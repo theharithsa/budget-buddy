@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, AlertTriangle, Wallet } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, type Budget, formatCurrency } from '@/lib/types';
+import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { toast } from 'sonner';
 
 interface BudgetManagerProps {
@@ -93,13 +94,18 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
           <Wallet size={24} className="text-primary" />
           <h2 className="text-2xl font-bold">Budget Overview</h2>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus size={16} />
-              Set Budget
-            </Button>
-          </DialogTrigger>
+        <div className="flex items-center gap-2">
+          <BudgetSetupWizard 
+            existingBudgets={budgets}
+            onAddBudget={onAddBudget}
+          />
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus size={16} />
+                Set Budget
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Set Category Budget</DialogTitle>
@@ -148,6 +154,7 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {budgets.length === 0 ? (
@@ -159,10 +166,16 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
               <p className="text-muted-foreground mb-4">
                 Set spending limits for your categories to better track your finances.
               </p>
-              <Button onClick={() => setOpen(true)} className="gap-2">
-                <Plus size={16} />
-                Set Your First Budget
-              </Button>
+              <div className="flex gap-2 justify-center">
+                <BudgetSetupWizard 
+                  existingBudgets={budgets}
+                  onAddBudget={onAddBudget}
+                />
+                <Button onClick={() => setOpen(true)} variant="outline" className="gap-2">
+                  <Plus size={16} />
+                  Manual Setup
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

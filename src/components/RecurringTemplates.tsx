@@ -293,6 +293,22 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         </Dialog>
       </div>
 
+      {/* Quick Tips */}
+      <Card className="bg-accent/10 border-accent/20">
+        <CardContent className="pt-4">
+          <div className="flex items-start gap-3">
+            <div className="text-accent">💡</div>
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm">Smart Bill Management</h4>
+              <p className="text-xs text-muted-foreground">
+                Use templates to quickly log recurring expenses like rent, utilities, and subscriptions. 
+                Click any template below to instantly add it to your expenses with today's date.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Custom Templates */}
       {customTemplates.length > 0 && (
         <div className="space-y-4">
@@ -358,42 +374,125 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         </div>
       )}
 
-      {/* Default Templates */}
-      <div className="space-y-4">
+      {/* Default Templates organized by frequency */}
+      <div className="space-y-6">
         <div className="flex items-center gap-2">
           <Separator className="flex-1" />
-          <h3 className="text-lg font-medium text-muted-foreground">Common Templates</h3>
+          <h3 className="text-lg font-medium text-muted-foreground">Common Bill Templates</h3>
           <Separator className="flex-1" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {defaultTemplates.map((template) => (
-            <Card key={template.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Repeat size={16} className="text-muted-foreground" />
-                  {template.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div>
-                    <div className="text-lg font-semibold">{formatCurrency(template.amount)}</div>
-                    <div className="text-xs text-muted-foreground">{template.category}</div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => handleUseTemplate(template)}
-                  >
-                    <Plus size={12} className="mr-1" />
-                    Use
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+
+        {/* Monthly Templates */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Monthly Bills</h4>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {defaultTemplates
+              .filter(template => template.frequency === 'monthly')
+              .map((template) => (
+                <Card key={template.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Repeat size={14} className="text-muted-foreground" />
+                      {template.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-lg font-semibold">{formatCurrency(template.amount)}</div>
+                        <div className="text-xs text-muted-foreground">{template.category}</div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => handleUseTemplate(template)}
+                      >
+                        <Plus size={12} className="mr-1" />
+                        Add Expense
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
         </div>
+
+        {/* Quarterly Templates */}
+        {defaultTemplates.some(t => t.frequency === 'quarterly') && (
+          <div className="space-y-3">
+            <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Quarterly Bills</h4>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              {defaultTemplates
+                .filter(template => template.frequency === 'quarterly')
+                .map((template) => (
+                  <Card key={template.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Repeat size={14} className="text-orange-500" />
+                        {template.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div>
+                          <div className="text-lg font-semibold">{formatCurrency(template.amount)}</div>
+                          <div className="text-xs text-muted-foreground">{template.category}</div>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => handleUseTemplate(template)}
+                        >
+                          <Plus size={12} className="mr-1" />
+                          Add Expense
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Yearly Templates */}
+        {defaultTemplates.some(t => t.frequency === 'yearly') && (
+          <div className="space-y-3">
+            <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Annual Payments</h4>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              {defaultTemplates
+                .filter(template => template.frequency === 'yearly')
+                .map((template) => (
+                  <Card key={template.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Repeat size={14} className="text-purple-500" />
+                        {template.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div>
+                          <div className="text-lg font-semibold">{formatCurrency(template.amount)}</div>
+                          <div className="text-xs text-muted-foreground">{template.category}</div>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => handleUseTemplate(template)}
+                        >
+                          <Plus size={12} className="mr-1" />
+                          Add Expense
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {templates.length === 0 && (
