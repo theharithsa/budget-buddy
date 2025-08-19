@@ -13,14 +13,18 @@ import { toast } from 'sonner';
 interface BudgetManagerProps {
   budgets: Budget[];
   onUpdateBudgets: (budgets: Budget[]) => void;
+  onAddBudget: (budget: Omit<Budget, 'id'>) => Promise<void>;
+  onUpdateBudget: (budgetId: string, budget: Partial<Budget>) => Promise<void>;
+  onDeleteBudget: (budgetId: string) => Promise<void>;
 }
 
-export function BudgetManager({ budgets, onUpdateBudgets }: BudgetManagerProps) {
+export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateBudget, onDeleteBudget }: BudgetManagerProps) {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
   const [limit, setLimit] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddBudget = (e: React.FormEvent) => {
+  const handleAddBudget = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const numLimit = parseFloat(limit);
@@ -34,32 +38,41 @@ export function BudgetManager({ budgets, onUpdateBudgets }: BudgetManagerProps) 
       return;
     }
 
-    const existingBudgetIndex = budgets.findIndex(b => b.category === category);
-    const newBudget: Budget = {
-      category,
-      limit: numLimit,
-      spent: existingBudgetIndex >= 0 ? budgets[existingBudgetIndex].spent : 0,
-    };
+    setIsLoading(true);
+    try {
+      const existingBudget = budgets.find(b => b.category === category);
+      
+      if (existingBudget) {
+        await onUpdateBudget(existingBudget.id, { limit: numLimit });
+        toast.success('Budget updated successfully');
+      } else {
+        await onAddBudget({
+          category,
+          limit: numLimit,
+          spent: 0,
+        });
+        toast.success('Budget added successfully');
+      }
 
-    let updatedBudgets;
-    if (existingBudgetIndex >= 0) {
-      updatedBudgets = budgets.map(b => b.category === category ? newBudget : b);
-      toast.success('Budget updated successfully');
-    } else {
-      updatedBudgets = [...budgets, newBudget];
-      toast.success('Budget added successfully');
+      setCategory('');
+      setLimit('');
+      setOpen(false);
+    } catch (error) {
+      console.error('Error saving budget:', error);
+      toast.error('Failed to save budget');
+    } finally {
+      setIsLoading(false);
     }
-
-    onUpdateBudgets(updatedBudgets);
-    setCategory('');
-    setLimit('');
-    setOpen(false);
   };
 
-  const handleDeleteBudget = (category: string) => {
-    const updatedBudgets = budgets.filter(b => b.category !== category);
-    onUpdateBudgets(updatedBudgets);
-    toast.success('Budget removed');
+  const handleDeleteBudget = async (budgetId: string) => {
+    try {
+      await onDeleteBudget(budgetId);
+      toast.success('Budget removed');
+    } catch (error) {
+      console.error('Error deleting budget:', error);
+      toast.error('Failed to remove budget');
+    }
   };
 
   const getProgressColor = (spent: number, limit: number) => {
@@ -128,8 +141,8 @@ export function BudgetManager({ budgets, onUpdateBudgets }: BudgetManagerProps) 
                 <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1">
-                  Set Budget
+                <Button type="submit" className="flex-1" disabled={isLoading}>
+                  {isLoading ? 'Saving...' : 'Set Budget'}
                 </Button>
               </div>
             </form>
@@ -189,7 +202,7 @@ export function BudgetManager({ budgets, onUpdateBudgets }: BudgetManagerProps) 
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteBudget(budget.category)}
+                        onClick={() => handleDeleteBudget(budget.id)}
                         className="text-muted-foreground hover:text-destructive"
                       >
                         Remove

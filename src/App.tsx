@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useKV } from '@github/spark/hooks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,13 +10,29 @@ import { ExpenseCard } from '@/components/ExpenseCard';
 import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
+import { LoginPage } from '@/components/LoginPage';
+import { AppHeader } from '@/components/AppHeader';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat } from '@phosphor-icons/react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
-function App() {
-  const [expenses, setExpenses] = useKV<Expense[]>('finance-expenses', []);
-  const [budgets, setBudgets] = useKV<Budget[]>('finance-budgets', []);
+function FinanceApp() {
+  const { user, loading: authLoading } = useAuth();
+  const {
+    expenses,
+    budgets,
+    loading: dataLoading,
+    addExpense,
+    deleteExpense,
+    addBudget,
+    updateBudget,
+    deleteBudget,
+    addTemplate,
+    deleteTemplate,
+  } = useFirestoreData();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
@@ -25,31 +40,61 @@ function App() {
 
   // Update budget spending when expenses change
   useEffect(() => {
+    if (!user || !budgets.length) return;
+
     const currentMonth = getCurrentMonth();
     const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
     
-    setBudgets(currentBudgets => 
-      currentBudgets.map(budget => ({
-        ...budget,
-        spent: calculateCategorySpending(monthlyExpenses, budget.category)
-      }))
+    // Update budgets with current spending
+    budgets.forEach(budget => {
+      const spent = calculateCategorySpending(monthlyExpenses, budget.category);
+      if (budget.spent !== spent) {
+        updateBudget(budget.id, { spent });
+      }
+    });
+  }, [expenses, budgets, user, updateBudget]);
+
+  const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
+    try {
+      await addExpense(expenseData);
+      toast.success('Expense added successfully');
+    } catch (error) {
+      console.error('Error adding expense:', error);
+      toast.error('Failed to add expense');
+    }
+  };
+
+  const handleDeleteExpense = async (id: string) => {
+    try {
+      await deleteExpense(id);
+      toast.success('Expense deleted');
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+      toast.error('Failed to delete expense');
+    }
+  };
+
+  const handleUpdateBudgets = (newBudgets: Budget[]) => {
+    // Handle budget updates through the BudgetManager component
+    // The component will call the appropriate Firebase functions
+  };
+
+  // Show loading spinner while authentication is loading
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
     );
-  }, [expenses, setBudgets]);
+  }
 
-  const handleAddExpense = (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
-    const newExpense: Expense = {
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      ...expenseData,
-    };
-    
-    setExpenses(currentExpenses => [newExpense, ...currentExpenses]);
-  };
-
-  const handleDeleteExpense = (id: string) => {
-    setExpenses(currentExpenses => currentExpenses.filter(expense => expense.id !== id));
-    toast.success('Expense deleted');
-  };
+  // Show login page if user is not authenticated
+  if (!user) {
+    return <LoginPage />;
+  }
 
   // Filter and sort expenses
   const filteredAndSortedExpenses = expenses
@@ -78,14 +123,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AppHeader />
+      
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Finance Tracker</h1>
-          <p className="text-muted-foreground">
-            Track your expenses, manage budgets, and analyze spending patterns
-          </p>
-        </div>
-
         {/* Monthly Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card>
@@ -193,7 +233,12 @@ function App() {
               <AddExpenseModal onAddExpense={handleAddExpense} />
             </div>
 
-            {filteredAndSortedExpenses.length === 0 ? (
+            {dataLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading expenses...</p>
+              </div>
+            ) : filteredAndSortedExpenses.length === 0 ? (
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center py-8">
@@ -227,11 +272,21 @@ function App() {
           </TabsContent>
 
           <TabsContent value="budgets">
-            <BudgetManager budgets={budgets} onUpdateBudgets={setBudgets} />
+            <BudgetManager 
+              budgets={budgets} 
+              onUpdateBudgets={handleUpdateBudgets}
+              onAddBudget={addBudget}
+              onUpdateBudget={updateBudget}
+              onDeleteBudget={deleteBudget}
+            />
           </TabsContent>
 
           <TabsContent value="templates">
-            <RecurringTemplates onAddExpense={handleAddExpense} />
+            <RecurringTemplates 
+              onAddExpense={handleAddExpense}
+              onAddTemplate={addTemplate}
+              onDeleteTemplate={deleteTemplate}
+            />
           </TabsContent>
 
           <TabsContent value="trends">
@@ -242,6 +297,14 @@ function App() {
       
       <Toaster position="top-right" />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <FinanceApp />
+    </AuthProvider>
   );
 }
 

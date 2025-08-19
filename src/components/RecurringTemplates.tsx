@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useKV } from '@github/spark/hooks';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,16 +8,22 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Plus, Receipt, Repeat, Trash2, Edit3, Clock } from '@phosphor-icons/react';
 import { type RecurringTemplate, type Expense, DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, formatCurrency } from '@/lib/types';
+import { useAuth } from '@/contexts/AuthContext';
+import { subscribeToTemplates } from '@/lib/firebase';
 import { toast } from 'sonner';
 
 interface RecurringTemplatesProps {
-  onAddExpense: (expenseData: Omit<Expense, 'id' | 'createdAt'>) => void;
+  onAddExpense: (expenseData: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>;
+  onAddTemplate: (template: Omit<RecurringTemplate, 'id' | 'createdAt'>) => Promise<void>;
+  onDeleteTemplate: (templateId: string) => Promise<void>;
 }
 
-export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
-  const [templates, setTemplates] = useKV<RecurringTemplate[]>('recurring-templates', DEFAULT_RECURRING_TEMPLATES);
+export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTemplate }: RecurringTemplatesProps) {
+  const { user } = useAuth();
+  const [templates, setTemplates] = useState<RecurringTemplate[]>(DEFAULT_RECURRING_TEMPLATES);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<RecurringTemplate | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -28,6 +33,21 @@ export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
     description: '',
     frequency: 'monthly' as const
   });
+
+  // Subscribe to user templates from Firebase
+  useEffect(() => {
+    if (!user) {
+      setTemplates(DEFAULT_RECURRING_TEMPLATES);
+      return;
+    }
+
+    const unsubscribe = subscribeToTemplates(user.uid, (userTemplates) => {
+      // Combine default templates with user templates
+      setTemplates([...DEFAULT_RECURRING_TEMPLATES, ...userTemplates]);
+    });
+
+    return unsubscribe;
+  }, [user]);
 
   const resetForm = () => {
     setFormData({
@@ -39,30 +59,40 @@ export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
     });
   };
 
-  const handleCreateTemplate = () => {
+  const handleCreateTemplate = async () => {
     if (!formData.name || !formData.amount || !formData.category) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    const newTemplate: RecurringTemplate = {
-      id: Date.now().toString(),
-      name: formData.name,
-      amount: parseFloat(formData.amount),
-      category: formData.category,
-      description: formData.description || formData.name,
-      frequency: formData.frequency,
-      isDefault: false,
-      createdAt: new Date().toISOString()
-    };
+    setIsLoading(true);
+    try {
+      await onAddTemplate({
+        name: formData.name,
+        amount: parseFloat(formData.amount),
+        category: formData.category,
+        description: formData.description || formData.name,
+        frequency: formData.frequency,
+        isDefault: false,
+      });
 
-    setTemplates(currentTemplates => [...currentTemplates, newTemplate]);
-    resetForm();
-    setIsCreateDialogOpen(false);
-    toast.success('Template created successfully');
+      resetForm();
+      setIsCreateDialogOpen(false);
+      toast.success('Template created successfully');
+    } catch (error) {
+      console.error('Error creating template:', error);
+      toast.error('Failed to create template');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEditTemplate = (template: RecurringTemplate) => {
+    if (template.isDefault) {
+      toast.error('Cannot edit default templates');
+      return;
+    }
+    
     setEditingTemplate(template);
     setFormData({
       name: template.name,
@@ -74,36 +104,54 @@ export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
     setIsCreateDialogOpen(true);
   };
 
-  const handleUpdateTemplate = () => {
+  const handleUpdateTemplate = async () => {
     if (!editingTemplate || !formData.name || !formData.amount || !formData.category) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    const updatedTemplate: RecurringTemplate = {
-      ...editingTemplate,
-      name: formData.name,
-      amount: parseFloat(formData.amount),
-      category: formData.category,
-      description: formData.description || formData.name,
-      frequency: formData.frequency
-    };
+    setIsLoading(true);
+    try {
+      // For updates, we delete the old and create new (since we don't have update function)
+      await onDeleteTemplate(editingTemplate.id);
+      await onAddTemplate({
+        name: formData.name,
+        amount: parseFloat(formData.amount),
+        category: formData.category,
+        description: formData.description || formData.name,
+        frequency: formData.frequency,
+        isDefault: false,
+      });
 
-    setTemplates(currentTemplates => 
-      currentTemplates.map(t => t.id === editingTemplate.id ? updatedTemplate : t)
-    );
-    resetForm();
-    setEditingTemplate(null);
-    setIsCreateDialogOpen(false);
-    toast.success('Template updated successfully');
+      resetForm();
+      setEditingTemplate(null);
+      setIsCreateDialogOpen(false);
+      toast.success('Template updated successfully');
+    } catch (error) {
+      console.error('Error updating template:', error);
+      toast.error('Failed to update template');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteTemplate = (id: string) => {
-    setTemplates(currentTemplates => currentTemplates.filter(t => t.id !== id));
-    toast.success('Template deleted');
+  const handleDeleteTemplate = async (id: string) => {
+    const template = templates.find(t => t.id === id);
+    if (template?.isDefault) {
+      toast.error('Cannot delete default templates');
+      return;
+    }
+
+    try {
+      await onDeleteTemplate(id);
+      toast.success('Template deleted');
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      toast.error('Failed to delete template');
+    }
   };
 
-  const handleUseTemplate = (template: RecurringTemplate) => {
+  const handleUseTemplate = async (template: RecurringTemplate) => {
     const expenseData = {
       amount: template.amount,
       category: template.category,
@@ -111,8 +159,13 @@ export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
       date: new Date().toISOString().split('T')[0] // Today's date
     };
     
-    onAddExpense(expenseData);
-    toast.success(`Added ${template.name} to expenses`);
+    try {
+      await onAddExpense(expenseData);
+      toast.success(`Added ${template.name} to expenses`);
+    } catch (error) {
+      console.error('Error adding expense:', error);
+      toast.error('Failed to add expense');
+    }
   };
 
   const handleDialogClose = () => {
@@ -227,8 +280,9 @@ export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
                 <Button 
                   onClick={editingTemplate ? handleUpdateTemplate : handleCreateTemplate}
                   className="flex-1"
+                  disabled={isLoading}
                 >
-                  {editingTemplate ? 'Update Template' : 'Create Template'}
+                  {isLoading ? 'Saving...' : (editingTemplate ? 'Update Template' : 'Create Template')}
                 </Button>
                 <Button variant="outline" onClick={handleDialogClose}>
                   Cancel
@@ -258,20 +312,24 @@ export function RecurringTemplates({ onAddExpense }: RecurringTemplatesProps) {
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleEditTemplate(template)}
-                      >
-                        <Edit3 size={14} />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDeleteTemplate(template.id)}
-                      >
-                        <Trash2 size={14} />
-                      </Button>
+                      {!template.isDefault && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleEditTemplate(template)}
+                          >
+                            <Edit3 size={14} />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteTemplate(template.id)}
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardHeader>

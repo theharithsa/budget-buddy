@@ -1,85 +1,178 @@
-# Firebase Setup Instructions
+# Finance Tracker - Firebase Setup Guide
 
-## Overview
-This finance tracker now includes receipt upload functionality using Firebase Storage. To enable this feature, you'll need to set up a Firebase project.
+This Finance Tracker application uses Firebase for authentication, database, and file storage. Follow this guide to set up your own Firebase project.
 
-## Setup Steps
+## Prerequisites
 
-### 1. Create a Firebase Project
+- A Google account
+- Basic understanding of Firebase console
+
+## Step 1: Create Firebase Project
+
 1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Click "Create a project"
-3. Enter a project name (e.g., "finance-tracker")
-4. Follow the setup wizard
+2. Click "Create a project" or "Add project"
+3. Enter a project name (e.g., "my-finance-tracker")
+4. Choose whether to enable Google Analytics (optional)
+5. Click "Create project"
 
-### 2. Enable Firebase Storage
-1. In your Firebase project console, go to "Storage" in the sidebar
-2. Click "Get started"
-3. Choose "Start in test mode" for now (you can configure security rules later)
-4. Select a storage location closest to your users
+## Step 2: Set Up Authentication
 
-### 3. Get Firebase Configuration
-1. Go to Project Settings (gear icon) → General tab
-2. Scroll down to "Your apps" section
-3. Click on "Web" icon to add a web app
-4. Enter an app nickname (e.g., "finance-tracker-web")
-5. Copy the configuration object
+1. In your Firebase project, go to **Authentication** > **Sign-in method**
+2. Enable **Google** as a sign-in provider:
+   - Click on Google
+   - Toggle "Enable"
+   - Set your project support email
+   - Click "Save"
 
-### 4. Update Firebase Configuration
-Replace the demo configuration in `src/lib/firebase.ts` with your actual Firebase config:
+## Step 3: Set Up Firestore Database
 
-```typescript
-const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com", 
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "your-app-id"
-};
-```
+1. Go to **Firestore Database**
+2. Click "Create database"
+3. Choose "Start in test mode" (you can secure it later)
+4. Select a location close to your users
+5. Click "Done"
 
-### 5. Security Rules (Optional but Recommended)
-In Firebase Console → Storage → Rules, you can set up security rules:
+### Firestore Security Rules (Optional - for production)
+
+Replace the default rules with these for better security:
 
 ```javascript
 rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /receipts/{allPaths=**} {
-      allow read, write: if request.auth != null; // Only authenticated users
-      // OR for public access (less secure):
-      // allow read, write: if true;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only access their own data
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
 ```
 
-## Features Added
+## Step 4: Set Up Storage
 
-### Receipt Upload
-- Upload images (JPEG, PNG, WebP) or PDF files
-- Maximum file size: 5MB
-- Files are stored in Firebase Storage under `/receipts/` path
-- Automatic file validation
+1. Go to **Storage**
+2. Click "Get started"
+3. Start in test mode
+4. Choose the same location as your Firestore database
+5. Click "Done"
 
-### Receipt Viewing
-- View uploaded receipts directly in the app
-- Support for both images and PDF files
-- Full-screen viewing with "Open in New Tab" option
+### Storage Security Rules (Optional - for production)
 
-### Data Storage
-- Receipt URLs are stored with expense data
-- Original filename is preserved
-- Receipts persist between sessions
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Users can only access their own receipts
+    match /receipts/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
 
-## Current Configuration
-The app is currently using demo Firebase configuration. Receipt upload will work once you:
-1. Set up your Firebase project
-2. Update the configuration in `src/lib/firebase.ts`
-3. Enable Firebase Storage in your project
+## Step 5: Get Your Firebase Configuration
+
+1. Go to **Project Settings** (gear icon)
+2. Scroll down to "Your apps"
+3. Click "Add app" and choose "Web" (</> icon)
+4. Register your app with a nickname
+5. Copy the Firebase configuration object
+
+## Step 6: Update Your Application
+
+1. Open `src/lib/firebase.ts` in your project
+2. Replace the `firebaseConfig` object with your configuration:
+
+```javascript
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-project.firebaseapp.com", 
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "your-messaging-sender-id",
+  appId: "your-app-id"
+};
+```
+
+## Step 7: Set Up Domain Authorization (Optional)
+
+For production deployment:
+
+1. Go to **Authentication** > **Settings** > **Authorized domains**
+2. Add your production domain (e.g., yourdomain.com)
+
+## Data Structure
+
+The application creates the following Firestore structure:
+
+```
+users/
+  {userId}/
+    expenses/
+      {expenseId}/
+        - amount: number
+        - category: string
+        - description: string
+        - date: string
+        - createdAt: string
+        - receiptUrl?: string
+        - receiptFileName?: string
+    
+    budgets/
+      {budgetId}/
+        - category: string
+        - limit: number
+        - spent: number
+    
+    templates/
+      {templateId}/
+        - name: string
+        - amount: number
+        - category: string
+        - description: string
+        - frequency: string
+        - isDefault: boolean
+        - createdAt: string
+```
+
+## Storage Structure
+
+Receipts are stored in Firebase Storage:
+
+```
+receipts/
+  {expenseId}_{timestamp}.{extension}
+```
 
 ## Troubleshooting
-- If uploads fail, check Firebase Storage rules
-- Ensure your Firebase project has Storage enabled
-- Verify the configuration matches your Firebase project settings
-- Check browser console for detailed error messages
+
+### Authentication Issues
+- Make sure Google sign-in is enabled in Authentication > Sign-in method
+- Check that your domain is authorized
+- Verify your Firebase config is correct
+
+### Database Permission Issues
+- Check Firestore security rules
+- Make sure users are properly authenticated
+- Verify the user ID matches in rules
+
+### Storage Upload Issues
+- Check Storage security rules
+- Verify file size (max 5MB)
+- Ensure file type is supported (JPEG, PNG, WebP, PDF)
+
+## Security Best Practices
+
+1. **Use Security Rules**: Always implement proper Firestore and Storage security rules for production
+2. **Environment Variables**: Store Firebase config in environment variables for production
+3. **HTTPS Only**: Always use HTTPS in production
+4. **Regular Monitoring**: Monitor usage and costs in Firebase console
+
+## Cost Considerations
+
+Firebase offers generous free tiers:
+- **Authentication**: 50,000 monthly active users (free)
+- **Firestore**: 50,000 reads, 20,000 writes, 20,000 deletes per day (free)
+- **Storage**: 5GB storage, 1GB/day downloads (free)
+
+Monitor your usage in the Firebase console to avoid unexpected charges.
