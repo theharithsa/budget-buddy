@@ -52,17 +52,55 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
   const [loading, setLoading] = useState(false);
   const [lastAnalyzed, setLastAnalyzed] = useState<Date | null>(null);
 
-  const analyzeSpending = async () => {
+  const analyzeSpending = async (useDemo = false) => {
     setLoading(true);
     try {
+      let expensesData = expenses;
+      let budgetsData = budgets;
+
+      // If using demo mode or no data exists, create sample data
+      if (useDemo || expenses.length === 0 || budgets.length === 0) {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+        
+        // Generate sample expenses for better analysis
+        expensesData = [
+          { id: '1', amount: 8500, category: 'Food & Dining', description: 'Grocery shopping', date: new Date(currentYear, currentMonth, 5).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '2', amount: 15000, category: 'Transportation', description: 'Fuel expenses', date: new Date(currentYear, currentMonth, 8).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '3', amount: 3200, category: 'Entertainment', description: 'Movie tickets', date: new Date(currentYear, currentMonth, 10).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '4', amount: 25000, category: 'Housing', description: 'Monthly rent', date: new Date(currentYear, currentMonth, 1).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '5', amount: 4500, category: 'Shopping', description: 'Clothing', date: new Date(currentYear, currentMonth, 12).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '6', amount: 2800, category: 'Healthcare', description: 'Medical checkup', date: new Date(currentYear, currentMonth, 15).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '7', amount: 1200, category: 'Utilities', description: 'Electricity bill', date: new Date(currentYear, currentMonth, 3).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '8', amount: 6000, category: 'Food & Dining', description: 'Restaurants', date: new Date(currentYear, currentMonth, 18).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '9', amount: 3500, category: 'Transportation', description: 'Metro/Bus passes', date: new Date(currentYear, currentMonth, 20).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '10', amount: 2000, category: 'Entertainment', description: 'Netflix subscription', date: new Date(currentYear, currentMonth, 22).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+        ];
+
+        budgetsData = [
+          { id: '1', category: 'Food & Dining', limit: 15000, spent: 14500, createdAt: new Date() },
+          { id: '2', category: 'Transportation', limit: 20000, spent: 18500, createdAt: new Date() },
+          { id: '3', category: 'Entertainment', limit: 8000, spent: 5200, createdAt: new Date() },
+          { id: '4', category: 'Housing', limit: 30000, spent: 25000, createdAt: new Date() },
+          { id: '5', category: 'Shopping', limit: 10000, spent: 4500, createdAt: new Date() },
+          { id: '6', category: 'Healthcare', limit: 5000, spent: 2800, createdAt: new Date() },
+          { id: '7', category: 'Utilities', limit: 3000, spent: 1200, createdAt: new Date() },
+        ];
+
+        if (useDemo) {
+          toast.info('Running demo analysis with sample data');
+        }
+      }
+
       // Prepare data for GPT analysis
       const currentMonth = getCurrentMonth();
-      const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
+      const monthlyExpenses = getMonthlyExpenses(expensesData, currentMonth);
       const totalSpent = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-      const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
+      const totalBudget = budgetsData.reduce((sum, budget) => sum + budget.limit, 0);
       
       // Category spending analysis
-      const categorySpending = budgets.map(budget => ({
+      const categorySpending = budgetsData.map(budget => ({
         category: budget.category,
         budgeted: budget.limit,
         spent: calculateCategorySpending(monthlyExpenses, budget.category),
@@ -70,7 +108,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       }));
 
       // Recent expenses for pattern analysis
-      const recentExpenses = expenses.slice(-50).map(exp => ({
+      const recentExpenses = expensesData.slice(-50).map(exp => ({
         category: exp.category,
         amount: exp.amount,
         date: exp.date,
@@ -79,12 +117,13 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
 
       // Create comprehensive prompt for GPT
       const prompt = spark.llmPrompt`
-        Analyze this user's spending data and provide comprehensive budget insights:
+        You are a professional financial advisor analyzing Indian spending patterns. Provide comprehensive budget insights for this user:
 
         CURRENT MONTH DATA:
         - Total Budget: ₹${totalBudget}
         - Total Spent: ₹${totalSpent}
         - Budget Utilization: ${totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0}%
+        - Remaining Budget: ₹${Math.max(0, totalBudget - totalSpent)}
 
         CATEGORY BREAKDOWN:
         ${categorySpending.map(cat => 
@@ -92,55 +131,69 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         ).join('\n')}
 
         RECENT TRANSACTIONS (Last 50):
-        ${recentExpenses.map(exp => 
+        ${recentExpenses.slice(0, 30).map(exp => 
           `- ${exp.date}: ${exp.category} - ₹${exp.amount} (${exp.description})`
         ).join('\n')}
 
-        Please provide analysis in the following JSON structure:
+        ANALYSIS REQUIREMENTS:
+        Please provide a detailed analysis in the following JSON structure. Be specific, actionable, and culturally relevant to Indian financial habits:
+
         {
-          "overallScore": (number 0-100, financial health score),
+          "overallScore": (number 0-100, financial health score based on budget adherence, spending patterns, and savings potential),
           "insights": [
-            "Key insight about spending patterns",
-            "Another important observation"
+            "Specific insight about spending patterns with actual numbers",
+            "Trend analysis with actionable observations",
+            "Behavioral pattern identification",
+            "Emergency fund status assessment"
           ],
           "recommendations": [
-            "Specific actionable recommendation",
-            "Another improvement suggestion"
+            "Specific actionable recommendation with exact amounts",
+            "Behavioral change suggestion with implementation steps",
+            "Investment or savings opportunity with timeline",
+            "Budget optimization strategy"
           ],
           "categoryAnalysis": [
             {
               "category": "Category name",
               "status": "healthy|warning|overspent",
-              "message": "Specific message about this category",
-              "percentage": (percentage of budget used)
+              "message": "Specific actionable message about this category performance",
+              "percentage": (exact percentage of budget used)
             }
           ],
           "savingsOpportunities": [
             {
               "category": "Category name",
-              "potentialSavings": (amount in rupees),
-              "suggestion": "How to save money in this category"
+              "potentialSavings": (realistic monthly savings amount in rupees),
+              "suggestion": "Specific actionable strategy to achieve these savings"
             }
           ]
         }
 
-        Focus on:
-        1. Spending patterns and trends
-        2. Budget efficiency
-        3. Categories that need attention
-        4. Realistic savings opportunities
-        5. Behavioral insights from transaction patterns
-        6. Emergency fund recommendations
-        7. Long-term financial planning advice
+        FOCUS AREAS:
+        1. Spending Pattern Analysis: Identify weekly/monthly patterns and suggest optimizations
+        2. Budget Efficiency: Rate how well each category budget is managed
+        3. Overspending Categories: Prioritize categories that need immediate attention
+        4. Smart Savings: Identify realistic savings opportunities without lifestyle impact
+        5. Indian Context: Consider typical Indian expenses like family obligations, festivals, etc.
+        6. Emergency Fund: Assess and recommend emergency fund building
+        7. Investment Readiness: Evaluate if user is ready for investment planning
+        8. Seasonal Adjustments: Account for Indian festival seasons and their impact
 
-        Be specific, actionable, and consider Indian financial context.
+        SCORING CRITERIA:
+        - 90-100: Excellent financial discipline, strong savings, well-planned spending
+        - 80-89: Good budget management with minor optimization opportunities
+        - 70-79: Average financial health with clear improvement areas
+        - 60-69: Budget concerns requiring attention and behavioral changes
+        - Below 60: Significant financial restructuring needed
+
+        Provide insights that are specific, measurable, achievable, relevant, and time-bound (SMART).
       `;
 
       const response = await spark.llm(prompt, 'gpt-4o', true);
       const gptAnalysis = JSON.parse(response);
 
       // Generate additional chart data
-      const monthlyTrend = generateMonthlyTrend(expenses, budgets);
+      const monthlyTrend = generateMonthlyTrend(expensesData, budgetsData);
       const topCategories = generateTopCategories(monthlyExpenses);
       const spendingPattern = generateSpendingPattern(monthlyExpenses);
 
@@ -153,7 +206,12 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
 
       setAnalysis(fullAnalysis);
       setLastAnalyzed(new Date());
-      toast.success('Budget analysis completed!');
+      
+      if (useDemo) {
+        toast.success('Demo analysis completed! This shows insights with sample data.');
+      } else {
+        toast.success('Budget analysis completed!');
+      }
     } catch (error) {
       console.error('Error analyzing budget:', error);
       toast.error('Failed to analyze budget. Please try again.');
@@ -246,24 +304,66 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             AI-powered insights into your spending patterns and budget optimization
           </p>
         </div>
-        <Button 
-          onClick={analyzeSpending} 
-          disabled={loading}
-          className="flex items-center gap-2"
-        >
-          {loading ? (
-            <RefreshCw className="animate-spin" size={16} />
-          ) : (
-            <BarChart3 size={16} />
+        <div className="flex items-center gap-2">
+          {(expenses.length === 0 || budgets.length === 0) && (
+            <Button 
+              onClick={() => analyzeSpending(true)} 
+              disabled={loading}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <BarChart3 size={16} />
+              Try Demo
+            </Button>
           )}
-          {loading ? 'Analyzing...' : 'Analyze Budget'}
-        </Button>
+          <Button 
+            onClick={() => analyzeSpending(false)} 
+            disabled={loading}
+            className="flex items-center gap-2"
+          >
+            {loading ? (
+              <RefreshCw className="animate-spin" size={16} />
+            ) : (
+              <BarChart3 size={16} />
+            )}
+            {loading ? 'Analyzing...' : 'Analyze Budget'}
+          </Button>
+        </div>
       </div>
+
+      {/* Info Card */}
+      {!analysis && !loading && (
+        <Card className="border-l-4 border-l-primary">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <Brain className="text-primary mt-1" size={20} />
+              <div>
+                <h3 className="font-semibold mb-2">How the AI Analyzer Works</h3>
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>• <strong>Analyzes</strong> your spending patterns and budget efficiency</p>
+                  <p>• <strong>Identifies</strong> savings opportunities and overspending areas</p>
+                  <p>• <strong>Provides</strong> personalized recommendations for Indian financial habits</p>
+                  <p>• <strong>Scores</strong> your financial health from 0-100</p>
+                  {(expenses.length === 0 || budgets.length === 0) && (
+                    <p className="text-accent font-medium">💡 No data yet? Try the demo to see sample insights!</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {lastAnalyzed && (
         <Alert>
+          <Brain size={16} />
           <AlertDescription>
             Last analyzed: {lastAnalyzed.toLocaleDateString()} at {lastAnalyzed.toLocaleTimeString()}
+            {analysis && (
+              <span className="ml-2 text-sm">
+                • Financial Health Score: <span className={getScoreColor(analysis.overallScore)}>{analysis.overallScore}/100</span>
+              </span>
+            )}
           </AlertDescription>
         </Alert>
       )}
@@ -334,12 +434,16 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={analysis.monthlyTrend}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                     <XAxis dataKey="month" />
-                    <YAxis tickFormatter={(value) => `₹${value}`} />
-                    <Tooltip formatter={(value) => [formatCurrency(value as number), '']} />
-                    <Area type="monotone" dataKey="budget" stackId="1" stroke="#8884d8" fill="#8884d8" opacity={0.3} />
-                    <Area type="monotone" dataKey="spent" stackId="2" stroke="#82ca9d" fill="#82ca9d" />
+                    <YAxis tickFormatter={(value) => `₹${(value/1000).toFixed(0)}k`} />
+                    <Tooltip 
+                      formatter={(value, name) => [formatCurrency(value as number), name === 'budget' ? 'Budget' : 'Spent']} 
+                      labelFormatter={(label) => `Month: ${label}`}
+                    />
+                    <Legend />
+                    <Area type="monotone" dataKey="budget" name="Budget" stackId="1" stroke="#8884d8" fill="#8884d8" opacity={0.3} />
+                    <Area type="monotone" dataKey="spent" name="Spent" stackId="2" stroke="#82ca9d" fill="#82ca9d" />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -361,13 +465,19 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
                       outerRadius={120}
                       paddingAngle={5}
                       dataKey="amount"
+                      label={({ category, percentage }) => `${category}: ${percentage.toFixed(1)}%`}
+                      labelLine={false}
                     >
                       {analysis.topCategories.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => [formatCurrency(value as number), '']} />
-                    <Legend />
+                    <Tooltip 
+                      formatter={(value, name, props) => [
+                        formatCurrency(value as number), 
+                        `${props.payload.category} (${props.payload.percentage.toFixed(1)}%)`
+                      ]} 
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -381,11 +491,14 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={analysis.spendingPattern}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                     <XAxis dataKey="day" />
-                    <YAxis tickFormatter={(value) => `₹${value}`} />
-                    <Tooltip formatter={(value) => [formatCurrency(value as number), 'Spent']} />
-                    <Bar dataKey="amount" fill="#3b82f6" />
+                    <YAxis tickFormatter={(value) => `₹${(value/1000).toFixed(0)}k`} />
+                    <Tooltip 
+                      formatter={(value) => [formatCurrency(value as number), 'Average Spent']}
+                      labelFormatter={(label) => `${label}s`}
+                    />
+                    <Bar dataKey="amount" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -521,10 +634,22 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               <h3 className="text-xl font-semibold mb-2">Ready to Analyze Your Budget</h3>
               <p className="text-muted-foreground mb-6">
                 Get AI-powered insights into your spending patterns, budget efficiency, and personalized recommendations.
+                {(expenses.length === 0 || budgets.length === 0) && (
+                  <span className="block mt-2 text-sm">
+                    Don't have data yet? Try our demo to see what insights look like!
+                  </span>
+                )}
               </p>
-              <Button onClick={analyzeSpending} size="lg">
-                Start Analysis
-              </Button>
+              <div className="flex items-center gap-4 justify-center">
+                {(expenses.length === 0 || budgets.length === 0) && (
+                  <Button onClick={() => analyzeSpending(true)} variant="outline" size="lg">
+                    Try Demo
+                  </Button>
+                )}
+                <Button onClick={() => analyzeSpending(false)} size="lg">
+                  {expenses.length > 0 ? 'Analyze My Data' : 'Start Analysis'}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
