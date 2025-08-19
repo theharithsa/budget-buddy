@@ -12,12 +12,13 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'fire
 // 5. Enable Storage
 // 6. Copy your config from Project Settings > General > Your apps
 const firebaseConfig = {
-  apiKey: "demo-api-key",
-  authDomain: "demo-project.firebaseapp.com",
-  projectId: "demo-project",
-  storageBucket: "demo-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "demo-app-id"
+  apiKey: "AIzaSyB2G6oajY2Q_erWxHkagZRacB3qH9quT-M",
+  authDomain: "vh-fin-buddy.firebaseapp.com",
+  projectId: "vh-fin-buddy",
+  storageBucket: "vh-fin-buddy.firebasestorage.app",
+  messagingSenderId: "822131624735",
+  appId: "1:822131624735:web:9c22081db0dcdf2dd8be2a",
+  measurementId: "G-WYC7VV3QQN"
 };
 
 // Initialize Firebase
