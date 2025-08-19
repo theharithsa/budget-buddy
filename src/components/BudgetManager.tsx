@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, AlertTriangle, Wallet } from '@phosphor-icons/react';
+import { Plus, AlertTriangle, Wallet, Calculator } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, type Budget, formatCurrency } from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { toast } from 'sonner';
@@ -21,6 +21,7 @@ interface BudgetManagerProps {
 
 export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateBudget, onDeleteBudget }: BudgetManagerProps) {
   const [open, setOpen] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [category, setCategory] = useState('');
   const [limit, setLimit] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +77,19 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
     }
   };
 
+  const handleBudgetsCreate = async (newBudgets: Budget[]) => {
+    try {
+      for (const budget of newBudgets) {
+        const { id, ...budgetData } = budget;
+        await onAddBudget(budgetData);
+      }
+      toast.success(`Successfully created ${newBudgets.length} budgets!`);
+    } catch (error) {
+      console.error('Error creating budgets:', error);
+      toast.error('Failed to create some budgets');
+    }
+  };
+
   const getProgressColor = (spent: number, limit: number) => {
     const percentage = (spent / limit) * 100;
     if (percentage >= 100) return 'bg-destructive';
@@ -95,15 +109,19 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
           <h2 className="text-2xl font-bold">Budget Overview</h2>
         </div>
         <div className="flex items-center gap-2">
-          <BudgetSetupWizard 
-            existingBudgets={budgets}
-            onAddBudget={onAddBudget}
-          />
+          <Button 
+            onClick={() => setWizardOpen(true)} 
+            className="gap-2"
+            variant="outline"
+          >
+            <Calculator size={16} />
+            Quick Setup
+          </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2">
                 <Plus size={16} />
-                Set Budget
+                Add Budget
               </Button>
             </DialogTrigger>
           <DialogContent className="sm:max-w-md">
@@ -249,6 +267,13 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
           })}
         </div>
       )}
+
+      <BudgetSetupWizard 
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onBudgetsCreate={handleBudgetsCreate}
+        existingBudgets={budgets}
+      />
     </div>
   );
 }

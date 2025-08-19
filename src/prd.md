@@ -46,14 +46,20 @@
 - **Success criteria**: Receipts uploaded successfully and accessible for viewing anytime
 
 ### Budget Management  
-- **What it does**: Set spending limits by category and track progress in INR currency
-- **Why it matters**: Enables proactive financial control and awareness
+- **What it does**: Set spending limits by category, track progress in INR currency, and use Quick Budget Setup wizard with intelligent suggestions
+- **Why it matters**: Enables proactive financial control and awareness with expert-recommended budget allocations
+- **Success criteria**: Budget setup completed in under 3 minutes with personalized recommendations
 - **Success criteria**: Users can easily see budget status and receive warnings when approaching limits
 
 ### Recurring Templates
 - **What it does**: Pre-defined templates for common bills and subscriptions that populate expense forms instantly
 - **Why it matters**: Eliminates repetitive data entry for predictable expenses, saving time and reducing errors
 - **Success criteria**: 80% faster expense entry for recurring items, reduced user friction
+
+### Quick Budget Setup Wizard
+- **What it does**: Intelligent budget setup with income-based suggestions and multiple budgeting styles (conservative, balanced, aggressive)
+- **Why it matters**: Reduces setup friction and provides expert guidance for users unsure about budget allocations
+- **Success criteria**: New users can set up comprehensive budgets in under 3 minutes with appropriate allocations
 
 ### Spending Trends
 - **What it does**: Visual analysis of spending patterns over time
