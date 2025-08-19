@@ -206,7 +206,7 @@ export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
           </>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">">>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
             <Input
