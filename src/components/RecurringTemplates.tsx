@@ -168,10 +168,12 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
     }
   };
 
-  const handleDialogClose = () => {
-    setIsCreateDialogOpen(false);
-    setEditingTemplate(null);
-    resetForm();
+  const handleDialogClose = (open: boolean) => {
+    setIsCreateDialogOpen(open);
+    if (!open) {
+      setEditingTemplate(null);
+      resetForm();
+    }
   };
 
   const getFrequencyBadgeVariant = (frequency: string) => {
@@ -284,7 +286,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                 >
                   {isLoading ? 'Saving...' : (editingTemplate ? 'Update Template' : 'Create Template')}
                 </Button>
-                <Button variant="outline" onClick={handleDialogClose}>
+                <Button variant="outline" onClick={() => handleDialogClose(false)}>
                   Cancel
                 </Button>
               </div>
@@ -504,7 +506,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
               <p className="text-muted-foreground mb-4">
                 Create templates for recurring expenses like bills and subscriptions to log them quickly.
               </p>
-              <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus size={16} className="mr-2" />
