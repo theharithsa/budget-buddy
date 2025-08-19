@@ -2,12 +2,13 @@
 
 ## Core Purpose & Success
 
-**Mission Statement**: A comprehensive personal finance tracker that helps users log expenses, manage budgets, analyze spending patterns, and streamline recurring transactions.
+**Mission Statement**: A comprehensive personal finance tracker that helps users log expenses with receipt storage, manage budgets, analyze spending patterns, and streamline recurring transactions.
 
 **Success Indicators**: 
-- Users consistently log their expenses and stay within budget limits
+- Users consistently log their expenses with receipts and stay within budget limits
 - Reduced time spent on manual expense entry through templates
 - Clear insight into spending patterns leading to better financial decisions
+- Organized receipt storage for tax and business purposes
 
 **Experience Qualities**: Efficient, Insightful, Trustworthy
 
@@ -33,12 +34,17 @@
 ## Essential Features
 
 ### Expense Logging
-- **What it does**: Quick entry of expenses with amount, category, date, and description
-- **Why it matters**: Core functionality that captures all spending data
-- **Success criteria**: Expense logged in under 30 seconds
+- **What it does**: Quick entry of expenses with amount, category, date, description, and optional receipt upload
+- **Why it matters**: Core functionality that captures all spending data with supporting documentation
+- **Success criteria**: Expense logged with receipt in under 45 seconds
+
+### Receipt Management
+- **What it does**: Upload and store receipt images/PDFs with Firebase Storage integration
+- **Why it matters**: Provides proof of purchase for tax deductions, business expenses, and financial record keeping
+- **Success criteria**: Receipts uploaded successfully and accessible for viewing anytime
 
 ### Budget Management  
-- **What it does**: Set spending limits by category and track progress
+- **What it does**: Set spending limits by category and track progress in INR currency
 - **Why it matters**: Enables proactive financial control and awareness
 - **Success criteria**: Users can easily see budget status and receive warnings when approaching limits
 
@@ -153,7 +159,26 @@
 
 **Testing Focus**: Template creation and usage workflows, expense entry speed, budget calculation accuracy
 
-**Critical Questions**: How often do users create custom templates vs. using defaults? Are the default templates comprehensive enough?
+**Critical Questions**: How often do users create custom templates vs. using defaults? Are the default templates comprehensive enough? What's the optimal file size limit for receipt uploads?
+
+## New Features Added
+
+### Currency Localization
+- **Implementation**: Updated to Indian Rupee (INR) with proper formatting
+- **Template Updates**: Adjusted default recurring template amounts to Indian pricing
+- **User Impact**: More relevant for Indian users with realistic expense amounts
+
+### Firebase Receipt Storage
+- **File Upload**: Support for images (JPEG, PNG, WebP) and PDF files up to 5MB
+- **Cloud Storage**: Receipts stored securely in Firebase Storage
+- **File Validation**: Automatic validation of file type and size
+- **Receipt Viewing**: In-app viewing of uploaded receipts with full-screen option
+- **Data Persistence**: Receipt URLs stored with expense data for long-term access
+
+### Enhanced Expense Cards
+- **Receipt Indicators**: Visual indicators when receipts are attached
+- **Receipt Viewer**: Modal dialog for viewing receipts without leaving the app
+- **File Information**: Display of original filename and file type
 
 ## Reflection
 This solution uniquely addresses the repetitive nature of expense tracking through the templates system, making it more likely users will maintain consistent financial tracking habits. The combination of quick expense entry, visual budget tracking, and automation features creates a comprehensive yet approachable financial management tool.

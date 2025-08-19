@@ -5,6 +5,8 @@ export interface Expense {
   description: string;
   date: string;
   createdAt: string;
+  receiptUrl?: string;
+  receiptFileName?: string;
 }
 
 export interface Budget {
@@ -43,9 +45,9 @@ export const DEFAULT_CATEGORIES: Category[] = [
 ];
 
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
   }).format(amount);
 };
 
@@ -75,7 +77,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'rent', 
     name: 'Rent/Mortgage', 
-    amount: 1200, 
+    amount: 25000, 
     category: 'Bills & Utilities', 
     description: 'Monthly rent payment',
     frequency: 'monthly',
@@ -85,7 +87,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'electricity', 
     name: 'Electricity Bill', 
-    amount: 80, 
+    amount: 2000, 
     category: 'Bills & Utilities', 
     description: 'Monthly electricity bill',
     frequency: 'monthly',
@@ -95,7 +97,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'phone', 
     name: 'Phone Bill', 
-    amount: 50, 
+    amount: 599, 
     category: 'Bills & Utilities', 
     description: 'Monthly phone service',
     frequency: 'monthly',
@@ -105,7 +107,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'internet', 
     name: 'Internet', 
-    amount: 60, 
+    amount: 800, 
     category: 'Bills & Utilities', 
     description: 'Monthly internet service',
     frequency: 'monthly',
@@ -115,7 +117,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'netflix', 
     name: 'Netflix', 
-    amount: 15, 
+    amount: 199, 
     category: 'Entertainment', 
     description: 'Netflix subscription',
     frequency: 'monthly',
@@ -125,7 +127,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'spotify', 
     name: 'Spotify', 
-    amount: 10, 
+    amount: 119, 
     category: 'Entertainment', 
     description: 'Spotify Premium',
     frequency: 'monthly',
@@ -135,7 +137,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'gym', 
     name: 'Gym Membership', 
-    amount: 30, 
+    amount: 1500, 
     category: 'Healthcare', 
     description: 'Monthly gym membership',
     frequency: 'monthly',
@@ -145,7 +147,7 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   { 
     id: 'insurance', 
     name: 'Car Insurance', 
-    amount: 120, 
+    amount: 8000, 
     category: 'Transportation', 
     description: 'Car insurance premium',
     frequency: 'monthly',

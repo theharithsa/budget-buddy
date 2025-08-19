@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Repeat } from '@phosphor-icons/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Plus, Repeat, Upload, X, FileImage } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, type Expense, type RecurringTemplate, formatCurrency } from '@/lib/types';
+import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
@@ -23,9 +25,35 @@ export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get most commonly used templates (first 6)
   const popularTemplates = templates.slice(0, 6);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      validateReceiptFile(file);
+      setReceiptFile(file);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Invalid file');
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setReceiptFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleUseTemplate = (template: RecurringTemplate) => {
     setAmount(template.amount.toString());
@@ -34,7 +62,7 @@ export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
     setShowTemplates(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const numAmount = parseFloat(amount);
@@ -48,22 +76,47 @@ export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
       return;
     }
 
-    onAddExpense({
-      amount: numAmount,
-      category,
-      description: description || 'No description',
-      date,
-    });
+    setIsUploading(true);
 
-    // Reset form
-    setAmount('');
-    setCategory('');
-    setDescription('');
-    setDate(new Date().toISOString().split('T')[0]);
-    setOpen(false);
-    setShowTemplates(false);
-    
-    toast.success('Expense added successfully');
+    try {
+      let receiptUrl: string | undefined;
+      let receiptFileName: string | undefined;
+
+      // Upload receipt if one is selected
+      if (receiptFile) {
+        const expenseId = Date.now().toString();
+        const receiptPath = generateReceiptPath(expenseId, receiptFile.name);
+        receiptUrl = await uploadFile(receiptFile, receiptPath);
+        receiptFileName = receiptFile.name;
+      }
+
+      onAddExpense({
+        amount: numAmount,
+        category,
+        description: description || 'No description',
+        date,
+        receiptUrl,
+        receiptFileName,
+      });
+
+      // Reset form
+      setAmount('');
+      setCategory('');
+      setDescription('');
+      setDate(new Date().toISOString().split('T')[0]);
+      setReceiptFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setOpen(false);
+      setShowTemplates(false);
+      
+      toast.success('Expense added successfully');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add expense');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -206,13 +259,68 @@ export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
               rows={2}
             />
           </div>
+
+          {/* Receipt Upload Section */}
+          <div className="space-y-2">
+            <Label>Receipt (optional)</Label>
+            {!receiptFile ? (
+              <div className="space-y-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="receipt-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full h-24 border-dashed"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Upload size={24} className="text-muted-foreground" />
+                    <div className="text-sm">
+                      <span className="font-medium">Click to upload receipt</span>
+                      <p className="text-xs text-muted-foreground">PNG, JPG, WebP or PDF (max 5MB)</p>
+                    </div>
+                  </div>
+                </Button>
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileImage size={20} className="text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">{receiptFile.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(receiptFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleRemoveFile}
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
           
           <div className="flex gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" className="flex-1">
-              Add Expense
+            <Button type="submit" className="flex-1" disabled={isUploading}>
+              {isUploading ? 'Adding...' : 'Add Expense'}
             </Button>
           </div>
         </form>

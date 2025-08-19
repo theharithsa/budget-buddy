@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Trash2, Calendar, Tag } from '@phosphor-icons/react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Trash2, Calendar, Tag, Receipt, Eye } from '@phosphor-icons/react';
 import { type Expense, DEFAULT_CATEGORIES, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {
@@ -10,6 +11,50 @@ interface ExpenseCardProps {
 
 export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
   const category = DEFAULT_CATEGORIES.find(cat => cat.name === expense.category);
+  
+  const ReceiptViewer = () => {
+    if (!expense.receiptUrl) return null;
+
+    const isPDF = expense.receiptFileName?.toLowerCase().endsWith('.pdf');
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
+            <Eye size={14} className="mr-1" />
+            View Receipt
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>Receipt - {expense.receiptFileName}</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center justify-center p-4">
+            {isPDF ? (
+              <iframe
+                src={expense.receiptUrl}
+                className="w-full h-96 border rounded"
+                title="Receipt PDF"
+              />
+            ) : (
+              <img
+                src={expense.receiptUrl}
+                alt="Receipt"
+                className="max-w-full max-h-96 object-contain rounded"
+              />
+            )}
+          </div>
+          <div className="flex justify-center pt-4">
+            <Button asChild>
+              <a href={expense.receiptUrl} target="_blank" rel="noopener noreferrer">
+                Open in New Tab
+              </a>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
   
   return (
     <Card className="expense-animation">
@@ -40,15 +85,24 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Tag size={14} />
-            {expense.category}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Tag size={14} />
+              {expense.category}
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar size={14} />
+              {formatDate(expense.date)}
+            </div>
+            {expense.receiptUrl && (
+              <div className="flex items-center gap-1">
+                <Receipt size={14} />
+                Receipt
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-1">
-            <Calendar size={14} />
-            {formatDate(expense.date)}
-          </div>
+          {expense.receiptUrl && <ReceiptViewer />}
         </div>
       </CardContent>
     </Card>
