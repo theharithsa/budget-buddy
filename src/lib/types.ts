@@ -19,6 +19,17 @@ export interface Category {
   icon: string;
 }
 
+export interface RecurringTemplate {
+  id: string;
+  name: string;
+  amount: number;
+  category: string;
+  description: string;
+  frequency: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly' | 'yearly';
+  isDefault: boolean;
+  createdAt: string;
+}
+
 export const DEFAULT_CATEGORIES: Category[] = [
   { name: 'Food & Dining', color: 'oklch(0.65 0.2 40)', icon: '🍽️' },
   { name: 'Transportation', color: 'oklch(0.6 0.25 220)', icon: '🚗' },
@@ -59,3 +70,86 @@ export const calculateCategorySpending = (expenses: Expense[], category: string)
     .filter(expense => expense.category === category)
     .reduce((total, expense) => total + expense.amount, 0);
 };
+
+export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
+  { 
+    id: 'rent', 
+    name: 'Rent/Mortgage', 
+    amount: 1200, 
+    category: 'Bills & Utilities', 
+    description: 'Monthly rent payment',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'electricity', 
+    name: 'Electricity Bill', 
+    amount: 80, 
+    category: 'Bills & Utilities', 
+    description: 'Monthly electricity bill',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'phone', 
+    name: 'Phone Bill', 
+    amount: 50, 
+    category: 'Bills & Utilities', 
+    description: 'Monthly phone service',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'internet', 
+    name: 'Internet', 
+    amount: 60, 
+    category: 'Bills & Utilities', 
+    description: 'Monthly internet service',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'netflix', 
+    name: 'Netflix', 
+    amount: 15, 
+    category: 'Entertainment', 
+    description: 'Netflix subscription',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'spotify', 
+    name: 'Spotify', 
+    amount: 10, 
+    category: 'Entertainment', 
+    description: 'Spotify Premium',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'gym', 
+    name: 'Gym Membership', 
+    amount: 30, 
+    category: 'Healthcare', 
+    description: 'Monthly gym membership',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  },
+  { 
+    id: 'insurance', 
+    name: 'Car Insurance', 
+    amount: 120, 
+    category: 'Transportation', 
+    description: 'Car insurance premium',
+    frequency: 'monthly',
+    isDefault: true,
+    createdAt: new Date().toISOString()
+  }
+];

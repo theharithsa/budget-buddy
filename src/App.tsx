@@ -10,7 +10,8 @@ import { AddExpenseModal } from '@/components/AddExpenseModal';
 import { ExpenseCard } from '@/components/ExpenseCard';
 import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
-import { Receipt, Wallet, TrendingUp, Search, SortDesc } from '@phosphor-icons/react';
+import { RecurringTemplates } from '@/components/RecurringTemplates';
+import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat } from '@phosphor-icons/react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -127,7 +128,7 @@ function App() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-3 w-full max-w-md">
+          <TabsList className="grid grid-cols-4 w-full max-w-lg">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <Receipt size={16} />
               Expenses
@@ -135,6 +136,10 @@ function App() {
             <TabsTrigger value="budgets" className="flex items-center gap-2">
               <Wallet size={16} />
               Budgets
+            </TabsTrigger>
+            <TabsTrigger value="templates" className="flex items-center gap-2">
+              <Repeat size={16} />
+              Templates
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
               <TrendingUp size={16} />
@@ -223,6 +228,10 @@ function App() {
 
           <TabsContent value="budgets">
             <BudgetManager budgets={budgets} onUpdateBudgets={setBudgets} />
+          </TabsContent>
+
+          <TabsContent value="templates">
+            <RecurringTemplates onAddExpense={handleAddExpense} />
           </TabsContent>
 
           <TabsContent value="trends">
