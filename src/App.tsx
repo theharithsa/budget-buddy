@@ -11,11 +11,12 @@ import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
+import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
-import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat, Palette } from '@phosphor-icons/react';
+import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat, Palette, Brain } from '@phosphor-icons/react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -175,7 +176,7 @@ function FinanceApp() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-5 w-full max-w-2xl">
+          <TabsList className="grid grid-cols-6 w-full max-w-3xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <Receipt size={16} />
               Expenses
@@ -191,6 +192,10 @@ function FinanceApp() {
             <TabsTrigger value="categories" className="flex items-center gap-2">
               <Palette size={16} />
               Categories
+            </TabsTrigger>
+            <TabsTrigger value="analyzer" className="flex items-center gap-2">
+              <Brain size={16} />
+              AI Analyzer
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
               <TrendingUp size={16} />
@@ -311,6 +316,10 @@ function FinanceApp() {
               onDeleteCategory={deleteCustomCategory}
               onAdoptCategory={adoptCategory}
             />
+          </TabsContent>
+
+          <TabsContent value="analyzer">
+            <BudgetAnalyzer expenses={expenses} budgets={budgets} />
           </TabsContent>
 
           <TabsContent value="trends">

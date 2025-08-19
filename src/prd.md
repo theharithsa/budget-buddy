@@ -2,7 +2,7 @@
 
 ## Core Purpose & Success
 
-**Mission Statement**: A comprehensive personal finance tracker with Google authentication that helps users securely log expenses with receipt storage, manage budgets, analyze spending patterns, and streamline recurring transactions with cloud synchronization.
+**Mission Statement**: A comprehensive personal finance tracker with Google authentication that helps users securely log expenses with receipt storage, manage budgets, analyze spending patterns with AI-powered insights, and streamline recurring transactions with cloud synchronization.
 
 **Success Indicators**: 
 - Users securely authenticate and maintain persistent financial data across devices
@@ -65,6 +65,11 @@
 - **What it does**: Visual analysis of spending patterns over time
 - **Why it matters**: Provides insights for better financial decision-making
 - **Success criteria**: Users can identify spending trends and adjust behavior accordingly
+
+### AI Budget Analyzer
+- **What it does**: GPT-powered analysis of spending patterns with personalized insights, recommendations, and interactive visualizations
+- **Why it matters**: Provides intelligent financial guidance beyond basic tracking, offering expert-level insights and optimization suggestions
+- **Success criteria**: Users receive actionable financial insights and can visualize complex spending patterns through comprehensive charts and graphs
 
 ## Design Direction
 
