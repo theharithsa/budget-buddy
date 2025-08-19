@@ -176,7 +176,8 @@ function FinanceApp() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-6 w-full max-w-3xl">
+          {/* Desktop Layout */}
+          <TabsList className="hidden md:grid grid-cols-6 w-full max-w-4xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <Receipt size={16} />
               Expenses
@@ -202,6 +203,36 @@ function FinanceApp() {
               Trends
             </TabsTrigger>
           </TabsList>
+
+          {/* Mobile Layout - Scrollable with icons and labels */}
+          <div className="md:hidden">
+            <TabsList className="flex w-full overflow-x-auto scrollbar-hide p-1">
+              <TabsTrigger value="expenses" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
+                <Receipt size={18} />
+                <span className="text-xs font-medium">Expenses</span>
+              </TabsTrigger>
+              <TabsTrigger value="budgets" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
+                <Wallet size={18} />
+                <span className="text-xs font-medium">Budgets</span>
+              </TabsTrigger>
+              <TabsTrigger value="templates" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
+                <Repeat size={18} />
+                <span className="text-xs font-medium">Templates</span>
+              </TabsTrigger>
+              <TabsTrigger value="categories" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
+                <Palette size={18} />
+                <span className="text-xs font-medium">Categories</span>
+              </TabsTrigger>
+              <TabsTrigger value="analyzer" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
+                <Brain size={18} />
+                <span className="text-xs font-medium">AI Analyzer</span>
+              </TabsTrigger>
+              <TabsTrigger value="trends" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
+                <TrendingUp size={18} />
+                <span className="text-xs font-medium">Trends</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="expenses" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
