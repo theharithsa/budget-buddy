@@ -22,6 +22,17 @@ export interface Category {
   icon: string;
 }
 
+export interface CustomCategory {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  userId: string;
+  isPublic: boolean;
+  createdAt: string;
+  createdBy: string; // User's display name
+}
+
 export interface RecurringTemplate {
   id: string;
   name: string;
@@ -395,3 +406,14 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
     createdAt: new Date().toISOString()
   }
 ];
+
+// Helper function to get all available categories (default + custom)
+export const getAllCategories = (customCategories: CustomCategory[] = []): Category[] => {
+  const customAsCategory = customCategories.map(cat => ({
+    name: cat.name,
+    color: cat.color,
+    icon: cat.icon
+  }));
+  
+  return [...DEFAULT_CATEGORIES, ...customAsCategory];
+};

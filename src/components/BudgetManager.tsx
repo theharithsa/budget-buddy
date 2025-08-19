@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, AlertTriangle, Wallet, Calculator } from '@phosphor-icons/react';
-import { DEFAULT_CATEGORIES, type Budget, formatCurrency } from '@/lib/types';
+import { DEFAULT_CATEGORIES, getAllCategories, type Budget, type CustomCategory, formatCurrency } from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { toast } from 'sonner';
 
@@ -17,9 +17,10 @@ interface BudgetManagerProps {
   onAddBudget: (budget: Omit<Budget, 'id'>) => Promise<void>;
   onUpdateBudget: (budgetId: string, budget: Partial<Budget>) => Promise<void>;
   onDeleteBudget: (budgetId: string) => Promise<void>;
+  customCategories?: CustomCategory[];
 }
 
-export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateBudget, onDeleteBudget }: BudgetManagerProps) {
+export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateBudget, onDeleteBudget, customCategories = [] }: BudgetManagerProps) {
   const [open, setOpen] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [category, setCategory] = useState('');
@@ -136,7 +137,7 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEFAULT_CATEGORIES.map((cat) => (
+                    {getAllCategories(customCategories).map((cat) => (
                       <SelectItem key={cat.name} value={cat.name}>
                         <div className="flex items-center gap-2">
                           <span>{cat.icon}</span>
@@ -200,7 +201,8 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
       ) : (
         <div className="grid gap-4">
           {budgets.map((budget) => {
-            const category = DEFAULT_CATEGORIES.find(cat => cat.name === budget.category);
+            const allCategories = getAllCategories(customCategories);
+            const category = allCategories.find(cat => cat.name === budget.category);
             const percentage = Math.min((budget.spent / budget.limit) * 100, 100);
             const isOverBudget = budget.spent > budget.limit;
             const isNearLimit = percentage >= 80 && !isOverBudget;

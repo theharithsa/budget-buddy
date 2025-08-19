@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Plus, Receipt, Repeat, Trash2, Edit3, Clock } from '@phosphor-icons/react';
-import { type RecurringTemplate, type Expense, DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, formatCurrency } from '@/lib/types';
+import { type RecurringTemplate, type Expense, type CustomCategory, DEFAULT_CATEGORIES, getAllCategories, DEFAULT_RECURRING_TEMPLATES, formatCurrency } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeToTemplates } from '@/lib/firebase';
 import { toast } from 'sonner';
@@ -16,9 +16,10 @@ interface RecurringTemplatesProps {
   onAddExpense: (expenseData: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>;
   onAddTemplate: (template: Omit<RecurringTemplate, 'id' | 'createdAt'>) => Promise<void>;
   onDeleteTemplate: (templateId: string) => Promise<void>;
+  customCategories?: CustomCategory[];
 }
 
-export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTemplate }: RecurringTemplatesProps) {
+export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTemplate, customCategories = [] }: RecurringTemplatesProps) {
   const { user } = useAuth();
   const [templates, setTemplates] = useState<RecurringTemplate[]>(DEFAULT_RECURRING_TEMPLATES);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -241,7 +242,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEFAULT_CATEGORIES.map((category) => (
+                    {getAllCategories(customCategories).map((category) => (
                       <SelectItem key={category.name} value={category.name}>
                         <div className="flex items-center gap-2">
                           <span>{category.icon}</span>

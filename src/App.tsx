@@ -10,12 +10,13 @@ import { ExpenseCard } from '@/components/ExpenseCard';
 import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
+import { CategoryManager } from '@/components/CategoryManager';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
-import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat } from '@phosphor-icons/react';
-import { type Expense, type Budget, DEFAULT_CATEGORIES, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
+import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat, Palette } from '@phosphor-icons/react';
+import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
 function FinanceApp() {
@@ -23,6 +24,8 @@ function FinanceApp() {
   const {
     expenses,
     budgets,
+    customCategories,
+    publicCategories,
     loading: dataLoading,
     addExpense,
     deleteExpense,
@@ -31,6 +34,10 @@ function FinanceApp() {
     deleteBudget,
     addTemplate,
     deleteTemplate,
+    addCustomCategory,
+    updateCustomCategory,
+    deleteCustomCategory,
+    adoptCategory,
   } = useFirestoreData();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -168,7 +175,7 @@ function FinanceApp() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-4 w-full max-w-lg">
+          <TabsList className="grid grid-cols-5 w-full max-w-2xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <Receipt size={16} />
               Expenses
@@ -180,6 +187,10 @@ function FinanceApp() {
             <TabsTrigger value="templates" className="flex items-center gap-2">
               <Repeat size={16} />
               Templates
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="flex items-center gap-2">
+              <Palette size={16} />
+              Categories
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
               <TrendingUp size={16} />
@@ -206,7 +217,7 @@ function FinanceApp() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    {DEFAULT_CATEGORIES.map((category) => (
+                    {getAllCategories(customCategories).map((category) => (
                       <SelectItem key={category.name} value={category.name}>
                         <div className="flex items-center gap-2">
                           <span>{category.icon}</span>
@@ -230,7 +241,7 @@ function FinanceApp() {
                 </Select>
               </div>
 
-              <AddExpenseModal onAddExpense={handleAddExpense} />
+              <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} />
             </div>
 
             {dataLoading ? (
@@ -253,7 +264,7 @@ function FinanceApp() {
                       }
                     </p>
                     {expenses.length === 0 && (
-                      <AddExpenseModal onAddExpense={handleAddExpense} />
+                      <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} />
                     )}
                   </div>
                 </CardContent>
@@ -278,6 +289,7 @@ function FinanceApp() {
               onAddBudget={addBudget}
               onUpdateBudget={updateBudget}
               onDeleteBudget={deleteBudget}
+              customCategories={customCategories}
             />
           </TabsContent>
 
@@ -286,6 +298,18 @@ function FinanceApp() {
               onAddExpense={handleAddExpense}
               onAddTemplate={addTemplate}
               onDeleteTemplate={deleteTemplate}
+              customCategories={customCategories}
+            />
+          </TabsContent>
+
+          <TabsContent value="categories">
+            <CategoryManager
+              customCategories={customCategories}
+              publicCategories={publicCategories}
+              onAddCategory={addCustomCategory}
+              onUpdateCategory={updateCustomCategory}
+              onDeleteCategory={deleteCustomCategory}
+              onAdoptCategory={adoptCategory}
             />
           </TabsContent>
 

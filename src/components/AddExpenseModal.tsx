@@ -9,15 +9,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Repeat, Upload, X, FileImage } from '@phosphor-icons/react';
-import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, type Expense, type RecurringTemplate, formatCurrency } from '@/lib/types';
+import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, type Expense, type RecurringTemplate, type CustomCategory, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
   onAddExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => void;
+  customCategories?: CustomCategory[];
 }
 
-export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
+export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpenseModalProps) {
   const [templates] = useKV<RecurringTemplate[]>('recurring-templates', DEFAULT_RECURRING_TEMPLATES);
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
@@ -227,7 +228,7 @@ export function AddExpenseModal({ onAddExpense }: AddExpenseModalProps) {
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {DEFAULT_CATEGORIES.map((cat) => (
+                {getAllCategories(customCategories).map((cat) => (
                   <SelectItem key={cat.name} value={cat.name}>
                     <div className="flex items-center gap-2">
                       <span>{cat.icon}</span>

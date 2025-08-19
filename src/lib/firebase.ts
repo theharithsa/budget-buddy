@@ -302,3 +302,130 @@ export const subscribeToTemplates = (userId: string, callback: (templates: any[]
     callback(templates);
   });
 };
+
+// Custom Category functions
+export const addCustomCategoryToFirestore = async (userId: string, category: any): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, 'users', userId, 'customCategories'), category);
+    
+    // If category is public, also add to global collection
+    if (category.isPublic) {
+      await addDoc(collection(db, 'publicCategories'), {
+        ...category,
+        originalId: docRef.id,
+        userId: userId
+      });
+    }
+    
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding custom category:', error);
+    throw new Error('Failed to save custom category. Please try again.');
+  }
+};
+
+export const updateCustomCategoryInFirestore = async (userId: string, categoryId: string, category: any): Promise<void> => {
+  try {
+    const docRef = doc(db, 'users', userId, 'customCategories', categoryId);
+    await updateDoc(docRef, category);
+    
+    // Update in public collection if it exists there
+    if (category.isPublic) {
+      const publicQ = query(
+        collection(db, 'publicCategories'),
+        where('originalId', '==', categoryId),
+        where('userId', '==', userId)
+      );
+      const publicSnapshot = await getDocs(publicQ);
+      
+      if (!publicSnapshot.empty) {
+        const publicDoc = publicSnapshot.docs[0];
+        await updateDoc(doc(db, 'publicCategories', publicDoc.id), category);
+      } else {
+        // Add to public collection if not exists
+        await addDoc(collection(db, 'publicCategories'), {
+          ...category,
+          originalId: categoryId,
+          userId: userId
+        });
+      }
+    } else {
+      // Remove from public collection if no longer public
+      const publicQ = query(
+        collection(db, 'publicCategories'),
+        where('originalId', '==', categoryId),
+        where('userId', '==', userId)
+      );
+      const publicSnapshot = await getDocs(publicQ);
+      
+      if (!publicSnapshot.empty) {
+        const publicDoc = publicSnapshot.docs[0];
+        await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
+      }
+    }
+  } catch (error) {
+    console.error('Error updating custom category:', error);
+    throw new Error('Failed to update custom category. Please try again.');
+  }
+};
+
+export const deleteCustomCategoryFromFirestore = async (userId: string, categoryId: string): Promise<void> => {
+  try {
+    const docRef = doc(db, 'users', userId, 'customCategories', categoryId);
+    await deleteDoc(docRef);
+    
+    // Remove from public collection if it exists there
+    const publicQ = query(
+      collection(db, 'publicCategories'),
+      where('originalId', '==', categoryId),
+      where('userId', '==', userId)
+    );
+    const publicSnapshot = await getDocs(publicQ);
+    
+    if (!publicSnapshot.empty) {
+      const publicDoc = publicSnapshot.docs[0];
+      await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
+    }
+  } catch (error) {
+    console.error('Error deleting custom category:', error);
+    throw new Error('Failed to delete custom category. Please try again.');
+  }
+};
+
+export const subscribeToCustomCategories = (userId: string, callback: (categories: any[]) => void) => {
+  const q = query(collection(db, 'users', userId, 'customCategories'));
+  
+  return onSnapshot(q, (querySnapshot) => {
+    const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(categories);
+  });
+};
+
+export const subscribeToPublicCategories = (callback: (categories: any[]) => void) => {
+  const q = query(collection(db, 'publicCategories'), orderBy('createdAt', 'desc'));
+  
+  return onSnapshot(q, (querySnapshot) => {
+    const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(categories);
+  });
+};
+
+export const adoptPublicCategory = async (userId: string, publicCategory: any): Promise<string> => {
+  try {
+    // Add to user's custom categories
+    const categoryData = {
+      name: publicCategory.name,
+      color: publicCategory.color,
+      icon: publicCategory.icon,
+      isPublic: false, // User's copy is private by default
+      createdAt: new Date().toISOString(),
+      createdBy: `Adopted from ${publicCategory.createdBy}`
+    };
+    
+    const docRef = await addDoc(collection(db, 'users', userId, 'customCategories'), categoryData);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adopting public category:', error);
+    throw new Error('Failed to adopt category. Please try again.');
+  }
+};
