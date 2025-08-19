@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from 'firebase/auth';
-import { onAuthChange } from '@/lib/firebase';
+import { onAuthChange, checkRedirectResult } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -29,12 +29,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
+    // Check for redirect result first
+    checkRedirectResult()
+      .then((redirectUser) => {
+        if (isMounted && redirectUser) {
+          setUser(redirectUser);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Redirect result error:', error);
+      });
+
+    // Set up auth state listener
     const unsubscribe = onAuthChange((user) => {
-      setUser(user);
-      setLoading(false);
+      if (isMounted) {
+        setUser(user);
+        setLoading(false);
+      }
     });
 
-    return unsubscribe;
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const value = {

@@ -1,24 +1,57 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { signInWithGoogle } from '@/lib/firebase';
-import { GoogleLogo, Wallet } from '@phosphor-icons/react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { signInWithGoogle, debugFirebaseConfig } from '@/lib/firebase';
+import { GoogleLogo, Wallet, Info, Bug, ArrowSquareOut } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
+  const [showRedirectOption, setShowRedirectOption] = useState(false);
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (useRedirect: boolean = false) => {
     setIsLoading(true);
+    setError(null);
+    
     try {
-      await signInWithGoogle();
-      toast.success('Successfully signed in!');
-    } catch (error) {
+      if (useRedirect) {
+        await signInWithGoogle(true);
+        // Redirect is in progress, no need to handle result here
+      } else {
+        await signInWithGoogle(false);
+        toast.success('Successfully signed in!');
+      }
+    } catch (error: any) {
       console.error('Sign in error:', error);
-      toast.error('Failed to sign in. Please try again.');
+      
+      if (error.message === 'REDIRECT_IN_PROGRESS') {
+        // Don't show error for redirect
+        return;
+      }
+      
+      const errorMessage = error.message || 'Failed to sign in. Please try again.';
+      setError(errorMessage);
+      
+      // Show redirect option if popup failed
+      if (error.message?.includes('Popup') || error.message?.includes('popup')) {
+        setShowRedirectOption(true);
+      }
+      
+      toast.error(errorMessage);
     } finally {
-      setIsLoading(false);
+      if (!useRedirect) {
+        setIsLoading(false);
+      }
     }
+  };
+
+  const handleDebug = () => {
+    debugFirebaseConfig();
+    setShowDebug(true);
+    toast.info('Debug information logged to console. Check browser developer tools.');
   };
 
   return (
@@ -41,8 +74,33 @@ export function LoginPage() {
             <CardTitle className="text-center">Sign In to Continue</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <Info size={16} />
+                <AlertDescription className="text-sm">
+                  {error}
+                  {error.includes('Popup') && (
+                    <div className="mt-2 text-xs">
+                      <strong>To fix this:</strong>
+                      <ol className="list-decimal list-inside mt-1 space-y-1">
+                        <li>Look for a popup blocker icon in your browser's address bar</li>
+                        <li>Click it and allow popups for this site</li>
+                        <li>Try signing in again, or use the redirect option below</li>
+                      </ol>
+                    </div>
+                  )}
+                  {error.includes('unauthorized-domain') && (
+                    <div className="mt-2 text-xs">
+                      <strong>Domain Authorization Issue:</strong>
+                      <p className="mt-1">This domain needs to be added to Firebase Authentication settings.</p>
+                    </div>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <Button
-              onClick={handleGoogleSignIn}
+              onClick={() => handleGoogleSignIn(false)}
               disabled={isLoading}
               className="w-full flex items-center gap-3"
               size="lg"
@@ -50,6 +108,31 @@ export function LoginPage() {
               <GoogleLogo size={20} />
               {isLoading ? 'Signing in...' : 'Continue with Google'}
             </Button>
+
+            {showRedirectOption && (
+              <Button
+                onClick={() => handleGoogleSignIn(true)}
+                disabled={isLoading}
+                variant="outline"
+                className="w-full flex items-center gap-3"
+                size="lg"
+              >
+                <ArrowSquareOut size={20} />
+                {isLoading ? 'Redirecting...' : 'Sign in with Redirect'}
+              </Button>
+            )}
+
+            {(error || showDebug) && (
+              <Button
+                onClick={handleDebug}
+                variant="outline"
+                size="sm"
+                className="w-full flex items-center gap-2"
+              >
+                <Bug size={16} />
+                Debug Firebase Config
+              </Button>
+            )}
             
             <div className="text-center text-sm text-muted-foreground">
               <p>Your data is securely stored and only accessible to you.</p>

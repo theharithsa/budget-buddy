@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
@@ -10,7 +10,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'fire
 // 3. Enable Authentication with Google provider
 // 4. Enable Firestore Database
 // 5. Enable Storage
-// 6. Copy your config from Project Settings > General > Your apps
+// 6. Add your domain to authorized domains in Authentication > Settings > Authorized domains
+// 7. Copy your config from Project Settings > General > Your apps
 const firebaseConfig = {
   apiKey: "AIzaSyB2G6oajY2Q_erWxHkagZRacB3qH9quT-M",
   authDomain: "vh-fin-buddy.firebaseapp.com",
@@ -21,6 +22,17 @@ const firebaseConfig = {
   measurementId: "G-WYC7VV3QQN"
 };
 
+// Debug function to check Firebase configuration
+export const debugFirebaseConfig = () => {
+  console.log('Firebase Config:', {
+    apiKey: firebaseConfig.apiKey ? '✓ Present' : '✗ Missing',
+    authDomain: firebaseConfig.authDomain,
+    projectId: firebaseConfig.projectId,
+    currentDomain: window.location.origin,
+    isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  });
+};
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -29,6 +41,9 @@ const storage = getStorage(app);
 
 // Configure Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 /**
  * Upload a file to Firebase Storage
@@ -97,13 +112,56 @@ export const validateReceiptFile = (file: File): boolean => {
 export { storage, auth, db };
 
 // Authentication functions
-export const signInWithGoogle = async (): Promise<User> => {
+export const signInWithGoogle = async (useRedirect: boolean = false): Promise<User> => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
-  } catch (error) {
+    if (useRedirect) {
+      // Use redirect method as fallback
+      await signInWithRedirect(auth, googleProvider);
+      // The result will be handled by checkRedirectResult
+      throw new Error('REDIRECT_IN_PROGRESS');
+    } else {
+      // Check if popup is blocked
+      const testPopup = window.open('', '_blank', 'width=1,height=1');
+      if (!testPopup || testPopup.closed || typeof testPopup.closed === 'undefined') {
+        throw new Error('POPUP_BLOCKED');
+      }
+      testPopup.close();
+      
+      const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    }
+  } catch (error: any) {
     console.error('Error signing in with Google:', error);
-    throw new Error('Failed to sign in with Google. Please try again.');
+    
+    // Handle specific Firebase auth errors
+    if (error.message === 'POPUP_BLOCKED' || error.code === 'auth/popup-blocked') {
+      throw new Error('Popup was blocked by your browser. Please allow popups for this site and try again, or use the redirect option.');
+    } else if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign in was cancelled. Please try again.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      throw new Error('This domain is not authorized for authentication. Please contact support.');
+    } else if (error.code === 'auth/operation-not-allowed') {
+      throw new Error('Google sign-in is not enabled. Please contact support.');
+    } else if (error.code === 'auth/cancelled-popup-request') {
+      throw new Error('Another sign-in popup is already open.');
+    } else if (error.message === 'REDIRECT_IN_PROGRESS') {
+      throw error; // Re-throw to handle in component
+    } else if (error.message?.includes('Popup blocked')) {
+      throw new Error('Popup was blocked by your browser. Please allow popups for this site and try again.');
+    } else {
+      throw new Error(error.message || 'Failed to sign in with Google. Please try again.');
+    }
+  }
+};
+
+// Check for redirect result on app load
+export const checkRedirectResult = async (): Promise<User | null> => {
+  try {
+    const result = await getRedirectResult(auth);
+    return result?.user || null;
+  } catch (error: any) {
+    console.error('Error checking redirect result:', error);
+    throw new Error(error.message || 'Failed to complete sign in.');
   }
 };
 
