@@ -610,11 +610,13 @@ export const subscribeToPublicCategories = (callback: (categories: any[]) => voi
       },
       (error) => {
         if (error.code === 'permission-denied') {
-          console.warn('Permission denied for public categories subscription. This is normal if not configured.');
+          // Silently handle permission denied - this is expected when Firestore rules aren't configured
+          // for public categories sharing. Return empty array to prevent errors.
+          callback([]);
         } else {
           console.error('Error in public categories subscription:', error);
+          callback([]);
         }
-        callback([]);
       }
     );
   } catch (error) {
