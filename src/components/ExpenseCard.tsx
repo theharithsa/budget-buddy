@@ -76,9 +76,10 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
           </div>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
+            className="h-8 w-8 text-destructive hover:text-destructive/80"
             onClick={() => onDelete(expense.id)}
-            className="text-destructive hover:text-destructive"
+            aria-label="Delete expense"
           >
             <Trash2 size={16} />
           </Button>

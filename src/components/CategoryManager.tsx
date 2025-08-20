@@ -389,18 +389,22 @@ export function CategoryManager({
                           </div>
                           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Button
-                              size="sm"
+                              size="icon"
                               variant="ghost"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
                               onClick={() => handleEditCategory(category)}
+                              aria-label="Edit category"
                             >
-                              <Edit3 size={14} />
+                              <Edit3 size={16} />
                             </Button>
                             <Button
-                              size="sm"
+                              size="icon"
                               variant="ghost"
+                              className="h-8 w-8 text-destructive hover:text-destructive/80"
                               onClick={() => handleDeleteCategory(category.id)}
+                              aria-label="Delete category"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={16} />
                             </Button>
                           </div>
                         </div>

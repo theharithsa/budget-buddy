@@ -334,18 +334,22 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                       {!template.isDefault && (
                         <>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
                             onClick={() => handleEditTemplate(template)}
+                            aria-label="Edit template"
                           >
-                            <Edit3 size={14} />
+                            <Edit3 size={16} />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
+                            className="h-8 w-8 text-destructive hover:text-destructive/80"
                             onClick={() => handleDeleteTemplate(template.id)}
+                            aria-label="Delete template"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={16} />
                           </Button>
                         </>
                       )}

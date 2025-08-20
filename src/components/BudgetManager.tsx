@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, AlertTriangle, Wallet, Calculator } from '@phosphor-icons/react';
+import { Plus, AlertTriangle, Wallet, Calculator, Trash2 } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, getAllCategories, type Budget, type CustomCategory, formatCurrency } from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { toast } from 'sonner';
@@ -236,8 +236,10 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteBudget(budget.id)}
-                        className="text-muted-foreground hover:text-destructive"
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                        aria-label="Remove budget"
                       >
+                        <Trash2 size={14} className="mr-1" />
                         Remove
                       </Button>
                     </div>
