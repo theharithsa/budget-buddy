@@ -13,13 +13,13 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'fire
 // 6. Add your domain to authorized domains in Authentication > Settings > Authorized domains
 // 7. Copy your config from Project Settings > General > Your apps
 const firebaseConfig = {
-  apiKey: "AIzaSyB2G6oajY2Q_erWxHkagZRacB3qH9quT-M",
-  authDomain: "vh-fin-buddy.firebaseapp.com",
-  projectId: "vh-fin-buddy",
-  storageBucket: "vh-fin-buddy.firebasestorage.app",
-  messagingSenderId: "822131624735",
-  appId: "1:822131624735:web:9c22081db0dcdf2dd8be2a",
-  measurementId: "G-WYC7VV3QQN"
+  apiKey: "AIzaSyDrZD1uiFf6BCTBvMi0WDoAr0VJrEwXWL8",
+  authDomain: "finbuddy-2025.firebaseapp.com",
+  projectId: "finbuddy-2025",
+  storageBucket: "finbuddy-2025.firebasestorage.app",
+  messagingSenderId: "1080442347255",
+  appId: "1:1080442347255:web:62813824efd5a9b12cfdf2",
+  measurementId: "G-ESNPQSYLCB"
 };
 
 // Debug function to check Firebase configuration
