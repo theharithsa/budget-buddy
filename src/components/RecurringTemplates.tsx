@@ -6,7 +6,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Receipt, ArrowsClockwise, Trash, Pencil, Clock } from '@phosphor-icons/react';
+import { 
+  Plus, 
+  Receipt, 
+  RefreshCw as ArrowsClockwise, 
+  Trash2 as Trash, 
+  Pencil, 
+  Clock 
+} from 'lucide-react';
 import { type RecurringTemplate, type Expense, type CustomCategory, DEFAULT_CATEGORIES, getAllCategories, DEFAULT_RECURRING_TEMPLATES, formatCurrency } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeToTemplates } from '@/lib/firebase';

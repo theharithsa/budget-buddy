@@ -19,13 +19,13 @@ import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
   Receipt, 
   Wallet, 
-  TrendUp, 
-  MagnifyingGlass, 
+  TrendingUp as TrendUp, 
+  Search as MagnifyingGlass, 
   List, 
-  ArrowsClockwise, 
-  Swatches, 
+  RefreshCw as ArrowsClockwise, 
+  Palette as Swatches, 
   Lightbulb 
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 

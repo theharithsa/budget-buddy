@@ -8,7 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
-import { Plus, ArrowsClockwise, Upload, X, File } from '@phosphor-icons/react';
+import { 
+  Plus, 
+  RefreshCw as ArrowsClockwise, 
+  Upload, 
+  X, 
+  FileImage as File 
+} from 'lucide-react';
 import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, type Expense, type RecurringTemplate, type CustomCategory, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { toast } from 'sonner';

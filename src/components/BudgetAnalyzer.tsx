@@ -5,7 +5,18 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Brain, TrendingUp, TrendingDown, Warning, CheckCircle, Circle, Chart, Sparkle, Lightbulb } from '@phosphor-icons/react';
+import { 
+  Brain, 
+  TrendingUp, 
+  TrendingDown, 
+  AlertTriangle as Warning, 
+  CheckCircle, 
+  Circle, 
+  BarChart3 as Chart, 
+  Sparkles as Sparkle, 
+  Lightbulb,
+  RefreshCw
+} from 'lucide-react';
 import { type Expense, type Budget, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { toast } from 'sonner';
@@ -96,31 +107,50 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
 
   const analyzeSpending = async (forcedMode?: 'demo' | 'statistical') => {
     setLoading(true);
+    
     try {
       // Determine which AI service to use based on availability
-      const hasSparkLLM = typeof window !== 'undefined' && window.spark && window.spark.llm && window.spark.llmPrompt;
+      const hasSparkLLM = typeof window !== 'undefined' && window.spark && window.spark.llm && typeof window.spark.llmPrompt === 'function';
       const hasEnvApiKey = Boolean(import.meta.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY);
       
-      console.log('AI Analysis Options:', {
-        hasSparkLLM,
-        hasEnvApiKey,
-        forcedMode
-      });
-
       let expensesData = expenses;
       let budgetsData = budgets;
       let selectedMode = forcedMode || analysisMode;
 
+      console.log('AI Analysis Options:', {
+        hasSparkLLM,
+        hasEnvApiKey,
+        forcedMode,
+        expensesCount: expenses.length,
+        budgetsCount: budgets.length,
+        analysisMode,
+        selectedMode,
+        expensesData: expenses,
+        budgetsData: budgets
+      });
+
+      console.log('🔍 Decision Logic:');
+      console.log('- forcedMode:', forcedMode);
+      console.log('- analysisMode:', analysisMode);
+      console.log('- selectedMode before auto-selection:', selectedMode);
+      console.log('- expenses.length === 0:', expenses.length === 0);
+      console.log('- budgets.length === 0:', budgets.length === 0);
+      console.log('- both empty:', expenses.length === 0 && budgets.length === 0);
+
       // Auto-select best available mode if not forced
       if (!forcedMode && analysisMode === 'auto') {
-        if (expenses.length === 0 || budgets.length === 0) {
+        if (expenses.length === 0 && budgets.length === 0) {
           selectedMode = 'demo';
+          console.log('🎭 No data available, switching to demo mode');
         } else if (hasSparkLLM) {
           selectedMode = 'auto'; // Will use Spark AI
+          console.log('✨ Using Spark AI for analysis');
         } else if (hasEnvApiKey) {
           selectedMode = 'auto'; // Will use environment API key
+          console.log('🤖 Using OpenAI API for analysis');
         } else {
           selectedMode = 'statistical'; // Fallback to built-in analysis
+          console.log('📊 Using statistical analysis (no AI available)');
         }
       }
 
@@ -278,22 +308,32 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         You are a professional financial advisor analyzing Indian spending patterns. Provide comprehensive budget insights for this user:
 
         CURRENT MONTH DATA:
-        - Total Budget: ₹${totalBudget}
-        - Total Spent: ₹${totalSpent}
-        - Budget Utilization: ${totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0}%
+        - Total Budget: ₹${totalBudget} ${totalBudget === 0 ? '(No budgets set yet)' : ''}
+        - Total Spent: ₹${totalSpent} ${totalSpent === 0 ? '(No expenses recorded yet)' : ''}
+        - Budget Utilization: ${totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 'N/A'}%
         - Remaining Budget: ₹${Math.max(0, totalBudget - totalSpent)}
+        - Data Status: ${expensesData.length} expenses, ${budgetsData.length} budgets recorded
 
-        CATEGORY BREAKDOWN:
+        ${budgetsData.length > 0 ? `CATEGORY BREAKDOWN:
         ${categorySpending.map(cat => 
           `- ${cat.category}: Budgeted ₹${cat.budgeted}, Spent ₹${cat.spent} (${cat.percentage.toFixed(1)}%)`
-        ).join('\n')}
+        ).join('\n')}` : 'NO BUDGET CATEGORIES SET YET - Analysis will focus on spending patterns'}
 
-        RECENT TRANSACTIONS (Last 50):
+        ${expensesData.length > 0 ? `RECENT TRANSACTIONS (Last ${Math.min(30, expensesData.length)}):
         ${recentExpenses.slice(0, 30).map(exp => 
           `- ${exp.date}: ${exp.category} - ₹${exp.amount} (${exp.description})`
-        ).join('\n')}
+        ).join('\n')}` : 'NO EXPENSES RECORDED YET - Recommendations will focus on budget setup'}
 
         ANALYSIS REQUIREMENTS:
+        ${expensesData.length === 0 && budgetsData.length === 0 
+          ? 'Since no data is available, provide general financial wellness advice and budget setup guidance for Indian households.'
+          : expensesData.length === 0 
+          ? 'Since no expenses are recorded yet, focus on budget validation and expense tracking recommendations.'
+          : budgetsData.length === 0
+          ? 'Since no budgets are set, focus on expense analysis and budget creation recommendations based on spending patterns.'
+          : 'Provide comprehensive analysis based on both expenses and budgets.'
+        }
+
         Please provide a detailed analysis in the following JSON structure. Be specific, actionable, and culturally relevant to Indian financial habits:
 
         {
@@ -358,8 +398,8 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             toast.success('AI analysis completed using advanced AI!');
           } else if (hasSparkLLM) {
             console.log('Using Spark LLM');
-            const sparkPrompt = spark.llmPrompt`${prompt}`;
-            response = await spark.llm(sparkPrompt, 'gpt-4o', true);
+            const sparkPrompt = (window as any).spark.llmPrompt`${prompt}`;
+            response = await (window as any).spark.llm(sparkPrompt, 'gpt-4o', true);
             toast.success('AI analysis completed using Spark AI!');
           } else {
             throw new Error('No AI service available');

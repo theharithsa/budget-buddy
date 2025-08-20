@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash, Calendar, Tag, Receipt, Eye } from '@phosphor-icons/react';
+import { Trash2 as Trash, Calendar, Tag, Receipt, Eye } from 'lucide-react';
 import { type Expense, DEFAULT_CATEGORIES, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {

@@ -7,7 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Lightbulb, Calculator, Target } from '@phosphor-icons/react';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Lightbulb, 
+  Calculator, 
+  Target 
+} from 'lucide-react';
 import { type Budget, DEFAULT_CATEGORIES, formatCurrency } from '@/lib/types';
 
 interface BudgetSuggestion {

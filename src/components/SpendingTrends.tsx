@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { TrendingUp } from '@phosphor-icons/react';
+import { TrendingUp } from 'lucide-react';
 import { type Expense, DEFAULT_CATEGORIES, formatCurrency, getCurrentMonth, getMonthlyExpenses } from '@/lib/types';
 
 interface SpendingTrendsProps {

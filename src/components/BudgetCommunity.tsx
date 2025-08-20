@@ -8,7 +8,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Globe, User, Pencil, Trash, Download, MagnifyingGlass, Tag, TrendUp, Wallet } from '@phosphor-icons/react';
+import { 
+  Plus, 
+  Globe, 
+  User, 
+  Pencil, 
+  Trash2 as Trash, 
+  Download, 
+  Search as MagnifyingGlass, 
+  Tag, 
+  TrendingUp as TrendUp, 
+  Wallet 
+} from 'lucide-react';
 import { type BudgetTemplate, type Budget, type CustomCategory, formatCurrency, getAllCategories } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -263,7 +274,7 @@ export function BudgetCommunity({
         <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
-              <Plus size={16} weight="regular" className="mr-2" />
+              <Plus size={16} className="mr-2" />
               Create Template
             </Button>
           </DialogTrigger>
@@ -441,7 +452,7 @@ export function BudgetCommunity({
                           </Badge>
                           {template.isPublic && (
                             <Badge variant="outline">
-                              <Globe size={12} weight="regular" className="mr-1" />
+                              <Globe size={12} className="mr-1" />
                               Public
                             </Badge>
                           )}
@@ -502,7 +513,7 @@ export function BudgetCommunity({
                   <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
                     <DialogTrigger asChild>
                       <Button>
-                        <Plus size={16} weight="regular" className="mr-2" />
+                        <Plus size={16} className="mr-2" />
                         Create Your First Template
                       </Button>
                     </DialogTrigger>
@@ -516,7 +527,7 @@ export function BudgetCommunity({
         <TabsContent value="community" className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-sm">
-              <MagnifyingGlass size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <MagnifyingGlass size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search templates..."
                 value={searchTerm}
@@ -590,7 +601,7 @@ export function BudgetCommunity({
                           className="flex-1"
                           onClick={() => handleAdoptTemplate(template)}
                         >
-                          <Download size={14} weight="regular" className="mr-1" />
+                          <Download size={14} className="mr-1" />
                           Add to My Templates
                         </Button>
                         <Button 

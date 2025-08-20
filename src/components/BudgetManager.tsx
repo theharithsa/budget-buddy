@@ -7,7 +7,15 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Warning, Wallet, Calculator, Trash, BookOpen, Globe } from '@phosphor-icons/react';
+import { 
+  Plus, 
+  AlertTriangle as Warning, 
+  Wallet, 
+  Calculator, 
+  Trash2 as Trash, 
+  Book as BookOpen, 
+  Globe 
+} from 'lucide-react';
 import { DEFAULT_CATEGORIES, getAllCategories, type Budget, type CustomCategory, type BudgetTemplate, formatCurrency } from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { BudgetCommunity } from '@/components/BudgetCommunity';
@@ -164,7 +172,7 @@ export function BudgetManager({
         <TabsContent value="budgets" className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Wallet size={24} weight="regular" className="text-primary" />
+              <Wallet size={24} className="text-primary" />
               <h2 className="text-2xl font-bold">Budget Overview</h2>
             </div>
             <div className="flex items-center gap-2">
@@ -287,7 +295,6 @@ export function BudgetManager({
                           {(isOverBudget || isNearLimit) && (
                             <Warning 
                               size={20} 
-                              weight="regular"
                               className={isOverBudget ? 'text-destructive' : 'text-yellow-500'} 
                             />
                           )}

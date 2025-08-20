@@ -6,7 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Key, Eye, EyeSlash, CheckCircle, Warning, Info } from '@phosphor-icons/react';
+import { 
+  Key, 
+  Eye, 
+  EyeOff as EyeSlash, 
+  CheckCircle, 
+  AlertTriangle as Warning, 
+  Info 
+} from 'lucide-react';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 

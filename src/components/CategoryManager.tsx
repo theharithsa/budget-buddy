@@ -7,7 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Swatches, Globe, User, Pencil, Trash, Download, MagnifyingGlass } from '@phosphor-icons/react';
+import { 
+  Plus, 
+  Palette as Swatches, 
+  Globe, 
+  User, 
+  Pencil, 
+  Trash, 
+  Download, 
+  Search as MagnifyingGlass 
+} from 'lucide-react';
 import { type CustomCategory, DEFAULT_CATEGORIES } from '@/lib/types';
 import { toast } from 'sonner';
 
