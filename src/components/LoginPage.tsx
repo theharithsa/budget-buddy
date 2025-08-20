@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { signInWithGoogle, debugFirebaseConfig } from '@/lib/firebase';
-import { Wallet, Info, Bug, ArrowSquareOut } from '@phosphor-icons/react';
-import { GoogleLogo } from '@phosphor-icons/react';
+import { Wallet, Info, Bug, ArrowSquareOut, GoogleLogo } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 export function LoginPage() {
