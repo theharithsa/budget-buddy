@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 // Firebase configuration - Replace with your Firebase project config
@@ -219,7 +219,7 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
       throw new Error('Firebase is not properly initialized');
     }
     
-    // Ensure all required fields are present and handle undefined values
+    // Ensure all required fields are present and handle null/undefined values
     const expenseData: any = {
       amount: Number(expense.amount),
       category: expense.category || '',
@@ -486,38 +486,48 @@ export const addCustomCategoryToFirestore = async (userId: string, category: any
 
 export const updateCustomCategoryInFirestore = async (userId: string, categoryId: string, category: any): Promise<void> => {
   try {
-    const docRef = doc(db, 'users', userId, 'customCategories', categoryId);
-    await updateDoc(docRef, category);
+    // First, get the current category data to ensure we have all required fields
+    const currentDocRef = doc(db, 'users', userId, 'customCategories', categoryId);
+    const currentDoc = await getDoc(currentDocRef);
     
-    // Update in public collection if it exists there
-    if (category.isPublic) {
-      const publicQ = query(
-        collection(db, 'publicCategories'),
-        where('originalId', '==', categoryId),
-        where('userId', '==', userId)
-      );
-      const publicSnapshot = await getDocs(publicQ);
-      
+    if (!currentDoc.exists()) {
+      throw new Error('Category not found');
+    }
+    
+    const currentData = currentDoc.data();
+    const updatedData = { ...currentData, ...category };
+    
+    // Update the user's private category
+    await updateDoc(currentDocRef, category);
+    
+    // Handle public collection updates
+    const publicQ = query(
+      collection(db, 'publicCategories'),
+      where('originalId', '==', categoryId),
+      where('userId', '==', userId)
+    );
+    const publicSnapshot = await getDocs(publicQ);
+    
+    if (updatedData.isPublic) {
+      // Category should be public
       if (!publicSnapshot.empty) {
+        // Update existing public category with complete data
         const publicDoc = publicSnapshot.docs[0];
-        await updateDoc(doc(db, 'publicCategories', publicDoc.id), category);
+        await updateDoc(doc(db, 'publicCategories', publicDoc.id), {
+          ...updatedData,
+          originalId: categoryId,
+          userId: userId
+        });
       } else {
-        // Add to public collection if not exists
+        // Add to public collection with complete data
         await addDoc(collection(db, 'publicCategories'), {
-          ...category,
+          ...updatedData,
           originalId: categoryId,
           userId: userId
         });
       }
     } else {
-      // Remove from public collection if no longer public
-      const publicQ = query(
-        collection(db, 'publicCategories'),
-        where('originalId', '==', categoryId),
-        where('userId', '==', userId)
-      );
-      const publicSnapshot = await getDocs(publicQ);
-      
+      // Category should not be public, remove from public collection if it exists
       if (!publicSnapshot.empty) {
         const publicDoc = publicSnapshot.docs[0];
         await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
@@ -610,8 +620,9 @@ export const subscribeToPublicCategories = (callback: (categories: any[]) => voi
       },
       (error) => {
         if (error.code === 'permission-denied') {
-          // Silently handle permission denied - this is expected when Firestore rules aren't configured
-          // for public categories sharing. Return empty array to prevent errors.
+          // This is expected when public categories sharing isn't configured
+          // Silently return empty array without logging
+          console.log('Permission denied for public categories subscription. This is normal if not configured.');
           callback([]);
         } else {
           console.error('Error in public categories subscription:', error);
