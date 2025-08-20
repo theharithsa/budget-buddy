@@ -219,16 +219,22 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
       throw new Error('Firebase is not properly initialized');
     }
     
-    // Ensure all required fields are present
-    const expenseData = {
+    // Ensure all required fields are present and handle undefined values
+    const expenseData: any = {
       amount: Number(expense.amount),
       category: expense.category || '',
       description: expense.description || 'No description',
       date: expense.date || new Date().toISOString().split('T')[0],
       createdAt: expense.createdAt || new Date().toISOString(),
-      receiptUrl: expense.receiptUrl || null,
-      receiptFileName: expense.receiptFileName || null,
     };
+    
+    // Only include receiptUrl and receiptFileName if they have actual values
+    if (expense.receiptUrl) {
+      expenseData.receiptUrl = expense.receiptUrl;
+    }
+    if (expense.receiptFileName) {
+      expenseData.receiptFileName = expense.receiptFileName;
+    }
     
     console.log('Processed expense data:', expenseData);
     

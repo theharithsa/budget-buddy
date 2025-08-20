@@ -66,16 +66,16 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         
         // Generate sample expenses for better analysis
         expensesData = [
-          { id: '1', amount: 8500, category: 'Food & Dining', description: 'Grocery shopping', date: new Date(currentYear, currentMonth, 5).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '2', amount: 15000, category: 'Transportation', description: 'Fuel expenses', date: new Date(currentYear, currentMonth, 8).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '3', amount: 3200, category: 'Entertainment', description: 'Movie tickets', date: new Date(currentYear, currentMonth, 10).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '4', amount: 25000, category: 'Housing', description: 'Monthly rent', date: new Date(currentYear, currentMonth, 1).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '5', amount: 4500, category: 'Shopping', description: 'Clothing', date: new Date(currentYear, currentMonth, 12).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '6', amount: 2800, category: 'Healthcare', description: 'Medical checkup', date: new Date(currentYear, currentMonth, 15).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '7', amount: 1200, category: 'Utilities', description: 'Electricity bill', date: new Date(currentYear, currentMonth, 3).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '8', amount: 6000, category: 'Food & Dining', description: 'Restaurants', date: new Date(currentYear, currentMonth, 18).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '9', amount: 3500, category: 'Transportation', description: 'Metro/Bus passes', date: new Date(currentYear, currentMonth, 20).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
-          { id: '10', amount: 2000, category: 'Entertainment', description: 'Netflix subscription', date: new Date(currentYear, currentMonth, 22).toISOString().split('T')[0], receiptUrl: null, createdAt: new Date() },
+          { id: '1', amount: 8500, category: 'Food & Dining', description: 'Grocery shopping', date: new Date(currentYear, currentMonth, 5).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '2', amount: 15000, category: 'Transportation', description: 'Fuel expenses', date: new Date(currentYear, currentMonth, 8).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '3', amount: 3200, category: 'Entertainment', description: 'Movie tickets', date: new Date(currentYear, currentMonth, 10).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '4', amount: 25000, category: 'Housing', description: 'Monthly rent', date: new Date(currentYear, currentMonth, 1).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '5', amount: 4500, category: 'Shopping', description: 'Clothing', date: new Date(currentYear, currentMonth, 12).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '6', amount: 2800, category: 'Healthcare', description: 'Medical checkup', date: new Date(currentYear, currentMonth, 15).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '7', amount: 1200, category: 'Utilities', description: 'Electricity bill', date: new Date(currentYear, currentMonth, 3).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '8', amount: 6000, category: 'Food & Dining', description: 'Restaurants', date: new Date(currentYear, currentMonth, 18).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '9', amount: 3500, category: 'Transportation', description: 'Metro/Bus passes', date: new Date(currentYear, currentMonth, 20).toISOString().split('T')[0], createdAt: new Date().toISOString() },
+          { id: '10', amount: 2000, category: 'Entertainment', description: 'Netflix subscription', date: new Date(currentYear, currentMonth, 22).toISOString().split('T')[0], createdAt: new Date().toISOString() },
         ];
 
         budgetsData = [

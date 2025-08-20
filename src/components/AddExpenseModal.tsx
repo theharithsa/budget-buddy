@@ -96,14 +96,20 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
         console.log('Receipt uploaded successfully:', receiptUrl);
       }
 
-      const expenseData = {
+      const expenseData: Omit<Expense, 'id' | 'createdAt'> = {
         amount: numAmount,
         category,
         description: description || 'No description',
         date,
-        receiptUrl,
-        receiptFileName,
       };
+
+      // Only add receipt fields if they have values
+      if (receiptUrl) {
+        expenseData.receiptUrl = receiptUrl;
+      }
+      if (receiptFileName) {
+        expenseData.receiptFileName = receiptFileName;
+      }
 
       console.log('Calling onAddExpense with:', expenseData);
       await onAddExpense(expenseData);
