@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { TrashIcon, CalendarIcon, TagIcon, ReceiptIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { Trash, Calendar, Tag, Receipt, Eye } from '@phosphor-icons/react';
 import { type Expense, DEFAULT_CATEGORIES, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {
@@ -21,7 +21,7 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
-            <EyeIcon className="w-4 h-4 mr-1" />
+            <Eye className="w-4 h-4 mr-1" />
             View Receipt
           </Button>
         </DialogTrigger>
@@ -81,7 +81,7 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
             onClick={() => onDelete(expense.id)}
             aria-label="Delete expense"
           >
-            <TrashIcon className="w-4 h-4" />
+            <Trash className="w-4 h-4" />
           </Button>
         </div>
       </CardHeader>
@@ -89,16 +89,16 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <TagIcon className="w-4 h-4" />
+              <Tag className="w-4 h-4" />
               {expense.category}
             </div>
             <div className="flex items-center gap-1">
-              <CalendarIcon className="w-4 h-4" />
+              <Calendar className="w-4 h-4" />
               {formatDate(expense.date)}
             </div>
             {expense.receiptUrl && (
               <div className="flex items-center gap-1">
-                <ReceiptIcon className="w-4 h-4" />
+                <Receipt className="w-4 h-4" />
                 Receipt
               </div>
             )}

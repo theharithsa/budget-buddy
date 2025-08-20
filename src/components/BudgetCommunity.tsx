@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Globe, User, PencilSimple, TrashSimple, Download, MagnifyingGlass, Tag, TrendingUp, Wallet } from '@phosphor-icons/react';
+import { Plus, Globe, User, Pencil, Trash, Download, MagnifyingGlass, Tag, TrendUp, Wallet } from '@phosphor-icons/react';
 import { type BudgetTemplate, type Budget, type CustomCategory, formatCurrency, getAllCategories } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -367,7 +367,7 @@ export function BudgetCommunity({
                         variant="ghost"
                         onClick={() => removeBudgetRow(index)}
                       >
-                        <TrashSimple size={14} />
+                        <Trash size={14} />
                       </Button>
                     </div>
                   ))}
@@ -454,7 +454,7 @@ export function BudgetCommunity({
                           className="h-8 w-8"
                           onClick={() => handleEditTemplate(template)}
                         >
-                          <PencilSimple size={16} weight="regular" />
+                          <Pencil size={16} />
                         </Button>
                         <Button
                           size="icon"
@@ -462,7 +462,7 @@ export function BudgetCommunity({
                           className="h-8 w-8 text-destructive"
                           onClick={() => handleDeleteTemplate(template.id)}
                         >
-                          <TrashSimple size={16} weight="regular" />
+                          <Trash size={16} />
                         </Button>
                       </div>
                     </div>
@@ -557,7 +557,7 @@ export function BudgetCommunity({
                           </Badge>
                           {template.usageCount && template.usageCount > 0 && (
                             <Badge variant="secondary">
-                              <TrendingUp size={12} className="mr-1" />
+                              <TrendUp size={12} className="mr-1" />
                               {template.usageCount} uses
                             </Badge>
                           )}

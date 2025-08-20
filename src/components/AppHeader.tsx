@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { ArrowRightOnRectangleIcon, UserIcon, BugAntIcon } from '@heroicons/react/24/outline';
+import { SignOut, User, Bug } from '@phosphor-icons/react';
 import { useAuth } from '@/contexts/AuthContext';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady } from '@/lib/firebase';
 import { toast } from 'sonner';
@@ -110,7 +110,7 @@ export function AppHeader() {
                 onClick={testFirebaseConnection}
                 className="cursor-pointer"
               >
-                <BugAntIcon className="mr-2 h-4 w-4" />
+                <Bug className="mr-2 h-4 w-4" />
                 Test Firebase
               </DropdownMenuItem>
               <DropdownMenuItem 
@@ -118,7 +118,7 @@ export function AppHeader() {
                 disabled={isLoggingOut}
                 className="cursor-pointer"
               >
-                <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
+                <SignOut className="mr-2 h-4 w-4" />
                 {isLoggingOut ? 'Signing out...' : 'Sign out'}
               </DropdownMenuItem>
             </DropdownMenuContent>

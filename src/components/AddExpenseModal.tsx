@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
-import { PlusIcon, ArrowPathIcon, ArrowUpTrayIcon, XMarkIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { Plus, ArrowsClockwise, Upload, X, File } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, type Expense, type RecurringTemplate, type CustomCategory, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { toast } from 'sonner';
@@ -133,7 +133,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
-          <PlusIcon className="w-4 h-4" />
+          <Plus className="w-4 h-4" />
           Add Expense
         </Button>
       </DialogTrigger>
@@ -154,7 +154,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                   size="sm"
                   onClick={() => setShowTemplates(true)}
                 >
-                  <ArrowPathIcon className="w-4 h-4 mr-1" />
+                  <ArrowsClockwise className="w-4 h-4 mr-1" />
                   View All
                 </Button>
               </div>
@@ -290,7 +290,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <ArrowUpTrayIcon className="w-6 h-6 text-muted-foreground" />
+                    <Upload className="w-6 h-6 text-muted-foreground" />
                     <div className="text-sm">
                       <span className="font-medium">Click to upload receipt</span>
                       <p className="text-xs text-muted-foreground">PNG, JPG, WebP or PDF (max 5MB)</p>
@@ -303,7 +303,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                 <CardContent className="p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <DocumentIcon className="w-5 h-5 text-muted-foreground" />
+                      <File className="w-5 h-5 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">{receiptFile.name}</p>
                         <p className="text-xs text-muted-foreground">
@@ -317,7 +317,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                       size="sm"
                       onClick={handleRemoveFile}
                     >
-                      <XMarkIcon className="w-4 h-4" />
+                      <X className="w-4 h-4" />
                     </Button>
                   </div>
                 </CardContent>

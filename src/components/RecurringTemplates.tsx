@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { PlusIcon, ReceiptIcon, ArrowPathIcon, TrashIcon, PencilIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { Plus, Receipt, ArrowsClockwise, Trash, Pencil, Clock } from '@phosphor-icons/react';
 import { type RecurringTemplate, type Expense, type CustomCategory, DEFAULT_CATEGORIES, getAllCategories, DEFAULT_RECURRING_TEMPLATES, formatCurrency } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeToTemplates } from '@/lib/firebase';
@@ -204,7 +204,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
-              <PlusIcon className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2" />
               Create Template
             </Button>
           </DialogTrigger>
@@ -325,7 +325,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                       <CardTitle className="text-base">{template.name}</CardTitle>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={getFrequencyBadgeVariant(template.frequency)}>
-                          <ClockIcon className="w-3 h-3" className="mr-1" />
+                          <Clock className="w-3 h-3 mr-1" />
                           {template.frequency}
                         </Badge>
                       </div>
@@ -340,7 +340,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                             onClick={() => handleEditTemplate(template)}
                             aria-label="Edit template"
                           >
-                            <PencilIcon className="w-4 h-4" />
+                            <Pencil className="w-4 h-4" />
                           </Button>
                           <Button
                             size="icon"
@@ -349,7 +349,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                             onClick={() => handleDeleteTemplate(template.id)}
                             aria-label="Delete template"
                           >
-                            <TrashIcon className="w-4 h-4" />
+                            <Trash className="w-4 h-4" />
                           </Button>
                         </>
                       )}
@@ -370,7 +370,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                       className="w-full"
                       onClick={() => handleUseTemplate(template)}
                     >
-                      <ReceiptIcon className="w-4 h-4" className="mr-2" />
+                      <Receipt className="w-4 h-4 mr-2" />
                       Add Expense
                     </Button>
                   </div>
@@ -399,7 +399,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                 <Card key={template.id} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <ArrowPathIcon className="w-4 h-4" className="text-muted-foreground" />
+                      <ArrowsClockwise className="w-4 h-4 text-muted-foreground" />
                       {template.name}
                     </CardTitle>
                   </CardHeader>
@@ -415,7 +415,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                         className="w-full"
                         onClick={() => handleUseTemplate(template)}
                       >
-                        <PlusIcon className="w-3 h-3" className="mr-1" />
+                        <Plus className="w-3 h-3 mr-1" />
                         Add Expense
                       </Button>
                     </div>
@@ -436,7 +436,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                   <Card key={template.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm flex items-center gap-2">
-                        <ArrowPathIcon className="w-4 h-4" className="text-orange-500" />
+                        <ArrowsClockwise className="w-4 h-4 text-orange-500" />
                         {template.name}
                       </CardTitle>
                     </CardHeader>
@@ -452,7 +452,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                           className="w-full"
                           onClick={() => handleUseTemplate(template)}
                         >
-                          <PlusIcon className="w-3 h-3" className="mr-1" />
+                          <Plus className="w-3 h-3 mr-1" />
                           Add Expense
                         </Button>
                       </div>
@@ -474,7 +474,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                   <Card key={template.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm flex items-center gap-2">
-                        <ArrowPathIcon className="w-4 h-4" className="text-purple-500" />
+                        <ArrowsClockwise className="w-4 h-4 text-purple-500" />
                         {template.name}
                       </CardTitle>
                     </CardHeader>
@@ -490,7 +490,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                           className="w-full"
                           onClick={() => handleUseTemplate(template)}
                         >
-                          <PlusIcon className="w-3 h-3" className="mr-1" />
+                          <Plus className="w-3 h-3 mr-1" />
                           Add Expense
                         </Button>
                       </div>
@@ -506,7 +506,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         <Card>
           <CardContent className="pt-6">
             <div className="text-center py-8">
-              <ArrowPathIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <ArrowsClockwise className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No templates yet</h3>
               <p className="text-muted-foreground mb-4">
                 Create templates for recurring expenses like bills and subscriptions to log them quickly.
@@ -514,7 +514,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
               <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
                 <DialogTrigger asChild>
                   <Button>
-                    <PlusIcon className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4 mr-2" />
                     Create Your First Template
                   </Button>
                 </DialogTrigger>

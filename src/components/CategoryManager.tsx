@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PlusIcon, SwatchIcon, GlobeAltIcon, UserIcon, PencilIcon, TrashIcon, ArrowDownTrayIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Plus, Swatches, Globe, User, Pencil, Trash, Download, MagnifyingGlass } from '@phosphor-icons/react';
 import { type CustomCategory, DEFAULT_CATEGORIES } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -224,7 +224,7 @@ export function CategoryManager({
         <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
-              <PlusIcon className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2" />
               Create Category
             </Button>
           </DialogTrigger>
@@ -326,11 +326,11 @@ export function CategoryManager({
       <Tabs defaultValue="my-categories" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 max-w-md">
           <TabsTrigger value="my-categories" className="flex items-center gap-2">
-            <UserIcon className="w-4 h-4" />
+            <User className="w-4 h-4" />
             My Categories
           </TabsTrigger>
           <TabsTrigger value="community" className="flex items-center gap-2">
-            <GlobeAltIcon className="w-4 h-4" />
+            <Globe className="w-4 h-4" />
             Community
           </TabsTrigger>
         </TabsList>
@@ -381,7 +381,7 @@ export function CategoryManager({
                             <div className="flex items-center gap-2 mt-1">
                               {category.isPublic && (
                                 <Badge variant="outline" className="text-xs">
-                                  <GlobeAltIcon className="w-3 h-3 mr-1" />
+                                  <Globe className="w-3 h-3 mr-1" />
                                   Public
                                 </Badge>
                               )}
@@ -395,7 +395,7 @@ export function CategoryManager({
                               onClick={() => handleEditCategory(category)}
                               aria-label="Edit category"
                             >
-                              <PencilIcon className="w-4 h-4" />
+                              <Pencil className="w-4 h-4" />
                             </Button>
                             <Button
                               size="icon"
@@ -404,7 +404,7 @@ export function CategoryManager({
                               onClick={() => handleDeleteCategory(category.id)}
                               aria-label="Delete category"
                             >
-                              <TrashIcon className="w-4 h-4" />
+                              <Trash className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
@@ -420,7 +420,7 @@ export function CategoryManager({
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center py-8">
-                  <SwatchIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <Swatches className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No custom categories yet</h3>
                   <p className="text-muted-foreground mb-4">
                     Create custom categories to better organize your expenses beyond the defaults.
@@ -428,7 +428,7 @@ export function CategoryManager({
                   <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
                     <DialogTrigger asChild>
                       <Button>
-                        <PlusIcon className="w-4 h-4 mr-2" />
+                        <Plus className="w-4 h-4 mr-2" />
                         Create Your First Category
                       </Button>
                     </DialogTrigger>
@@ -442,7 +442,7 @@ export function CategoryManager({
         <TabsContent value="community" className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search community categories..."
                 value={searchTerm}
@@ -477,7 +477,7 @@ export function CategoryManager({
                       className="w-full"
                       onClick={() => handleAdoptCategory(category)}
                     >
-                      <ArrowDownTrayIcon className="w-4 h-4 mr-1" />
+                      <Download className="w-4 h-4 mr-1" />
                       Add to My Categories
                     </Button>
                   </CardContent>
@@ -488,7 +488,7 @@ export function CategoryManager({
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center py-8">
-                  <GlobeAltIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <Globe className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">
                     {searchTerm ? 'No matching categories found' : 'No community categories available'}
                   </h3>

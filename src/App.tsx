@@ -17,15 +17,15 @@ import { AppHeader } from '@/components/AppHeader';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
-  ReceiptIcon, 
-  WalletIcon, 
-  TrendingUpIcon, 
-  MagnifyingGlassIcon, 
-  ListBulletIcon, 
-  ArrowPathIcon, 
-  SwatchIcon, 
-  LightBulbIcon 
-} from '@heroicons/react/24/outline';
+  Receipt, 
+  Wallet, 
+  TrendUp, 
+  MagnifyingGlass, 
+  List, 
+  ArrowsClockwise, 
+  Swatches, 
+  Lightbulb 
+} from '@phosphor-icons/react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -204,27 +204,27 @@ function FinanceApp() {
           {/* Desktop Layout */}
           <TabsList className="hidden md:grid grid-cols-6 w-full max-w-4xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
-              <ReceiptIcon className="w-4 h-4" />
+              <Receipt className="w-4 h-4" />
               Expenses
             </TabsTrigger>
             <TabsTrigger value="budgets" className="flex items-center gap-2">
-              <WalletIcon className="w-4 h-4" />
+              <Wallet className="w-4 h-4" />
               Budgets
             </TabsTrigger>
             <TabsTrigger value="templates" className="flex items-center gap-2">
-              <ArrowPathIcon className="w-4 h-4" />
+              <ArrowsClockwise className="w-4 h-4" />
               Templates
             </TabsTrigger>
             <TabsTrigger value="categories" className="flex items-center gap-2">
-              <SwatchIcon className="w-4 h-4" />
+              <Swatches className="w-4 h-4" />
               Categories
             </TabsTrigger>
             <TabsTrigger value="analyzer" className="flex items-center gap-2">
-              <LightBulbIcon className="w-4 h-4" />
+              <Lightbulb className="w-4 h-4" />
               AI Analyzer
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
-              <TrendingUpIcon className="w-4 h-4" />
+              <TrendUp className="w-4 h-4" />
               Trends
             </TabsTrigger>
           </TabsList>
@@ -245,7 +245,7 @@ function FinanceApp() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative flex-1 max-w-sm">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search expenses..."
                     value={searchTerm}
@@ -273,7 +273,7 @@ function FinanceApp() {
 
                 <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
                   <SelectTrigger className="w-40">
-                    <ListBulletIcon className="w-4 h-4" />
+                    <List className="w-4 h-4" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -296,7 +296,7 @@ function FinanceApp() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center py-8">
-                    <ReceiptIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                    <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold mb-2">
                       {expenses.length === 0 ? 'No expenses yet' : 'No expenses match your filters'}
                     </h3>
@@ -383,7 +383,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <ReceiptIcon className="w-5 h-5" />
+            <Receipt className="w-5 h-5" />
             <span className="text-xs font-medium">Expenses</span>
           </button>
           
@@ -395,7 +395,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <WalletIcon className="w-5 h-5" />
+            <Wallet className="w-5 h-5" />
             <span className="text-xs font-medium">Budgets</span>
           </button>
           
@@ -407,7 +407,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <ArrowPathIcon className="w-5 h-5" />
+            <ArrowsClockwise className="w-5 h-5" />
             <span className="text-xs font-medium">Templates</span>
           </button>
           
@@ -419,7 +419,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <SwatchIcon className="w-5 h-5" />
+            <Swatches className="w-5 h-5" />
             <span className="text-xs font-medium">Categories</span>
           </button>
           
@@ -431,7 +431,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <LightBulbIcon className="w-5 h-5" />
+            <Lightbulb className="w-5 h-5" />
             <span className="text-xs font-medium">AI Analyzer</span>
           </button>
           
@@ -443,7 +443,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <TrendingUpIcon className="w-5 h-5" />
+            <TrendUp className="w-5 h-5" />
             <span className="text-xs font-medium">Trends</span>
           </button>
         </div>

@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PlusIcon, ExclamationTriangleIcon, WalletIcon, CalculatorIcon, TrashIcon, BookOpenIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import { Plus, Warning, Wallet, Calculator, Trash, BookOpen, Globe } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, getAllCategories, type Budget, type CustomCategory, type BudgetTemplate, formatCurrency } from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { BudgetCommunity } from '@/components/BudgetCommunity';
@@ -156,7 +156,7 @@ export function BudgetManager({
             My Budgets
           </TabsTrigger>
           <TabsTrigger value="templates" className="flex items-center gap-2">
-            <BookOpenIcon className="w-4 h-4" />
+            <BookOpen className="w-4 h-4" />
             Templates
           </TabsTrigger>
         </TabsList>
@@ -173,13 +173,13 @@ export function BudgetManager({
                 className="gap-2"
                 variant="outline"
               >
-                <CalculatorIcon className="w-4 h-4" weight="regular" />
+                <Calculator className="w-4 h-4" />
                 Quick Setup
               </Button>
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button className="gap-2">
-                    <PlusIcon className="w-4 h-4" />
+                    <Plus className="w-4 h-4" />
                     Add Budget
                   </Button>
                 </DialogTrigger>
@@ -238,7 +238,7 @@ export function BudgetManager({
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center py-8">
-                  <WalletIcon className="w-12 h-12" weight="regular" className="mx-auto text-muted-foreground mb-4" />
+                  <Wallet className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No budgets set</h3>
                   <p className="text-muted-foreground mb-4">
                     Set spending limits for your categories to better track your finances.
@@ -249,7 +249,7 @@ export function BudgetManager({
                       onAddBudget={onAddBudget}
                     />
                     <Button onClick={() => setOpen(true)} variant="outline" className="gap-2">
-                      <PlusIcon className="w-4 h-4" />
+                      <Plus className="w-4 h-4" />
                       Manual Setup
                     </Button>
                   </div>
@@ -298,7 +298,7 @@ export function BudgetManager({
                             className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                             aria-label="Remove budget"
                           >
-                            <TrashIcon className="w-4 h-4" />
+                            <Trash className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
