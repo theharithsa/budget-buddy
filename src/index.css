@@ -28,6 +28,9 @@
   --input: oklch(0.9 0.005 240);
   --ring: oklch(0.45 0.15 240);
   --radius: 0.5rem;
+  --font-sans: Open Sans;
+  --font-serif: Noto Serif;
+  --font-mono: "Space Mono";
 }
 
 @theme {
@@ -66,7 +69,7 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Open Sans', 'Inter', sans-serif;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   }
   
   .font-inter {

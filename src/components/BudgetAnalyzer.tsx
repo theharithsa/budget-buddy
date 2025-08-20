@@ -5,11 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Brain, TrendingUp, TrendingDown, Warning, CheckCircle, Circle, Chart } from '@phosphor-icons/react';
+import { Brain, TrendingUp, TrendingDown, Warning, CheckCircle, Circle, Chart, Sparkle, Lightbulb } from '@phosphor-icons/react';
 import { type Expense, type Budget, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ApiKeyManager } from '@/components/ApiKeyManager';
-import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
 interface BudgetAnalysis {
@@ -53,22 +51,20 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
   const [analysis, setAnalysis] = useState<BudgetAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [lastAnalyzed, setLastAnalyzed] = useState<Date | null>(null);
-  const [openAiKey] = useKV('openai-api-key', '');
-  const [hasCustomKey, setHasCustomKey] = useState(false);
-
-  useEffect(() => {
-    setHasCustomKey(Boolean(openAiKey));
-  }, [openAiKey]);
+  const [analysisMode, setAnalysisMode] = useState<'auto' | 'demo' | 'statistical'>('auto');
 
   const callOpenAIDirectly = async (prompt: string): Promise<string> => {
-    if (!openAiKey) {
-      throw new Error('OpenAI API key not configured');
+    // Check for environment variable first (preferred deployment method)
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error('OpenAI API key not configured in environment');
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAiKey}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -98,29 +94,43 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
     return data.choices[0]?.message?.content || '';
   };
 
-  const analyzeSpending = async (useDemo = false) => {
+  const analyzeSpending = async (forcedMode?: 'demo' | 'statistical') => {
     setLoading(true);
     try {
-      // Determine which AI service to use
+      // Determine which AI service to use based on availability
       const hasSparkLLM = typeof window !== 'undefined' && window.spark && window.spark.llm && window.spark.llmPrompt;
-      const hasOpenAIKey = Boolean(openAiKey);
+      const hasEnvApiKey = Boolean(import.meta.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY);
       
       console.log('AI Analysis Options:', {
         hasSparkLLM,
-        hasOpenAIKey,
-        useDemo
+        hasEnvApiKey,
+        forcedMode
       });
 
       let expensesData = expenses;
       let budgetsData = budgets;
+      let selectedMode = forcedMode || analysisMode;
+
+      // Auto-select best available mode if not forced
+      if (!forcedMode && analysisMode === 'auto') {
+        if (expenses.length === 0 || budgets.length === 0) {
+          selectedMode = 'demo';
+        } else if (hasSparkLLM) {
+          selectedMode = 'auto'; // Will use Spark AI
+        } else if (hasEnvApiKey) {
+          selectedMode = 'auto'; // Will use environment API key
+        } else {
+          selectedMode = 'statistical'; // Fallback to built-in analysis
+        }
+      }
 
       // If using demo mode, create sample data
-      if (useDemo) {
+      if (selectedMode === 'demo') {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();
         
-        // Generate sample expenses for better analysis
+        // Generate comprehensive sample expenses for better analysis
         expensesData = [
           { id: '1', amount: 8500, category: 'Food & Dining', description: 'Grocery shopping', date: new Date(currentYear, currentMonth, 5).toISOString().split('T')[0], createdAt: new Date().toISOString() },
           { id: '2', amount: 15000, category: 'Transportation', description: 'Fuel expenses', date: new Date(currentYear, currentMonth, 8).toISOString().split('T')[0], createdAt: new Date().toISOString() },
@@ -144,9 +154,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
           { id: '7', category: 'Utilities', limit: 3000, spent: 1200, createdAt: new Date() },
         ];
 
-        if (useDemo) {
-          toast.info('Running demo analysis with sample data');
-        }
+        toast.info('Running demo analysis with sample data');
       }
 
       // Prepare data for GPT analysis
@@ -174,7 +182,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       // Create comprehensive prompt for AI analysis
       let gptAnalysis;
       
-      if (useDemo) {
+      if (selectedMode === 'demo') {
         // Provide demo analysis without LLM call
         console.log('Using demo analysis mode');
         gptAnalysis = {
@@ -210,9 +218,9 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               suggestion: `Optimize ${cat.category} spending by choosing alternatives and planning purchases`
             }))
         };
-      } else if (!hasSparkLLM && !hasOpenAIKey) {
+      } else if (selectedMode === 'statistical' || (!hasSparkLLM && !hasEnvApiKey)) {
         // Provide built-in algorithmic analysis for real data when no AI is available
-        console.log('Using built-in algorithmic analysis - no AI service available');
+        console.log('Using built-in algorithmic analysis');
         
         // Calculate a smarter score based on actual data
         let score = 100;
@@ -242,7 +250,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
           recommendations: [
             expensesData.length === 0 ? "Start by recording your daily expenses to build spending patterns" : "Continue tracking expenses to improve analysis accuracy",
             budgetsData.length === 0 ? "Set up budget categories to enable better financial control" : "Review and adjust budget limits based on actual spending patterns",
-            totalSpent > 0 ? `Consider saving ${Math.floor(totalSpent * 0.1).toLocaleString()} monthly for emergency fund` : "Set up automated savings transfers once you establish spending patterns",
+            totalSpent > 0 ? `Consider saving ₹${Math.floor(totalSpent * 0.1).toLocaleString()} monthly for emergency fund` : "Set up automated savings transfers once you establish spending patterns",
             "Review your highest spending categories for optimization opportunities"
           ],
           categoryAnalysis: categorySpending.map(cat => ({
@@ -265,7 +273,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             }))
         };
       } else {
-        // Use available AI service (Spark LLM or OpenAI)
+        // Use available AI service (Spark LLM or Environment API key)
         const prompt = `
         You are a professional financial advisor analyzing Indian spending patterns. Provide comprehensive budget insights for this user:
 
@@ -344,10 +352,10 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         try {
           let response;
           
-          if (hasOpenAIKey) {
-            console.log('Using OpenAI API with custom key');
+          if (hasEnvApiKey) {
+            console.log('Using environment OpenAI API key');
             response = await callOpenAIDirectly(prompt);
-            toast.success('AI analysis completed using your OpenAI API key!');
+            toast.success('AI analysis completed using advanced AI!');
           } else if (hasSparkLLM) {
             console.log('Using Spark LLM');
             const sparkPrompt = spark.llmPrompt`${prompt}`;
@@ -415,9 +423,9 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       setAnalysis(fullAnalysis);
       setLastAnalyzed(new Date());
       
-      if (useDemo) {
+      if (selectedMode === 'demo') {
         toast.success('Demo analysis completed! This shows insights with sample data.');
-      } else if (!hasSparkLLM && !hasOpenAIKey) {
+      } else if (selectedMode === 'statistical' || (!hasSparkLLM && !hasEnvApiKey)) {
         toast.success('Budget analysis completed using built-in algorithms!');
       }
       // Success messages for AI services are handled above
@@ -503,9 +511,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
 
   return (
     <div className="space-y-6">
-      {/* API Key Configuration */}
-      <ApiKeyManager onApiKeyChange={setHasCustomKey} />
-      
+      {/* Header with Clean CTA */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -513,23 +519,23 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             Smart Budget Analyzer
           </h2>
           <p className="text-muted-foreground">
-            AI-powered insights into your spending patterns and budget optimization
+            Get AI-powered insights into your spending patterns and personalized recommendations
           </p>
         </div>
         <div className="flex items-center gap-2">
           {(expenses.length === 0 || budgets.length === 0) && (
             <Button 
-              onClick={() => analyzeSpending(true)} 
+              onClick={() => analyzeSpending('demo')} 
               disabled={loading}
               variant="outline"
               className="flex items-center gap-2"
             >
-              <Chart size={16} />
+              <Sparkle size={16} />
               Try Demo
             </Button>
           )}
           <Button 
-            onClick={() => analyzeSpending(false)} 
+            onClick={() => analyzeSpending()} 
             disabled={loading}
             className="flex items-center gap-2"
           >
@@ -543,56 +549,46 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         </div>
       </div>
 
-      {/* Info Card */}
+      {/* Simplified Info Card */}
       {!analysis && !loading && (
-        <div className="space-y-4">
-          <Card className="border-l-4 border-l-primary">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <Brain className="text-primary mt-1" size={20} />
-                <div>
-                  <h3 className="font-semibold mb-2">How the AI Analyzer Works</h3>
-                  <div className="text-sm text-muted-foreground space-y-2">
-                    <p>• <strong>Analyzes</strong> your spending patterns and budget efficiency</p>
-                    <p>• <strong>Identifies</strong> savings opportunities and overspending areas</p>
-                    <p>• <strong>Provides</strong> personalized recommendations for Indian financial habits</p>
-                    <p>• <strong>Scores</strong> your financial health from 0-100</p>
-                    {(expenses.length === 0 || budgets.length === 0) && (
-                      <p className="text-accent font-medium">💡 No data yet? Try the demo to see sample insights!</p>
-                    )}
-                  </div>
+        <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-accent/5">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <Lightbulb className="text-primary mt-1" size={20} />
+              <div>
+                <h3 className="font-semibold mb-2">AI-Powered Financial Insights</h3>
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>• <strong>Analyzes</strong> your spending patterns and budget efficiency</p>
+                  <p>• <strong>Identifies</strong> savings opportunities and overspending areas</p>
+                  <p>• <strong>Provides</strong> personalized recommendations for your financial goals</p>
+                  <p>• <strong>Scores</strong> your financial health and tracks improvements</p>
+                  {(expenses.length === 0 || budgets.length === 0) && (
+                    <div className="mt-3 p-3 bg-accent/10 border border-accent/20 rounded-lg">
+                      <p className="text-accent font-medium flex items-center gap-2">
+                        <Sparkle size={16} />
+                        No data yet? Try the demo to see sample insights!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          
-          <Alert>
-            <Warning size={16} />
-            <AlertDescription>
-              <strong>AI Analysis Options:</strong>
-              <br />
-              • <strong>Spark AI:</strong> Built-in AI analysis (recommended)
-              <br />
-              • <strong>OpenAI GPT-4:</strong> Advanced analysis with your API key
-              <br />
-              • <strong>Demo Mode:</strong> See sample insights with demo data
-              <br />
-              • <strong>Built-in Algorithms:</strong> Statistical analysis without AI
-            </AlertDescription>
-          </Alert>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {lastAnalyzed && (
-        <Alert>
-          <Brain size={16} />
+      {lastAnalyzed && analysis && (
+        <Alert className="bg-green-50 border-green-200">
+          <CheckCircle size={16} className="text-green-600" />
           <AlertDescription>
-            Last analyzed: {lastAnalyzed.toLocaleDateString()} at {lastAnalyzed.toLocaleTimeString()}
-            {analysis && (
-              <span className="ml-2 text-sm">
-                • Financial Health Score: <span className={getScoreColor(analysis.overallScore)}>{analysis.overallScore}/100</span>
+            <div className="flex items-center justify-between">
+              <span>
+                Analysis completed on {lastAnalyzed.toLocaleDateString()} at {lastAnalyzed.toLocaleTimeString()}
               </span>
-            )}
+              <Badge variant="outline" className={`${getScoreColor(analysis.overallScore)} border-current`}>
+                Financial Health: {analysis.overallScore}/100
+              </Badge>
+            </div>
           </AlertDescription>
         </Alert>
       )}
@@ -861,8 +857,8 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             <div className="text-center py-12">
               <Brain size={64} className="mx-auto text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold mb-2">Ready to Analyze Your Budget</h3>
-              <p className="text-muted-foreground mb-6">
-                Get AI-powered insights into your spending patterns, budget efficiency, and personalized recommendations.
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Get AI-powered insights into your spending patterns, budget efficiency, and personalized recommendations to improve your financial health.
                 {(expenses.length === 0 || budgets.length === 0) && (
                   <span className="block mt-2 text-sm">
                     Don't have data yet? Try our demo to see what insights look like!
@@ -871,11 +867,13 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               </p>
               <div className="flex items-center gap-4 justify-center">
                 {(expenses.length === 0 || budgets.length === 0) && (
-                  <Button onClick={() => analyzeSpending(true)} variant="outline" size="lg">
+                  <Button onClick={() => analyzeSpending('demo')} variant="outline" size="lg" className="flex items-center gap-2">
+                    <Sparkle size={16} />
                     Try Demo
                   </Button>
                 )}
-                <Button onClick={() => analyzeSpending(false)} size="lg">
+                <Button onClick={() => analyzeSpending()} size="lg" className="flex items-center gap-2">
+                  <Brain size={16} />
                   {expenses.length > 0 ? 'Analyze My Data' : 'Start Analysis'}
                 </Button>
               </div>

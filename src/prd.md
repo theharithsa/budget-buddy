@@ -67,9 +67,10 @@
 - **Success criteria**: Users can identify spending trends and adjust behavior accordingly
 
 ### AI Budget Analyzer
-- **What it does**: GPT-powered analysis of spending patterns with personalized insights, recommendations, and interactive visualizations
-- **Why it matters**: Provides intelligent financial guidance beyond basic tracking, offering expert-level insights and optimization suggestions
-- **Success criteria**: Users receive actionable financial insights and can visualize complex spending patterns through comprehensive charts and graphs
+- **What it does**: Intelligent analysis of spending patterns with personalized insights, recommendations, and interactive visualizations using multiple AI backends
+- **Why it matters**: Provides expert-level financial guidance beyond basic tracking, offering actionable insights without requiring technical configuration
+- **Success criteria**: Users receive actionable financial insights seamlessly, with automatic fallback to statistical analysis when AI services are unavailable
+- **Configuration**: Uses environment variables for API keys during deployment, eliminating user friction and technical barriers
 
 ## Design Direction
 
