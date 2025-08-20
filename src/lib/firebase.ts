@@ -303,6 +303,12 @@ export const getExpensesFromFirestore = async (userId: string): Promise<any[]> =
 
 export const subscribeToExpenses = (userId: string, callback: (expenses: any[]) => void) => {
   try {
+    if (!userId || !db) {
+      console.error('Invalid userId or database not initialized');
+      callback([]);
+      return () => {};
+    }
+
     const q = query(
       collection(db, 'users', userId, 'expenses'),
       orderBy('date', 'desc')
@@ -310,18 +316,27 @@ export const subscribeToExpenses = (userId: string, callback: (expenses: any[]) 
     
     return onSnapshot(q, 
       (querySnapshot) => {
-        const expenses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(expenses);
+        try {
+          const expenses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(expenses);
+        } catch (error) {
+          console.error('Error processing expenses data:', error);
+          callback([]);
+        }
       },
       (error) => {
-        console.error('Error in expenses subscription:', error);
-        // Return empty array on error to prevent crashes
+        // Only log permission errors if they're not the common harmless ones
+        if (error.code === 'permission-denied') {
+          console.warn('Permission denied for expenses subscription. User may not be fully authenticated yet.');
+        } else {
+          console.error('Error in expenses subscription:', error);
+        }
         callback([]);
       }
     );
   } catch (error) {
     console.error('Error setting up expenses subscription:', error);
-    // Return a no-op unsubscribe function
+    callback([]);
     return () => {};
   }
 };
@@ -358,20 +373,36 @@ export const deleteBudgetFromFirestore = async (userId: string, budgetId: string
 
 export const subscribeToBudgets = (userId: string, callback: (budgets: any[]) => void) => {
   try {
+    if (!userId || !db) {
+      console.error('Invalid userId or database not initialized');
+      callback([]);
+      return () => {};
+    }
+
     const q = query(collection(db, 'users', userId, 'budgets'));
     
     return onSnapshot(q, 
       (querySnapshot) => {
-        const budgets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(budgets);
+        try {
+          const budgets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(budgets);
+        } catch (error) {
+          console.error('Error processing budgets data:', error);
+          callback([]);
+        }
       },
       (error) => {
-        console.error('Error in budgets subscription:', error);
+        if (error.code === 'permission-denied') {
+          console.warn('Permission denied for budgets subscription. User may not be fully authenticated yet.');
+        } else {
+          console.error('Error in budgets subscription:', error);
+        }
         callback([]);
       }
     );
   } catch (error) {
     console.error('Error setting up budgets subscription:', error);
+    callback([]);
     return () => {};
   }
 };
@@ -398,20 +429,36 @@ export const deleteTemplateFromFirestore = async (userId: string, templateId: st
 
 export const subscribeToTemplates = (userId: string, callback: (templates: any[]) => void) => {
   try {
+    if (!userId || !db) {
+      console.error('Invalid userId or database not initialized');
+      callback([]);
+      return () => {};
+    }
+
     const q = query(collection(db, 'users', userId, 'templates'));
     
     return onSnapshot(q, 
       (querySnapshot) => {
-        const templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(templates);
+        try {
+          const templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(templates);
+        } catch (error) {
+          console.error('Error processing templates data:', error);
+          callback([]);
+        }
       },
       (error) => {
-        console.error('Error in templates subscription:', error);
+        if (error.code === 'permission-denied') {
+          console.warn('Permission denied for templates subscription. User may not be fully authenticated yet.');
+        } else {
+          console.error('Error in templates subscription:', error);
+        }
         callback([]);
       }
     );
   } catch (error) {
     console.error('Error setting up templates subscription:', error);
+    callback([]);
     return () => {};
   }
 };
@@ -506,21 +553,75 @@ export const deleteCustomCategoryFromFirestore = async (userId: string, category
 };
 
 export const subscribeToCustomCategories = (userId: string, callback: (categories: any[]) => void) => {
-  const q = query(collection(db, 'users', userId, 'customCategories'));
-  
-  return onSnapshot(q, (querySnapshot) => {
-    const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(categories);
-  });
+  try {
+    if (!userId || !db) {
+      console.error('Invalid userId or database not initialized');
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(collection(db, 'users', userId, 'customCategories'));
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        try {
+          const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(categories);
+        } catch (error) {
+          console.error('Error processing custom categories data:', error);
+          callback([]);
+        }
+      },
+      (error) => {
+        if (error.code === 'permission-denied') {
+          console.warn('Permission denied for custom categories subscription. User may not be fully authenticated yet.');
+        } else {
+          console.error('Error in custom categories subscription:', error);
+        }
+        callback([]);
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up custom categories subscription:', error);
+    callback([]);
+    return () => {};
+  }
 };
 
 export const subscribeToPublicCategories = (callback: (categories: any[]) => void) => {
-  const q = query(collection(db, 'publicCategories'), orderBy('createdAt', 'desc'));
-  
-  return onSnapshot(q, (querySnapshot) => {
-    const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(categories);
-  });
+  try {
+    if (!db) {
+      console.error('Database not initialized');
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(collection(db, 'publicCategories'), orderBy('createdAt', 'desc'));
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        try {
+          const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(categories);
+        } catch (error) {
+          console.error('Error processing public categories data:', error);
+          callback([]);
+        }
+      },
+      (error) => {
+        if (error.code === 'permission-denied') {
+          console.warn('Permission denied for public categories subscription. This is normal if not configured.');
+        } else {
+          console.error('Error in public categories subscription:', error);
+        }
+        callback([]);
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up public categories subscription:', error);
+    callback([]);
+    return () => {};
+  }
 };
 
 export const adoptPublicCategory = async (userId: string, publicCategory: any): Promise<string> => {

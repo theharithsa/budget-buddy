@@ -31,7 +31,8 @@ export function useFirestoreData() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !user.uid) {
+      // Clear all data when user is not authenticated
       setExpenses([]);
       setBudgets([]);
       setTemplates([]);
@@ -45,54 +46,93 @@ export function useFirestoreData() {
     setLoading(true);
 
     let unsubscribeFunctions: (() => void)[] = [];
+    let timeoutId: NodeJS.Timeout;
+    let isCleanedUp = false;
 
-    try {
-      // Subscribe to expenses
-      const unsubscribeExpenses = subscribeToExpenses(user.uid, (expenseData) => {
-        console.log('Received expenses data:', expenseData.length, 'expenses');
-        setExpenses(expenseData);
-      });
-      unsubscribeFunctions.push(unsubscribeExpenses);
+    // Add a delay to ensure Firebase auth is fully ready and permissions are set
+    timeoutId = setTimeout(() => {
+      if (isCleanedUp) return;
 
-      // Subscribe to budgets
-      const unsubscribeBudgets = subscribeToBudgets(user.uid, (budgetData) => {
-        console.log('Received budgets data:', budgetData.length, 'budgets');
-        setBudgets(budgetData);
-      });
-      unsubscribeFunctions.push(unsubscribeBudgets);
+      try {
+        // Subscribe to expenses
+        const unsubscribeExpenses = subscribeToExpenses(user.uid, (expenseData) => {
+          if (!isCleanedUp) {
+            console.log('Received expenses data:', expenseData.length, 'expenses');
+            setExpenses(expenseData);
+          }
+        });
+        if (unsubscribeExpenses) {
+          unsubscribeFunctions.push(unsubscribeExpenses);
+        }
 
-      // Subscribe to templates
-      const unsubscribeTemplates = subscribeToTemplates(user.uid, (templateData) => {
-        console.log('Received templates data:', templateData.length, 'templates');
-        setTemplates(templateData);
-      });
-      unsubscribeFunctions.push(unsubscribeTemplates);
+        // Subscribe to budgets
+        const unsubscribeBudgets = subscribeToBudgets(user.uid, (budgetData) => {
+          if (!isCleanedUp) {
+            console.log('Received budgets data:', budgetData.length, 'budgets');
+            setBudgets(budgetData);
+          }
+        });
+        if (unsubscribeBudgets) {
+          unsubscribeFunctions.push(unsubscribeBudgets);
+        }
 
-      // Subscribe to custom categories
-      const unsubscribeCustomCategories = subscribeToCustomCategories(user.uid, (categoryData) => {
-        console.log('Received custom categories data:', categoryData.length, 'categories');
-        setCustomCategories(categoryData);
-      });
-      unsubscribeFunctions.push(unsubscribeCustomCategories);
+        // Subscribe to templates
+        const unsubscribeTemplates = subscribeToTemplates(user.uid, (templateData) => {
+          if (!isCleanedUp) {
+            console.log('Received templates data:', templateData.length, 'templates');
+            setTemplates(templateData);
+          }
+        });
+        if (unsubscribeTemplates) {
+          unsubscribeFunctions.push(unsubscribeTemplates);
+        }
 
-      // Subscribe to public categories
-      const unsubscribePublicCategories = subscribeToPublicCategories((categoryData) => {
-        console.log('Received public categories data:', categoryData.length, 'public categories');
-        setPublicCategories(categoryData);
-      });
-      unsubscribeFunctions.push(unsubscribePublicCategories);
+        // Subscribe to custom categories
+        const unsubscribeCustomCategories = subscribeToCustomCategories(user.uid, (categoryData) => {
+          if (!isCleanedUp) {
+            console.log('Received custom categories data:', categoryData.length, 'categories');
+            setCustomCategories(categoryData);
+          }
+        });
+        if (unsubscribeCustomCategories) {
+          unsubscribeFunctions.push(unsubscribeCustomCategories);
+        }
 
-      setLoading(false);
-    } catch (error) {
-      console.error('Error setting up Firebase subscriptions:', error);
-      setLoading(false);
-    }
+        // Subscribe to public categories
+        const unsubscribePublicCategories = subscribeToPublicCategories((categoryData) => {
+          if (!isCleanedUp) {
+            console.log('Received public categories data:', categoryData.length, 'public categories');
+            setPublicCategories(categoryData);
+          }
+        });
+        if (unsubscribePublicCategories) {
+          unsubscribeFunctions.push(unsubscribePublicCategories);
+        }
+
+        if (!isCleanedUp) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error setting up Firebase subscriptions:', error);
+        if (!isCleanedUp) {
+          setLoading(false);
+        }
+      }
+    }, 500); // Increased delay to ensure auth is fully ready
 
     return () => {
       console.log('Cleaning up Firebase subscriptions');
+      isCleanedUp = true;
+      
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      
       unsubscribeFunctions.forEach(unsubscribe => {
         try {
-          unsubscribe();
+          if (typeof unsubscribe === 'function') {
+            unsubscribe();
+          }
         } catch (error) {
           console.error('Error unsubscribing:', error);
         }
