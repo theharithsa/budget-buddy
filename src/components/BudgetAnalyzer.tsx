@@ -8,6 +8,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Brain, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, RefreshCw, BarChart3 } from '@phosphor-icons/react';
 import { type Expense, type Budget, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { ApiKeyManager } from '@/components/ApiKeyManager';
+import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
 interface BudgetAnalysis {
@@ -51,15 +53,63 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
   const [analysis, setAnalysis] = useState<BudgetAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [lastAnalyzed, setLastAnalyzed] = useState<Date | null>(null);
+  const [openAiKey] = useKV('openai-api-key', '');
+  const [hasCustomKey, setHasCustomKey] = useState(false);
+
+  useEffect(() => {
+    setHasCustomKey(Boolean(openAiKey));
+  }, [openAiKey]);
+
+  const callOpenAIDirectly = async (prompt: string): Promise<string> => {
+    if (!openAiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a professional financial advisor specialized in Indian market conditions. Provide detailed, actionable financial insights. Always respond with valid JSON only.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+        max_tokens: 2000
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Request failed'}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0]?.message?.content || '';
+  };
 
   const analyzeSpending = async (useDemo = false) => {
     setLoading(true);
     try {
-      // Check if spark.llm is available
-      if (typeof window === 'undefined' || !window.spark || !window.spark.llm || !window.spark.llmPrompt) {
-        console.warn('Spark LLM functionality not available, using demo mode');
-        useDemo = true;
-      }
+      // Determine which AI service to use
+      const hasSparkLLM = typeof window !== 'undefined' && window.spark && window.spark.llm && window.spark.llmPrompt;
+      const hasOpenAIKey = Boolean(openAiKey);
+      
+      console.log('AI Analysis Options:', {
+        hasSparkLLM,
+        hasOpenAIKey,
+        useDemo
+      });
 
       let expensesData = expenses;
       let budgetsData = budgets;
@@ -121,12 +171,12 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         description: exp.description
       }));
 
-      // Create comprehensive prompt for GPT
+      // Create comprehensive prompt for AI analysis
       let gptAnalysis;
       
-      if (useDemo || typeof window === 'undefined' || !window.spark?.llm) {
+      if (useDemo || (!hasSparkLLM && !hasOpenAIKey)) {
         // Provide demo analysis without LLM call
-        console.log('Using demo analysis mode');
+        console.log('Using demo analysis mode - no AI service available');
         gptAnalysis = {
           overallScore: 75,
           insights: [
@@ -161,8 +211,8 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             }))
         };
       } else {
-        // Use real LLM analysis
-        const prompt = spark.llmPrompt`
+        // Use available AI service (Spark LLM or OpenAI)
+        const prompt = `
         You are a professional financial advisor analyzing Indian spending patterns. Provide comprehensive budget insights for this user:
 
         CURRENT MONTH DATA:
@@ -235,15 +285,31 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         Provide insights that are specific, measurable, achievable, relevant, and time-bound (SMART).
       `;
 
-        console.log('Sending prompt to LLM:', prompt);
+        console.log('Sending prompt to AI service');
         
         try {
-          const response = await spark.llm(prompt, 'gpt-4o', true);
-          console.log('LLM response received:', response);
+          let response;
+          
+          if (hasOpenAIKey) {
+            console.log('Using OpenAI API with custom key');
+            response = await callOpenAIDirectly(prompt);
+            toast.success('AI analysis completed using your OpenAI API key!');
+          } else if (hasSparkLLM) {
+            console.log('Using Spark LLM');
+            const sparkPrompt = spark.llmPrompt`${prompt}`;
+            response = await spark.llm(sparkPrompt, 'gpt-4o', true);
+            toast.success('AI analysis completed using Spark AI!');
+          } else {
+            throw new Error('No AI service available');
+          }
+          
+          console.log('AI response received:', response);
           gptAnalysis = JSON.parse(response);
         } catch (llmError) {
-          console.error('LLM or JSON parsing error:', llmError);
-          // Fallback to demo analysis if LLM fails
+          console.error('AI service error:', llmError);
+          toast.error(`AI analysis failed: ${llmError.message || 'Unknown error'}`);
+          
+          // Fallback to demo analysis if AI fails
           gptAnalysis = {
             overallScore: 75,
             insights: [
@@ -297,11 +363,10 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       
       if (useDemo) {
         toast.success('Demo analysis completed! This shows insights with sample data.');
-      } else if (typeof window === 'undefined' || !window.spark?.llm) {
+      } else if (!hasSparkLLM && !hasOpenAIKey) {
         toast.success('Budget analysis completed using built-in algorithms!');
-      } else {
-        toast.success('AI-powered budget analysis completed!');
       }
+      // Success messages for AI services are handled above
     } catch (error) {
       console.error('Error analyzing budget:', error);
       toast.error('Analysis failed. Please try again or use the demo mode.');
@@ -384,6 +449,9 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
 
   return (
     <div className="space-y-6">
+      {/* API Key Configuration */}
+      <ApiKeyManager onApiKeyChange={setHasCustomKey} />
+      
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -447,9 +515,15 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
           <Alert>
             <AlertTriangle size={16} />
             <AlertDescription>
-              <strong>About AI Analysis:</strong> The analyzer provides intelligent insights using built-in algorithms. 
-              For advanced AI features powered by OpenAI GPT-4, additional API configuration is required. 
-              Both demo and real data analysis are fully functional and provide valuable financial insights.
+              <strong>AI Analysis Options:</strong>
+              <br />
+              • <strong>Spark AI:</strong> Built-in AI analysis (recommended)
+              <br />
+              • <strong>OpenAI GPT-4:</strong> Advanced analysis with your API key
+              <br />
+              • <strong>Demo Mode:</strong> See sample insights with demo data
+              <br />
+              • <strong>Built-in Algorithms:</strong> Statistical analysis without AI
             </AlertDescription>
           </Alert>
         </div>
