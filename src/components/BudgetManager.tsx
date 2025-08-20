@@ -239,7 +239,7 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
                         className="text-muted-foreground hover:text-destructive transition-colors"
                         aria-label="Remove budget"
                       >
-                        <Trash2 size={14} className="mr-1" />
+                        Remove
                         Remove
                       </Button>
                     </div>
