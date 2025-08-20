@@ -1,12 +1,14 @@
 {
-    "name": "spark-template",
+    "name": "finbuddy",
     "private": true,
-    "version": "0.0.0",
+    "version": "1.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
         "kill": "fuser -k 5000/tcp",
         "build": "tsc -b --noCheck && vite build",
+        "start": "node server.js",
+        "serve": "npm run build && npm start",
         "lint": "eslint .",
         "optimize": "vite optimize",
         "preview": "vite preview"
@@ -53,6 +55,7 @@
         "d3": "^7.9.0",
         "date-fns": "^3.6.0",
         "embla-carousel-react": "^8.5.2",
+        "express": "^5.1.0",
         "firebase": "^12.1.0",
         "framer-motion": "^12.6.2",
         "input-otp": "^1.4.2",
