@@ -103,11 +103,11 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
         date,
       };
 
-      // Only add receipt fields if they have values
-      if (receiptUrl) {
+      // Only add receipt fields if they have valid values
+      if (receiptUrl && receiptUrl.trim() !== '') {
         expenseData.receiptUrl = receiptUrl;
       }
-      if (receiptFileName) {
+      if (receiptFileName && receiptFileName.trim() !== '') {
         expenseData.receiptFileName = receiptFileName;
       }
 

@@ -135,7 +135,7 @@ export const validateReceiptFile = (file: File): boolean => {
   return true;
 };
 
-export { storage, auth, db, checkFirebaseReady };
+export { storage, auth, db };
 
 // Authentication functions
 export const signInWithGoogle = async (useRedirect: boolean = false): Promise<User> => {
@@ -228,11 +228,11 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
       createdAt: expense.createdAt || new Date().toISOString(),
     };
     
-    // Only include receiptUrl and receiptFileName if they have actual values
-    if (expense.receiptUrl) {
+    // Only include receiptUrl and receiptFileName if they have actual non-empty values
+    if (expense.receiptUrl && expense.receiptUrl.trim() !== '') {
       expenseData.receiptUrl = expense.receiptUrl;
     }
-    if (expense.receiptFileName) {
+    if (expense.receiptFileName && expense.receiptFileName.trim() !== '') {
       expenseData.receiptFileName = expense.receiptFileName;
     }
     
