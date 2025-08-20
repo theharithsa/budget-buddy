@@ -14,7 +14,7 @@ import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/fire
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
-  onAddExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => void;
+  onAddExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>;
   customCategories?: CustomCategory[];
 }
 
@@ -77,6 +77,9 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
       return;
     }
 
+    console.log('Starting expense submission...');
+    console.log('Form data:', { amount: numAmount, category, description, date });
+
     setIsUploading(true);
 
     try {
@@ -85,20 +88,25 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
 
       // Upload receipt if one is selected
       if (receiptFile) {
+        console.log('Uploading receipt file...');
         const expenseId = Date.now().toString();
         const receiptPath = generateReceiptPath(expenseId, receiptFile.name);
         receiptUrl = await uploadFile(receiptFile, receiptPath);
         receiptFileName = receiptFile.name;
+        console.log('Receipt uploaded successfully:', receiptUrl);
       }
 
-      onAddExpense({
+      const expenseData = {
         amount: numAmount,
         category,
         description: description || 'No description',
         date,
         receiptUrl,
         receiptFileName,
-      });
+      };
+
+      console.log('Calling onAddExpense with:', expenseData);
+      await onAddExpense(expenseData);
 
       // Reset form
       setAmount('');
@@ -113,8 +121,9 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
       setShowTemplates(false);
       
       toast.success('Expense added successfully');
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to add expense');
+    } catch (error: any) {
+      console.error('Error in handleSubmit:', error);
+      toast.error(error?.message || 'Failed to add expense');
     } finally {
       setIsUploading(false);
     }

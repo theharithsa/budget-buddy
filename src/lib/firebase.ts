@@ -33,6 +33,32 @@ export const debugFirebaseConfig = () => {
   });
 };
 
+// Check if Firebase is properly initialized and user is authenticated
+export const checkFirebaseReady = (user: any): boolean => {
+  if (!auth) {
+    console.error('Firebase auth not initialized');
+    return false;
+  }
+  
+  if (!db) {
+    console.error('Firestore not initialized');
+    return false;
+  }
+  
+  if (!user) {
+    console.error('User not authenticated');
+    return false;
+  }
+  
+  if (!user.uid) {
+    console.error('User ID not available');
+    return false;
+  }
+  
+  console.log('Firebase ready check passed for user:', user.uid);
+  return true;
+};
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -109,7 +135,7 @@ export const validateReceiptFile = (file: File): boolean => {
   return true;
 };
 
-export { storage, auth, db };
+export { storage, auth, db, checkFirebaseReady };
 
 // Authentication functions
 export const signInWithGoogle = async (useRedirect: boolean = false): Promise<User> => {
@@ -181,11 +207,57 @@ export const onAuthChange = (callback: (user: User | null) => void) => {
 // Firestore data functions
 export const addExpenseToFirestore = async (userId: string, expense: any): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, 'users', userId, 'expenses'), expense);
+    // Add detailed logging to debug the issue
+    console.log('Adding expense to Firestore:', { userId, expense });
+    
+    if (!userId) {
+      throw new Error('User ID is required to save expense');
+    }
+    
+    // Check if Firebase is ready
+    if (!checkFirebaseReady({ uid: userId })) {
+      throw new Error('Firebase is not properly initialized');
+    }
+    
+    // Ensure all required fields are present
+    const expenseData = {
+      amount: Number(expense.amount),
+      category: expense.category || '',
+      description: expense.description || 'No description',
+      date: expense.date || new Date().toISOString().split('T')[0],
+      createdAt: expense.createdAt || new Date().toISOString(),
+      receiptUrl: expense.receiptUrl || null,
+      receiptFileName: expense.receiptFileName || null,
+    };
+    
+    console.log('Processed expense data:', expenseData);
+    
+    const docRef = await addDoc(collection(db, 'users', userId, 'expenses'), expenseData);
+    console.log('Expense added successfully with ID:', docRef.id);
     return docRef.id;
-  } catch (error) {
-    console.error('Error adding expense:', error);
-    throw new Error('Failed to save expense. Please try again.');
+  } catch (error: any) {
+    console.error('Detailed error adding expense:', {
+      error: error.message,
+      code: error.code,
+      stack: error.stack,
+      userId,
+      expense
+    });
+    
+    // Provide more specific error messages
+    if (error.code === 'permission-denied') {
+      throw new Error('Permission denied. Please make sure you are signed in and try again.');
+    } else if (error.code === 'unavailable') {
+      throw new Error('Service is temporarily unavailable. Please try again in a moment.');
+    } else if (error.code === 'unauthenticated') {
+      throw new Error('You must be signed in to add expenses.');
+    } else if (error.message?.includes('User ID is required')) {
+      throw new Error('Authentication error. Please sign out and sign in again.');
+    } else if (error.message?.includes('Firebase is not properly initialized')) {
+      throw new Error('Application initialization error. Please refresh the page and try again.');
+    } else {
+      throw new Error(error.message || 'Failed to save expense. Please try again.');
+    }
   }
 };
 
@@ -224,15 +296,28 @@ export const getExpensesFromFirestore = async (userId: string): Promise<any[]> =
 };
 
 export const subscribeToExpenses = (userId: string, callback: (expenses: any[]) => void) => {
-  const q = query(
-    collection(db, 'users', userId, 'expenses'),
-    orderBy('date', 'desc')
-  );
-  
-  return onSnapshot(q, (querySnapshot) => {
-    const expenses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(expenses);
-  });
+  try {
+    const q = query(
+      collection(db, 'users', userId, 'expenses'),
+      orderBy('date', 'desc')
+    );
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        const expenses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(expenses);
+      },
+      (error) => {
+        console.error('Error in expenses subscription:', error);
+        // Return empty array on error to prevent crashes
+        callback([]);
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up expenses subscription:', error);
+    // Return a no-op unsubscribe function
+    return () => {};
+  }
 };
 
 export const addBudgetToFirestore = async (userId: string, budget: any): Promise<string> => {
@@ -266,12 +351,23 @@ export const deleteBudgetFromFirestore = async (userId: string, budgetId: string
 };
 
 export const subscribeToBudgets = (userId: string, callback: (budgets: any[]) => void) => {
-  const q = query(collection(db, 'users', userId, 'budgets'));
-  
-  return onSnapshot(q, (querySnapshot) => {
-    const budgets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(budgets);
-  });
+  try {
+    const q = query(collection(db, 'users', userId, 'budgets'));
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        const budgets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(budgets);
+      },
+      (error) => {
+        console.error('Error in budgets subscription:', error);
+        callback([]);
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up budgets subscription:', error);
+    return () => {};
+  }
 };
 
 export const addTemplateToFirestore = async (userId: string, template: any): Promise<string> => {
@@ -295,12 +391,23 @@ export const deleteTemplateFromFirestore = async (userId: string, templateId: st
 };
 
 export const subscribeToTemplates = (userId: string, callback: (templates: any[]) => void) => {
-  const q = query(collection(db, 'users', userId, 'templates'));
-  
-  return onSnapshot(q, (querySnapshot) => {
-    const templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(templates);
-  });
+  try {
+    const q = query(collection(db, 'users', userId, 'templates'));
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        const templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(templates);
+      },
+      (error) => {
+        console.error('Error in templates subscription:', error);
+        callback([]);
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up templates subscription:', error);
+    return () => {};
+  }
 };
 
 // Custom Category functions

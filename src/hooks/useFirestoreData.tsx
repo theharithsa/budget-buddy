@@ -41,54 +41,87 @@ export function useFirestoreData() {
       return;
     }
 
+    console.log('Setting up Firebase subscriptions for user:', user.uid);
     setLoading(true);
 
-    // Subscribe to expenses
-    const unsubscribeExpenses = subscribeToExpenses(user.uid, (expenseData) => {
-      setExpenses(expenseData);
-    });
+    let unsubscribeFunctions: (() => void)[] = [];
 
-    // Subscribe to budgets
-    const unsubscribeBudgets = subscribeToBudgets(user.uid, (budgetData) => {
-      setBudgets(budgetData);
-    });
+    try {
+      // Subscribe to expenses
+      const unsubscribeExpenses = subscribeToExpenses(user.uid, (expenseData) => {
+        console.log('Received expenses data:', expenseData.length, 'expenses');
+        setExpenses(expenseData);
+      });
+      unsubscribeFunctions.push(unsubscribeExpenses);
 
-    // Subscribe to templates
-    const unsubscribeTemplates = subscribeToTemplates(user.uid, (templateData) => {
-      setTemplates(templateData);
-    });
+      // Subscribe to budgets
+      const unsubscribeBudgets = subscribeToBudgets(user.uid, (budgetData) => {
+        console.log('Received budgets data:', budgetData.length, 'budgets');
+        setBudgets(budgetData);
+      });
+      unsubscribeFunctions.push(unsubscribeBudgets);
 
-    // Subscribe to custom categories
-    const unsubscribeCustomCategories = subscribeToCustomCategories(user.uid, (categoryData) => {
-      setCustomCategories(categoryData);
-    });
+      // Subscribe to templates
+      const unsubscribeTemplates = subscribeToTemplates(user.uid, (templateData) => {
+        console.log('Received templates data:', templateData.length, 'templates');
+        setTemplates(templateData);
+      });
+      unsubscribeFunctions.push(unsubscribeTemplates);
 
-    // Subscribe to public categories
-    const unsubscribePublicCategories = subscribeToPublicCategories((categoryData) => {
-      setPublicCategories(categoryData);
-    });
+      // Subscribe to custom categories
+      const unsubscribeCustomCategories = subscribeToCustomCategories(user.uid, (categoryData) => {
+        console.log('Received custom categories data:', categoryData.length, 'categories');
+        setCustomCategories(categoryData);
+      });
+      unsubscribeFunctions.push(unsubscribeCustomCategories);
 
-    setLoading(false);
+      // Subscribe to public categories
+      const unsubscribePublicCategories = subscribeToPublicCategories((categoryData) => {
+        console.log('Received public categories data:', categoryData.length, 'public categories');
+        setPublicCategories(categoryData);
+      });
+      unsubscribeFunctions.push(unsubscribePublicCategories);
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error setting up Firebase subscriptions:', error);
+      setLoading(false);
+    }
 
     return () => {
-      unsubscribeExpenses();
-      unsubscribeBudgets();
-      unsubscribeTemplates();
-      unsubscribeCustomCategories();
-      unsubscribePublicCategories();
+      console.log('Cleaning up Firebase subscriptions');
+      unsubscribeFunctions.forEach(unsubscribe => {
+        try {
+          unsubscribe();
+        } catch (error) {
+          console.error('Error unsubscribing:', error);
+        }
+      });
     };
   }, [user]);
 
   // Expense operations
   const addExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
-    if (!user) throw new Error('User not authenticated');
+    if (!user) {
+      console.error('addExpense: User not authenticated');
+      throw new Error('User not authenticated');
+    }
+    
+    console.log('addExpense called with:', { userId: user.uid, expenseData });
     
     const expense = {
       ...expenseData,
       createdAt: new Date().toISOString(),
     };
     
-    await addExpenseToFirestore(user.uid, expense);
+    try {
+      const result = await addExpenseToFirestore(user.uid, expense);
+      console.log('addExpense successful:', result);
+      return result;
+    } catch (error) {
+      console.error('addExpense failed:', error);
+      throw error;
+    }
   };
 
   const updateExpense = async (expenseId: string, expenseData: Partial<Expense>) => {

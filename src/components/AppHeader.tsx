@@ -8,9 +8,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { SignOut, User } from '@phosphor-icons/react';
+import { SignOut, User, Bug } from '@phosphor-icons/react';
 import { useAuth } from '@/contexts/AuthContext';
-import { logOut } from '@/lib/firebase';
+import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady } from '@/lib/firebase';
 import { toast } from 'sonner';
 
 export function AppHeader() {
@@ -27,6 +27,42 @@ export function AppHeader() {
       toast.error('Failed to sign out');
     } finally {
       setIsLoggingOut(false);
+    }
+  };
+
+  const testFirebaseConnection = async () => {
+    try {
+      console.log('Testing Firebase connection...');
+      debugFirebaseConfig();
+      
+      if (!user) {
+        toast.error('User not authenticated');
+        return;
+      }
+
+      // Check if Firebase is ready
+      if (!checkFirebaseReady(user)) {
+        toast.error('Firebase not properly initialized');
+        return;
+      }
+
+      // Test adding a simple expense
+      const testExpense = {
+        amount: 1,
+        category: 'Food',
+        description: 'Test expense',
+        date: new Date().toISOString().split('T')[0],
+        createdAt: new Date().toISOString(),
+      };
+
+      console.log('Testing expense creation with:', testExpense);
+      const result = await addExpenseToFirestore(user.uid, testExpense);
+      console.log('Test expense created successfully:', result);
+      toast.success('Firebase connection test successful!');
+      
+    } catch (error: any) {
+      console.error('Firebase test failed:', error);
+      toast.error(`Firebase test failed: ${error.message}`);
     }
   };
 
@@ -70,6 +106,13 @@ export function AppHeader() {
                 </div>
               </div>
               <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={testFirebaseConnection}
+                className="cursor-pointer"
+              >
+                <Bug className="mr-2 h-4 w-4" />
+                Test Firebase
+              </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={handleLogout}
                 disabled={isLoggingOut}

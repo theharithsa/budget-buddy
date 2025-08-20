@@ -64,11 +64,20 @@ function FinanceApp() {
 
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
+      console.log('handleAddExpense called with:', expenseData);
+      console.log('Current user:', user?.uid);
+      
+      if (!user) {
+        toast.error('You must be signed in to add expenses');
+        return;
+      }
+      
       await addExpense(expenseData);
       toast.success('Expense added successfully');
-    } catch (error) {
-      console.error('Error adding expense:', error);
-      toast.error('Failed to add expense');
+    } catch (error: any) {
+      console.error('Error in handleAddExpense:', error);
+      const errorMessage = error?.message || 'Failed to add expense';
+      toast.error(errorMessage);
     }
   };
 
