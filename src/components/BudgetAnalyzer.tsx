@@ -114,8 +114,8 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       let expensesData = expenses;
       let budgetsData = budgets;
 
-      // If using demo mode or no data exists, create sample data
-      if (useDemo || expenses.length === 0 || budgets.length === 0) {
+      // If using demo mode, create sample data
+      if (useDemo) {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();
@@ -174,9 +174,9 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       // Create comprehensive prompt for AI analysis
       let gptAnalysis;
       
-      if (useDemo || (!hasSparkLLM && !hasOpenAIKey)) {
+      if (useDemo) {
         // Provide demo analysis without LLM call
-        console.log('Using demo analysis mode - no AI service available');
+        console.log('Using demo analysis mode');
         gptAnalysis = {
           overallScore: 75,
           insights: [
@@ -208,6 +208,60 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               category: cat.category,
               potentialSavings: Math.floor(cat.spent * 0.1),
               suggestion: `Optimize ${cat.category} spending by choosing alternatives and planning purchases`
+            }))
+        };
+      } else if (!hasSparkLLM && !hasOpenAIKey) {
+        // Provide built-in algorithmic analysis for real data when no AI is available
+        console.log('Using built-in algorithmic analysis - no AI service available');
+        
+        // Calculate a smarter score based on actual data
+        let score = 100;
+        const budgetUtilization = totalBudget > 0 ? (totalSpent / totalBudget) : 0;
+        
+        // Deduct points for budget overruns
+        if (budgetUtilization > 1.2) score -= 40;
+        else if (budgetUtilization > 1.0) score -= 20;
+        else if (budgetUtilization > 0.9) score -= 10;
+        else if (budgetUtilization < 0.3) score -= 15; // Too low usage might indicate unrealistic budgets
+        
+        // Deduct points for categories over budget
+        const overspentCategories = categorySpending.filter(cat => cat.percentage > 100);
+        score -= overspentCategories.length * 10;
+        
+        // Ensure score is within bounds
+        score = Math.max(0, Math.min(100, score));
+        
+        gptAnalysis = {
+          overallScore: score,
+          insights: [
+            `You've spent ₹${totalSpent.toLocaleString()} out of your ₹${totalBudget.toLocaleString()} budget this month (${(budgetUtilization * 100).toFixed(1)}% utilization)`,
+            expensesData.length > 0 ? `You have ${expensesData.length} transactions recorded this period` : "No expense data available for analysis",
+            budgetsData.length > 0 ? `You're tracking ${budgetsData.length} budget categories` : "No budget categories set up yet",
+            overspentCategories.length > 0 ? `${overspentCategories.length} categories are over budget and need attention` : "All categories are within budget limits"
+          ],
+          recommendations: [
+            expensesData.length === 0 ? "Start by recording your daily expenses to build spending patterns" : "Continue tracking expenses to improve analysis accuracy",
+            budgetsData.length === 0 ? "Set up budget categories to enable better financial control" : "Review and adjust budget limits based on actual spending patterns",
+            totalSpent > 0 ? `Consider saving ${Math.floor(totalSpent * 0.1).toLocaleString()} monthly for emergency fund` : "Set up automated savings transfers once you establish spending patterns",
+            "Review your highest spending categories for optimization opportunities"
+          ],
+          categoryAnalysis: categorySpending.map(cat => ({
+            category: cat.category,
+            status: cat.percentage > 100 ? 'overspent' : cat.percentage > 80 ? 'warning' : 'healthy',
+            message: cat.percentage > 100 
+              ? `Over budget by ₹${(cat.spent - cat.budgeted).toLocaleString()}. Consider reducing expenses.` 
+              : cat.percentage > 80 
+              ? `Approaching budget limit. ₹${(cat.budgeted - cat.spent).toLocaleString()} remaining.`
+              : `Well within budget. ₹${(cat.budgeted - cat.spent).toLocaleString()} remaining.`,
+            percentage: Math.min(cat.percentage, 100)
+          })),
+          savingsOpportunities: categorySpending
+            .filter(cat => cat.spent > cat.budgeted * 0.5)
+            .slice(0, 3)
+            .map(cat => ({
+              category: cat.category,
+              potentialSavings: Math.floor(cat.spent * 0.1),
+              suggestion: `Consider reducing ${cat.category} expenses by 10% to save monthly`
             }))
         };
       } else {
@@ -484,7 +538,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             ) : (
               <BarChart3 size={16} />
             )}
-            {loading ? 'Analyzing...' : 'Analyze Budget'}
+            {loading ? 'Analyzing...' : (expenses.length > 0 ? 'Analyze My Data' : 'Start Analysis')}
           </Button>
         </div>
       </div>
