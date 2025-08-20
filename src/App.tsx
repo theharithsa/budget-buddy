@@ -130,7 +130,7 @@ function FinanceApp() {
   const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-16 md:pb-0">
       <AppHeader />
       
       <div className="container mx-auto px-4 py-8">
@@ -204,33 +204,15 @@ function FinanceApp() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Mobile Layout - Scrollable with icons and labels */}
+          {/* Mobile Layout - Hidden, bottom nav handles it */}
           <div className="md:hidden">
-            <TabsList className="flex w-full overflow-x-auto scrollbar-hide p-1">
-              <TabsTrigger value="expenses" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
-                <Receipt size={18} />
-                <span className="text-xs font-medium">Expenses</span>
-              </TabsTrigger>
-              <TabsTrigger value="budgets" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
-                <Wallet size={18} />
-                <span className="text-xs font-medium">Budgets</span>
-              </TabsTrigger>
-              <TabsTrigger value="templates" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
-                <Repeat size={18} />
-                <span className="text-xs font-medium">Templates</span>
-              </TabsTrigger>
-              <TabsTrigger value="categories" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
-                <Palette size={18} />
-                <span className="text-xs font-medium">Categories</span>
-              </TabsTrigger>
-              <TabsTrigger value="analyzer" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
-                <Brain size={18} />
-                <span className="text-xs font-medium">AI Analyzer</span>
-              </TabsTrigger>
-              <TabsTrigger value="trends" className="flex flex-col items-center gap-1 min-w-0 px-3 py-2 flex-shrink-0">
-                <TrendingUp size={18} />
-                <span className="text-xs font-medium">Trends</span>
-              </TabsTrigger>
+            <TabsList className="hidden">
+              <TabsTrigger value="expenses">Expenses</TabsTrigger>
+              <TabsTrigger value="budgets">Budgets</TabsTrigger>
+              <TabsTrigger value="templates">Templates</TabsTrigger>
+              <TabsTrigger value="categories">Categories</TabsTrigger>
+              <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
+              <TabsTrigger value="trends">Trends</TabsTrigger>
             </TabsList>
           </div>
 
@@ -357,6 +339,83 @@ function FinanceApp() {
             <SpendingTrends expenses={expenses} />
           </TabsContent>
         </Tabs>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border">
+        <div className="grid grid-cols-6 h-16">
+          <button
+            onClick={() => setActiveTab('expenses')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'expenses' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Receipt size={20} />
+            <span className="text-xs font-medium">Expenses</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('budgets')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'budgets' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Wallet size={20} />
+            <span className="text-xs font-medium">Budgets</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('templates')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'templates' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Repeat size={20} />
+            <span className="text-xs font-medium">Templates</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'categories' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Palette size={20} />
+            <span className="text-xs font-medium">Categories</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('analyzer')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'analyzer' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Brain size={20} />
+            <span className="text-xs font-medium">AI Analyzer</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('trends')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'trends' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <TrendingUp size={20} />
+            <span className="text-xs font-medium">Trends</span>
+          </button>
+        </div>
       </div>
       
       <Toaster position="top-right" />
