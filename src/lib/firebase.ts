@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+// import { log } from './logger';
 
 // Firebase configuration - Replace with your Firebase project config
 // To set up Firebase:
@@ -139,24 +140,51 @@ export { storage, auth, db };
 
 // Authentication functions
 export const signInWithGoogle = async (useRedirect: boolean = false): Promise<User> => {
+  const startTime = performance.now();
+  
+  // log.info('Firebase', 'Google sign-in initiated', { useRedirect });
+  
   try {
     if (useRedirect) {
+      // log.debug('Firebase', 'Using redirect authentication method');
       // Use redirect method as fallback
       await signInWithRedirect(auth, googleProvider);
+      // log.info('Firebase', 'Redirect sign-in initiated successfully');
       // The result will be handled by checkRedirectResult
       throw new Error('REDIRECT_IN_PROGRESS');
     } else {
+      // log.debug('Firebase', 'Using popup authentication method');
+      
       // Check if popup is blocked
       const testPopup = window.open('', '_blank', 'width=1,height=1');
       if (!testPopup || testPopup.closed || typeof testPopup.closed === 'undefined') {
+        // log.warn('Firebase', 'Popup blocked by browser');
         throw new Error('POPUP_BLOCKED');
       }
       testPopup.close();
       
       const result = await signInWithPopup(auth, googleProvider);
+      
+      const duration = performance.now() - startTime;
+      // log.performance('GoogleSignInPopup', duration);
+      // log.info('Firebase', 'Google sign-in successful', { 
+      //   userId: result.user.uid,
+      //   email: result.user.email,
+      //   duration 
+      // });
+      
       return result.user;
     }
   } catch (error: any) {
+    const duration = performance.now() - startTime;
+    
+    // log.error('Firebase', 'Google sign-in failed', {
+    //   error: error.message,
+    //   code: error.code,
+    //   useRedirect,
+    //   duration
+    // }, error);
+    
     console.error('Error signing in with Google:', error);
     
     // Handle specific Firebase auth errors
@@ -182,19 +210,44 @@ export const signInWithGoogle = async (useRedirect: boolean = false): Promise<Us
 
 // Check for redirect result on app load
 export const checkRedirectResult = async (): Promise<User | null> => {
+  // log.debug('Firebase', 'Checking redirect result');
+  
   try {
     const result = await getRedirectResult(auth);
+    
+    if (result?.user) {
+      // log.info('Firebase', 'Redirect sign-in completed successfully', {
+      //   userId: result.user.uid,
+      //   email: result.user.email
+      // });
+    } else {
+      // log.debug('Firebase', 'No redirect result found');
+    }
+    
     return result?.user || null;
   } catch (error: any) {
+    // log.error('Firebase', 'Error checking redirect result', {
+    //   error: error.message,
+    //   code: error.code
+    // }, error);
+    
     console.error('Error checking redirect result:', error);
     throw new Error(error.message || 'Failed to complete sign in.');
   }
 };
 
 export const logOut = async (): Promise<void> => {
+  // log.info('Firebase', 'Sign out initiated');
+  
   try {
     await signOut(auth);
-  } catch (error) {
+    // log.info('Firebase', 'Sign out completed successfully');
+  } catch (error: any) {
+    // log.error('Firebase', 'Sign out failed', {
+    //   error: error.message,
+    //   code: error.code
+    // }, error);
+    
     console.error('Error signing out:', error);
     throw new Error('Failed to sign out. Please try again.');
   }

@@ -11,6 +11,7 @@ import {
   Chrome as GoogleLogo 
 } from 'lucide-react';
 import { toast } from 'sonner';
+// import { log } from '@/lib/logger';
 
 export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,30 +20,62 @@ export function LoginPage() {
   const [showRedirectOption, setShowRedirectOption] = useState(false);
 
   const handleGoogleSignIn = async (useRedirect: boolean = false) => {
+    const startTime = performance.now();
     setIsLoading(true);
     setError(null);
     
+    // log.info('Login', 'Google sign-in attempt started', { 
+    //   useRedirect,
+    //   userAgent: navigator.userAgent,
+    //   timestamp: new Date().toISOString()
+    // });
+
+    // log.userAction('Sign In Attempt', {
+    //   provider: 'Google',
+    //   method: useRedirect ? 'redirect' : 'popup'
+    // });
+    
     try {
       if (useRedirect) {
+        // log.debug('Login', 'Using redirect method for Google sign-in');
         await signInWithGoogle(true);
+        // log.info('Login', 'Redirect sign-in initiated successfully');
         // Redirect is in progress, no need to handle result here
       } else {
+        // log.debug('Login', 'Using popup method for Google sign-in');
         await signInWithGoogle(false);
+        
+        const duration = performance.now() - startTime;
+        // log.performance('GoogleSignIn', duration, { method: 'popup' });
+        // log.info('Login', 'Popup sign-in completed successfully', { duration });
+        
         toast.success('Successfully signed in!');
       }
     } catch (error: any) {
+      const duration = performance.now() - startTime;
+      const errorMessage = error.message || 'Failed to sign in. Please try again.';
+      
+      // log.error('Login', 'Google sign-in failed', {
+      //   error: errorMessage,
+      //   useRedirect,
+      //   duration,
+      //   errorCode: error.code,
+      //   stack: error.stack
+      // }, error);
+      
       console.error('Sign in error:', error);
       
       if (error.message === 'REDIRECT_IN_PROGRESS') {
+        // log.debug('Login', 'Redirect in progress, not showing error');
         // Don't show error for redirect
         return;
       }
       
-      const errorMessage = error.message || 'Failed to sign in. Please try again.';
       setError(errorMessage);
       
       // Show redirect option if popup failed
       if (error.message?.includes('Popup') || error.message?.includes('popup')) {
+        // log.warn('Login', 'Popup blocked, suggesting redirect method');
         setShowRedirectOption(true);
       }
       
@@ -55,9 +88,14 @@ export function LoginPage() {
   };
 
   const handleDebug = () => {
+    // log.userAction('Debug Firebase Config');
+    // log.info('Login', 'Debug mode activated');
+    
     debugFirebaseConfig();
     setShowDebug(true);
     toast.info('Debug information logged to console. Check browser developer tools.');
+    
+    // log.debug('Login', 'Firebase debug information displayed');
   };
 
   return (

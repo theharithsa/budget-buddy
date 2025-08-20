@@ -20,6 +20,7 @@ import {
 import { type Expense, type Budget, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { toast } from 'sonner';
+import { log } from '@/lib/logger';
 
 interface BudgetAnalysis {
   overallScore: number;
@@ -106,7 +107,23 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
   };
 
   const analyzeSpending = async (forcedMode?: 'demo' | 'statistical') => {
+    const startTime = performance.now();
     setLoading(true);
+    
+    log.info('BudgetAnalyzer', 'Starting budget analysis', {
+      forcedMode,
+      expensesCount: expenses.length,
+      budgetsCount: budgets.length,
+      analysisMode
+    });
+
+    log.userAction('Analyze Budget', {
+      forcedMode,
+      dataAvailable: {
+        expenses: expenses.length > 0,
+        budgets: budgets.length > 0
+      }
+    });
     
     try {
       // Determine which AI service to use based on availability
@@ -116,6 +133,12 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       let expensesData = expenses;
       let budgetsData = budgets;
       let selectedMode = forcedMode || analysisMode;
+
+      log.debug('BudgetAnalyzer', 'AI service availability check', {
+        hasSparkLLM,
+        hasEnvApiKey,
+        selectedMode
+      });
 
       console.log('AI Analysis Options:', {
         hasSparkLLM,
@@ -141,12 +164,15 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       if (!forcedMode && analysisMode === 'auto') {
         if (expenses.length === 0 && budgets.length === 0) {
           selectedMode = 'demo';
+          log.info('BudgetAnalyzer', 'No data available, switching to demo mode');
           console.log('🎭 No data available, switching to demo mode');
         } else if (hasSparkLLM) {
           selectedMode = 'auto'; // Will use Spark AI
+          log.info('BudgetAnalyzer', 'Using Spark AI for analysis');
           console.log('✨ Using Spark AI for analysis');
         } else if (hasEnvApiKey) {
           selectedMode = 'auto'; // Will use environment API key
+          log.info('BudgetAnalyzer', 'Using OpenAI API for analysis');
           console.log('🤖 Using OpenAI API for analysis');
         } else {
           selectedMode = 'statistical'; // Fallback to built-in analysis
@@ -175,13 +201,13 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         ];
 
         budgetsData = [
-          { id: '1', category: 'Food & Dining', limit: 15000, spent: 14500, createdAt: new Date() },
-          { id: '2', category: 'Transportation', limit: 20000, spent: 18500, createdAt: new Date() },
-          { id: '3', category: 'Entertainment', limit: 8000, spent: 5200, createdAt: new Date() },
-          { id: '4', category: 'Housing', limit: 30000, spent: 25000, createdAt: new Date() },
-          { id: '5', category: 'Shopping', limit: 10000, spent: 4500, createdAt: new Date() },
-          { id: '6', category: 'Healthcare', limit: 5000, spent: 2800, createdAt: new Date() },
-          { id: '7', category: 'Utilities', limit: 3000, spent: 1200, createdAt: new Date() },
+          { id: '1', category: 'Food & Dining', limit: 15000, spent: 14500 },
+          { id: '2', category: 'Transportation', limit: 20000, spent: 18500 },
+          { id: '3', category: 'Entertainment', limit: 8000, spent: 5200 },
+          { id: '4', category: 'Housing', limit: 30000, spent: 25000 },
+          { id: '5', category: 'Shopping', limit: 10000, spent: 4500 },
+          { id: '6', category: 'Healthcare', limit: 5000, spent: 2800 },
+          { id: '7', category: 'Utilities', limit: 3000, spent: 1200 },
         ];
 
         toast.info('Running demo analysis with sample data');
@@ -467,9 +493,32 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         toast.success('Demo analysis completed! This shows insights with sample data.');
       } else if (selectedMode === 'statistical' || (!hasSparkLLM && !hasEnvApiKey)) {
         toast.success('Budget analysis completed using built-in algorithms!');
+        log.info('BudgetAnalyzer', 'Statistical analysis completed successfully');
       }
       // Success messages for AI services are handled above
+      
+      const duration = performance.now() - startTime;
+      log.performance('BudgetAnalysis', duration, {
+        mode: selectedMode,
+        expensesCount: expensesData.length,
+        budgetsCount: budgetsData.length,
+        overallScore: gptAnalysis?.overallScore
+      });
+      
     } catch (error) {
+      const duration = performance.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      log.error('BudgetAnalyzer', 'Budget analysis failed', {
+        error: errorMessage,
+        forcedMode,
+        expensesCount: expenses.length,
+        budgetsCount: budgets.length,
+        analysisMode,
+        duration,
+        stack: error instanceof Error ? error.stack : undefined
+      }, error instanceof Error ? error : new Error(String(error)));
+      
       console.error('Error analyzing budget:', error);
       toast.error('Analysis failed. Please try again or use the demo mode.');
     } finally {
