@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { signInWithGoogle, debugFirebaseConfig } from '@/lib/firebase';
-import { GoogleLogo, Wallet, Info, Bug, ArrowSquareOut } from '@phosphor-icons/react';
+import { WalletIcon, InformationCircleIcon, BugAntIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { GoogleLogo } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 export function LoginPage() {
@@ -76,7 +77,7 @@ export function LoginPage() {
           <CardContent className="space-y-4">
             {error && (
               <Alert variant="destructive">
-                <Info size={16} />
+                <InformationCircleIcon className="w-4 h-4" />
                 <AlertDescription className="text-sm">
                   {error}
                   {error.includes('Popup') && (

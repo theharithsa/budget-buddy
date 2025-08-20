@@ -16,7 +16,16 @@ import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
-import { Receipt, Wallet, TrendingUp, MagnifyingGlass, List, Repeat, Palette, Brain } from '@phosphor-icons/react';
+import { 
+  ReceiptIcon, 
+  WalletIcon, 
+  TrendingUpIcon, 
+  MagnifyingGlassIcon, 
+  ListBulletIcon, 
+  ArrowPathIcon, 
+  SwatchIcon, 
+  LightBulbIcon 
+} from '@heroicons/react/24/outline';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -195,27 +204,27 @@ function FinanceApp() {
           {/* Desktop Layout */}
           <TabsList className="hidden md:grid grid-cols-6 w-full max-w-4xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
-              <Receipt size={16} weight="regular" />
+              <ReceiptIcon className="w-4 h-4" />
               Expenses
             </TabsTrigger>
             <TabsTrigger value="budgets" className="flex items-center gap-2">
-              <Wallet size={16} weight="regular" />
+              <WalletIcon className="w-4 h-4" />
               Budgets
             </TabsTrigger>
             <TabsTrigger value="templates" className="flex items-center gap-2">
-              <Repeat size={16} weight="regular" />
+              <ArrowPathIcon className="w-4 h-4" />
               Templates
             </TabsTrigger>
             <TabsTrigger value="categories" className="flex items-center gap-2">
-              <Palette size={16} weight="regular" />
+              <SwatchIcon className="w-4 h-4" />
               Categories
             </TabsTrigger>
             <TabsTrigger value="analyzer" className="flex items-center gap-2">
-              <Brain size={16} weight="regular" />
+              <LightBulbIcon className="w-4 h-4" />
               AI Analyzer
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
-              <TrendingUp size={16} weight="regular" />
+              <TrendingUpIcon className="w-4 h-4" />
               Trends
             </TabsTrigger>
           </TabsList>
@@ -236,7 +245,7 @@ function FinanceApp() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative flex-1 max-w-sm">
-                  <MagnifyingGlass size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search expenses..."
                     value={searchTerm}
@@ -264,7 +273,7 @@ function FinanceApp() {
 
                 <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
                   <SelectTrigger className="w-40">
-                    <List size={16} weight="regular" />
+                    <ListBulletIcon className="w-4 h-4" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -287,7 +296,7 @@ function FinanceApp() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center py-8">
-                    <Receipt size={48} weight="regular" className="mx-auto text-muted-foreground mb-4" />
+                    <ReceiptIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold mb-2">
                       {expenses.length === 0 ? 'No expenses yet' : 'No expenses match your filters'}
                     </h3>
@@ -374,7 +383,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Receipt size={20} weight="regular" />
+            <ReceiptIcon className="w-5 h-5" />
             <span className="text-xs font-medium">Expenses</span>
           </button>
           
@@ -386,7 +395,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Wallet size={20} weight="regular" />
+            <WalletIcon className="w-5 h-5" />
             <span className="text-xs font-medium">Budgets</span>
           </button>
           
@@ -398,7 +407,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Repeat size={20} weight="regular" />
+            <ArrowPathIcon className="w-5 h-5" />
             <span className="text-xs font-medium">Templates</span>
           </button>
           
@@ -410,7 +419,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Palette size={20} weight="regular" />
+            <SwatchIcon className="w-5 h-5" />
             <span className="text-xs font-medium">Categories</span>
           </button>
           
@@ -422,7 +431,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Brain size={20} weight="regular" />
+            <LightBulbIcon className="w-5 h-5" />
             <span className="text-xs font-medium">AI Analyzer</span>
           </button>
           
@@ -434,7 +443,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <TrendingUp size={20} weight="regular" />
+            <TrendingUpIcon className="w-5 h-5" />
             <span className="text-xs font-medium">Trends</span>
           </button>
         </div>
