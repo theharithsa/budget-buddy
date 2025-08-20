@@ -470,17 +470,33 @@ export const addCustomCategoryToFirestore = async (userId: string, category: any
     
     // If category is public, also add to global collection
     if (category.isPublic) {
-      await addDoc(collection(db, 'publicCategories'), {
-        ...category,
-        originalId: docRef.id,
-        userId: userId
-      });
+      try {
+        await addDoc(collection(db, 'publicCategories'), {
+          ...category,
+          originalId: docRef.id,
+          userId: userId
+        });
+      } catch (publicError: any) {
+        // Handle permission errors gracefully for public categories
+        if (publicError.code === 'permission-denied') {
+          console.warn('Permission denied for public categories. Private category was created successfully.');
+          // Don't throw error - the private category creation was successful
+        } else {
+          console.error('Error adding to public categories:', publicError);
+          // Still don't throw - the main category was created successfully
+        }
+      }
     }
     
     return docRef.id;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error adding custom category:', error);
-    throw new Error('Failed to save custom category. Please try again.');
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to create categories.');
+    } else {
+      throw new Error('Failed to save custom category. Please try again.');
+    }
   }
 };
 
@@ -497,45 +513,64 @@ export const updateCustomCategoryInFirestore = async (userId: string, categoryId
     const currentData = currentDoc.data();
     const updatedData = { ...currentData, ...category };
     
-    // Update the user's private category
+    // Update the user's private category first
     await updateDoc(currentDocRef, category);
     
-    // Handle public collection updates
-    const publicQ = query(
-      collection(db, 'publicCategories'),
-      where('originalId', '==', categoryId),
-      where('userId', '==', userId)
-    );
-    const publicSnapshot = await getDocs(publicQ);
-    
-    if (updatedData.isPublic) {
-      // Category should be public
-      if (!publicSnapshot.empty) {
-        // Update existing public category with complete data
-        const publicDoc = publicSnapshot.docs[0];
-        await updateDoc(doc(db, 'publicCategories', publicDoc.id), {
-          ...updatedData,
-          originalId: categoryId,
-          userId: userId
-        });
+    // Handle public collection updates only if the user has permission
+    try {
+      const publicQ = query(
+        collection(db, 'publicCategories'),
+        where('originalId', '==', categoryId),
+        where('userId', '==', userId)
+      );
+      const publicSnapshot = await getDocs(publicQ);
+      
+      if (updatedData.isPublic) {
+        // Category should be public
+        if (!publicSnapshot.empty) {
+          // Update existing public category with complete data
+          const publicDoc = publicSnapshot.docs[0];
+          await updateDoc(doc(db, 'publicCategories', publicDoc.id), {
+            ...updatedData,
+            originalId: categoryId,
+            userId: userId
+          });
+        } else {
+          // Add to public collection with complete data
+          await addDoc(collection(db, 'publicCategories'), {
+            ...updatedData,
+            originalId: categoryId,
+            userId: userId
+          });
+        }
       } else {
-        // Add to public collection with complete data
-        await addDoc(collection(db, 'publicCategories'), {
-          ...updatedData,
-          originalId: categoryId,
-          userId: userId
-        });
+        // Category should not be public, remove from public collection if it exists
+        if (!publicSnapshot.empty) {
+          const publicDoc = publicSnapshot.docs[0];
+          await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
+        }
       }
-    } else {
-      // Category should not be public, remove from public collection if it exists
-      if (!publicSnapshot.empty) {
-        const publicDoc = publicSnapshot.docs[0];
-        await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
+    } catch (publicError: any) {
+      // Handle permission errors gracefully for public categories
+      if (publicError.code === 'permission-denied') {
+        console.warn('Permission denied for public categories. User\'s private category was updated successfully.');
+        // Don't throw error - the private category update was successful
+      } else {
+        console.error('Error updating public category:', publicError);
+        // Still don't throw - the main update succeeded
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating custom category:', error);
-    throw new Error('Failed to update custom category. Please try again.');
+    
+    // Only throw if the main category update failed
+    if (error.message === 'Category not found') {
+      throw error;
+    } else if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to update this category.');
+    } else {
+      throw new Error('Failed to update custom category. Please try again.');
+    }
   }
 };
 
@@ -545,20 +580,36 @@ export const deleteCustomCategoryFromFirestore = async (userId: string, category
     await deleteDoc(docRef);
     
     // Remove from public collection if it exists there
-    const publicQ = query(
-      collection(db, 'publicCategories'),
-      where('originalId', '==', categoryId),
-      where('userId', '==', userId)
-    );
-    const publicSnapshot = await getDocs(publicQ);
-    
-    if (!publicSnapshot.empty) {
-      const publicDoc = publicSnapshot.docs[0];
-      await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
+    try {
+      const publicQ = query(
+        collection(db, 'publicCategories'),
+        where('originalId', '==', categoryId),
+        where('userId', '==', userId)
+      );
+      const publicSnapshot = await getDocs(publicQ);
+      
+      if (!publicSnapshot.empty) {
+        const publicDoc = publicSnapshot.docs[0];
+        await deleteDoc(doc(db, 'publicCategories', publicDoc.id));
+      }
+    } catch (publicError: any) {
+      // Handle permission errors gracefully for public categories
+      if (publicError.code === 'permission-denied') {
+        console.warn('Permission denied for public categories. Private category was deleted successfully.');
+        // Don't throw error - the private category deletion was successful
+      } else {
+        console.error('Error removing from public categories:', publicError);
+        // Still don't throw - the main category was deleted successfully
+      }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error deleting custom category:', error);
-    throw new Error('Failed to delete custom category. Please try again.');
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to delete this category.');
+    } else {
+      throw new Error('Failed to delete custom category. Please try again.');
+    }
   }
 };
 
@@ -621,8 +672,7 @@ export const subscribeToPublicCategories = (callback: (categories: any[]) => voi
       (error) => {
         if (error.code === 'permission-denied') {
           // This is expected when public categories sharing isn't configured
-          // Silently return empty array without logging
-          console.log('Permission denied for public categories subscription. This is normal if not configured.');
+          // Silently handle without logging as it's normal behavior
           callback([]);
         } else {
           console.error('Error in public categories subscription:', error);

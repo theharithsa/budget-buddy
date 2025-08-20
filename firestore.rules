@@ -6,15 +6,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
-    // Public categories - readable by all authenticated users, writable by any authenticated user
+    // Public categories - readable by all authenticated users, writable by original creator only
     match /publicCategories/{categoryId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && (
-        // Allow creating new public categories
-        resource == null ||
-        // Allow updating only if the user is the original creator
-        resource.data.userId == request.auth.uid
-      );
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
   }
 }

@@ -110,9 +110,10 @@ export function CategoryManager({
       resetForm();
       setIsCreateDialogOpen(false);
       toast.success('Category created successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating category:', error);
-      toast.error('Failed to create category');
+      const errorMessage = error?.message || 'Failed to create category';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -159,9 +160,10 @@ export function CategoryManager({
       setEditingCategory(null);
       setIsCreateDialogOpen(false);
       toast.success('Category updated successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating category:', error);
-      toast.error('Failed to update category');
+      const errorMessage = error?.message || 'Failed to update category';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -171,9 +173,10 @@ export function CategoryManager({
     try {
       await onDeleteCategory(categoryId);
       toast.success('Category deleted');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting category:', error);
-      toast.error('Failed to delete category');
+      const errorMessage = error?.message || 'Failed to delete category';
+      toast.error(errorMessage);
     }
   };
 
@@ -181,9 +184,10 @@ export function CategoryManager({
     try {
       await onAdoptCategory(category);
       toast.success(`Added "${category.name}" to your categories`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adopting category:', error);
-      toast.error('Failed to adopt category');
+      const errorMessage = error?.message || 'Failed to adopt category';
+      toast.error(errorMessage);
     }
   };
 
