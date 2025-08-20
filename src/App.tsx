@@ -25,8 +25,11 @@ function FinanceApp() {
   const {
     expenses,
     budgets,
+    templates,
     customCategories,
     publicCategories,
+    budgetTemplates,
+    publicBudgetTemplates,
     loading: dataLoading,
     addExpense,
     deleteExpense,
@@ -39,6 +42,10 @@ function FinanceApp() {
     updateCustomCategory,
     deleteCustomCategory,
     adoptCategory,
+    addBudgetTemplate,
+    updateBudgetTemplate,
+    deleteBudgetTemplate,
+    adoptBudgetTemplate,
   } = useFirestoreData();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -312,10 +319,16 @@ function FinanceApp() {
           <TabsContent value="budgets">
             <BudgetManager 
               budgets={budgets} 
+              budgetTemplates={budgetTemplates}
+              publicBudgetTemplates={publicBudgetTemplates}
               onUpdateBudgets={handleUpdateBudgets}
               onAddBudget={addBudget}
               onUpdateBudget={updateBudget}
               onDeleteBudget={deleteBudget}
+              onAddBudgetTemplate={addBudgetTemplate}
+              onUpdateBudgetTemplate={updateBudgetTemplate}
+              onDeleteBudgetTemplate={deleteBudgetTemplate}
+              onAdoptBudgetTemplate={adoptBudgetTemplate}
               customCategories={customCategories}
             />
           </TabsContent>

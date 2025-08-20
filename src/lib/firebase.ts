@@ -663,6 +663,7 @@ export const subscribeToPublicCategories = (callback: (categories: any[]) => voi
       (querySnapshot) => {
         try {
           const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          console.log('Successfully loaded public categories:', categories.length);
           callback(categories);
         } catch (error) {
           console.error('Error processing public categories data:', error);
@@ -671,8 +672,8 @@ export const subscribeToPublicCategories = (callback: (categories: any[]) => voi
       },
       (error) => {
         if (error.code === 'permission-denied') {
-          // This is expected when public categories sharing isn't configured
-          // Silently handle without logging as it's normal behavior
+          // Log a more helpful message for public categories permission issues
+          console.warn('Permission denied for public categories subscription. This feature may not be configured or you may need to check Firebase rules.');
           callback([]);
         } else {
           console.error('Error in public categories subscription:', error);
@@ -704,5 +705,253 @@ export const adoptPublicCategory = async (userId: string, publicCategory: any): 
   } catch (error) {
     console.error('Error adopting public category:', error);
     throw new Error('Failed to adopt category. Please try again.');
+  }
+};
+
+// Budget Template functions
+export const addBudgetTemplateToFirestore = async (userId: string, template: any): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, 'users', userId, 'budgetTemplates'), template);
+    
+    // If template is public, also add to global collection
+    if (template.isPublic) {
+      try {
+        await addDoc(collection(db, 'publicBudgetTemplates'), {
+          ...template,
+          originalId: docRef.id,
+          userId: userId
+        });
+      } catch (publicError: any) {
+        // Handle permission errors gracefully for public templates
+        if (publicError.code === 'permission-denied') {
+          console.warn('Permission denied for public budget templates. Private template was created successfully.');
+        } else {
+          console.error('Error adding to public budget templates:', publicError);
+        }
+      }
+    }
+    
+    return docRef.id;
+  } catch (error: any) {
+    console.error('Error adding budget template:', error);
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to create budget templates.');
+    } else {
+      throw new Error('Failed to save budget template. Please try again.');
+    }
+  }
+};
+
+export const updateBudgetTemplateInFirestore = async (userId: string, templateId: string, template: any): Promise<void> => {
+  try {
+    // First, get the current template data
+    const currentDocRef = doc(db, 'users', userId, 'budgetTemplates', templateId);
+    const currentDoc = await getDoc(currentDocRef);
+    
+    if (!currentDoc.exists()) {
+      throw new Error('Budget template not found');
+    }
+    
+    const currentData = currentDoc.data();
+    const updatedData = { ...currentData, ...template };
+    
+    // Update the user's private template first
+    await updateDoc(currentDocRef, template);
+    
+    // Handle public collection updates
+    try {
+      const publicQ = query(
+        collection(db, 'publicBudgetTemplates'),
+        where('originalId', '==', templateId),
+        where('userId', '==', userId)
+      );
+      const publicSnapshot = await getDocs(publicQ);
+      
+      if (updatedData.isPublic) {
+        // Template should be public
+        if (!publicSnapshot.empty) {
+          // Update existing public template
+          const publicDoc = publicSnapshot.docs[0];
+          await updateDoc(doc(db, 'publicBudgetTemplates', publicDoc.id), {
+            ...updatedData,
+            originalId: templateId,
+            userId: userId
+          });
+        } else {
+          // Add to public collection
+          await addDoc(collection(db, 'publicBudgetTemplates'), {
+            ...updatedData,
+            originalId: templateId,
+            userId: userId
+          });
+        }
+      } else {
+        // Template should not be public, remove from public collection if it exists
+        if (!publicSnapshot.empty) {
+          const publicDoc = publicSnapshot.docs[0];
+          await deleteDoc(doc(db, 'publicBudgetTemplates', publicDoc.id));
+        }
+      }
+    } catch (publicError: any) {
+      if (publicError.code === 'permission-denied') {
+        console.warn('Permission denied for public budget templates. User\'s private template was updated successfully.');
+      } else {
+        console.error('Error updating public budget template:', publicError);
+      }
+    }
+  } catch (error: any) {
+    console.error('Error updating budget template:', error);
+    
+    if (error.message === 'Budget template not found') {
+      throw error;
+    } else if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to update this budget template.');
+    } else {
+      throw new Error('Failed to update budget template. Please try again.');
+    }
+  }
+};
+
+export const deleteBudgetTemplateFromFirestore = async (userId: string, templateId: string): Promise<void> => {
+  try {
+    const docRef = doc(db, 'users', userId, 'budgetTemplates', templateId);
+    await deleteDoc(docRef);
+    
+    // Remove from public collection if it exists there
+    try {
+      const publicQ = query(
+        collection(db, 'publicBudgetTemplates'),
+        where('originalId', '==', templateId),
+        where('userId', '==', userId)
+      );
+      const publicSnapshot = await getDocs(publicQ);
+      
+      if (!publicSnapshot.empty) {
+        const publicDoc = publicSnapshot.docs[0];
+        await deleteDoc(doc(db, 'publicBudgetTemplates', publicDoc.id));
+      }
+    } catch (publicError: any) {
+      if (publicError.code === 'permission-denied') {
+        console.warn('Permission denied for public budget templates. Private template was deleted successfully.');
+      } else {
+        console.error('Error removing from public budget templates:', publicError);
+      }
+    }
+  } catch (error: any) {
+    console.error('Error deleting budget template:', error);
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to delete this budget template.');
+    } else {
+      throw new Error('Failed to delete budget template. Please try again.');
+    }
+  }
+};
+
+export const subscribeToBudgetTemplates = (userId: string, callback: (templates: any[]) => void) => {
+  try {
+    if (!userId || !db) {
+      console.error('Invalid userId or database not initialized');
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(collection(db, 'users', userId, 'budgetTemplates'));
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        try {
+          const templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(templates);
+        } catch (error) {
+          console.error('Error processing budget templates data:', error);
+          callback([]);
+        }
+      },
+      (error) => {
+        if (error.code === 'permission-denied') {
+          console.warn('Permission denied for budget templates subscription. User may not be fully authenticated yet.');
+        } else {
+          console.error('Error in budget templates subscription:', error);
+        }
+        callback([]);
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up budget templates subscription:', error);
+    callback([]);
+    return () => {};
+  }
+};
+
+export const subscribeToPublicBudgetTemplates = (callback: (templates: any[]) => void) => {
+  try {
+    if (!db) {
+      console.error('Database not initialized');
+      callback([]);
+      return () => {};
+    }
+
+    const q = query(collection(db, 'publicBudgetTemplates'), orderBy('createdAt', 'desc'));
+    
+    return onSnapshot(q, 
+      (querySnapshot) => {
+        try {
+          const templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          callback(templates);
+        } catch (error) {
+          console.error('Error processing public budget templates data:', error);
+          callback([]);
+        }
+      },
+      (error) => {
+        if (error.code === 'permission-denied') {
+          // This is expected when public budget templates sharing isn't configured
+          callback([]);
+        } else {
+          console.error('Error in public budget templates subscription:', error);
+          callback([]);
+        }
+      }
+    );
+  } catch (error) {
+    console.error('Error setting up public budget templates subscription:', error);
+    callback([]);
+    return () => {};
+  }
+};
+
+export const adoptPublicBudgetTemplate = async (userId: string, publicTemplate: any): Promise<string> => {
+  try {
+    // Add to user's budget templates
+    const templateData = {
+      name: publicTemplate.name,
+      description: publicTemplate.description,
+      budgets: publicTemplate.budgets,
+      totalBudget: publicTemplate.totalBudget,
+      incomeLevel: publicTemplate.incomeLevel,
+      tags: publicTemplate.tags,
+      isPublic: false, // User's copy is private by default
+      createdAt: new Date().toISOString(),
+      createdBy: `Adopted from ${publicTemplate.createdBy}`
+    };
+    
+    const docRef = await addDoc(collection(db, 'users', userId, 'budgetTemplates'), templateData);
+    
+    // Increment usage count in public template
+    try {
+      const publicDocRef = doc(db, 'publicBudgetTemplates', publicTemplate.id);
+      await updateDoc(publicDocRef, {
+        usageCount: (publicTemplate.usageCount || 0) + 1
+      });
+    } catch (error) {
+      console.warn('Could not update usage count for public template');
+    }
+    
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adopting public budget template:', error);
+    throw new Error('Failed to adopt budget template. Please try again.');
   }
 };

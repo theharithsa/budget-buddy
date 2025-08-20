@@ -6,6 +6,8 @@ import {
   subscribeToTemplates,
   subscribeToCustomCategories,
   subscribeToPublicCategories,
+  subscribeToBudgetTemplates,
+  subscribeToPublicBudgetTemplates,
   addExpenseToFirestore,
   updateExpenseInFirestore,
   deleteExpenseFromFirestore,
@@ -18,8 +20,12 @@ import {
   updateCustomCategoryInFirestore,
   deleteCustomCategoryFromFirestore,
   adoptPublicCategory,
+  addBudgetTemplateToFirestore,
+  updateBudgetTemplateInFirestore,
+  deleteBudgetTemplateFromFirestore,
+  adoptPublicBudgetTemplate,
 } from '@/lib/firebase';
-import { type Expense, type Budget, type RecurringTemplate, type CustomCategory } from '@/lib/types';
+import { type Expense, type Budget, type RecurringTemplate, type CustomCategory, type BudgetTemplate } from '@/lib/types';
 
 export function useFirestoreData() {
   const { user } = useAuth();
@@ -28,6 +34,8 @@ export function useFirestoreData() {
   const [templates, setTemplates] = useState<RecurringTemplate[]>([]);
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>([]);
   const [publicCategories, setPublicCategories] = useState<CustomCategory[]>([]);
+  const [budgetTemplates, setBudgetTemplates] = useState<BudgetTemplate[]>([]);
+  const [publicBudgetTemplates, setPublicBudgetTemplates] = useState<BudgetTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,6 +46,8 @@ export function useFirestoreData() {
       setTemplates([]);
       setCustomCategories([]);
       setPublicCategories([]);
+      setBudgetTemplates([]);
+      setPublicBudgetTemplates([]);
       setLoading(false);
       return;
     }
@@ -107,6 +117,28 @@ export function useFirestoreData() {
         });
         if (unsubscribePublicCategories) {
           unsubscribeFunctions.push(unsubscribePublicCategories);
+        }
+
+        // Subscribe to budget templates
+        const unsubscribeBudgetTemplates = subscribeToBudgetTemplates(user.uid, (templateData) => {
+          if (!isCleanedUp) {
+            console.log('Received budget templates data:', templateData.length, 'budget templates');
+            setBudgetTemplates(templateData);
+          }
+        });
+        if (unsubscribeBudgetTemplates) {
+          unsubscribeFunctions.push(unsubscribeBudgetTemplates);
+        }
+
+        // Subscribe to public budget templates
+        const unsubscribePublicBudgetTemplates = subscribeToPublicBudgetTemplates((templateData) => {
+          if (!isCleanedUp) {
+            console.log('Received public budget templates data:', templateData.length, 'public budget templates');
+            setPublicBudgetTemplates(templateData);
+          }
+        });
+        if (unsubscribePublicBudgetTemplates) {
+          unsubscribeFunctions.push(unsubscribePublicBudgetTemplates);
         }
 
         if (!isCleanedUp) {
@@ -236,12 +268,43 @@ export function useFirestoreData() {
     await adoptPublicCategory(user.uid, publicCategory);
   };
 
+  // Budget Template operations
+  const addBudgetTemplate = async (templateData: Omit<BudgetTemplate, 'id' | 'createdAt' | 'userId'>) => {
+    if (!user) throw new Error('User not authenticated');
+    
+    const template = {
+      ...templateData,
+      userId: user.uid,
+      createdAt: new Date().toISOString(),
+      createdBy: user.displayName || user.email || 'Anonymous'
+    };
+    
+    await addBudgetTemplateToFirestore(user.uid, template);
+  };
+
+  const updateBudgetTemplate = async (templateId: string, templateData: Partial<BudgetTemplate>) => {
+    if (!user) throw new Error('User not authenticated');
+    await updateBudgetTemplateInFirestore(user.uid, templateId, templateData);
+  };
+
+  const deleteBudgetTemplate = async (templateId: string) => {
+    if (!user) throw new Error('User not authenticated');
+    await deleteBudgetTemplateFromFirestore(user.uid, templateId);
+  };
+
+  const adoptBudgetTemplate = async (publicTemplate: BudgetTemplate) => {
+    if (!user) throw new Error('User not authenticated');
+    await adoptPublicBudgetTemplate(user.uid, publicTemplate);
+  };
+
   return {
     expenses,
     budgets,
     templates,
     customCategories,
     publicCategories,
+    budgetTemplates,
+    publicBudgetTemplates,
     loading,
     addExpense,
     updateExpense,
@@ -255,5 +318,9 @@ export function useFirestoreData() {
     updateCustomCategory,
     deleteCustomCategory,
     adoptCategory,
+    addBudgetTemplate,
+    updateBudgetTemplate,
+    deleteBudgetTemplate,
+    adoptBudgetTemplate,
   };
 }

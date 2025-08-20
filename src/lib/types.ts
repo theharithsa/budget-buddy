@@ -44,6 +44,25 @@ export interface RecurringTemplate {
   createdAt: string;
 }
 
+export interface BudgetTemplate {
+  id: string;
+  name: string;
+  description: string;
+  budgets: Array<{
+    category: string;
+    limit: number;
+    percentage?: number;
+  }>;
+  totalBudget: number;
+  incomeLevel: 'low' | 'medium' | 'high' | 'custom';
+  userId: string;
+  isPublic: boolean;
+  createdAt: string;
+  createdBy: string;
+  tags: string[];
+  usageCount?: number;
+}
+
 export const DEFAULT_CATEGORIES: Category[] = [
   { name: 'Food & Dining', color: 'oklch(0.65 0.2 40)', icon: '🍽️' },
   { name: 'Transportation', color: 'oklch(0.6 0.25 220)', icon: '🚗' },
