@@ -224,7 +224,7 @@ export function CategoryManager({
         <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
-              <Plus size={16} className="mr-2" />
+              <Plus size={16} weight="regular" className="mr-2" />
               Create Category
             </Button>
           </DialogTrigger>
@@ -381,7 +381,7 @@ export function CategoryManager({
                             <div className="flex items-center gap-2 mt-1">
                               {category.isPublic && (
                                 <Badge variant="outline" className="text-xs">
-                                  <Globe size={10} className="mr-1" />
+                                  <Globe size={12} weight="regular" className="mr-1" />
                                   Public
                                 </Badge>
                               )}
@@ -391,20 +391,20 @@ export function CategoryManager({
                             <Button
                               size="icon"
                               variant="ghost"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted/50"
                               onClick={() => handleEditCategory(category)}
                               aria-label="Edit category"
                             >
-                              <Edit3 size={16} />
+                              <Edit3 size={16} weight="regular" />
                             </Button>
                             <Button
                               size="icon"
                               variant="ghost"
-                              className="h-8 w-8 text-destructive hover:text-destructive/80"
+                              className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
                               onClick={() => handleDeleteCategory(category.id)}
                               aria-label="Delete category"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={16} weight="regular" />
                             </Button>
                           </div>
                         </div>
@@ -428,7 +428,7 @@ export function CategoryManager({
                   <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
                     <DialogTrigger asChild>
                       <Button>
-                        <Plus size={16} className="mr-2" />
+                        <Plus size={16} weight="regular" className="mr-2" />
                         Create Your First Category
                       </Button>
                     </DialogTrigger>
@@ -442,7 +442,7 @@ export function CategoryManager({
         <TabsContent value="community" className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <Search size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search community categories..."
                 value={searchTerm}
@@ -477,7 +477,7 @@ export function CategoryManager({
                       className="w-full"
                       onClick={() => handleAdoptCategory(category)}
                     >
-                      <Download size={12} className="mr-1" />
+                      <Download size={14} weight="regular" className="mr-1" />
                       Add to My Categories
                     </Button>
                   </CardContent>

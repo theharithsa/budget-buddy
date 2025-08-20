@@ -20,8 +20,8 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
-            <Eye size={14} className="mr-1" />
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
+            <Eye size={16} weight="regular" className="mr-1" />
             View Receipt
           </Button>
         </DialogTrigger>
@@ -77,11 +77,11 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-destructive hover:text-destructive/80"
+            className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
             onClick={() => onDelete(expense.id)}
             aria-label="Delete expense"
           >
-            <Trash2 size={16} />
+            <Trash2 size={16} weight="regular" />
           </Button>
         </div>
       </CardHeader>
@@ -89,16 +89,16 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <Tag size={14} />
+              <Tag size={16} weight="regular" />
               {expense.category}
             </div>
             <div className="flex items-center gap-1">
-              <Calendar size={14} />
+              <Calendar size={16} weight="regular" />
               {formatDate(expense.date)}
             </div>
             {expense.receiptUrl && (
               <div className="flex items-center gap-1">
-                <Receipt size={14} />
+                <Receipt size={16} weight="regular" />
                 Receipt
               </div>
             )}

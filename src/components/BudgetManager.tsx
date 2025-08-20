@@ -106,7 +106,7 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Wallet size={24} className="text-primary" />
+          <Wallet size={24} weight="regular" className="text-primary" />
           <h2 className="text-2xl font-bold">Budget Overview</h2>
         </div>
         <div className="flex items-center gap-2">
@@ -115,13 +115,13 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
             className="gap-2"
             variant="outline"
           >
-            <Calculator size={16} />
+            <Calculator size={16} weight="regular" />
             Quick Setup
           </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2">
-                <Plus size={16} />
+                <Plus size={16} weight="regular" />
                 Add Budget
               </Button>
             </DialogTrigger>
@@ -180,7 +180,7 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
         <Card>
           <CardContent className="pt-6">
             <div className="text-center py-8">
-              <Wallet size={48} className="mx-auto text-muted-foreground mb-4" />
+              <Wallet size={48} weight="regular" className="mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No budgets set</h3>
               <p className="text-muted-foreground mb-4">
                 Set spending limits for your categories to better track your finances.
@@ -191,7 +191,7 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
                   onAddBudget={onAddBudget}
                 />
                 <Button onClick={() => setOpen(true)} variant="outline" className="gap-2">
-                  <Plus size={16} />
+                  <Plus size={16} weight="regular" />
                   Manual Setup
                 </Button>
               </div>
@@ -229,18 +229,18 @@ export function BudgetManager({ budgets, onUpdateBudgets, onAddBudget, onUpdateB
                       {(isOverBudget || isNearLimit) && (
                         <AlertTriangle 
                           size={20} 
+                          weight="regular"
                           className={isOverBudget ? 'text-destructive' : 'text-yellow-500'} 
                         />
                       )}
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
                         onClick={() => handleDeleteBudget(budget.id)}
-                        className="text-muted-foreground hover:text-destructive transition-colors"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                         aria-label="Remove budget"
                       >
-                        Remove
-                        Remove
+                        <Trash2 size={16} weight="regular" />
                       </Button>
                     </div>
                   </div>

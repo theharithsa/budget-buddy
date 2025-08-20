@@ -133,7 +133,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
-          <Plus size={16} />
+          <Plus size={16} weight="regular" />
           Add Expense
         </Button>
       </DialogTrigger>
@@ -154,7 +154,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                   size="sm"
                   onClick={() => setShowTemplates(true)}
                 >
-                  <Repeat size={14} className="mr-1" />
+                  <Repeat size={14} weight="regular" className="mr-1" />
                   View All
                 </Button>
               </div>
@@ -290,7 +290,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <Upload size={24} className="text-muted-foreground" />
+                    <Upload size={24} weight="regular" className="text-muted-foreground" />
                     <div className="text-sm">
                       <span className="font-medium">Click to upload receipt</span>
                       <p className="text-xs text-muted-foreground">PNG, JPG, WebP or PDF (max 5MB)</p>
@@ -303,7 +303,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                 <CardContent className="p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FileImage size={20} className="text-muted-foreground" />
+                      <FileImage size={20} weight="regular" className="text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">{receiptFile.name}</p>
                         <p className="text-xs text-muted-foreground">
@@ -317,7 +317,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                       size="sm"
                       onClick={handleRemoveFile}
                     >
-                      <X size={16} />
+                      <X size={16} weight="regular" />
                     </Button>
                   </div>
                 </CardContent>

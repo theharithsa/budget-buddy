@@ -188,27 +188,27 @@ function FinanceApp() {
           {/* Desktop Layout */}
           <TabsList className="hidden md:grid grid-cols-6 w-full max-w-4xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
-              <Receipt size={16} />
+              <Receipt size={16} weight="regular" />
               Expenses
             </TabsTrigger>
             <TabsTrigger value="budgets" className="flex items-center gap-2">
-              <Wallet size={16} />
+              <Wallet size={16} weight="regular" />
               Budgets
             </TabsTrigger>
             <TabsTrigger value="templates" className="flex items-center gap-2">
-              <Repeat size={16} />
+              <Repeat size={16} weight="regular" />
               Templates
             </TabsTrigger>
             <TabsTrigger value="categories" className="flex items-center gap-2">
-              <Palette size={16} />
+              <Palette size={16} weight="regular" />
               Categories
             </TabsTrigger>
             <TabsTrigger value="analyzer" className="flex items-center gap-2">
-              <Brain size={16} />
+              <Brain size={16} weight="regular" />
               AI Analyzer
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
-              <TrendingUp size={16} />
+              <TrendingUp size={16} weight="regular" />
               Trends
             </TabsTrigger>
           </TabsList>
@@ -229,7 +229,7 @@ function FinanceApp() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative flex-1 max-w-sm">
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                  <Search size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search expenses..."
                     value={searchTerm}
@@ -257,7 +257,7 @@ function FinanceApp() {
 
                 <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
                   <SelectTrigger className="w-40">
-                    <SortDesc size={16} />
+                    <SortDesc size={16} weight="regular" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -280,7 +280,7 @@ function FinanceApp() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center py-8">
-                    <Receipt size={48} className="mx-auto text-muted-foreground mb-4" />
+                    <Receipt size={48} weight="regular" className="mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold mb-2">
                       {expenses.length === 0 ? 'No expenses yet' : 'No expenses match your filters'}
                     </h3>
@@ -361,7 +361,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Receipt size={20} />
+            <Receipt size={20} weight="regular" />
             <span className="text-xs font-medium">Expenses</span>
           </button>
           
@@ -373,7 +373,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Wallet size={20} />
+            <Wallet size={20} weight="regular" />
             <span className="text-xs font-medium">Budgets</span>
           </button>
           
@@ -385,7 +385,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Repeat size={20} />
+            <Repeat size={20} weight="regular" />
             <span className="text-xs font-medium">Templates</span>
           </button>
           
@@ -397,7 +397,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Palette size={20} />
+            <Palette size={20} weight="regular" />
             <span className="text-xs font-medium">Categories</span>
           </button>
           
@@ -409,7 +409,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Brain size={20} />
+            <Brain size={20} weight="regular" />
             <span className="text-xs font-medium">AI Analyzer</span>
           </button>
           
@@ -421,7 +421,7 @@ function FinanceApp() {
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <TrendingUp size={20} />
+            <TrendingUp size={20} weight="regular" />
             <span className="text-xs font-medium">Trends</span>
           </button>
         </div>

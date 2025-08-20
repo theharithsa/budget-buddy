@@ -110,7 +110,7 @@ export function AppHeader() {
                 onClick={testFirebaseConnection}
                 className="cursor-pointer"
               >
-                <Bug className="mr-2 h-4 w-4" />
+                <Bug weight="regular" className="mr-2 h-4 w-4" />
                 Test Firebase
               </DropdownMenuItem>
               <DropdownMenuItem 
@@ -118,7 +118,7 @@ export function AppHeader() {
                 disabled={isLoggingOut}
                 className="cursor-pointer"
               >
-                <SignOut className="mr-2 h-4 w-4" />
+                <SignOut weight="regular" className="mr-2 h-4 w-4" />
                 {isLoggingOut ? 'Signing out...' : 'Sign out'}
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -204,7 +204,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         <Dialog open={isCreateDialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
-              <Plus size={16} className="mr-2" />
+              <Plus size={16} weight="regular" className="mr-2" />
               Create Template
             </Button>
           </DialogTrigger>
@@ -325,7 +325,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                       <CardTitle className="text-base">{template.name}</CardTitle>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={getFrequencyBadgeVariant(template.frequency)}>
-                          <Clock size={12} className="mr-1" />
+                          <Clock size={12} weight="regular" className="mr-1" />
                           {template.frequency}
                         </Badge>
                       </div>
@@ -336,20 +336,20 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted/50"
                             onClick={() => handleEditTemplate(template)}
                             aria-label="Edit template"
                           >
-                            <Edit3 size={16} />
+                            <Edit3 size={16} weight="regular" />
                           </Button>
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-8 w-8 text-destructive hover:text-destructive/80"
+                            className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
                             onClick={() => handleDeleteTemplate(template.id)}
                             aria-label="Delete template"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={16} weight="regular" />
                           </Button>
                         </>
                       )}
@@ -370,7 +370,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                       className="w-full"
                       onClick={() => handleUseTemplate(template)}
                     >
-                      <Receipt size={14} className="mr-2" />
+                      <Receipt size={14} weight="regular" className="mr-2" />
                       Add Expense
                     </Button>
                   </div>
@@ -399,7 +399,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                 <Card key={template.id} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Repeat size={14} className="text-muted-foreground" />
+                      <Repeat size={14} weight="regular" className="text-muted-foreground" />
                       {template.name}
                     </CardTitle>
                   </CardHeader>
@@ -415,7 +415,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                         className="w-full"
                         onClick={() => handleUseTemplate(template)}
                       >
-                        <Plus size={12} className="mr-1" />
+                        <Plus size={12} weight="regular" className="mr-1" />
                         Add Expense
                       </Button>
                     </div>
@@ -436,7 +436,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                   <Card key={template.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm flex items-center gap-2">
-                        <Repeat size={14} className="text-orange-500" />
+                        <Repeat size={14} weight="regular" className="text-orange-500" />
                         {template.name}
                       </CardTitle>
                     </CardHeader>
@@ -452,7 +452,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                           className="w-full"
                           onClick={() => handleUseTemplate(template)}
                         >
-                          <Plus size={12} className="mr-1" />
+                          <Plus size={12} weight="regular" className="mr-1" />
                           Add Expense
                         </Button>
                       </div>
@@ -474,7 +474,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                   <Card key={template.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm flex items-center gap-2">
-                        <Repeat size={14} className="text-purple-500" />
+                        <Repeat size={14} weight="regular" className="text-purple-500" />
                         {template.name}
                       </CardTitle>
                     </CardHeader>
@@ -490,7 +490,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                           className="w-full"
                           onClick={() => handleUseTemplate(template)}
                         >
-                          <Plus size={12} className="mr-1" />
+                          <Plus size={12} weight="regular" className="mr-1" />
                           Add Expense
                         </Button>
                       </div>
@@ -506,7 +506,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         <Card>
           <CardContent className="pt-6">
             <div className="text-center py-8">
-              <Repeat size={48} className="mx-auto text-muted-foreground mb-4" />
+              <Repeat size={48} weight="regular" className="mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No templates yet</h3>
               <p className="text-muted-foreground mb-4">
                 Create templates for recurring expenses like bills and subscriptions to log them quickly.
