@@ -16,7 +16,7 @@ import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
-import { Receipt, Wallet, TrendingUp, Search, SortDesc, Repeat, Palette, Brain } from '@phosphor-icons/react';
+import { Receipt, Wallet, TrendingUp, MagnifyingGlass, List, Repeat, Palette, Brain } from '@phosphor-icons/react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -236,7 +236,7 @@ function FinanceApp() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative flex-1 max-w-sm">
-                  <Search size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                  <MagnifyingGlass size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search expenses..."
                     value={searchTerm}
@@ -264,7 +264,7 @@ function FinanceApp() {
 
                 <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
                   <SelectTrigger className="w-40">
-                    <SortDesc size={16} weight="regular" />
+                    <List size={16} weight="regular" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

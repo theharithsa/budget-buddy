@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Brain, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, RefreshCw, BarChart3 } from '@phosphor-icons/react';
+import { Brain, TrendingUp, TrendingDown, Warning, CheckCircle, Circle, Chart } from '@phosphor-icons/react';
 import { type Expense, type Budget, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ApiKeyManager } from '@/components/ApiKeyManager';
@@ -491,7 +491,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
       case 'healthy':
         return <CheckCircle className="text-green-600" size={16} />;
       case 'warning':
-        return <AlertTriangle className="text-yellow-600" size={16} />;
+        return <Warning className="text-yellow-600" size={16} />;
       case 'overspent':
         return <TrendingDown className="text-red-600" size={16} />;
       default:
@@ -524,7 +524,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
               variant="outline"
               className="flex items-center gap-2"
             >
-              <BarChart3 size={16} />
+              <Chart size={16} />
               Try Demo
             </Button>
           )}
@@ -534,9 +534,9 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             className="flex items-center gap-2"
           >
             {loading ? (
-              <RefreshCw className="animate-spin" size={16} />
+              <Circle className="animate-spin" size={16} />
             ) : (
-              <BarChart3 size={16} />
+              <Chart size={16} />
             )}
             {loading ? 'Analyzing...' : (expenses.length > 0 ? 'Analyze My Data' : 'Start Analysis')}
           </Button>
@@ -567,7 +567,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
           </Card>
           
           <Alert>
-            <AlertTriangle size={16} />
+            <Warning size={16} />
             <AlertDescription>
               <strong>AI Analysis Options:</strong>
               <br />

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Key, Eye, EyeSlash, CheckCircle, AlertTriangle, Info } from '@phosphor-icons/react';
+import { Key, Eye, EyeSlash, CheckCircle, Warning, Info } from '@phosphor-icons/react';
 import { useKV } from '@github/spark/hooks';
 import { toast } from 'sonner';
 
@@ -122,7 +122,7 @@ export function ApiKeyManager({ onApiKeyChange }: ApiKeyManagerProps) {
                 </>
               ) : (
                 <Badge variant="secondary" className="flex items-center gap-1">
-                  <AlertTriangle size={12} />
+                  <Warning size={12} />
                   Not Configured
                 </Badge>
               )}
@@ -205,7 +205,7 @@ export function ApiKeyManager({ onApiKeyChange }: ApiKeyManagerProps) {
 
         {!hasApiKey && (
           <Alert>
-            <AlertTriangle size={16} />
+            <Warning size={16} />
             <AlertDescription>
               Without an OpenAI API key, the analyzer will use built-in algorithms and demo data. 
               This still provides valuable insights, but OpenAI GPT-4 offers more sophisticated analysis.

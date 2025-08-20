@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2, Calendar, Tag, Receipt, Eye } from '@phosphor-icons/react';
+import { TrashSimple, Calendar, Tag as TagIcon, Receipt, Eye } from '@phosphor-icons/react';
 import { type Expense, DEFAULT_CATEGORIES, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {
@@ -81,7 +81,7 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
             onClick={() => onDelete(expense.id)}
             aria-label="Delete expense"
           >
-            <Trash2 size={16} weight="regular" />
+            <TrashSimple size={16} weight="regular" />
           </Button>
         </div>
       </CardHeader>
@@ -89,7 +89,7 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <Tag size={16} weight="regular" />
+              <TagIcon size={16} weight="regular" />
               {expense.category}
             </div>
             <div className="flex items-center gap-1">

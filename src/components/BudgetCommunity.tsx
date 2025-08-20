@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Globe, User, Edit3, Trash2, Download, Search, Tag, TrendingUp, Wallet } from '@phosphor-icons/react';
+import { Plus, Globe, User, PencilSimple, TrashSimple, Download, MagnifyingGlass, Tag, TrendingUp, Wallet } from '@phosphor-icons/react';
 import { type BudgetTemplate, type Budget, type CustomCategory, formatCurrency, getAllCategories } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -367,7 +367,7 @@ export function BudgetCommunity({
                         variant="ghost"
                         onClick={() => removeBudgetRow(index)}
                       >
-                        <Trash2 size={14} />
+                        <TrashSimple size={14} />
                       </Button>
                     </div>
                   ))}
@@ -454,7 +454,7 @@ export function BudgetCommunity({
                           className="h-8 w-8"
                           onClick={() => handleEditTemplate(template)}
                         >
-                          <Edit3 size={16} weight="regular" />
+                          <PencilSimple size={16} weight="regular" />
                         </Button>
                         <Button
                           size="icon"
@@ -462,7 +462,7 @@ export function BudgetCommunity({
                           className="h-8 w-8 text-destructive"
                           onClick={() => handleDeleteTemplate(template.id)}
                         >
-                          <Trash2 size={16} weight="regular" />
+                          <TrashSimple size={16} weight="regular" />
                         </Button>
                       </div>
                     </div>
@@ -516,7 +516,7 @@ export function BudgetCommunity({
         <TabsContent value="community" className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <MagnifyingGlass size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search templates..."
                 value={searchTerm}

@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, AlertTriangle, Wallet, Calculator, Trash2, BookOpen, Globe } from '@phosphor-icons/react';
+import { Plus, Warning, Wallet, Calculator, TrashSimple, BookOpen, Globe } from '@phosphor-icons/react';
 import { DEFAULT_CATEGORIES, getAllCategories, type Budget, type CustomCategory, type BudgetTemplate, formatCurrency } from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { BudgetCommunity } from '@/components/BudgetCommunity';
@@ -285,7 +285,7 @@ export function BudgetManager({
                         </div>
                         <div className="flex items-center gap-2">
                           {(isOverBudget || isNearLimit) && (
-                            <AlertTriangle 
+                            <Warning 
                               size={20} 
                               weight="regular"
                               className={isOverBudget ? 'text-destructive' : 'text-yellow-500'} 
@@ -298,7 +298,7 @@ export function BudgetManager({
                             className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                             aria-label="Remove budget"
                           >
-                            <Trash2 size={16} weight="regular" />
+                            <TrashSimple size={16} weight="regular" />
                           </Button>
                         </div>
                       </div>

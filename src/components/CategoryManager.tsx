@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Palette, Globe, User, Edit3, Trash2, Download, Search } from '@phosphor-icons/react';
+import { Plus, Palette, Globe, User, PencilSimple, TrashSimple, Download, MagnifyingGlass } from '@phosphor-icons/react';
 import { type CustomCategory, DEFAULT_CATEGORIES } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -395,7 +395,7 @@ export function CategoryManager({
                               onClick={() => handleEditCategory(category)}
                               aria-label="Edit category"
                             >
-                              <Edit3 size={16} weight="regular" />
+                              <PencilSimple size={16} weight="regular" />
                             </Button>
                             <Button
                               size="icon"
@@ -404,7 +404,7 @@ export function CategoryManager({
                               onClick={() => handleDeleteCategory(category.id)}
                               aria-label="Delete category"
                             >
-                              <Trash2 size={16} weight="regular" />
+                              <TrashSimple size={16} weight="regular" />
                             </Button>
                           </div>
                         </div>
@@ -442,7 +442,7 @@ export function CategoryManager({
         <TabsContent value="community" className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <MagnifyingGlass size={16} weight="regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search community categories..."
                 value={searchTerm}

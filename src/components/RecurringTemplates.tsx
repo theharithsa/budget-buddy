@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Receipt, Repeat, Trash2, Edit3, Clock } from '@phosphor-icons/react';
+import { Plus, Receipt, Repeat, TrashSimple, PencilSimple, Clock } from '@phosphor-icons/react';
 import { type RecurringTemplate, type Expense, type CustomCategory, DEFAULT_CATEGORIES, getAllCategories, DEFAULT_RECURRING_TEMPLATES, formatCurrency } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeToTemplates } from '@/lib/firebase';
@@ -340,7 +340,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                             onClick={() => handleEditTemplate(template)}
                             aria-label="Edit template"
                           >
-                            <Edit3 size={16} weight="regular" />
+                            <PencilSimple size={16} weight="regular" />
                           </Button>
                           <Button
                             size="icon"
@@ -349,7 +349,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
                             onClick={() => handleDeleteTemplate(template.id)}
                             aria-label="Delete template"
                           >
-                            <Trash2 size={16} weight="regular" />
+                            <TrashSimple size={16} weight="regular" />
                           </Button>
                         </>
                       )}
