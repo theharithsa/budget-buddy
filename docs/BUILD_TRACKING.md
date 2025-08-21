@@ -1,7 +1,7 @@
-# 📊 Dynatrace Build & Deployment Tracking - Complete Guide
+# 📊 Dynatrace Pipeline Tracking - Complete Guide
 
 ## 🎯 Overview
-FinBuddy now includes comprehensive build and deployment event tracking that automatically sends detailed information to Dynatrace every time a build or deployment completes (success or failure).
+FinBuddy uses a comprehensive **single-event pipeline tracking** system that captures both build and deployment information in one Dynatrace event. No separate workflows or multiple API calls - just one complete pipeline event per run.
 
 ## 🔧 Environment Variables Configuration
 
@@ -16,7 +16,7 @@ DYNATRACE_API_TOKEN=dt0c01.YOUR_TOKEN_HERE
 # Custom events endpoint (optional - has sensible default)
 DYNATRACE_ENDPOINT=https://bos01241.live.dynatrace.com/platform/ingest/custom/events/finbuddy
 
-# Azure deployment configuration
+# Azure deployment configuration (optional)
 AZURE_WEBAPP_NAME=your-webapp-name
 AZURE_RESOURCE_GROUP=your-resource-group
 ```
@@ -32,28 +32,40 @@ export AZURE_RESOURCE_GROUP="your-resource-group"
 # Tokens are already in your .env file
 ```
 
-## 📦 Build Event Payload Fields (22 Total)
+## 📦 Comprehensive Pipeline Event (25+ Fields)
 
-### Complete Build JSON Payload Example:
+### Complete Pipeline JSON Payload Example:
 ```json
 {
   "source": "finbuddy",
-  "event.id": 1755749066087,
-  "event.type": "build",
-  "build.status": "success",
-  "build.duration": 15542,
-  "build.timestamp": "2025-08-21T04:14:34.555Z",
+  "event.id": 1755751470416,
+  "event.type": "pipeline",
+  "pipeline.timestamp": "2025-08-21T04:44:30.416Z",
+  "pipeline.status": "success",
   "project.name": "finbuddy",
   "project.version": "1.0.0",
-  "git.commit": "fea314e4a1b2c3d4e5f6789abcdef",
-  "git.branch": "main",
-  "git.author": "John Developer",
-  "git.message": "Add build tracking feature",
   "environment": "development",
+  "git.commit": "03295bd9",
+  "git.branch": "main",
+  "git.author": "Harithsa, Vishruth",
+  "git.message": "Add Azure deployment tracking with Dynatrace integration",
+  "build.status": "success",
+  "build.duration": 17310,
+  "build.output": "✓ Build completed successfully",
+  "artifacts.count": 15,
+  "artifacts.total_size": 2048576,
+  "deployment.status": "success",
+  "deployment.duration": 45230,
+  "deployment.url": "https://finbuddy-app.azurewebsites.net",
+  "azure.webapp_name": "finbuddy-app",
+  "azure.resource_group": "finbuddy-rg",
+  "azure.subscription": "12345678-1234-1234-1234-123456789abc",
+  "azure.location": "East US",
   "platform": "win32",
-  "node.version": "v18.17.0",
-  "artifacts.count": 2,
-  "artifacts.total_size": 810,
+  "node.version": "v22.14.0",
+  "ci.pipeline": "github-actions"
+}
+```
   "build.output": "vite v6.3.5 building for production...\n✓ 2362 modules transformed...",
   "artifacts": [
     {
@@ -173,56 +185,45 @@ export AZURE_RESOURCE_GROUP="your-resource-group"
 
 ## 🚀 Usage
 
-### Local Development:
+### Single Command Pipeline:
 ```bash
 # Test connection
 npm run test:dynatrace
 
-# Build with tracking
+# Complete pipeline (build + deploy + tracking) - ONE EVENT
+npm run pipeline
+
+# Legacy separate build tracking (still available)
 npm run build:tracked
 
-# Deploy to Azure with tracking
-npm run deploy:azure
-
-# Build and deploy with tracking
-npm run deploy:tracked
-
-# Build and serve locally with tracking
+# Build and serve locally
 npm run serve:tracked
 ```
 
-### Example Build Output:
+### Example Pipeline Output:
 ```
-🚀 Starting build for finbuddy v1.0.0
-📋 Build ID: 1755749066087
-🌿 Branch: main
-📝 Commit: fea314e4
+🚀 Pipeline script loaded, starting main...
+🔄 Pipeline tracker starting...
+🚀 Starting pipeline for finbuddy v1.0.0
+📋 Pipeline ID: 1755751452257
+📦 Starting build phase...
+🔨 Starting build process...
 ✅ Build completed successfully
-✅ Build event sent to Dynatrace successfully
-
-📊 Build Summary:
-   Status: ✅ SUCCESS
-   Duration: 15542ms
-   Artifacts: 2 files
-   Total Size: 0.79 KB
-```
-
-### Example Deployment Output:
-```
-🚀 Starting Azure deployment for finbuddy v1.0.0
-📋 Deployment ID: 1755749088432
-🌿 Branch: main
-📝 Commit: fea314e4
-🔄 Deploying to Azure App Service...
+🌿 Current branch: main
+🚀 Starting deployment phase...
 ✅ Deployment completed successfully
 🌐 App URL: https://finbuddy-app.azurewebsites.net
-✅ Deployment event sent to Dynatrace successfully
+📡 Sending event to Dynatrace...
+✅ Pipeline event sent to Dynatrace successfully!
 
-📊 Deployment Summary:
-   Status: ✅ SUCCESS
-   Duration: 45230ms
-   Target: Azure App Service
-   Environment: production
+📊 Pipeline Summary:
+   Build Status: ✅ SUCCESS
+   Build Duration: 17310ms
+   Deployment Status: ✅ SUCCESS
+   Deployment Duration: 45230ms
+   Total Duration: 62540ms
+   Dynatrace Event: ✅ SENT
+   🌐 App URL: https://finbuddy-app.azurewebsites.net
 ```
 
 ## 🔐 GitHub Actions Production Setup
@@ -261,60 +262,60 @@ git push origin main
 
 ### Useful Queries:
 ```dql
-// All build and deployment events
-fetch events | filter source == "finbuddy"
+// All pipeline events
+fetch events | filter source == "finbuddy" and event.type == "pipeline"
 
-// Failed builds only
-fetch events | filter source == "finbuddy" and build.status == "failed"
+// Failed pipelines (build or deployment failures)
+fetch events | filter source == "finbuddy" and pipeline.status == "failed"
 
-// Failed deployments only
-fetch events | filter source == "finbuddy" and deployment.status == "failed"
+// Successful deployments only
+fetch events | filter source == "finbuddy" and deployment.status == "success"
 
 // Build duration trends
-fetch events | filter source == "finbuddy" and event.type == "build"
+fetch events | filter source == "finbuddy" and build.status == "success"
 | summarize avg(build.duration) by bin(timestamp, 1h)
 
 // Deployment duration trends
-fetch events | filter source == "finbuddy" and event.type == "deployment"
+fetch events | filter source == "finbuddy" and deployment.status == "success"
 | summarize avg(deployment.duration) by bin(timestamp, 1h)
 
-// Deployment success rate
-fetch events | filter source == "finbuddy" and event.type == "deployment"
-| summarize success_rate = countIf(deployment.status == "success") * 100.0 / count() by bin(timestamp, 1d)
+// Pipeline success rate
+fetch events | filter source == "finbuddy"
+| summarize success_rate = countIf(pipeline.status == "success") * 100.0 / count() by bin(timestamp, 1d)
 ```
 
 ## 🛠️ Scripts Created
 
 ### Package.json Scripts:
 - `test:dynatrace` - Test Dynatrace connection
-- `build:tracked` - Build with tracking
-- `serve:tracked` - Build and serve with tracking
-- `deploy:azure` - Deploy to Azure with tracking
-- `deploy:tracked` - Build and deploy with tracking
+- `pipeline` - **Complete build + deploy + tracking in ONE event**
+- `build:tracked` - Legacy separate build tracking
+- `serve:tracked` - Build and serve locally
 
 ### Files:
-- `scripts/build-tracker.js` - Build tracking script
-- `scripts/deployment-tracker.js` - Azure deployment tracking script
+- `scripts/pipeline-tracker.js` - **Single comprehensive pipeline tracking**
+- `scripts/build-tracker.js` - Legacy build-only tracking
 - `scripts/test-dynatrace.js` - Connection test
-- `.github/workflows/build-with-dynatrace.yml` - CI/CD workflow with build and deployment tracking
+- `.github/workflows/build-with-dynatrace.yml` - Simplified CI/CD workflow
 
-## ✅ Security Features
+## ✅ Key Benefits
 
-- ✅ **No hardcoded tokens** - All secrets in environment variables
-- ✅ **Environment-scoped access** - GitHub production environment
-- ✅ **Audit trail** - GitHub tracks all secret access
-- ✅ **Error handling** - Clear messages when tokens missing
-- ✅ **Connection validation** - Tests connectivity before build
-- ✅ **Azure authentication** - Secure Azure service principal integration
+- ✅ **Single Event** - No separate API calls, one comprehensive event
+- ✅ **Complete Pipeline View** - Build + deployment in single payload
+- ✅ **Simplified Workflow** - One script, one job, one event
+- ✅ **Rich Context** - 25+ fields covering entire pipeline
+- ✅ **Smart Skipping** - Deployment skipped if build fails or not main branch
+- ✅ **Error Handling** - Captures both build and deployment failures
+- ✅ **Environment Variables** - Secure token management
 
 ## 🎉 Status: Production Ready
 
-Your build and deployment tracking is now:
-- ✅ Secure with environment variables
-- ✅ Comprehensive with 22 build fields and 19 deployment fields
-- ✅ CI/CD integrated with GitHub Actions
-- ✅ Azure deployment automation with duration tracking
-- ✅ Tested and verified working
-- ✅ Ready for production deployment
+Your **single-event pipeline tracking** is now:
+- ✅ One comprehensive event per pipeline run
+- ✅ Complete build and deployment coverage in single payload
+- ✅ Simplified GitHub Actions workflow
+- ✅ 25+ data fields capturing entire pipeline context
+- ✅ Smart conditional deployment based on build success and branch
+- ✅ Ready for production with full observability
 
-Every build and deployment (success or failure) will be automatically tracked and sent to Dynatrace with detailed information for monitoring, alerting, and analysis!
+Every pipeline run sends **exactly ONE event** to Dynatrace with complete build and deployment information! 🎯
