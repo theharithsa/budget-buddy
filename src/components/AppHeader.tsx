@@ -13,8 +13,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { pwaManager } from '@/lib/pwa';
+import { MobileNavigationTrigger } from '@/components/Navigation';
 
-export function AppHeader() {
+interface AppHeaderProps {
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
+
+export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
   const { user } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -95,11 +101,21 @@ export function AppHeader() {
     <div className="border-b bg-card">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Finance Tracker</h1>
-            <p className="text-sm text-muted-foreground">
-              Track your expenses, manage budgets, and analyze spending patterns
-            </p>
+          <div className="flex items-center gap-4">
+            {/* Mobile Navigation Trigger */}
+            {activeTab && onTabChange && (
+              <MobileNavigationTrigger 
+                activeTab={activeTab} 
+                onTabChange={onTabChange} 
+              />
+            )}
+            
+            <div>
+              <h1 className="text-2xl font-bold">Finance Tracker</h1>
+              <p className="text-sm text-muted-foreground">
+                Track your expenses, manage budgets, and analyze spending patterns
+              </p>
+            </div>
           </div>
 
           <DropdownMenu>

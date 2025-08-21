@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-08-21
+
+### ✨ Added
+
+- Added expense editing functionality with comprehensive EditExpenseModal component allowing users to modify expense details, categories, people associations, and view current receipts
+
+
+## [1.3.1] - 2025-08-21
+
+### 🐛 Fixed
+
+- Fixed Budget Analyzer, Templates, and People sections showing 'Coming Soon' - replaced placeholders with fully functional components
+
+
+## [1.3.0] - 2025-08-21
+
+### ✨ Added
+
+- Implemented modern sidebar navigation system with collapsible desktop sidebar and mobile sheet overlay to replace cramped 7-tab bottom navigation
+
+
 ## [1.2.0] - 2025-08-21
 
 ### 🎉 Added - Major Feature Release

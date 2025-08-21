@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Toaster } from '@/components/ui/sonner';
 import { AddExpenseModal } from '@/components/AddExpenseModal';
-import { EditExpenseModal } from '@/components/EditExpenseModal';
 import { ExpenseCard } from '@/components/ExpenseCard';
 import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
@@ -44,16 +43,13 @@ function FinanceApp() {
     loading: dataLoading,
     addExpense,
     deleteExpense,
-    updateExpense,
     addBudget,
     deleteBudget,
     updateBudget,
     addTemplate,
     deleteTemplate,
-    addCustomCategory,
-    updateCustomCategory,
-    deleteCustomCategory,
-    adoptCategory,
+    addCategory,
+    deleteCategory,
     addPerson,
     deletePerson,
     adoptPerson,
@@ -65,30 +61,26 @@ function FinanceApp() {
 
   const [activeTab, setActiveTab] = useState('expenses');
   const [showAddExpense, setShowAddExpense] = useState(false);
-  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 
+  // PWA Manager effect
+  useEffect(() => {
+    PWAManager.init();
+  }, []);
+
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
-      await addExpense(expenseData);
+      await addExpense({
+        ...expenseData,
+        createdAt: new Date().toISOString(),
+      });
       setShowAddExpense(false);
       toast.success('Expense added successfully!');
     } catch (error) {
       console.error('Error adding expense:', error);
       toast.error('Failed to add expense');
-    }
-  };
-
-  const handleUpdateExpense = async (expenseId: string, expenseData: Partial<Expense>) => {
-    try {
-      await updateExpense(expenseId, expenseData);
-      setEditingExpense(null);
-      toast.success('Expense updated successfully!');
-    } catch (error) {
-      console.error('Error updating expense:', error);
-      toast.error('Failed to update expense');
     }
   };
 
@@ -100,11 +92,6 @@ function FinanceApp() {
       console.error('Error deleting expense:', error);
       toast.error('Failed to delete expense');
     }
-  };
-
-  const handleUpdateBudgets = (budgets: Budget[]) => {
-    // This is a placeholder for bulk budget updates
-    console.log('Bulk budget update:', budgets);
   };
 
   const handleQuickAdd = (templateData: any) => {
@@ -277,8 +264,7 @@ function FinanceApp() {
                       key={expense.id}
                       expense={expense}
                       onDelete={() => handleDeleteExpense(expense.id)}
-                      onEdit={() => setEditingExpense(expense)}
-                      customPeople={[...customPeople, ...publicPeople]}
+                      people={[...customPeople, ...publicPeople]}
                     />
                   ))
                 ) : (
@@ -304,10 +290,10 @@ function FinanceApp() {
             <TabsContent value="budgets">
               <BudgetManager 
                 budgets={budgets}
+                expenses={expenses}
                 onAddBudget={addBudget}
                 onDeleteBudget={deleteBudget}
                 onUpdateBudget={updateBudget}
-                onUpdateBudgets={handleUpdateBudgets}
                 customCategories={customCategories}
                 budgetTemplates={budgetTemplates}
                 publicBudgetTemplates={publicBudgetTemplates}
@@ -319,10 +305,13 @@ function FinanceApp() {
 
             <TabsContent value="templates">
               <RecurringTemplates 
-                onAddExpense={handleAddExpense}
+                templates={templates}
                 onAddTemplate={addTemplate}
                 onDeleteTemplate={deleteTemplate}
+                onQuickAdd={handleQuickAdd}
                 customCategories={customCategories}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
               />
             </TabsContent>
 
@@ -330,16 +319,19 @@ function FinanceApp() {
               <CategoryManager 
                 customCategories={customCategories}
                 publicCategories={publicCategories}
-                onAddCategory={addCustomCategory}
-                onUpdateCategory={updateCustomCategory}
-                onDeleteCategory={deleteCustomCategory}
-                onAdoptCategory={adoptCategory}
+                onAddCategory={addCategory}
+                onDeleteCategory={deleteCategory}
               />
             </TabsContent>
 
             <TabsContent value="people">
               <PeopleManager 
-                user={user}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
+                onAddPerson={addPerson}
+                onDeletePerson={deletePerson}
+                onAdoptPerson={adoptPerson}
+                onUpdatePerson={updatePerson}
               />
             </TabsContent>
 
@@ -347,6 +339,7 @@ function FinanceApp() {
               <BudgetAnalyzer 
                 expenses={expenses}
                 budgets={budgets}
+                customCategories={customCategories}
               />
             </TabsContent>
 
@@ -367,19 +360,9 @@ function FinanceApp() {
       {/* Add Expense Modal */}
       {showAddExpense && (
         <AddExpenseModal
-          onAddExpense={handleAddExpense}
-          customCategories={customCategories}
-          customPeople={customPeople}
-        />
-      )}
-
-      {/* Edit Expense Modal */}
-      {editingExpense && (
-        <EditExpenseModal
-          expense={editingExpense}
-          isOpen={!!editingExpense}
-          onClose={() => setEditingExpense(null)}
-          onUpdate={handleUpdateExpense}
+          isOpen={showAddExpense}
+          onClose={() => setShowAddExpense(false)}
+          onSubmit={handleAddExpense}
           customCategories={customCategories}
           customPeople={customPeople}
           publicPeople={publicPeople}

@@ -2,16 +2,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Trash2 as Trash, Calendar, Tag, Receipt, Eye, Users } from 'lucide-react';
+import { Trash2 as Trash, Calendar, Tag, Receipt, Eye, Users, Edit } from 'lucide-react';
 import { type Expense, type Person, DEFAULT_CATEGORIES, getAllPeople, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {
   expense: Expense;
   onDelete: (id: string) => void;
+  onEdit?: () => void;
   customPeople?: Person[];
 }
 
-export function ExpenseCard({ expense, onDelete, customPeople = [] }: ExpenseCardProps) {
+export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [] }: ExpenseCardProps) {
   const category = DEFAULT_CATEGORIES.find(cat => cat.name === expense.category);
   const allPeople = getAllPeople(customPeople);
   
@@ -82,15 +83,28 @@ export function ExpenseCard({ expense, onDelete, customPeople = [] }: ExpenseCar
               <p className="text-sm text-muted-foreground">{expense.description}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
-            onClick={() => onDelete(expense.id)}
-            aria-label="Delete expense"
-          >
-            <Trash className="w-4 h-4" />
-          </Button>
+          <div className="flex gap-1">
+            {onEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-primary hover:text-primary/80 hover:bg-primary/10"
+                onClick={onEdit}
+                aria-label="Edit expense"
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+              onClick={() => onDelete(expense.id)}
+              aria-label="Delete expense"
+            >
+              <Trash className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">

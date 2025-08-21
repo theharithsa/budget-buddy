@@ -12,8 +12,13 @@
  * - patch: For bug fixes (1.0.0 -> 1.0.1)
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Get command line arguments
 const args = process.argv.slice(2);
