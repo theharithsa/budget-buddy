@@ -226,8 +226,8 @@ git push origin main
 1. Go to: `https://github.com/theharithsa/budget-buddy/settings/environments`
 2. Click **New environment** → Name: `production`
 3. Add these secrets:
-   - `DYNATRACE_TOKEN`: `dt0c01.KTMO6B4MFMUMLL2UKM57LOEV.DDKJLHV2GPH7NJ7NJIPLVUQOREVONZ3CRNXK2LZ6V3NXI2TEAOCRSBJD6YCD6PYQ`
-   - `DYNATRACE_ENDPOINT`: `https://bos01241.live.dynatrace.com/platform/ingest/custom/events/finbuddy`
+   - `DYNATRACE_TOKEN`: <DT-Token>
+   - `DYNATRACE_ENDPOINT`: `https://tenant.live.dynatrace.com/platform/ingest/custom/event/<custom_event_type>`
 
 ### 2. Main Workflow Integration:
 Your existing `main_finbuddy.yml` workflow now includes:
