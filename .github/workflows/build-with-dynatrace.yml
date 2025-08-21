@@ -1,0 +1,58 @@
+name: Build with Dynatrace Tracking
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-track:
+    runs-on: ubuntu-latest
+    environment: production  # Use GitHub environment for secrets
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for git info
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Test Dynatrace connection
+      run: npm run test:dynatrace
+      env:
+        DYNATRACE_TOKEN: ${{ secrets.DYNATRACE_TOKEN }}
+        DYNATRACE_ENDPOINT: ${{ secrets.DYNATRACE_ENDPOINT }}
+    
+    - name: Build with Dynatrace tracking
+      run: npm run build:tracked
+      env:
+        NODE_ENV: production
+        DYNATRACE_TOKEN: ${{ secrets.DYNATRACE_TOKEN }}
+        DYNATRACE_ENDPOINT: ${{ secrets.DYNATRACE_ENDPOINT }}
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      if: always()  # Upload even if build fails
+      with:
+        name: build-artifacts
+        path: |
+          dist/
+          package.json
+          server.js
+        retention-days: 30
+    
+    - name: Deploy to staging (on success)
+      if: success() && github.ref == 'refs/heads/main'
+      run: |
+        echo "🚀 Ready for deployment"
+        echo "Build completed successfully with Dynatrace tracking"
