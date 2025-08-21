@@ -19,7 +19,7 @@ jobs:
         fetch-depth: 0  # Full history for git info
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
@@ -41,7 +41,7 @@ jobs:
         DYNATRACE_ENDPOINT: ${{ secrets.DYNATRACE_ENDPOINT }}
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()  # Upload even if build fails
       with:
         name: build-artifacts
