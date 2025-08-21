@@ -8,10 +8,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { LogOut as SignOut, User, Bug } from 'lucide-react';
+import { LogOut as SignOut, User, Bug, Download } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady } from '@/lib/firebase';
 import { toast } from 'sonner';
+import { pwaManager } from '@/lib/pwa';
 
 export function AppHeader() {
   const { user } = useAuth();
@@ -27,6 +28,24 @@ export function AppHeader() {
       toast.error('Failed to sign out');
     } finally {
       setIsLoggingOut(false);
+    }
+  };
+
+  const handleInstallApp = async () => {
+    try {
+      const success = await pwaManager.promptInstall();
+      if (!success) {
+        // Open installation guide in new tab
+        window.open('/install-guide.html', '_blank');
+        toast.info('Installation guide opened in new tab');
+      } else {
+        toast.success('App installation started!');
+      }
+    } catch (error) {
+      console.error('Install error:', error);
+      // Open installation guide in new tab
+      window.open('/install-guide.html', '_blank');
+      toast.info('Installation guide opened in new tab');
     }
   };
 
@@ -112,6 +131,13 @@ export function AppHeader() {
               >
                 <Bug className="mr-2 h-4 w-4" />
                 Test Firebase
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleInstallApp}
+                className="cursor-pointer"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Install App
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={handleLogout}

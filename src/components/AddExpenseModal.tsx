@@ -15,29 +15,31 @@ import {
   X, 
   FileImage as File 
 } from 'lucide-react';
-import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, type Expense, type RecurringTemplate, type CustomCategory, formatCurrency } from '@/lib/types';
+import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, getAllPeople, type Expense, type RecurringTemplate, type CustomCategory, type Person, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
   onAddExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>;
   customCategories?: CustomCategory[];
+  customPeople?: Person[];
 }
 
-export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpenseModalProps) {
+export function AddExpenseModal({ onAddExpense, customCategories = [], customPeople = [] }: AddExpenseModalProps) {
   const [templates] = useKV<RecurringTemplate[]>('recurring-templates', DEFAULT_RECURRING_TEMPLATES);
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   const [showTemplates, setShowTemplates] = useState(false);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get most commonly used templates (first 6)
-  const popularTemplates = templates.slice(0, 6);
+  const popularTemplates = templates?.slice(0, 6) || [];
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,8 +109,9 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
         category,
         description: description || 'No description',
         date,
-        receiptUrl: receiptUrl || null,
-        receiptFileName: receiptFileName || null,
+        receiptUrl: receiptUrl || undefined,
+        receiptFileName: receiptFileName || undefined,
+        peopleIds: selectedPeople.length > 0 ? selectedPeople : undefined,
       };
 
       console.log('Calling onAddExpense with:', expenseData);
@@ -119,6 +122,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
       setCategory('');
       setDescription('');
       setDate(new Date().toISOString().split('T')[0]);
+      setSelectedPeople([]);
       setReceiptFile(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -200,7 +204,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                 </Button>
               </div>
               <div className="max-h-60 overflow-y-auto space-y-1">
-                {templates.map((template) => (
+                {(templates || []).map((template) => (
                   <Button
                     key={template.id}
                     type="button"
@@ -253,6 +257,51 @@ export function AddExpenseModal({ onAddExpense, customCategories = [] }: AddExpe
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* People Selection */}
+          <div className="space-y-2">
+            <Label>People this expense is for (optional)</Label>
+            <div className="space-y-2">
+              {getAllPeople(customPeople).map((person) => (
+                <div key={person.id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={`person-${person.id}`}
+                    checked={person.id ? selectedPeople.includes(person.id) : false}
+                    onChange={(e) => {
+                      if (!person.id) return;
+                      if (e.target.checked) {
+                        setSelectedPeople(prev => [...prev, person.id!]);
+                      } else {
+                        setSelectedPeople(prev => prev.filter(id => id !== person.id));
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <label
+                    htmlFor={`person-${person.id}`}
+                    className="flex items-center gap-2 cursor-pointer text-sm"
+                  >
+                    <div 
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
+                      style={{ backgroundColor: person.color }}
+                    >
+                      {person.icon}
+                    </div>
+                    <span>{person.name}</span>
+                    {person.relationship && (
+                      <span className="text-gray-500">({person.relationship})</span>
+                    )}
+                  </label>
+                </div>
+              ))}
+              {getAllPeople(customPeople).length === 0 && (
+                <p className="text-sm text-gray-500">
+                  No people added yet. Go to People Manager to add people.
+                </p>
+              )}
+            </div>
           </div>
           
           <div className="space-y-2">

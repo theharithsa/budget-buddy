@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { Person } from './types';
 // import { log } from './logger';
 
 // Firebase configuration - Replace with your Firebase project config
@@ -1006,5 +1007,141 @@ export const adoptPublicBudgetTemplate = async (userId: string, publicTemplate: 
   } catch (error) {
     console.error('Error adopting public budget template:', error);
     throw new Error('Failed to adopt budget template. Please try again.');
+  }
+};
+
+// People management functions
+export const addPersonToFirestore = async (userId: string, person: Omit<Person, 'id'>): Promise<string> => {
+  try {
+    const personData = {
+      ...person,
+      userId: userId,
+      createdAt: new Date().toISOString()
+    };
+    
+    const docRef = await addDoc(collection(db, 'users', userId, 'customPeople'), personData);
+    
+    // If person is public, also add to global collection
+    if (person.isPublic) {
+      try {
+        await addDoc(collection(db, 'publicPeople'), {
+          ...personData,
+          originalId: docRef.id,
+          userId: userId
+        });
+      } catch (publicError: any) {
+        // Handle permission errors gracefully for public people
+        if (publicError.code === 'permission-denied') {
+          console.warn('Permission denied for public people. Private person was created successfully.');
+        } else {
+          console.error('Error adding to public people:', publicError);
+        }
+      }
+    }
+    
+    return docRef.id;
+  } catch (error: any) {
+    console.error('Error adding person:', error);
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to create people.');
+    } else {
+      throw new Error('Failed to save person. Please try again.');
+    }
+  }
+};
+
+export const updatePersonInFirestore = async (userId: string, personId: string, person: Partial<Person>): Promise<void> => {
+  try {
+    await updateDoc(doc(db, 'users', userId, 'customPeople', personId), person);
+  } catch (error: any) {
+    console.error('Error updating person:', error);
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to update this person.');
+    } else {
+      throw new Error('Failed to update person. Please try again.');
+    }
+  }
+};
+
+export const deletePersonFromFirestore = async (userId: string, personId: string): Promise<void> => {
+  try {
+    await deleteDoc(doc(db, 'users', userId, 'customPeople', personId));
+  } catch (error: any) {
+    console.error('Error deleting person:', error);
+    
+    if (error.code === 'permission-denied') {
+      throw new Error('You don\'t have permission to delete this person.');
+    } else {
+      throw new Error('Failed to delete person. Please try again.');
+    }
+  }
+};
+
+export const subscribeToCustomPeople = (userId: string, callback: (people: Person[]) => void): Unsubscribe => {
+  const q = query(
+    collection(db, 'users', userId, 'customPeople'),
+    orderBy('name', 'asc')
+  );
+  
+  return onSnapshot(q, (snapshot) => {
+    const people: Person[] = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Person));
+    callback(people);
+  }, (error) => {
+    console.error('Error listening to custom people:', error);
+    callback([]);
+  });
+};
+
+export const subscribeToPublicPeople = (callback: (people: Person[]) => void): Unsubscribe => {
+  const q = query(
+    collection(db, 'publicPeople'),
+    orderBy('name', 'asc')
+  );
+  
+  return onSnapshot(q, (snapshot) => {
+    const people: Person[] = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Person));
+    callback(people);
+  }, (error) => {
+    console.error('Error listening to public people:', error);
+    callback([]);
+  });
+};
+
+export const adoptPublicPerson = async (userId: string, publicPerson: Person): Promise<string> => {
+  try {
+    // Increment usage count for this public person
+    try {
+      await updateDoc(doc(db, 'publicPeople', publicPerson.id), {
+        usageCount: increment(1)
+      });
+    } catch (error) {
+      console.warn('Could not update usage count for public person');
+    }
+    
+    // Create user's own copy of the person
+    const personData = {
+      name: publicPerson.name,
+      color: publicPerson.color,
+      icon: publicPerson.icon,
+      relationship: publicPerson.relationship,
+      userId: userId,
+      isPublic: false, // User's copy is private by default
+      createdAt: new Date().toISOString(),
+      createdBy: `Adopted from ${publicPerson.createdBy}`
+    };
+    
+    const docRef = await addDoc(collection(db, 'users', userId, 'customPeople'), personData);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adopting public person:', error);
+    throw new Error('Failed to adopt person. Please try again.');
   }
 };

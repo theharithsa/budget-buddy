@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Debug - FinBuddy</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .debug-section { 
+            background: white; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            border: none; 
+            background: #3b82f6; 
+            color: white; 
+            border-radius: 4px; 
+            cursor: pointer;
+        }
+        button:hover { background: #2563eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .install-button { 
+            background: #10b981; 
+            font-size: 16px; 
+            padding: 15px 30px;
+            display: none;
+        }
+        .install-button.show { display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>🔧 PWA Debug Tool - FinBuddy</h1>
+    
+    <div class="debug-section">
+        <h2>📱 PWA Installation</h2>
+        <button id="manualInstall" class="install-button">Install FinBuddy App</button>
+        <div id="installStatus"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🔍 PWA Readiness Check</h2>
+        <button onclick="checkPWAReadiness()">Run PWA Check</button>
+        <div id="pwaStatus"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>📄 Manifest Information</h2>
+        <button onclick="checkManifest()">Check Manifest</button>
+        <div id="manifestInfo"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>⚙️ Service Worker Status</h2>
+        <button onclick="checkServiceWorker()">Check Service Worker</button>
+        <div id="swInfo"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🌐 Browser Information</h2>
+        <div id="browserInfo"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🔗 Quick Links</h2>
+        <a href="/">← Back to FinBuddy App</a><br>
+        <a href="/manifest.json" target="_blank">View Manifest.json</a><br>
+        <a href="/sw.js" target="_blank">View Service Worker</a>
+    </div>
+
+    <script>
+        let deferredPrompt = null;
+        
+        // Listen for install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('💡 Install prompt available');
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            const installBtn = document.getElementById('manualInstall');
+            installBtn.classList.add('show');
+            
+            document.getElementById('installStatus').innerHTML = 
+                '<div class="status success">✅ App can be installed! Click the button above.</div>';
+        });
+        
+        // Manual install trigger
+        document.getElementById('manualInstall').addEventListener('click', async () => {
+            if (!deferredPrompt) {
+                document.getElementById('installStatus').innerHTML = 
+                    '<div class="status warning">⚠️ Install prompt not available. Try adding to home screen manually.</div>';
+                return;
+            }
+            
+            deferredPrompt.prompt();
+            const result = await deferredPrompt.userChoice;
+            
+            if (result.outcome === 'accepted') {
+                document.getElementById('installStatus').innerHTML = 
+                    '<div class="status success">🎉 App installed successfully!</div>';
+            } else {
+                document.getElementById('installStatus').innerHTML = 
+                    '<div class="status info">ℹ️ Installation cancelled by user.</div>';
+            }
+            
+            deferredPrompt = null;
+            document.getElementById('manualInstall').classList.remove('show');
+        });
+        
+        // Check PWA readiness
+        function checkPWAReadiness() {
+            const status = document.getElementById('pwaStatus');
+            let checks = [];
+            
+            // HTTPS check
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                checks.push('<div class="status success">✅ HTTPS requirement met</div>');
+            } else {
+                checks.push('<div class="status error">❌ HTTPS required for PWA (except localhost)</div>');
+            }
+            
+            // Service Worker support
+            if ('serviceWorker' in navigator) {
+                checks.push('<div class="status success">✅ Service Worker supported</div>');
+            } else {
+                checks.push('<div class="status error">❌ Service Worker not supported</div>');
+            }
+            
+            // Manifest support
+            if ('onappinstalled' in window) {
+                checks.push('<div class="status success">✅ App install events supported</div>');
+            } else {
+                checks.push('<div class="status warning">⚠️ App install events not supported</div>');
+            }
+            
+            // Standalone mode check
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                checks.push('<div class="status info">📱 Currently running in standalone mode</div>');
+            } else {
+                checks.push('<div class="status info">🌐 Currently running in browser mode</div>');
+            }
+            
+            // Before install prompt
+            if (deferredPrompt) {
+                checks.push('<div class="status success">✅ Install prompt available</div>');
+            } else {
+                checks.push('<div class="status warning">⚠️ Install prompt not triggered yet</div>');
+            }
+            
+            status.innerHTML = checks.join('');
+        }
+        
+        // Check manifest
+        async function checkManifest() {
+            const info = document.getElementById('manifestInfo');
+            
+            try {
+                const response = await fetch('/manifest.json');
+                const manifest = await response.json();
+                
+                let html = '<div class="status success">✅ Manifest loaded successfully</div>';
+                html += `<pre>${JSON.stringify(manifest, null, 2)}</pre>`;
+                
+                info.innerHTML = html;
+            } catch (error) {
+                info.innerHTML = `<div class="status error">❌ Failed to load manifest: ${error.message}</div>`;
+            }
+        }
+        
+        // Check service worker
+        async function checkServiceWorker() {
+            const info = document.getElementById('swInfo');
+            
+            if (!('serviceWorker' in navigator)) {
+                info.innerHTML = '<div class="status error">❌ Service Worker not supported</div>';
+                return;
+            }
+            
+            try {
+                const registration = await navigator.serviceWorker.getRegistration();
+                
+                if (registration) {
+                    let html = '<div class="status success">✅ Service Worker registered</div>';
+                    html += `<div class="status info">Scope: ${registration.scope}</div>`;
+                    html += `<div class="status info">State: ${registration.active?.state || 'Unknown'}</div>`;
+                    
+                    if (registration.waiting) {
+                        html += '<div class="status warning">⚠️ Update available</div>';
+                    }
+                    
+                    info.innerHTML = html;
+                } else {
+                    // Try to register
+                    const newRegistration = await navigator.serviceWorker.register('/sw.js');
+                    info.innerHTML = '<div class="status success">✅ Service Worker registered successfully</div>';
+                }
+            } catch (error) {
+                info.innerHTML = `<div class="status error">❌ Service Worker error: ${error.message}</div>`;
+            }
+        }
+        
+        // Show browser info
+        function showBrowserInfo() {
+            const info = document.getElementById('browserInfo');
+            
+            const browserData = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                viewport: `${window.innerWidth}x${window.innerHeight}`,
+                screen: `${screen.width}x${screen.height}`,
+                protocol: location.protocol,
+                host: location.host
+            };
+            
+            let html = '';
+            for (const [key, value] of Object.entries(browserData)) {
+                html += `<div><strong>${key}:</strong> ${value}</div>`;
+            }
+            
+            info.innerHTML = html;
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            showBrowserInfo();
+            checkPWAReadiness();
+            
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById('installStatus').innerHTML = 
+                    '<div class="status info">📱 App is already installed and running in standalone mode!</div>';
+            }
+        });
+        
+        // Listen for successful installation
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('installStatus').innerHTML = 
+                '<div class="status success">🎉 App has been installed successfully!</div>';
+        });
+    </script>
+</body>
+</html>

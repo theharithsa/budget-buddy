@@ -11,9 +11,11 @@ import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
+import { PeopleManager } from '@/components/PeopleManager';
 import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
+import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
@@ -24,10 +26,12 @@ import {
   List, 
   RefreshCw as ArrowsClockwise, 
   Palette as Swatches, 
-  Lightbulb 
+  Lightbulb,
+  Users
 } from 'lucide-react';
 import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
+import { PWAManager } from '@/lib/pwa';
 
 function FinanceApp() {
   const { user, loading: authLoading } = useAuth();
@@ -37,6 +41,8 @@ function FinanceApp() {
     templates,
     customCategories,
     publicCategories,
+    customPeople,
+    publicPeople,
     budgetTemplates,
     publicBudgetTemplates,
     loading: dataLoading,
@@ -51,6 +57,10 @@ function FinanceApp() {
     updateCustomCategory,
     deleteCustomCategory,
     adoptCategory,
+    addPerson,
+    updatePerson,
+    deletePerson,
+    adoptPerson,
     addBudgetTemplate,
     updateBudgetTemplate,
     deleteBudgetTemplate,
@@ -61,6 +71,11 @@ function FinanceApp() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
   const [activeTab, setActiveTab] = useState('expenses');
+
+  // Initialize PWA
+  useEffect(() => {
+    new PWAManager();
+  }, []);
 
   // Update budget spending when expenses change
   useEffect(() => {
@@ -158,6 +173,11 @@ function FinanceApp() {
     <div className="min-h-screen bg-background pb-16 md:pb-0">
       <AppHeader />
       
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
+      <PWAConnectionStatus />
+      
       <div className="container mx-auto px-4 py-8">
         {/* Monthly Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -202,7 +222,7 @@ function FinanceApp() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           {/* Desktop Layout */}
-          <TabsList className="hidden md:grid grid-cols-6 w-full max-w-4xl">
+          <TabsList className="hidden md:grid grid-cols-7 w-full max-w-5xl">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <Receipt className="w-4 h-4" />
               Expenses
@@ -218,6 +238,10 @@ function FinanceApp() {
             <TabsTrigger value="categories" className="flex items-center gap-2">
               <Swatches className="w-4 h-4" />
               Categories
+            </TabsTrigger>
+            <TabsTrigger value="people" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              People
             </TabsTrigger>
             <TabsTrigger value="analyzer" className="flex items-center gap-2">
               <Lightbulb className="w-4 h-4" />
@@ -236,6 +260,7 @@ function FinanceApp() {
               <TabsTrigger value="budgets">Budgets</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
+              <TabsTrigger value="people">People</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
               <TabsTrigger value="trends">Trends</TabsTrigger>
             </TabsList>
@@ -284,7 +309,7 @@ function FinanceApp() {
                 </Select>
               </div>
 
-              <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} />
+              <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} customPeople={customPeople} />
             </div>
 
             {dataLoading ? (
@@ -307,7 +332,7 @@ function FinanceApp() {
                       }
                     </p>
                     {expenses.length === 0 && (
-                      <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} />
+                      <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} customPeople={customPeople} />
                     )}
                   </div>
                 </CardContent>
@@ -319,6 +344,7 @@ function FinanceApp() {
                     key={expense.id}
                     expense={expense}
                     onDelete={handleDeleteExpense}
+                    customPeople={customPeople}
                   />
                 ))}
               </div>
@@ -362,6 +388,10 @@ function FinanceApp() {
             />
           </TabsContent>
 
+          <TabsContent value="people">
+            <PeopleManager user={user} />
+          </TabsContent>
+
           <TabsContent value="analyzer">
             <BudgetAnalyzer expenses={expenses} budgets={budgets} />
           </TabsContent>
@@ -374,7 +404,7 @@ function FinanceApp() {
 
       {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border">
-        <div className="grid grid-cols-6 h-16">
+        <div className="grid grid-cols-7 h-16">
           <button
             onClick={() => setActiveTab('expenses')}
             className={`flex flex-col items-center justify-center gap-1 transition-colors ${
@@ -424,6 +454,18 @@ function FinanceApp() {
           </button>
           
           <button
+            onClick={() => setActiveTab('people')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              activeTab === 'people' 
+                ? 'text-primary bg-primary/10' 
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            <span className="text-xs font-medium">People</span>
+          </button>
+          
+          <button
             onClick={() => setActiveTab('analyzer')}
             className={`flex flex-col items-center justify-center gap-1 transition-colors ${
               activeTab === 'analyzer' 
@@ -448,6 +490,11 @@ function FinanceApp() {
           </button>
         </div>
       </div>
+      
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
+      <PWAConnectionStatus />
       
       <Toaster position="top-right" />
     </div>

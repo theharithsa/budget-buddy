@@ -1,16 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2 as Trash, Calendar, Tag, Receipt, Eye } from 'lucide-react';
-import { type Expense, DEFAULT_CATEGORIES, formatCurrency, formatDate } from '@/lib/types';
+import { Badge } from '@/components/ui/badge';
+import { Trash2 as Trash, Calendar, Tag, Receipt, Eye, Users } from 'lucide-react';
+import { type Expense, type Person, DEFAULT_CATEGORIES, getAllPeople, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {
   expense: Expense;
   onDelete: (id: string) => void;
+  customPeople?: Person[];
 }
 
-export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
+export function ExpenseCard({ expense, onDelete, customPeople = [] }: ExpenseCardProps) {
   const category = DEFAULT_CATEGORIES.find(cat => cat.name === expense.category);
+  const allPeople = getAllPeople(customPeople);
+  
+  // Get people associated with this expense
+  const associatedPeople = expense.peopleIds 
+    ? allPeople.filter(person => expense.peopleIds?.includes(person.id!))
+    : [];
   
   const ReceiptViewer = () => {
     if (!expense.receiptUrl) return null;
@@ -86,24 +94,54 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Tag className="w-4 h-4" />
-              {expense.category}
-            </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
-              {formatDate(expense.date)}
-            </div>
-            {expense.receiptUrl && (
-              <div className="flex items-center gap-1">
-                <Receipt className="w-4 h-4" />
-                Receipt
+        <div className="space-y-3">
+          {/* People Section */}
+          {associatedPeople.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Users className="w-4 h-4" />
+                <span>For:</span>
               </div>
-            )}
+              <div className="flex gap-1 flex-wrap">
+                {associatedPeople.map((person) => (
+                  <Badge 
+                    key={person.id} 
+                    variant="secondary" 
+                    className="text-xs flex items-center gap-1"
+                  >
+                    <span 
+                      className="w-3 h-3 rounded-full flex items-center justify-center text-[10px]"
+                      style={{ backgroundColor: person.color }}
+                    >
+                      {person.icon}
+                    </span>
+                    {person.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Existing info section */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Tag className="w-4 h-4" />
+                {expense.category}
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                {formatDate(expense.date)}
+              </div>
+              {expense.receiptUrl && (
+                <div className="flex items-center gap-1">
+                  <Receipt className="w-4 h-4" />
+                  Receipt
+                </div>
+              )}
+            </div>
+            {expense.receiptUrl && <ReceiptViewer />}
           </div>
-          {expense.receiptUrl && <ReceiptViewer />}
         </div>
       </CardContent>
     </Card>

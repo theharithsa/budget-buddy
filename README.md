@@ -2,6 +2,8 @@
 
 A comprehensive personal finance management application built with React, TypeScript, and Firebase. Track expenses, manage budgets, and get AI-powered insights into your spending patterns.
 
+🌐 **Live Application**: [https://finbuddy.azurewebsites.net](https://finbuddy.azurewebsites.net)
+
 ## ✨ Features
 
 - **💳 Expense Tracking** - Quick expense logging with receipt uploads
@@ -81,7 +83,27 @@ All documentation is organized in the [`docs/`](./docs/) folder:
 3. Make your changes
 4. Submit a pull request
 
-## 📄 License
+## � Version Management
+
+Budget Buddy follows [Semantic Versioning](https://semver.org/) with automated changelog management.
+
+**Current Version**: `1.2.0`
+
+### Quick Version Bumps
+```bash
+# New features
+npm run version:minor "Added new feature description"
+
+# Bug fixes  
+npm run version:patch "Fixed bug description"
+
+# Breaking changes
+npm run version:major "Major change description"
+```
+
+See [VERSION_MANAGEMENT.md](VERSION_MANAGEMENT.md) for detailed guidelines and [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## �📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

@@ -6,6 +6,8 @@ import {
   subscribeToTemplates,
   subscribeToCustomCategories,
   subscribeToPublicCategories,
+  subscribeToCustomPeople,
+  subscribeToPublicPeople,
   subscribeToBudgetTemplates,
   subscribeToPublicBudgetTemplates,
   addExpenseToFirestore,
@@ -19,13 +21,17 @@ import {
   addCustomCategoryToFirestore,
   updateCustomCategoryInFirestore,
   deleteCustomCategoryFromFirestore,
+  addPersonToFirestore,
+  updatePersonInFirestore,
+  deletePersonFromFirestore,
   adoptPublicCategory,
+  adoptPublicPerson,
   addBudgetTemplateToFirestore,
   updateBudgetTemplateInFirestore,
   deleteBudgetTemplateFromFirestore,
   adoptPublicBudgetTemplate,
 } from '@/lib/firebase';
-import { type Expense, type Budget, type RecurringTemplate, type CustomCategory, type BudgetTemplate } from '@/lib/types';
+import { type Expense, type Budget, type RecurringTemplate, type CustomCategory, type BudgetTemplate, type Person } from '@/lib/types';
 
 export function useFirestoreData() {
   const { user } = useAuth();
@@ -34,6 +40,8 @@ export function useFirestoreData() {
   const [templates, setTemplates] = useState<RecurringTemplate[]>([]);
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>([]);
   const [publicCategories, setPublicCategories] = useState<CustomCategory[]>([]);
+  const [customPeople, setCustomPeople] = useState<Person[]>([]);
+  const [publicPeople, setPublicPeople] = useState<Person[]>([]);
   const [budgetTemplates, setBudgetTemplates] = useState<BudgetTemplate[]>([]);
   const [publicBudgetTemplates, setPublicBudgetTemplates] = useState<BudgetTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +54,8 @@ export function useFirestoreData() {
       setTemplates([]);
       setCustomCategories([]);
       setPublicCategories([]);
+      setCustomPeople([]);
+      setPublicPeople([]);
       setBudgetTemplates([]);
       setPublicBudgetTemplates([]);
       setLoading(false);
@@ -117,6 +127,28 @@ export function useFirestoreData() {
         });
         if (unsubscribePublicCategories) {
           unsubscribeFunctions.push(unsubscribePublicCategories);
+        }
+
+        // Subscribe to custom people
+        const unsubscribeCustomPeople = subscribeToCustomPeople(user.uid, (peopleData) => {
+          if (!isCleanedUp) {
+            console.log('Received custom people data:', peopleData.length, 'people');
+            setCustomPeople(peopleData);
+          }
+        });
+        if (unsubscribeCustomPeople) {
+          unsubscribeFunctions.push(unsubscribeCustomPeople);
+        }
+
+        // Subscribe to public people
+        const unsubscribePublicPeople = subscribeToPublicPeople((peopleData) => {
+          if (!isCleanedUp) {
+            console.log('Received public people data:', peopleData.length, 'public people');
+            setPublicPeople(peopleData);
+          }
+        });
+        if (unsubscribePublicPeople) {
+          unsubscribeFunctions.push(unsubscribePublicPeople);
         }
 
         // Subscribe to budget templates
@@ -268,6 +300,35 @@ export function useFirestoreData() {
     await adoptPublicCategory(user.uid, publicCategory);
   };
 
+  // Person operations
+  const addPerson = async (personData: Omit<Person, 'id' | 'createdAt' | 'userId'>) => {
+    if (!user) throw new Error('User not authenticated');
+    
+    const person = {
+      ...personData,
+      userId: user.uid,
+      createdAt: new Date().toISOString(),
+      createdBy: user.displayName || user.email || 'Anonymous'
+    };
+    
+    await addPersonToFirestore(user.uid, person);
+  };
+
+  const updatePerson = async (personId: string, personData: Partial<Person>) => {
+    if (!user) throw new Error('User not authenticated');
+    await updatePersonInFirestore(user.uid, personId, personData);
+  };
+
+  const deletePerson = async (personId: string) => {
+    if (!user) throw new Error('User not authenticated');
+    await deletePersonFromFirestore(user.uid, personId);
+  };
+
+  const adoptPerson = async (publicPerson: Person) => {
+    if (!user) throw new Error('User not authenticated');
+    await adoptPublicPerson(user.uid, publicPerson);
+  };
+
   // Budget Template operations
   const addBudgetTemplate = async (templateData: Omit<BudgetTemplate, 'id' | 'createdAt' | 'userId'>) => {
     if (!user) throw new Error('User not authenticated');
@@ -303,6 +364,8 @@ export function useFirestoreData() {
     templates,
     customCategories,
     publicCategories,
+    customPeople,
+    publicPeople,
     budgetTemplates,
     publicBudgetTemplates,
     loading,
@@ -318,6 +381,10 @@ export function useFirestoreData() {
     updateCustomCategory,
     deleteCustomCategory,
     adoptCategory,
+    addPerson,
+    updatePerson,
+    deletePerson,
+    adoptPerson,
     addBudgetTemplate,
     updateBudgetTemplate,
     deleteBudgetTemplate,
