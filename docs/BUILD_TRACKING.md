@@ -8,13 +8,12 @@ FinBuddy uses a comprehensive **single-event pipeline tracking** system that cap
 ### Required Variables:
 ```bash
 # Primary token variable (recommended)
-DYNATRACE_TOKEN=dt0c01.KTMO6B4MFMUMLL2UKM57LOEV.DDKJLHV2GPH7NJ7NJIPLVUQOREVONZ3CRNXK2LZ6V3NXI2TEAOCRSBJD6YCD6PYQ
-
+DYNATRACE_TOKEN=DT_TOKEN
 # Alternative token variable name (fallback)
 DYNATRACE_API_TOKEN=dt0c01.YOUR_TOKEN_HERE
 
 # Custom events endpoint (optional - has sensible default)
-DYNATRACE_ENDPOINT=https://bos01241.live.dynatrace.com/platform/ingest/custom/events/finbuddy
+DYNATRACE_ENDPOINT=https://tenantid.live.dynatrace.com/platform/ingest/custom/events/eventsEndPoint
 
 # Azure deployment configuration (optional)
 AZURE_WEBAPP_NAME=your-webapp-name
