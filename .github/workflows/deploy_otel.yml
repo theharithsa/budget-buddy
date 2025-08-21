@@ -1,12 +1,10 @@
 name: 'Deploy OpenTelemetry'
-
 on:
   push:
     branches:
       - main
     paths:
       - .github/workflows/**
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,9 +12,17 @@ jobs:
     concurrency:
       group: otel-deploy-job
     steps:
-      - uses: plengauer/Thoth/actions/instrument/deploy@v5.24.2
+      - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
+        env:
+          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+        with:
+          secrets_to_redact: '["${{ github.token }}","${{ secrets.DEPLOY_OBSERVABILITY_TOKEN }}","${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}"]'
+      - uses: plengauer/opentelemetry-github/actions/instrument/deploy@v5.24.2
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: '${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}'
           OTEL_EXPORTER_OTLP_HEADERS: '${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}'
         with:
           github_token: '${{ secrets.DEPLOY_OBSERVABILITY_TOKEN }}' # TODO configure a token that has permissions to push contents and open pull requests
+    permissions:
+      actions: read
