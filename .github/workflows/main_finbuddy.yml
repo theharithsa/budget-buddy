@@ -44,6 +44,11 @@ jobs:
     environment: production
     
     steps:
+      - name: Checkout code for git info
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
@@ -60,10 +65,19 @@ jobs:
 
       - name: Send pipeline event to Dynatrace
         if: always()  # Run even if deployment fails
+        env:
+          DYNATRACE_TOKEN: ${{ secrets.DYNATRACE_TOKEN }}
+          DYNATRACE_ENDPOINT: ${{ vars.DYNATRACE_ENDPOINT }}
         run: |
           # Create a simple pipeline event
           EVENT_ID=$(date +%s%3N)
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+          
+          # Get git info safely
+          GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null | cut -c1-8 || echo "unknown")
+          GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+          GIT_AUTHOR=$(git log -1 --pretty=format:'%an' 2>/dev/null || echo "GitHub Actions")
+          GIT_MESSAGE=$(git log -1 --pretty=format:'%s' 2>/dev/null || echo "Automated deployment")
           
           # Determine pipeline status
           if [ "${{ steps.deploy-to-webapp.outcome }}" = "success" ]; then
@@ -83,10 +97,10 @@ jobs:
             "project.name": "finbuddy",
             "project.version": "1.0.0",
             "environment": "production",
-            "git.commit": "$(git rev-parse HEAD | cut -c1-8)",
-            "git.branch": "main",
-            "git.author": "$(git log -1 --pretty=format:'%an')",
-            "git.message": "$(git log -1 --pretty=format:'%s')",
+            "git.commit": "$GIT_COMMIT",
+            "git.branch": "$GIT_BRANCH",
+            "git.author": "$GIT_AUTHOR",
+            "git.message": "$GIT_MESSAGE",
             "build.status": "success",
             "deployment.status": "${{ steps.deploy-to-webapp.outcome }}",
             "deployment.url": "https://finbuddy.azurewebsites.net",
@@ -96,10 +110,29 @@ jobs:
           }
           EOF
           
-          # Send to Dynatrace
-          curl -X POST "${{ secrets.DYNATRACE_ENDPOINT }}" \
-            -H "Authorization: Api-Token ${{ secrets.DYNATRACE_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d @event.json
+          # Validate environment variables
+          if [ -z "$DYNATRACE_TOKEN" ] || [ -z "$DYNATRACE_ENDPOINT" ]; then
+            echo "❌ Missing Dynatrace configuration"
+            echo "DYNATRACE_TOKEN: ${DYNATRACE_TOKEN:+set}"
+            echo "DYNATRACE_ENDPOINT: ${DYNATRACE_ENDPOINT:+set}"
+            exit 1
+          fi
           
-          echo "✅ Pipeline event sent to Dynatrace successfully!"
+          # Send to Dynatrace with error handling
+          echo "📡 Sending event to Dynatrace..."
+          echo "Endpoint: $DYNATRACE_ENDPOINT"
+          
+          if curl -X POST "$DYNATRACE_ENDPOINT" \
+            -H "Authorization: Api-Token $DYNATRACE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d @event.json \
+            --fail \
+            --silent \
+            --show-error; then
+            echo "✅ Pipeline event sent to Dynatrace successfully!"
+          else
+            echo "❌ Failed to send event to Dynatrace"
+            echo "Event payload:"
+            cat event.json
+            exit 1
+          fi
