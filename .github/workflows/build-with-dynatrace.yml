@@ -1,4 +1,4 @@
-name: Build with Dynatrace Tracking
+name: Build and Deploy with Dynatrace Tracking
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-track:
+  build-and-deploy:
     runs-on: ubuntu-latest
     environment: production  # Use GitHub environment for secrets
     
@@ -51,8 +51,24 @@ jobs:
           server.js
         retention-days: 30
     
-    - name: Deploy to staging (on success)
+    - name: Setup Azure CLI
       if: success() && github.ref == 'refs/heads/main'
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Deploy to Azure with tracking
+      if: success() && github.ref == 'refs/heads/main'
+      run: npm run deploy:azure
+      env:
+        DYNATRACE_TOKEN: ${{ secrets.DYNATRACE_TOKEN }}
+        DYNATRACE_ENDPOINT: ${{ secrets.DYNATRACE_ENDPOINT }}
+        AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+        AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+    
+    - name: Deployment summary
+      if: always() && github.ref == 'refs/heads/main'
       run: |
-        echo "🚀 Ready for deployment"
-        echo "Build completed successfully with Dynatrace tracking"
+        echo "🚀 Deployment completed"
+        echo "Build and deployment events sent to Dynatrace"
+        echo "Check Dynatrace dashboard for detailed metrics"
