@@ -8,7 +8,6 @@
         "kill": "fuser -k 5000/tcp",
         "build": "tsc -b --noCheck && vite build",
         "build:tracked": "node scripts/build-tracker.js",
-        "pipeline": "node scripts/pipeline-tracker.js",
         "start": "node server.js",
         "serve": "npm run build && npm start",
         "serve:tracked": "npm run build:tracked && npm start",

@@ -12,11 +12,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need git history for tracking
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -38,6 +41,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    environment: production
     
     steps:
       - name: Download artifact from build job
@@ -53,3 +57,49 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DB75F49D4E06445D8D5A7EF60CAC9EF5 }}
+
+      - name: Send pipeline event to Dynatrace
+        if: always()  # Run even if deployment fails
+        run: |
+          # Create a simple pipeline event
+          EVENT_ID=$(date +%s%3N)
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+          
+          # Determine pipeline status
+          if [ "${{ steps.deploy-to-webapp.outcome }}" = "success" ]; then
+            PIPELINE_STATUS="success"
+          else
+            PIPELINE_STATUS="failed"
+          fi
+          
+          # Create event payload
+          cat > event.json << EOF
+          {
+            "source": "finbuddy",
+            "event.id": $EVENT_ID,
+            "event.type": "pipeline",
+            "pipeline.timestamp": "$TIMESTAMP",
+            "pipeline.status": "$PIPELINE_STATUS",
+            "project.name": "finbuddy",
+            "project.version": "1.0.0",
+            "environment": "production",
+            "git.commit": "$(git rev-parse HEAD | cut -c1-8)",
+            "git.branch": "main",
+            "git.author": "$(git log -1 --pretty=format:'%an')",
+            "git.message": "$(git log -1 --pretty=format:'%s')",
+            "build.status": "success",
+            "deployment.status": "${{ steps.deploy-to-webapp.outcome }}",
+            "deployment.url": "https://finbuddy.azurewebsites.net",
+            "azure.webapp_name": "finbuddy",
+            "platform": "linux",
+            "ci.pipeline": "github-actions"
+          }
+          EOF
+          
+          # Send to Dynatrace
+          curl -X POST "${{ secrets.DYNATRACE_ENDPOINT }}" \
+            -H "Authorization: Api-Token ${{ secrets.DYNATRACE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d @event.json
+          
+          echo "✅ Pipeline event sent to Dynatrace successfully!"

@@ -185,48 +185,42 @@ export AZURE_RESOURCE_GROUP="your-resource-group"
 
 ## 🚀 Usage
 
-### Single Command Pipeline:
+### Local Development:
 ```bash
 # Test connection
 npm run test:dynatrace
 
-# Complete pipeline (build + deploy + tracking) - ONE EVENT
-npm run pipeline
-
-# Legacy separate build tracking (still available)
+# Build with tracking (local only)
 npm run build:tracked
 
 # Build and serve locally
 npm run serve:tracked
 ```
 
-### Example Pipeline Output:
+### Production Deployment:
+```bash
+# Push to main branch - triggers main workflow with automatic tracking
+git push origin main
 ```
-🚀 Pipeline script loaded, starting main...
-🔄 Pipeline tracker starting...
-🚀 Starting pipeline for finbuddy v1.0.0
-📋 Pipeline ID: 1755751452257
-📦 Starting build phase...
-🔨 Starting build process...
+
+### Example Local Build Output:
+```
+🚀 Starting build for finbuddy v1.0.0
+📋 Build ID: 1755749066087
+🌿 Branch: main
+� Commit: fea314e4
 ✅ Build completed successfully
-🌿 Current branch: main
-🚀 Starting deployment phase...
-✅ Deployment completed successfully
-🌐 App URL: https://finbuddy-app.azurewebsites.net
-📡 Sending event to Dynatrace...
-✅ Pipeline event sent to Dynatrace successfully!
-
-📊 Pipeline Summary:
-   Build Status: ✅ SUCCESS
-   Build Duration: 17310ms
-   Deployment Status: ✅ SUCCESS
-   Deployment Duration: 45230ms
-   Total Duration: 62540ms
-   Dynatrace Event: ✅ SENT
-   🌐 App URL: https://finbuddy-app.azurewebsites.net
+✅ Build event sent to Dynatrace successfully
 ```
 
-## 🔐 GitHub Actions Production Setup
+### Example GitHub Actions Output:
+```
+✅ Deploy to Azure Web App completed
+� Creating pipeline event...
+✅ Pipeline event sent to Dynatrace successfully!
+```
+
+## 🔐 GitHub Actions Integration
 
 ### 1. Create Production Environment:
 1. Go to: `https://github.com/theharithsa/budget-buddy/settings/environments`
@@ -234,25 +228,20 @@ npm run serve:tracked
 3. Add these secrets:
    - `DYNATRACE_TOKEN`: `dt0c01.KTMO6B4MFMUMLL2UKM57LOEV.DDKJLHV2GPH7NJ7NJIPLVUQOREVONZ3CRNXK2LZ6V3NXI2TEAOCRSBJD6YCD6PYQ`
    - `DYNATRACE_ENDPOINT`: `https://bos01241.live.dynatrace.com/platform/ingest/custom/events/finbuddy`
-   - `AZURE_CREDENTIALS`: Azure service principal JSON (for deployment)
-   - `AZURE_WEBAPP_NAME`: Your Azure App Service name
-   - `AZURE_RESOURCE_GROUP`: Your Azure resource group name
 
-### 2. Workflow Configuration:
-The GitHub Actions workflow is configured to:
-- Use production environment secrets
-- Test Dynatrace connection before building
-- Track all build events with comprehensive metadata
-- Deploy to Azure App Service with duration tracking
-- Send deployment events to Dynatrace
-- Handle errors gracefully for both build and deployment
+### 2. Main Workflow Integration:
+Your existing `main_finbuddy.yml` workflow now includes:
+- ✅ Build and deployment (existing Azure setup)
+- ✅ Dynatrace event tracking after deployment
+- ✅ Single pipeline event with complete context
+- ✅ Runs on every push to main branch
+- ✅ Uses your existing Azure publish profile
 
-### 3. Trigger a Test:
-```bash
-git add .
-git commit -m "Test production build and deployment"
-git push origin main
-```
+### 3. No Separate Workflows:
+- ❌ No separate Dynatrace workflow
+- ❌ No Azure CLI setup in Dynatrace events
+- ✅ Everything integrated into your main deployment workflow
+- ✅ Single job flow: Build → Deploy → Track
 
 ## 🎯 Dynatrace Monitoring
 
@@ -284,38 +273,39 @@ fetch events | filter source == "finbuddy"
 | summarize success_rate = countIf(pipeline.status == "success") * 100.0 / count() by bin(timestamp, 1d)
 ```
 
-## 🛠️ Scripts Created
+## 🛠️ Files & Scripts
 
 ### Package.json Scripts:
 - `test:dynatrace` - Test Dynatrace connection
-- `pipeline` - **Complete build + deploy + tracking in ONE event**
-- `build:tracked` - Legacy separate build tracking
-- `serve:tracked` - Build and serve locally
+- `build:tracked` - Build with local tracking
+- `serve:tracked` - Build and serve locally with tracking
 
-### Files:
-- `scripts/pipeline-tracker.js` - **Single comprehensive pipeline tracking**
-- `scripts/build-tracker.js` - Legacy build-only tracking
-- `scripts/test-dynatrace.js` - Connection test
-- `.github/workflows/build-with-dynatrace.yml` - Simplified CI/CD workflow
+### Files Created:
+- `scripts/build-tracker.js` - Local build tracking only
+- `scripts/test-dynatrace.js` - Connection testing
+- `main_finbuddy.yml` - **Main workflow with integrated Dynatrace tracking**
+
+### Removed Files:
+- ❌ `pipeline-tracker.js` - Removed (redundant)
+- ❌ `deployment-tracker.js` - Removed (redundant) 
+- ❌ `build-with-dynatrace.yml` - Removed (separate workflow not needed)
 
 ## ✅ Key Benefits
 
-- ✅ **Single Event** - No separate API calls, one comprehensive event
-- ✅ **Complete Pipeline View** - Build + deployment in single payload
-- ✅ **Simplified Workflow** - One script, one job, one event
-- ✅ **Rich Context** - 25+ fields covering entire pipeline
-- ✅ **Smart Skipping** - Deployment skipped if build fails or not main branch
-- ✅ **Error Handling** - Captures both build and deployment failures
-- ✅ **Environment Variables** - Secure token management
+- ✅ **Maximum Simplicity** - No separate scripts for production
+- ✅ **Single Workflow** - Everything in your existing main workflow
+- ✅ **Inline Tracking** - Dynatrace event created directly in workflow
+- ✅ **No Dependencies** - Just bash/curl, no Node.js scripts needed
+- ✅ **Clear & Visible** - All logic visible in workflow file
+- ✅ **Local Testing** - build-tracker.js for development only
 
-## 🎉 Status: Production Ready
+## 🎉 Final Status: Ultra-Clean Solution
 
-Your **single-event pipeline tracking** is now:
-- ✅ One comprehensive event per pipeline run
-- ✅ Complete build and deployment coverage in single payload
-- ✅ Simplified GitHub Actions workflow
-- ✅ 25+ data fields capturing entire pipeline context
-- ✅ Smart conditional deployment based on build success and branch
-- ✅ Ready for production with full observability
+Your Dynatrace tracking is now **maximally simplified**:
+- ✅ **One workflow file** - your existing `main_finbuddy.yml`
+- ✅ **One additional step** - inline Dynatrace event creation
+- ✅ **No extra files** - no separate scripts or workflows
+- ✅ **Complete tracking** - full pipeline visibility in Dynatrace
+- ✅ **Zero complexity** - straightforward bash commands
 
-Every pipeline run sends **exactly ONE event** to Dynatrace with complete build and deployment information! 🎯
+**Perfect integration** with your existing workflow! 🎯
