@@ -66,8 +66,8 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [] }: Ex
   };
   
   return (
-    <Card className="expense-animation">
-      <CardHeader className="pb-3">
+    <Card className="expense-animation h-full flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div 
@@ -107,7 +107,7 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [] }: Ex
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 flex-grow flex flex-col justify-between">
         <div className="space-y-3">
           {/* People Section */}
           {associatedPeople.length > 0 && (

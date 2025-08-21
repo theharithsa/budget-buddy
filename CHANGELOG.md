@@ -7,6 +7,108 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] - 2025-08-22
+
+### 🎨 Improved
+
+#### **Expense Page Grid Layout**
+
+- **Responsive Grid Layout for Expenses**
+  - **Problem**: Single-column layout (one expense per line) became impractical with many expenses, causing excessive scrolling
+  - **Solution**: Implemented responsive multi-column grid layout with breakpoint-based columns
+  - **Responsive Breakpoints**:
+    - Mobile (default): 1 column
+    - Medium (768px+): 2 columns
+    - Large (1024px+): 3 columns
+    - Extra Large (1280px+): 4 columns
+  - **Enhanced Card Layout**: ExpenseCard components now use full height with flexible content distribution
+  - **Files Modified**: `src/App.tsx`, `src/components/ExpenseCard.tsx`
+  - **Benefits**: Better screen space utilization, reduced scrolling, improved browsing experience for users with many expenses
+
+## [1.5.0] - 2025-08-22
+
+### 🐛 Fixed
+
+#### **Critical Bug Fixes**
+
+- **[CRITICAL] Add Expense Button Dual System Issue**
+  - **Problem**: Clicking "Add Expense" button showed a circular blue button with "+" icon instead of directly opening the modal, requiring a second click
+  - **Root Cause**: AddExpenseModal component had internal DialogTrigger button conflicting with external state management in App.tsx
+  - **Solution**: Refactored AddExpenseModal to be fully controlled with `isOpen` and `onClose` props, removed internal trigger button
+  - **Files Modified**: `src/components/AddExpenseModal.tsx`, `src/App.tsx`
+  - **Impact**: Direct modal opening on first click, eliminated user confusion
+  - **Technical Details**: 
+    - Added `isOpen` and `onClose` props to AddExpenseModalProps interface
+    - Implemented state synchronization with useEffect
+    - Removed DialogTrigger and internal button from modal component
+    - Updated parent component to pass modal state directly
+
+- **Budget Templates "Not Configured for Session" Error**
+  - **Problem**: Budget templates functionality showing "Budget templates functionality is not configured for this session" message
+  - **Root Cause**: Missing `updateBudgetTemplate` function from BudgetManager component props validation
+  - **Solution**: Added missing function import and prop passing from useFirestoreData hook
+  - **Files Modified**: `src/App.tsx`
+  - **Impact**: Budget templates fully functional in Budgets section, users can now create and manage budget templates
+  - **Technical Details**:
+    - Added `updateBudgetTemplate` to destructuring in App.tsx
+    - Passed `onUpdateBudgetTemplate={updateBudgetTemplate}` prop to BudgetManager
+    - All four required template functions now properly provided (add, update, delete, adopt)
+
+### ✨ Added
+
+#### **Date Range Filtering System**
+
+- **Comprehensive Timeframe Selector for Expenses**
+  - **Default Behavior**: Application now defaults to showing current month expenses
+  - **Preset Options**: Quick selection for Current month, Last month, Last 30 days, Last 90 days, Current year, All time
+  - **Custom Date Range**: Manual from/to date selection with validation
+  - **Real-time Filtering**: Expenses filter immediately when date range changes
+  - **Smart Labels**: Dynamic spending summary labels that reflect selected timeframe
+  - **Files Added**: `src/components/TimeframePicker.tsx`
+  - **Files Modified**: `src/App.tsx`, `src/lib/types.ts`
+  - **Impact**: Users can now query expenses month-on-month basis as requested
+  - **Technical Implementation**:
+    - Created TimeframePicker component with Popover UI and preset options
+    - Added `getExpensesByDateRange` utility function to types.ts
+    - Implemented DateRange interface with string-based dates
+    - Updated expense filtering logic to include date range validation
+    - Enhanced total spending calculation to reflect selected period
+
+#### **Enhanced Layout and Responsiveness**
+
+- **Improved Expense Filter Layout**
+  - **Better Responsive Breakpoints**: Changed from `sm:flex-row` to `lg:flex-row` for better mobile experience
+  - **Button Container Isolation**: Wrapped Add Expense button in separate container to prevent layout conflicts
+  - **Overflow Prevention**: Added `min-w-0` class to filter container to prevent flex overflow issues
+  - **Enhanced Event Handling**: Added preventDefault and stopPropagation to button clicks
+  - **Files Modified**: `src/App.tsx`
+  - **Impact**: Better mobile experience and elimination of layout conflicts
+
+### 🔧 Technical Improvements
+
+- **Modal State Management Enhancement**
+  - Improved controlled component pattern for modals
+  - Better separation of concerns between parent and child components
+  - Enhanced event handling to prevent interference
+
+- **Date Handling Utilities**
+  - Added comprehensive date range filtering functionality
+  - Proper date string formatting and validation
+  - Cross-browser compatible date calculations
+
+### 📱 Mobile Experience Improvements
+
+- **Responsive Filter Layout**: Better handling of multiple filter components on mobile screens
+- **Touch-friendly Interactions**: Improved button sizing and touch targets
+- **Layout Stability**: Prevented filter components from causing layout shifts
+
+### 🎯 User Experience Enhancements
+
+- **Immediate Visual Feedback**: All interactions now provide instant feedback
+- **Intuitive Date Selection**: User-friendly timeframe picker with clear presets
+- **Simplified Workflows**: Reduced clicks required for common actions
+- **Dynamic Content**: Labels and summaries update based on user selections
+
 ## [1.4.0] - 2025-08-21
 
 ### ✨ Added

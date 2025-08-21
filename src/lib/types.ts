@@ -111,6 +111,13 @@ export const getMonthlyExpenses = (expenses: Expense[], month: string): Expense[
   return expenses.filter(expense => expense.date.startsWith(month));
 };
 
+export const getExpensesByDateRange = (expenses: Expense[], fromDate: string, toDate: string): Expense[] => {
+  return expenses.filter(expense => {
+    const expenseDate = expense.date;
+    return expenseDate >= fromDate && expenseDate <= toDate;
+  });
+};
+
 export const calculateCategorySpending = (expenses: Expense[], category: string): number => {
   return expenses
     .filter(expense => expense.category === category)

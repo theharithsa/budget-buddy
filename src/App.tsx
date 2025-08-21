@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AddExpenseModal } from '@/components/AddExpenseModal';
 import { EditExpenseModal } from '@/components/EditExpenseModal';
 import { ExpenseCard } from '@/components/ExpenseCard';
+import { TimeframePicker, type DateRange } from '@/components/TimeframePicker';
 import { BudgetManager } from '@/components/BudgetManager';
 import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
@@ -25,7 +26,7 @@ import {
   Receipt,
   List
 } from 'lucide-react';
-import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
+import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, getExpensesByDateRange, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 import { PWAManager } from '@/lib/pwa';
 
@@ -59,6 +60,7 @@ function FinanceApp() {
     adoptPerson,
     updatePerson,
     addBudgetTemplate,
+    updateBudgetTemplate,
     deleteBudgetTemplate,
     adoptBudgetTemplate,
   } = useFirestoreData();
@@ -69,6 +71,17 @@ function FinanceApp() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
+  
+  // Initialize date range to current month
+  const [dateRange, setDateRange] = useState<DateRange>(() => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return { 
+      from: start.toISOString().split('T')[0], 
+      to: end.toISOString().split('T')[0] 
+    };
+  });
 
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
@@ -134,7 +147,12 @@ function FinanceApp() {
       const matchesSearch = expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            expense.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || expense.category === categoryFilter;
-      return matchesSearch && matchesCategory;
+      
+      // Check if expense date falls within the selected date range
+      const expenseDate = expense.date;
+      const matchesDateRange = expenseDate >= dateRange.from && expenseDate <= dateRange.to;
+      
+      return matchesSearch && matchesCategory && matchesDateRange;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -150,8 +168,30 @@ function FinanceApp() {
 
   const currentMonth = getCurrentMonth();
   const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
-  const totalSpent = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+  
+  // Calculate total spent for the selected date range
+  const totalSpent = filteredAndSortedExpenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
+
+  // Helper function to get display label for date range
+  const getDateRangeLabel = () => {
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+    
+    if (dateRange.from === currentMonthStart && dateRange.to === currentMonthEnd) {
+      return "This Month Spent";
+    }
+    
+    const fromDate = new Date(dateRange.from + 'T00:00:00');
+    const toDate = new Date(dateRange.to + 'T00:00:00');
+    
+    if (dateRange.from === dateRange.to) {
+      return `Spent on ${fromDate.toLocaleDateString()}`;
+    }
+    
+    return `Spent ${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`;
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -169,12 +209,12 @@ function FinanceApp() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">This Month Spent</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{getDateRangeLabel()}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-primary">{formatCurrency(totalSpent)}</div>
                 <p className="text-xs text-muted-foreground">
-                  {monthlyExpenses.length} transactions this month
+                  {filteredAndSortedExpenses.length} transactions in selected period
                 </p>
               </CardContent>
             </Card>
@@ -219,8 +259,8 @@ function FinanceApp() {
             </TabsList>
 
             <TabsContent value="expenses" className="space-y-6">
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                <div className="flex flex-col sm:flex-row gap-4 flex-1">
+              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                <div className="flex flex-col sm:flex-row gap-4 flex-1 min-w-0">
                   <div className="relative flex-1 max-w-sm">
                     <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -263,14 +303,30 @@ function FinanceApp() {
                       <SelectItem value="category">Category</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  <TimeframePicker 
+                    dateRange={dateRange} 
+                    onDateRangeChange={setDateRange}
+                    className="w-60"
+                  />
                 </div>
 
-                <Button onClick={() => setShowAddExpense(true)}>
-                  Add Expense
-                </Button>
+                <div className="flex gap-2 items-center">
+                  <Button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('Add Expense button clicked');
+                      setShowAddExpense(true);
+                    }}
+                    className="shrink-0"
+                  >
+                    Add Expense
+                  </Button>
+                </div>
               </div>
 
-              <div className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredAndSortedExpenses.length > 0 ? (
                   filteredAndSortedExpenses.map((expense) => (
                     <ExpenseCard
@@ -282,21 +338,23 @@ function FinanceApp() {
                     />
                   ))
                 ) : (
-                  <Card className="p-8 text-center">
-                    <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No expenses found</h3>
-                    <p className="text-muted-foreground mb-4">
-                      {searchTerm || categoryFilter !== 'all' 
-                        ? 'Try adjusting your search or filter criteria'
-                        : 'Start by adding your first expense'
-                      }
-                    </p>
-                    {(!searchTerm && categoryFilter === 'all') && (
-                      <Button onClick={() => setShowAddExpense(true)}>
-                        Add Your First Expense
-                      </Button>
-                    )}
-                  </Card>
+                  <div className="col-span-full">
+                    <Card className="p-8 text-center">
+                      <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium mb-2">No expenses found</h3>
+                      <p className="text-muted-foreground mb-4">
+                        {searchTerm || categoryFilter !== 'all' 
+                          ? 'Try adjusting your search or filter criteria'
+                          : 'Start by adding your first expense'
+                        }
+                      </p>
+                      {(!searchTerm && categoryFilter === 'all') && (
+                        <Button onClick={() => setShowAddExpense(true)}>
+                          Add Your First Expense
+                        </Button>
+                      )}
+                    </Card>
+                  </div>
                 )}
               </div>
             </TabsContent>
@@ -313,6 +371,7 @@ function FinanceApp() {
                 publicBudgetTemplates={publicBudgetTemplates}
                 onAdoptBudgetTemplate={adoptBudgetTemplate}
                 onAddBudgetTemplate={addBudgetTemplate}
+                onUpdateBudgetTemplate={updateBudgetTemplate}
                 onDeleteBudgetTemplate={deleteBudgetTemplate}
               />
             </TabsContent>
@@ -365,13 +424,14 @@ function FinanceApp() {
       <Toaster position="top-right" />
 
       {/* Add Expense Modal */}
-      {showAddExpense && (
-        <AddExpenseModal
-          onAddExpense={handleAddExpense}
-          customCategories={customCategories}
-          customPeople={customPeople}
-        />
-      )}
+      <AddExpenseModal
+        isOpen={showAddExpense}
+        onClose={() => setShowAddExpense(false)}
+        onAddExpense={handleAddExpense}
+        customCategories={customCategories}
+        customPeople={customPeople}
+        publicPeople={publicPeople}
+      />
 
       {/* Edit Expense Modal */}
       {editingExpense && (

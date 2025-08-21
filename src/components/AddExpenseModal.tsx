@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { 
   Plus, 
   RefreshCw as ArrowsClockwise, 
@@ -20,14 +21,37 @@ import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/fire
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
   onAddExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>;
   customCategories?: CustomCategory[];
   customPeople?: Person[];
+  publicPeople?: Person[];
 }
 
-export function AddExpenseModal({ onAddExpense, customCategories = [], customPeople = [] }: AddExpenseModalProps) {
+export function AddExpenseModal({ 
+  isOpen = false, 
+  onClose, 
+  onAddExpense, 
+  customCategories = [], 
+  customPeople = [],
+  publicPeople = []
+}: AddExpenseModalProps) {
   const [templates] = useKV<RecurringTemplate[]>('recurring-templates', DEFAULT_RECURRING_TEMPLATES);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(isOpen);
+
+  // Sync internal open state with external isOpen prop
+  useEffect(() => {
+    setOpen(isOpen);
+  }, [isOpen]);
+
+  // Handle open state changes
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen && onClose) {
+      onClose();
+    }
+  };
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
@@ -37,6 +61,19 @@ export function AddExpenseModal({ onAddExpense, customCategories = [], customPeo
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Helper functions for people management
+  const allPeople = getAllPeople([...customPeople, ...publicPeople]);
+  
+  const handlePeopleToggle = (personId: string) => {
+    setSelectedPeople(prev => 
+      prev.includes(personId) 
+        ? prev.filter(id => id !== personId)
+        : [...prev, personId]
+    );
+  };
+
+  const selectedPeopleData = allPeople.filter(person => selectedPeople.includes(person.id!));
 
   // Get most commonly used templates (first 6)
   const popularTemplates = templates?.slice(0, 6) || [];
@@ -62,6 +99,15 @@ export function AddExpenseModal({ onAddExpense, customCategories = [], customPeo
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const togglePerson = (personId: string) => {
+    setSelectedPeople(prev => {
+      const newSelection = prev.includes(personId)
+        ? prev.filter(id => id !== personId)
+        : [...prev, personId];
+      return newSelection;
+    });
   };
 
   const handleUseTemplate = (template: RecurringTemplate) => {
@@ -127,7 +173,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [], customPeo
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      setOpen(false);
+      handleOpenChange(false);
       setShowTemplates(false);
       
       toast.success('Expense added successfully');
@@ -140,13 +186,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [], customPeo
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="w-4 h-4" />
-          Add Expense
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Expense</DialogTitle>
@@ -260,48 +300,59 @@ export function AddExpenseModal({ onAddExpense, customCategories = [], customPeo
           </div>
 
           {/* People Selection */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label>People this expense is for (optional)</Label>
-            <div className="space-y-2">
-              {getAllPeople(customPeople).map((person) => (
-                <div key={person.id} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={`person-${person.id}`}
-                    checked={person.id ? selectedPeople.includes(person.id) : false}
-                    onChange={(e) => {
-                      if (!person.id) return;
-                      if (e.target.checked) {
-                        setSelectedPeople(prev => [...prev, person.id!]);
-                      } else {
-                        setSelectedPeople(prev => prev.filter(id => id !== person.id));
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <label
-                    htmlFor={`person-${person.id}`}
-                    className="flex items-center gap-2 cursor-pointer text-sm"
+            
+            {/* Selected People Display */}
+            {selectedPeopleData.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {selectedPeopleData.map((person) => (
+                  <Badge 
+                    key={person.id} 
+                    variant="secondary" 
+                    className="flex items-center gap-1"
                   >
-                    <div 
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
-                      style={{ backgroundColor: person.color }}
+                    <span>{person.icon}</span>
+                    {person.name}
+                    <button
+                      type="button"
+                      onClick={() => handlePeopleToggle(person.id!)}
+                      className="ml-1 hover:text-destructive"
                     >
-                      {person.icon}
-                    </div>
-                    <span>{person.name}</span>
-                    {person.relationship && (
-                      <span className="text-gray-500">({person.relationship})</span>
-                    )}
-                  </label>
-                </div>
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* People Selection Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+              {allPeople.map((person) => (
+                <button
+                  key={person.id}
+                  type="button"
+                  onClick={() => handlePeopleToggle(person.id!)}
+                  className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${
+                    selectedPeople.includes(person.id!) 
+                      ? 'border-primary bg-primary/10 text-primary' 
+                      : 'border-border hover:bg-muted'
+                  }`}
+                >
+                  <span>{person.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate">{person.name}</div>
+                    <div className="text-xs text-muted-foreground truncate">{person.relationship}</div>
+                  </div>
+                </button>
               ))}
-              {getAllPeople(customPeople).length === 0 && (
-                <p className="text-sm text-gray-500">
-                  No people added yet. Go to People Manager to add people.
-                </p>
-              )}
             </div>
+            
+            {allPeople.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No people added yet. Go to People Manager to add people.
+              </p>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -381,7 +432,7 @@ export function AddExpenseModal({ onAddExpense, customCategories = [], customPeo
           </div>
           
           <div className="flex gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} className="flex-1">
               Cancel
             </Button>
             <Button type="submit" className="flex-1" disabled={isUploading}>
