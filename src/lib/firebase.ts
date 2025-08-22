@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe, deleteField } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Person } from './types';
 // import { log } from './logger';
@@ -328,7 +328,19 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
 export const updateExpenseInFirestore = async (userId: string, expenseId: string, expense: any): Promise<void> => {
   try {
     const docRef = doc(db, 'users', userId, 'expenses', expenseId);
-    await updateDoc(docRef, expense);
+    
+    // Create update object, converting undefined values to deleteField()
+    const updateData: Record<string, any> = {};
+    
+    for (const [key, value] of Object.entries(expense)) {
+      if (value === undefined) {
+        updateData[key] = deleteField();
+      } else {
+        updateData[key] = value;
+      }
+    }
+    
+    await updateDoc(docRef, updateData);
   } catch (error) {
     console.error('Error updating expense:', error);
     throw new Error('Failed to update expense. Please try again.');
