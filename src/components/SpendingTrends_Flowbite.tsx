@@ -354,35 +354,35 @@ export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card rounded-lg shadow border border-border p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center">
             <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center me-3">
               <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+              <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
                 {formatCurrency(trendsData.totalSpent)}
               </h5>
-              <p className="text-sm font-normal text-muted-foreground">Total Spending</p>
+              <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Total Spending</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-lg shadow border border-border p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center">
             <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center me-3">
               <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+              <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
                 {formatCurrency(trendsData.avgDaily)}
               </h5>
-              <p className="text-sm font-normal text-muted-foreground">Daily Average</p>
+              <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Daily Average</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-lg shadow border border-border p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center">
             <div className={`w-12 h-12 rounded-lg flex items-center justify-center me-3 ${
               trendsData.growth >= 0 
@@ -396,10 +396,10 @@ export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
               )}
             </div>
             <div>
-              <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+              <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
                 {Math.abs(trendsData.growth).toFixed(1)}%
               </h5>
-              <p className="text-sm font-normal text-muted-foreground">
+              <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 {trendsData.growth >= 0 ? 'Increase' : 'Decrease'}
               </p>
             </div>
@@ -410,15 +410,15 @@ export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
       {/* Charts Grid - Pure Flowbite Design */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Monthly Trends */}
-        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
-          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
-                <BarChart3 className="w-6 h-6 text-muted-foreground" />
+              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+                <BarChart3 className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </div>
               <div>
-                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Monthly Trends</h5>
-                <p className="text-sm font-normal text-muted-foreground">Last 12 months spending</p>
+                <h5 className="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Monthly Trends</h5>
+                <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Last 12 months spending</p>
               </div>
             </div>
           </div>
@@ -426,15 +426,15 @@ export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
         </div>
 
         {/* Category Breakdown */}
-        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
-          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
-                <Activity className="w-6 h-6 text-muted-foreground" />
+              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+                <Activity className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </div>
               <div>
-                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Top Categories</h5>
-                <p className="text-sm font-normal text-muted-foreground">Spending by category</p>
+                <h5 className="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Top Categories</h5>
+                <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Spending by category</p>
               </div>
             </div>
           </div>
@@ -442,15 +442,15 @@ export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
         </div>
 
         {/* Weekly Trends */}
-        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
-          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
-                <TrendingUp className="w-6 h-6 text-muted-foreground" />
+              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+                <TrendingUp className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </div>
               <div>
-                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Weekly Performance</h5>
-                <p className="text-sm font-normal text-muted-foreground">Last 8 weeks</p>
+                <h5 className="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Weekly Performance</h5>
+                <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Last 8 weeks</p>
               </div>
             </div>
           </div>
@@ -458,15 +458,15 @@ export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
         </div>
 
         {/* Daily Trends */}
-        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
-          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
-                <Calendar className="w-6 h-6 text-muted-foreground" />
+              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+                <Calendar className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </div>
               <div>
-                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Daily Activity</h5>
-                <p className="text-sm font-normal text-muted-foreground">Last 30 days</p>
+                <h5 className="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Daily Activity</h5>
+                <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Last 30 days</p>
               </div>
             </div>
           </div>

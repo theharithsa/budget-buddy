@@ -1,18 +1,77 @@
-# 💰 Budget Buddy
+# 💰 Budget Buddy v2.2.1
 
-A comprehensive personal finance management application built with React, TypeScript, and Firebase. Track expenses, manage budgets, and get AI-powered insights into your spending patterns.
+A comprehensive personal finance analytics platform built with React, TypeScript, and Firebase. Track expenses, analyze spending behavior, and transform your financial habits with AI-powered insights and professional Flowbite charts.
 
 🌐 **Live Application**: [https://finbuddy.azurewebsites.net](https://finbuddy.azurewebsites.net)
 
-## ✨ Features
+## ✨ Latest Updates (v2.2.1)
 
-- **💳 Expense Tracking** - Quick expense logging with receipt uploads
-- **📊 Budget Management** - Set and track spending limits by category
-- **🔄 Recurring Templates** - Save frequently used transactions
-- **🤖 AI Budget Analyzer** - Get personalized financial insights
-- **🔐 Secure Authentication** - Google OAuth integration
-- **☁️ Cloud Sync** - Firebase backend for data synchronization
-- **🎨 Modern UI** - Beautiful interface with dark/light modes
+**🐛 Critical Bug Fix Release**
+
+- **Dashboard Grid Layout Fixed**: Summary Cards now properly display in 4-column grid on desktop screens
+- **Theme Context Issues Resolved**: Fixed dark mode theme switching across all components  
+- **PWA Install Banner**: Fixed theme responsiveness for proper light/dark mode support
+- **Responsive Layout**: Enhanced CSS Grid implementation with auto-responsive column distribution
+
+Previous major release (v2.2.0) included complete Flowbite Charts redesign with ApexCharts integration.
+
+### 🎨 Complete Flowbite Charts Redesign
+- **ApexCharts Integration** - Migrated to industry-standard ApexCharts library for superior performance
+- **Authentic Flowbite Design** - Pixel-perfect implementation of Flowbite design patterns
+- **Professional Chart Types** - Area charts, column charts, pie charts, and donut charts with gradient fills
+- **Enhanced KPI Displays** - Large metrics with growth indicators and status badges
+- **Interactive Features** - Hover states, tooltips, and smooth animations
+- **Grid Layout System** - Responsive 2x2 chart grid optimized for all screen sizes
+
+### 📊 Advanced Data Visualization
+- **Area Charts** - Monthly spending trends with gradient backgrounds and growth metrics
+- **Column Charts** - Weekly spending breakdown with rounded columns and comparative data
+- **Pie Charts** - Category distribution with Flowbite color palette and interactive legends
+- **Donut Charts** - Budget performance tracking with center statistics and status indicators
+- **Smart Tooltips** - Context-aware data display with formatted currency and percentages
+- **Responsive Design** - Charts adapt seamlessly to mobile, tablet, and desktop viewports
+
+## ✨ Core Features
+
+### 📊 Professional Data Visualization
+- **ApexCharts Library** - Industry-leading chart library with enterprise-grade features
+- **Flowbite Design System** - Consistent professional styling across all components
+- **Multiple Chart Types** - Area, column, pie, and donut charts with advanced customization
+- **Real-time Updates** - Charts automatically refresh with new expense data
+- **Dark Mode Support** - Perfect contrast ratios and theme consistency
+- **Export Capabilities** - Download charts as images or data exports
+
+### 💳 Financial Management
+- **Smart Expense Tracking** - Quick logging with receipt uploads and categorization
+- **Dynamic Budget Management** - Set and monitor spending limits with real-time alerts
+- **Recurring Templates** - Automate frequently used transactions
+- **Multi-Person Tracking** - Track shared expenses and relationships
+
+### 📊 Advanced Analytics Dashboard
+- **Comprehensive Charts** - 12+ visualization types including trends, patterns, and distributions
+- **Tabbed Interface** - Overview, Advanced, Behavior, Achievements, and Budget tabs
+- **Interactive Visualizations** - Hover tooltips, animations, and responsive design
+- **Time-Series Analysis** - Monthly trends, weekly patterns, and historical comparisons
+
+### 🧠 Behavioral Insights Engine
+- **Spending Behavior Analysis** - Identify patterns, habits, and spending psychology
+- **Impulse Purchase Detection** - AI-powered flagging of impulsive spending
+- **Needs vs Wants Classification** - Categorize expenses into essential vs discretionary
+- **Consistency Scoring** - Measure and track spending predictability
+- **Pattern Recognition** - Weekly, monthly, and seasonal spending trends
+
+### 🏆 Gamification System
+- **Achievement Badges** - 8+ achievements across tracking, saving, budgeting, and consistency
+- **Rarity Tiers** - Common, Rare, Epic, and Legendary achievement levels
+- **Point & Level System** - Earn points and level up through financial milestones
+- **Financial Score** - Comprehensive health score with component breakdowns
+- **Streak Tracking** - Monitor saving streaks and spending-free days
+
+### 🎨 Enhanced User Experience
+- **Improved Theme System** - Better readability with enhanced light/dark mode contrast
+- **Smooth Animations** - Interactive hover effects and seamless transitions
+- **Mobile Optimized** - Responsive design for all device sizes
+- **Quick Actions** - Easy access to common tasks from dashboard
 
 ## 🚀 Quick Start
 

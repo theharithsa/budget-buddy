@@ -77,7 +77,7 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
-            <Download className="h-5 w-5 text-blue-600" />
+            <Download className="h-5 w-5 text-primary" />
             Install FinBuddy
           </CardTitle>
           <Button
@@ -95,7 +95,7 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
       </CardHeader>
       <CardContent className="pt-0">
         <div className="space-y-3">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground">
             <ul className="space-y-1">
               <li>• Works offline</li>
               <li>• Quick access from home screen</li>
@@ -167,11 +167,11 @@ export const PWAUpdatePrompt: React.FC<PWAPromptProps> = ({ className }) => {
   }
 
   return (
-    <Card className={`fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 shadow-lg bg-blue-50 border-blue-200 ${className}`}>
+    <Card className={`fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 shadow-lg bg-card border-border ${className}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-blue-800">
-            <RefreshCw className="h-5 w-5" />
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+            <RefreshCw className="h-5 w-5 text-primary" />
             Update Available
           </CardTitle>
           <Button
@@ -183,7 +183,7 @@ export const PWAUpdatePrompt: React.FC<PWAPromptProps> = ({ className }) => {
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <CardDescription className="text-blue-600">
+        <CardDescription className="text-muted-foreground">
           A new version of FinBuddy is available
         </CardDescription>
       </CardHeader>
@@ -243,12 +243,10 @@ export const PWAConnectionStatus: React.FC<PWAPromptProps> = ({ className }) => 
   }
 
   return (
-    <Card className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 shadow-lg ${
-      isOnline ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
-    } ${className}`}>
+    <Card className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 shadow-lg bg-card border-border ${className}`}>
       <CardContent className="p-3">
         <div className={`flex items-center gap-2 text-sm font-medium ${
-          isOnline ? 'text-green-800' : 'text-red-800'
+          isOnline ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
         }`}>
           {isOnline ? (
             <>

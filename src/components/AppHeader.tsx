@@ -8,21 +8,85 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { LogOut as SignOut, User, Bug, Download } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady } from '@/lib/firebase';
+import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady, auth } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { pwaManager } from '@/lib/pwa';
-import { MobileNavigationTrigger } from '@/components/Navigation';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { cn } from '@/lib/utils';
 
 interface AppHeaderProps {
   activeTab?: string;
   onTabChange?: (tab: string) => void;
 }
 
+interface NavigationItem {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description?: string;
+}
+
+const navigationItems: NavigationItem[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: Home,
+    description: 'Overview and charts'
+  },
+  {
+    id: 'expenses',
+    label: 'Expenses',
+    icon: Receipt,
+    description: 'Track and manage expenses'
+  },
+  {
+    id: 'budgets',
+    label: 'Budgets',
+    icon: Wallet,
+    description: 'Set and monitor budgets'
+  },
+  {
+    id: 'templates',
+    label: 'Templates',
+    icon: ArrowsClockwise,
+    description: 'Recurring transactions'
+  },
+  {
+    id: 'categories',
+    label: 'Categories',
+    icon: Swatches,
+    description: 'Organize spending categories'
+  },
+  {
+    id: 'people',
+    label: 'People',
+    icon: Users,
+    description: 'Manage people and relationships'
+  },
+  {
+    id: 'analyzer',
+    label: 'AI Analyzer',
+    icon: Lightbulb,
+    description: 'AI-powered insights'
+  }
+];
+
 export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
   const { user } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleTabChange = (tab: string) => {
+    if (onTabChange) {
+      onTabChange(tab);
+      setMobileMenuOpen(false); // Close mobile menu after selection
+    }
+  };
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -52,6 +116,40 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
       // Open installation guide in new tab
       window.open('/install-guide.html', '_blank');
       toast.info('Installation guide opened in new tab');
+    }
+  };
+
+  const handleClearCache = async () => {
+    try {
+      // Clear localStorage
+      localStorage.clear();
+      
+      // Clear sessionStorage
+      sessionStorage.clear();
+      
+      // Clear service worker caches if available
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(
+          cacheNames.map(cacheName => caches.delete(cacheName))
+        );
+      }
+      
+      toast.success('Cache cleared successfully! Refreshing page...');
+      
+      // Wait a moment for the toast to show, then refresh
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Clear cache error:', error);
+      toast.error('Failed to clear cache completely, but localStorage/sessionStorage cleared');
+      
+      // Still refresh even if cache clearing fails
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
 
@@ -91,6 +189,20 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
     }
   };
 
+  const refreshUserProfile = async () => {
+    try {
+      if (auth.currentUser) {
+        await auth.currentUser.reload();
+        setAvatarError(false); // Reset avatar error state
+        toast.success('User profile refreshed!');
+        console.log('Updated user photo URL:', auth.currentUser.photoURL);
+      }
+    } catch (error: any) {
+      console.error('Failed to refresh user profile:', error);
+      toast.error('Failed to refresh profile');
+    }
+  };
+
   if (!user) return null;
 
   const userInitials = user.displayName
@@ -102,28 +214,97 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Mobile Navigation Trigger */}
-            {activeTab && onTabChange && (
-              <MobileNavigationTrigger 
-                activeTab={activeTab} 
-                onTabChange={onTabChange} 
-              />
-            )}
-            
+            {/* Mobile Navigation Menu */}
+            <div className="lg:hidden">
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-2">
+                    <Menu className="w-5 h-5" />
+                    <span className="sr-only">Open navigation menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-80 p-0">
+                  <div className="flex flex-col h-full">
+                    {/* Header */}
+                    <div className="p-6 border-b border-border">
+                      <h2 className="text-lg font-semibold text-foreground">FinBuddy</h2>
+                      <p className="text-sm text-muted-foreground mt-1">v2.1.0 • Navigate to any section</p>
+                    </div>
+
+                    {/* Navigation Items */}
+                    <ScrollArea className="flex-1 p-4">
+                      <div className="space-y-2">
+                        {navigationItems.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = activeTab === item.id;
+                          
+                          return (
+                            <Button
+                              key={item.id}
+                              variant={isActive ? "secondary" : "ghost"}
+                              className={cn(
+                                "w-full justify-start gap-4 h-14 text-left",
+                                isActive && "bg-primary/10 text-primary border-primary/20"
+                              )}
+                              onClick={() => handleTabChange(item.id)}
+                            >
+                              <Icon className="w-6 h-6 flex-shrink-0" />
+                              <div className="flex-1">
+                                <div className="font-medium">{item.label}</div>
+                                {item.description && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {item.description}
+                                  </div>
+                                )}
+                              </div>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+
+                    {/* Footer */}
+                    <div className="p-4 border-t border-border">
+                      <p className="text-xs text-muted-foreground text-center">
+                        Tap any item to navigate
+                      </p>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+
             <div>
-              <h1 className="text-2xl font-bold">Finance Tracker</h1>
+              <h1 className="text-2xl font-bold">FinBuddy</h1>
               <p className="text-sm text-muted-foreground">
-                Track your expenses, manage budgets, and analyze spending patterns
+                Track your expenses, manage budgets • v2.1.0
               </p>
             </div>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
-                  <AvatarFallback>{userInitials}</AvatarFallback>
+                  {!avatarError && user.photoURL ? (
+                    <AvatarImage 
+                      src={user.photoURL} 
+                      alt={user.displayName || 'User'}
+                      onError={() => {
+                        console.log('Avatar image failed to load:', user.photoURL);
+                        setAvatarError(true);
+                      }}
+                      onLoad={() => {
+                        console.log('Avatar image loaded successfully:', user.photoURL);
+                        setAvatarError(false);
+                      }}
+                    />
+                  ) : null}
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {userInitials}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -149,12 +330,27 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                 Test Firebase
               </DropdownMenuItem>
               <DropdownMenuItem 
+                onClick={refreshUserProfile}
+                className="cursor-pointer"
+              >
+                <UserCheck className="mr-2 h-4 w-4" />
+                Refresh Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem 
                 onClick={handleInstallApp}
                 className="cursor-pointer"
               >
                 <Download className="mr-2 h-4 w-4" />
                 Install App
               </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleClearCache}
+                className="cursor-pointer"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Clear Cache & Refresh
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem 
                 onClick={handleLogout}
                 disabled={isLoggingOut}
@@ -165,6 +361,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
       </div>
     </div>

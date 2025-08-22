@@ -13,13 +13,15 @@ import {
   Users,
   Menu,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavigationProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onSidebarToggle?: (isCollapsed: boolean) => void;
 }
 
 interface NavigationItem {
@@ -30,6 +32,12 @@ interface NavigationItem {
 }
 
 const navigationItems: NavigationItem[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: Home,
+    description: 'Overview and charts'
+  },
   {
     id: 'expenses',
     label: 'Expenses',
@@ -65,12 +73,6 @@ const navigationItems: NavigationItem[] = [
     label: 'AI Analyzer',
     icon: Lightbulb,
     description: 'AI-powered insights'
-  },
-  {
-    id: 'trends',
-    label: 'Trends',
-    icon: TrendUp,
-    description: 'Spending patterns and trends'
   }
 ];
 
@@ -82,21 +84,37 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
   onToggleCollapse: () => void;
 }) {
   return (
-    <div className={cn(
-      "hidden lg:flex flex-col bg-card border-r border-border transition-all duration-300",
-      isCollapsed ? "w-16" : "w-64"
-    )}>
+    <div 
+      className={cn(
+        "fixed left-0 top-0 h-screen flex flex-col border-r transition-all duration-300 z-40 shadow-lg",
+        isCollapsed ? "w-16" : "w-64"
+      )}
+      style={{
+        backgroundColor: 'var(--background)',
+        borderColor: 'var(--border)',
+      }}
+    >
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div 
+        className="p-4 border-b"
+        style={{
+          borderColor: 'var(--border)',
+          backgroundColor: 'var(--muted)',
+        }}
+      >
         <div className="flex items-center justify-between">
           {!isCollapsed && (
-            <h2 className="text-lg font-semibold text-foreground">Navigation</h2>
+            <div>
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>FinBuddy</h2>
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>v2.1.0</p>
+            </div>
           )}
           <Button
             variant="ghost"
             size="sm"
             onClick={onToggleCollapse}
             className="p-2"
+            style={{ color: 'var(--muted-foreground)' }}
           >
             {isCollapsed ? (
               <ChevronRight className="w-4 h-4" />
@@ -108,7 +126,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
       </div>
 
       {/* Navigation Items */}
-      <ScrollArea className="flex-1 p-2">
+      <ScrollArea className="flex-1 p-2" style={{ backgroundColor: 'var(--background)' }}>
         <div className="space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
@@ -120,9 +138,12 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
                 variant={isActive ? "secondary" : "ghost"}
                 className={cn(
                   "w-full justify-start gap-3 h-12 transition-all",
-                  isCollapsed ? "px-3" : "px-4",
-                  isActive && "bg-primary/10 text-primary border-primary/20"
+                  isCollapsed ? "px-3" : "px-4"
                 )}
+                style={{
+                  color: isActive ? 'var(--primary)' : 'var(--foreground)',
+                  backgroundColor: isActive ? 'var(--secondary)' : 'transparent',
+                }}
                 onClick={() => onTabChange(item.id)}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
@@ -130,7 +151,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
                   <div className="flex-1 text-left">
                     <div className="font-medium">{item.label}</div>
                     {item.description && (
-                      <div className="text-xs text-muted-foreground line-clamp-1">
+                      <div className="text-xs line-clamp-1" style={{ color: 'var(--muted-foreground)' }}>
                         {item.description}
                       </div>
                     )}
@@ -145,121 +166,52 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
   );
 }
 
-// Mobile Sidebar Component
-function MobileSidebar({ activeTab, onTabChange }: {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-
-  const handleTabChange = (tab: string) => {
-    onTabChange(tab);
-    setOpen(false); // Close sidebar after selection
-  };
-
-  return (
-    <div className="lg:hidden">
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="sm" className="p-2">
-            <Menu className="w-5 h-5" />
-            <span className="sr-only">Open navigation menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-80 p-0">
-          <div className="flex flex-col h-full">
-            {/* Header */}
-            <div className="p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground">Budget Buddy</h2>
-              <p className="text-sm text-muted-foreground mt-1">Navigate to any section</p>
-            </div>
-
-            {/* Navigation Items */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-2">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeTab === item.id;
-                  
-                  return (
-                    <Button
-                      key={item.id}
-                      variant={isActive ? "secondary" : "ghost"}
-                      className={cn(
-                        "w-full justify-start gap-4 h-14 text-left",
-                        isActive && "bg-primary/10 text-primary border-primary/20"
-                      )}
-                      onClick={() => handleTabChange(item.id)}
-                    >
-                      <Icon className="w-6 h-6 flex-shrink-0" />
-                      <div className="flex-1">
-                        <div className="font-medium">{item.label}</div>
-                        {item.description && (
-                          <div className="text-xs text-muted-foreground">
-                            {item.description}
-                          </div>
-                        )}
-                      </div>
-                    </Button>
-                  );
-                })}
-              </div>
-            </ScrollArea>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-border">
-              <p className="text-xs text-muted-foreground text-center">
-                Tap any item to navigate
-              </p>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-    </div>
-  );
-}
-
 // Main Navigation Component
-export function Navigation({ activeTab, onTabChange }: NavigationProps) {
+export function Navigation({ activeTab, onTabChange, onSidebarToggle }: NavigationProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if screen is mobile size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkScreenSize(); // Check on mount
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Auto-collapse sidebar on smaller desktop screens
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1280 && window.innerWidth >= 1024) {
-        setIsCollapsed(true);
-      } else if (window.innerWidth >= 1280) {
-        setIsCollapsed(false);
-      }
+      const newCollapsedState = window.innerWidth < 1280 && window.innerWidth >= 1024;
+      setIsCollapsed(newCollapsedState);
+      onSidebarToggle?.(newCollapsedState);
     };
 
     handleResize(); // Check on mount
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [onSidebarToggle]);
+
+  const handleToggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    onSidebarToggle?.(newState);
+  };
+
+  // Only render sidebar on desktop screens
+  if (isMobile) {
+    return null;
+  }
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <DesktopSidebar 
-        activeTab={activeTab}
-        onTabChange={onTabChange}
-        isCollapsed={isCollapsed}
-        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-      />
-      
-      {/* Mobile Sidebar */}
-      <MobileSidebar 
-        activeTab={activeTab}
-        onTabChange={onTabChange}
-      />
-    </>
-  );
-}
-
-// Export the mobile trigger for use in header
-export function MobileNavigationTrigger({ activeTab, onTabChange }: NavigationProps) {
-  return (
-    <MobileSidebar activeTab={activeTab} onTabChange={onTabChange} />
+    <DesktopSidebar 
+      activeTab={activeTab}
+      onTabChange={onTabChange}
+      isCollapsed={isCollapsed}
+      onToggleCollapse={handleToggleCollapse}
+    />
   );
 }

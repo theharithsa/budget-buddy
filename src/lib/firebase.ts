@@ -72,6 +72,9 @@ const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
+// Explicitly request profile scope to ensure we get profile photo
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
 
 /**
  * Upload a file to Firebase Storage

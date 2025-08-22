@@ -7,6 +7,375 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2025-08-22
+
+### Fixed
+
+#### **🐛 Critical Bug Fixes for Chart Redesign**
+
+- **Dashboard Grid Layout**: Fixed Summary Cards not displaying in 4-column grid layout on desktop screens
+  - Resolved CSS Grid responsive breakpoint issues
+  - Fixed container width constraints that prevented proper grid expansion
+  - Used CSS Grid `auto-fit` with `minmax(250px, 1fr)` for reliable responsive layout
+  - Cards now properly display horizontally on desktop (1024px+) and adapt responsively
+
+- **Theme Context Issues**: Fixed theme switching problems across all components
+  - Resolved dark mode theme not applying to charts and UI elements
+  - Fixed PWA install banner showing light theme colors in dark mode
+  - Updated all hardcoded colors to use CSS variables for proper theme responsiveness
+  - Fixed icon visibility issues with theme-aware color classes
+
+- **PWA Component Theme Integration**:
+  - Fixed Install FinBuddy banner theme switching
+  - Updated Update Available banner to use theme-aware colors
+  - Fixed Connection Status banner for proper dark/light mode support
+  - Replaced all hardcoded `text-blue-600`, `text-gray-600` with `text-primary`, `text-muted-foreground`
+
+### Technical Improvements
+
+- **App Container Structure**: Optimized main content container to use `max-w-7xl mx-auto w-full` instead of restrictive `container` class
+- **CSS Grid Implementation**: Enhanced grid layout with auto-responsive column distribution
+- **Theme System**: Strengthened CSS variable integration across all PWA and dashboard components
+
+## [2.2.0] - 2025-08-22
+
+### Added
+
+#### **🎨 Complete Flowbite Charts Redesign**
+
+- **ApexCharts Integration**: Complete migration from Chart.js to ApexCharts library for professional grade data visualization
+- **Authentic Flowbite Design**: Implemented exact design patterns from Flowbite documentation with pixel-perfect accuracy
+- **Four Professional Chart Types**:
+  - **Area Chart**: Monthly spending trends with gradient fills and hover interactions
+  - **Column Chart**: Weekly spending breakdown with rounded columns and daily metrics
+  - **Pie Chart**: Category distribution with Flowbite color palette and interactive tooltips
+  - **Donut Chart**: Budget performance tracking with status indicators and progress metrics
+- **Advanced Visual Features**:
+  - Gradient backgrounds and smooth animations
+  - Interactive hover states and tooltips
+  - Professional color scheme matching Flowbite design system
+  - Responsive chart sizing for all screen sizes
+  - Dark mode support with proper contrast ratios
+
+#### **📊 Enhanced Data Visualization**
+
+- **Smart KPI Displays**: Large bold numbers with percentage growth indicators
+- **Status Badges**: Color-coded budget performance indicators (Under Budget, On Track, Over Budget)
+- **Action Buttons**: Professional navigation with dropdown menus and report links
+- **Grid Layout**: Responsive 2x2 grid layout optimizing space utilization
+- **Real-time Updates**: Charts automatically update with new expense data
+
+#### **🔧 Technical Improvements**
+
+- **ApexCharts Library**: Leveraging industry-standard charting library for better performance
+- **Memory Management**: Proper chart cleanup on component unmount to prevent memory leaks
+- **TypeScript Support**: Full type safety with ApexCharts TypeScript definitions
+- **Optimized Rendering**: Efficient chart rendering with minimal re-renders
+
+### Changed
+
+- **Chart Library Migration**: Replaced Chart.js with ApexCharts for superior visualization capabilities
+- **Design Language**: Adopted authentic Flowbite design patterns throughout chart components
+- **Data Processing**: Enhanced data calculation logic for better chart representation
+- **Component Architecture**: Simplified component structure using useRef hooks for chart instances
+
+### Fixed
+
+- **Chart Performance**: Eliminated lag and improved rendering speed
+- **Memory Leaks**: Proper cleanup of chart instances on component unmount
+- **Responsive Issues**: Fixed chart scaling and layout problems on mobile devices
+- **Dark Mode**: Consistent theming across all chart components
+
+### Technical Details
+
+- **Dependencies**: Added ApexCharts 5.3.3 for advanced charting capabilities
+- **Architecture**: Modern React hooks pattern with useRef for DOM manipulation
+- **Styling**: CSS-in-JS approach using ApexCharts configuration objects
+- **Performance**: Optimized re-rendering using useMemo for data processing
+
+## [2.1.1] - 2025-08-22
+
+### Added
+
+#### **📊 Flowbite Charts Integration**
+
+- **Professional Chart Components**: Integrated Flowbite design system for enhanced data visualization
+- **New Dashboard Tab**: Added dedicated "Flowbite" tab with 4 distinct chart types
+- **Chart Variety**: 
+  - Flowbite Pie Charts for category spending breakdown with percentages
+  - Horizontal Bar Charts for monthly trends with growth indicators
+  - Progress Charts for budget performance with status badges
+  - Doughnut Charts for category distribution with center statistics
+- **Design System Benefits**:
+  - Consistent styling with Flowbite design tokens
+  - Seamless light/dark mode support
+  - Responsive layouts optimized for all devices
+  - Smooth CSS animations and transitions
+  - Professional enterprise-grade appearance
+
+#### **🔧 Technical Enhancements**
+
+- **Package Integration**: Added `flowbite` and `flowbite-react` dependencies
+- **Build Configuration**: Updated Tailwind config with Flowbite plugin and content paths
+- **Component Architecture**: Created reusable FlowbiteCharts component with modular chart types
+- **Performance**: Optimized chart rendering with efficient data processing and memoization
+
+### Fixed
+
+#### **🎨 Navigation & Dashboard UI Improvements**
+
+- **Navigation System Overhaul**:
+  - Fixed missing desktop navigation visibility issues
+  - Improved mobile hamburger menu alignment and positioning
+  - Enhanced responsive behavior with JavaScript-based screen detection
+  - Implemented proper light/dark mode theming using CSS variables
+  - Resolved authentication-related navigation hiding problems
+
+- **Dashboard Grid Layout Enhancement**:
+  - Implemented responsive CSS Grid for key metrics cards
+  - Fixed single-column layout issues on desktop screens
+  - Added 4-column desktop layout with adaptive tablet/mobile breakpoints
+  - Used inline CSS Grid styles for reliable cross-browser compatibility
+  - Improved card spacing and visual hierarchy
+
+- **Icon Visibility & Contrast**:
+  - Resolved light mode icon contrast and visibility problems
+  - Implemented explicit RGB color values for reliable theming
+  - Added high-contrast color scheme: Purple, Blue, Green, Orange
+  - Bypassed Tailwind CSS compilation issues with inline styles
+  - Enhanced accessibility with better color contrast ratios
+
+#### **Technical Improvements**
+
+- **CSS Architecture**: Migrated from unreliable Tailwind responsive classes to JavaScript detection
+- **Color Management**: Replaced Tailwind color utilities with explicit RGB values for consistency
+- **Layout Stability**: Used CSS Grid with auto-fit minmax for responsive card layouts
+- **Theme Reliability**: Implemented CSS custom properties for consistent light/dark mode support
+
+### Changed
+
+- Enhanced dashboard card layout from single-column to responsive multi-column grid
+- Improved navigation component architecture with better responsive handling
+- Updated icon styling approach from Tailwind classes to inline CSS for reliability
+
+## [2.0.0] - 2025-08-22
+
+### Added
+
+#### **🌟 Advanced Financial Analytics Dashboard**
+
+- **Comprehensive Chart Library**: 12+ different chart types providing complete financial insights
+- **Tabbed Analytics Interface**: Organized into Overview, Patterns, Breakdown, and Insights tabs
+- **Interactive Financial Visualizations**:
+  - **Category Donut Chart**: Spending breakdown with percentage distribution
+  - **Monthly Trend Line**: 6-month spending pattern analysis
+  - **Budget vs Actual Comparison**: Visual budget performance tracking
+  - **Weekly Heatmap**: Day-of-week spending intensity visualization
+  - **Cashflow Waterfall**: Daily money flow analysis
+  - **Top Categories Bar Chart**: Highest spending categories ranking
+  - **Payment Method Pie Chart**: Distribution across UPI, cards, cash
+  - **Merchant Analysis**: Top spending destinations
+  - **Recurring vs One-off Breakdown**: Spending pattern classification
+  - **People-based Analytics**: Spending associated with individuals
+  - **Forecast Projection**: Predictive month-end spending estimation
+
+#### **🎨 Dark Mode & Theme System**
+
+- **Complete Dark Mode Support**: Beautiful dark theme with proper contrast and accessibility
+- **Theme Toggle**: Easy switching between light, dark, and system themes
+- **Persistent Theme Selection**: User preferences saved across sessions
+- **Adaptive Chart Colors**: Charts automatically adapt to selected theme
+- **System Theme Detection**: Respects user's OS theme preference
+
+#### **📊 Enhanced Data Processing**
+
+- **Advanced Analytics Engine**: Complex data aggregations and calculations
+- **Weekly Spending Patterns**: Heatmap showing spending intensity by day
+- **Merchant Intelligence**: Automatic merchant extraction from descriptions
+- **Payment Method Analysis**: Mock payment method distribution (ready for real data)
+- **Recurring Expense Detection**: Smart identification of recurring transactions
+- **Monthly Forecasting**: Predictive spending based on current patterns
+
+#### **🎯 Improved User Experience**
+
+- **Tabbed Navigation**: Organized analytics into logical sections
+- **Enhanced Quick Stats**: More relevant and actionable metrics
+- **Interactive Charts**: Hover tooltips and detailed information
+- **Responsive Design**: All charts work perfectly on mobile and desktop
+- **Performance Optimized**: Efficient data processing with useMemo hooks
+
+### Technical
+
+#### **🔧 Architecture Improvements**
+
+- **Theme Provider System**: Complete theme management with React Context
+- **Advanced Chart Integration**: Enhanced Recharts implementation with multiple chart types
+- **Data Processing Pipeline**: Sophisticated analytics calculations
+- **Component Modularity**: Clean separation of chart components and logic
+- **Type Safety**: Full TypeScript support for all new features
+
+#### **🎨 Design System Enhancement**
+
+- **Dark Mode Variables**: Complete CSS custom property system
+- **Chart Color Palettes**: Separate color schemes for light and dark themes
+- **Consistent Spacing**: Improved layout and spacing throughout
+- **Accessibility**: Proper contrast ratios and keyboard navigation
+
+### Breaking Changes
+
+#### **⚠️ Major Version Changes**
+
+- **Dashboard Structure**: Complete redesign of dashboard layout and functionality
+- **Chart System**: Replaced basic charts with comprehensive analytics suite
+- **Theme Integration**: New theme system requires React Context setup
+- **Data Requirements**: Enhanced analytics may require additional data fields
+
+## [1.6.1] - 2025-08-22
+
+### Fixed
+
+#### **Currency Display & Timeframe Issues**
+
+- **INR Currency Symbol**: Fixed charts displaying USD ($) instead of INR (₹) symbols
+- **Timeframe Selection**: Enhanced timeframe picker functionality for proper date range filtering
+- **Chart Tooltips**: Corrected currency formatting throughout all chart components
+
+### Added
+
+#### **Enhanced Financial Analysis Charts**
+
+- **Monthly Trends Chart**: Bar chart showing spending patterns over the last 6 months
+- **Top Categories Ranking**: Visual ranking of highest spending categories with percentages
+- **Top People Analysis**: Ranking of people associated with highest spending amounts
+- **Comprehensive Analytics**: Three-column layout with detailed spending breakdowns
+
+#### **Improved Navigation**
+
+- **Streamlined Experience**: Removed redundant "Trends" page since analytics are now in Dashboard
+- **Focused Navigation**: Cleaner navigation menu with essential sections only
+- **Better User Flow**: Dashboard now provides all trending and analytical insights
+
+### Technical
+
+- **Enhanced Data Processing**: Added monthly aggregation and people-based spending analysis
+- **Chart Performance**: Optimized chart rendering with proper data filtering
+- **Component Cleanup**: Removed unused SpendingTrends component and related imports
+- **Responsive Design**: All new charts work seamlessly across device sizes
+
+## [1.6.0] - 2025-08-22
+
+### Added
+
+#### **Charts-Based Dashboard Homepage**
+
+- **New Dashboard Component**: Complete financial overview with interactive charts and analytics
+- **Homepage Redesign**: Dashboard now serves as the default landing page instead of expenses
+- **Daily Spending Trends**: Area chart showing spending patterns over selected date range
+- **Category Breakdown**: Interactive pie chart showing spending distribution by categories
+- **Budget Progress Visualization**: Visual progress bars for all active budgets with status indicators
+- **Quick Stats Cards**: Key metrics including total spent, budget progress, weekly changes, and remaining budget
+- **Weekly Comparison**: Automatic comparison with previous week's spending with trend indicators
+- **Quick Actions Panel**: Easy navigation buttons to common tasks (expenses, budgets, AI analysis, trends)
+- **Interactive Charts**: Built with Recharts library for responsive, interactive data visualization
+- **Responsive Design**: Charts and layout adapt perfectly to all screen sizes
+
+#### **Enhanced Navigation Structure**
+
+- **Dashboard First**: Added Dashboard as the first navigation item with Home icon
+- **Updated Navigation Order**: Reorganized menu items with Dashboard at the top for better UX
+- **Contextual Navigation**: Dashboard provides direct links to relevant sections based on data
+
+#### **Improved Data Visualization**
+
+- **Multiple Chart Types**: Area charts for trends, pie charts for categories, progress bars for budgets
+- **Color-Coded Status**: Budget status indicators (good/warning/over) with appropriate colors
+- **Empty State Handling**: Helpful empty states with action buttons when no data is available
+- **Date Range Integration**: Full TimeframePicker integration for filtering all dashboard data
+- **Real-time Updates**: Dashboard reflects changes immediately when data is modified
+
+### Improved
+
+#### **User Experience**
+
+- **Landing Page**: Users now see a comprehensive overview immediately upon login
+- **Data-Driven Insights**: Visual representation makes spending patterns more apparent
+- **Quick Access**: Direct navigation to any section from the dashboard
+- **Mobile Optimized**: All charts and components work seamlessly on mobile devices
+
+### Technical
+
+- **Chart Library Integration**: Added Recharts for professional data visualization
+- **Performance Optimized**: Efficient data processing with useMemo for expensive calculations
+- **TypeScript Support**: Full type safety for all chart components and data structures
+- **Responsive Components**: All dashboard elements adapt to different screen sizes
+
+## [1.5.3] - 2025-08-22
+
+### Added
+
+#### **Clear Cache & Session Management**
+
+- **Clear Cache Functionality**: Added comprehensive cache clearing option in user dropdown menu
+- **Cache Clearing Scope**: 
+  - Clears localStorage (including app preferences and data)
+  - Clears sessionStorage (temporary session data)
+  - Clears service worker caches (PWA cached resources)
+  - Automatically refreshes page after cleanup
+- **User Access**: Available via user avatar dropdown menu with RefreshCw icon
+- **Use Cases**: Resolves conflicts between old and new app changes, clears stored preferences, fresh app state
+- **User Feedback**: Toast notifications during the clearing process
+
+#### **Enhanced Expense Filtering System**
+
+- **People Filter**: New filter to show expenses associated with specific people
+- **Consolidated Filter UI**: Reorganized filter interface for better usability
+- **Filter Organization**:
+  - **Primary Filters** (top row): Search box and timeframe picker for most common actions
+  - **Secondary Filters** (bottom row): Category, People, and Sort options
+  - **Background Panel**: All filters contained in a subtle background panel for visual grouping
+- **People Filter Features**:
+  - Dropdown shows all available people (default + custom + public)
+  - Visual indicators with person icons and colors
+  - Integrates with existing expense-people associations
+- **Improved Layout**: Reduced visual clutter while maintaining all functionality
+
+### 🎨 Improved
+
+#### **Filter User Experience**
+
+- **Organized Layout**: Filters grouped logically with clear visual hierarchy
+- **Responsive Design**: Filter layout adapts properly to different screen sizes  
+- **Visual Enhancement**: Background panels and borders improve readability
+- **Compact Design**: More functionality in less visual space
+
+## [1.5.2] - 2025-08-22
+
+### ✨ Added
+
+#### **List/Grid Toggle View for Expenses**
+
+- **Flexible Viewing Options**: Users can now toggle between list and grid views for expenses
+- **Toggle Controls**: 
+  - Clean toggle button interface with List and Grid icons
+  - Located next to the Add Expense button for easy access
+  - Active state clearly indicates current view mode
+- **List View**:
+  - Horizontal compact layout with all expense information in single rows
+  - Displays amount, description, category, date, people, and receipt info inline
+  - Optimized for quick scanning of many expenses
+  - Edit and delete buttons positioned on the right
+- **Grid View**: 
+  - Existing responsive card-based layout (1-4 columns based on screen size)
+  - Vertical card design with comprehensive information display
+  - Better for detailed viewing and visual browsing
+- **User Preference Persistence**: 
+  - View mode choice saved to localStorage
+  - Preference maintained across browser sessions
+  - Defaults to grid view for new users
+- **Responsive Design**: Both views adapt properly to different screen sizes
+- **Files Modified**: `src/App.tsx`, `src/components/ExpenseCard.tsx`
+- **Benefits**: Users can choose the viewing experience that best suits their workflow and screen space preferences
+
 ## [1.5.1] - 2025-08-22
 
 ### 🎨 Improved

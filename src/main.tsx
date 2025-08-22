@@ -1,9 +1,11 @@
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from "react-error-boundary";
 import "@github/spark/spark"
+import 'flowbite';
 
 import App from './App.tsx'
 import { ErrorFallback } from './ErrorFallback.tsx'
+import { ThemeProvider } from './contexts/ThemeContext.tsx'
 // import { initializeLogger, log } from './lib/logger.ts'
 
 import "./main.css"
@@ -66,6 +68,8 @@ console.log('Creating React root and rendering application');
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary FallbackComponent={ErrorFallback}>
-    <App />
+    <ThemeProvider defaultTheme="light" storageKey="finbuddy-ui-theme">
+      <App />
+    </ThemeProvider>
    </ErrorBoundary>
 )

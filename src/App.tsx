@@ -9,12 +9,13 @@ import { AddExpenseModal } from '@/components/AddExpenseModal';
 import { EditExpenseModal } from '@/components/EditExpenseModal';
 import { ExpenseCard } from '@/components/ExpenseCard';
 import { TimeframePicker, type DateRange } from '@/components/TimeframePicker';
+import { Dashboard } from '@/components/Dashboard';
 import { BudgetManager } from '@/components/BudgetManager';
-import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
 import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
+import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { Navigation } from '@/components/Navigation';
@@ -24,9 +25,11 @@ import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
   Search as MagnifyingGlass,
   Receipt,
-  List
+  List,
+  Grid3x3,
+  LayoutGrid
 } from 'lucide-react';
-import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, getExpensesByDateRange, calculateCategorySpending } from '@/lib/types';
+import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, getAllPeople, formatCurrency, getCurrentMonth, getMonthlyExpenses, getExpensesByDateRange, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
 import { PWAManager } from '@/lib/pwa';
 
@@ -65,12 +68,25 @@ function FinanceApp() {
     adoptBudgetTemplate,
   } = useFirestoreData();
 
-  const [activeTab, setActiveTab] = useState('expenses');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [peopleFilter, setPeopleFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Initialize view mode with localStorage persistence
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+    const saved = localStorage.getItem('budget-buddy-view-mode');
+    return (saved as 'list' | 'grid') || 'grid';
+  });
+  
+  // Save view mode to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('budget-buddy-view-mode', viewMode);
+  }, [viewMode]);
   
   // Initialize date range to current month
   const [dateRange, setDateRange] = useState<DateRange>(() => {
@@ -148,11 +164,15 @@ function FinanceApp() {
                            expense.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || expense.category === categoryFilter;
       
+      // Check if expense includes the selected person
+      const matchesPeople = peopleFilter === 'all' || 
+                           (expense.peopleIds && expense.peopleIds.includes(peopleFilter));
+      
       // Check if expense date falls within the selected date range
       const expenseDate = expense.date;
       const matchesDateRange = expenseDate >= dateRange.from && expenseDate <= dateRange.to;
       
-      return matchesSearch && matchesCategory && matchesDateRange;
+      return matchesSearch && matchesCategory && matchesPeople && matchesDateRange;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -194,83 +214,107 @@ function FinanceApp() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background">
       {/* Sidebar Navigation */}
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <Navigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        onSidebarToggle={setSidebarCollapsed}
+      />
       
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      {/* Main Content Area - with dynamic left margin for desktop sidebar */}
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${
+        sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
+      }`}>
         {/* Header */}
         <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
         
         {/* Content with proper spacing */}
-        <div className="flex-1 container mx-auto px-4 py-6">
-          {/* Monthly Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{getDateRangeLabel()}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-primary">{formatCurrency(totalSpent)}</div>
-                <p className="text-xs text-muted-foreground">
-                  {filteredAndSortedExpenses.length} transactions in selected period
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Budget</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-secondary">{formatCurrency(totalBudget)}</div>
-                <p className="text-xs text-muted-foreground">
-                  {budgets.length} active budgets
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Remaining</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className={`text-3xl font-bold ${totalBudget > 0 && totalSpent > totalBudget ? 'text-destructive' : 'text-accent'}`}>
-                  {formatCurrency(Math.max(0, totalBudget - totalSpent))}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {totalBudget > 0 ? `${((totalSpent / totalBudget) * 100).toFixed(1)}% used` : 'Set budgets to track'}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
+        <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             {/* Hidden TabsList for functionality only */}
             <TabsList className="hidden">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="expenses">Expenses</TabsTrigger>
               <TabsTrigger value="budgets">Budgets</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
-              <TabsTrigger value="trends">Trends</TabsTrigger>
             </TabsList>
 
+            <TabsContent value="dashboard">
+              <Dashboard 
+                expenses={expenses}
+                budgets={budgets}
+                customCategories={customCategories}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
+                onNavigate={setActiveTab}
+              />
+            </TabsContent>
+
             <TabsContent value="expenses" className="space-y-6">
-              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-                <div className="flex flex-col sm:flex-row gap-4 flex-1 min-w-0">
-                  <div className="relative flex-1 max-w-sm">
-                    <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search expenses..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+              {/* Filters Section */}
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                  {/* Primary Filters Row */}
+                  <div className="flex flex-col sm:flex-row gap-3 flex-1 min-w-0">
+                    <div className="relative flex-1 max-w-sm">
+                      <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search expenses..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    
+                    <TimeframePicker 
+                      dateRange={dateRange} 
+                      onDateRangeChange={setDateRange}
+                      className="w-60"
                     />
                   </div>
-                  
+
+                  {/* View Controls */}
+                  <div className="flex gap-2 items-center">
+                    {/* View Mode Toggle */}
+                    <div className="flex bg-background rounded-lg p-1 border">
+                      <Button
+                        variant={viewMode === 'list' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('list')}
+                        className="h-8 px-3"
+                      >
+                        <List className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('grid')}
+                        className="h-8 px-3"
+                      >
+                        <LayoutGrid className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <Button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Add Expense button clicked');
+                        setShowAddExpense(true);
+                      }}
+                      className="shrink-0"
+                    >
+                      Add Expense
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Secondary Filters Row */}
+                <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border/50">
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="Filter by category" />
@@ -282,6 +326,28 @@ function FinanceApp() {
                           <div className="flex items-center gap-2">
                             <span>{category.icon}</span>
                             {category.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={peopleFilter} onValueChange={setPeopleFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filter by person" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All People</SelectItem>
+                      {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
+                        <SelectItem key={person.id} value={person.id!}>
+                          <div className="flex items-center gap-2">
+                            <span 
+                              className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              style={{ backgroundColor: person.color }}
+                            >
+                              {person.icon}
+                            </span>
+                            {person.name}
                           </div>
                         </SelectItem>
                       ))}
@@ -303,30 +369,17 @@ function FinanceApp() {
                       <SelectItem value="category">Category</SelectItem>
                     </SelectContent>
                   </Select>
-
-                  <TimeframePicker 
-                    dateRange={dateRange} 
-                    onDateRangeChange={setDateRange}
-                    className="w-60"
-                  />
-                </div>
-
-                <div className="flex gap-2 items-center">
-                  <Button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log('Add Expense button clicked');
-                      setShowAddExpense(true);
-                    }}
-                    className="shrink-0"
-                  >
-                    Add Expense
-                  </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div 
+                className={viewMode === 'grid' ? "gap-4" : "space-y-4"}
+                style={viewMode === 'grid' ? {
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '1rem'
+                } : {}}
+              >
                 {filteredAndSortedExpenses.length > 0 ? (
                   filteredAndSortedExpenses.map((expense) => (
                     <ExpenseCard
@@ -335,10 +388,11 @@ function FinanceApp() {
                       onDelete={() => handleDeleteExpense(expense.id)}
                       onEdit={() => setEditingExpense(expense)}
                       customPeople={[...customPeople, ...publicPeople]}
+                      viewMode={viewMode}
                     />
                   ))
                 ) : (
-                  <div className="col-span-full">
+                  <div className={viewMode === 'grid' ? "col-span-full" : ""}>
                     <Card className="p-8 text-center">
                       <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                       <h3 className="text-lg font-medium mb-2">No expenses found</h3>
@@ -403,14 +457,19 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="analyzer">
-              <BudgetAnalyzer 
-                expenses={expenses}
-                budgets={budgets}
+              <ComingSoon 
+                title="AI Analyzer"
+                description="Advanced AI-powered financial insights and recommendations"
+                version="4.0"
+                features={[
+                  "Smart Budget Insights",
+                  "Predictive Spending Analytics", 
+                  "AI-Powered Categorization",
+                  "Personalized Recommendations",
+                  "Goal Achievement Tracking",
+                  "Anomaly Detection"
+                ]}
               />
-            </TabsContent>
-
-            <TabsContent value="trends">
-              <SpendingTrends expenses={expenses} />
             </TabsContent>
           </Tabs>
         </div>

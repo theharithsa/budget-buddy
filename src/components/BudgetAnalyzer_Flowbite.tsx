@@ -76,17 +76,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
   const analysisData = {
     totalSpent: expenses.reduce((sum, expense) => sum + expense.amount, 0),
     totalBudget: budgets.reduce((sum, budget) => sum + budget.limit, 0),
-    categoryBreakdown: (() => {
-      const categoryMap = new Map();
-      expenses.forEach(expense => {
-        const category = expense.category;
-        categoryMap.set(category, (categoryMap.get(category) || 0) + expense.amount);
-      });
-      return Array.from(categoryMap.entries())
-        .map(([category, amount]) => ({ category, amount }))
-        .sort((a, b) => b.amount - a.amount)
-        .slice(0, 6);
-    })(),
+    categoryBreakdown: calculateCategorySpending(expenses).slice(0, 6),
     budgetUtilization: budgets.map(budget => {
       const spent = expenses.filter(e => e.category === budget.category)
         .reduce((sum, e) => sum + e.amount, 0);
@@ -203,7 +193,7 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
   useEffect(() => {
     if (areaChartRef.current && expenses.length > 0) {
       // Generate monthly data
-      const monthlyData: { month: string; amount: number }[] = [];
+      const monthlyData = [];
       for (let i = 5; i >= 0; i--) {
         const date = new Date();
         date.setMonth(date.getMonth() - i);
@@ -442,44 +432,44 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
         <div className="space-y-6">
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-card rounded-lg shadow border border-border p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center me-3">
                   <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+                  <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
                     {analysis.overallScore}/100
                   </h5>
-                  <p className="text-sm font-normal text-muted-foreground">Budget Score</p>
+                  <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Budget Score</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-card rounded-lg shadow border border-border p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center me-3">
                   <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+                  <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
                     {formatCurrency(analysisData.totalSpent)}
                   </h5>
-                  <p className="text-sm font-normal text-muted-foreground">Total Spent</p>
+                  <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Total Spent</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-card rounded-lg shadow border border-border p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center me-3">
                   <Activity className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+                  <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
                     {((analysisData.totalSpent / analysisData.totalBudget) * 100).toFixed(1)}%
                   </h5>
-                  <p className="text-sm font-normal text-muted-foreground">Budget Used</p>
+                  <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Budget Used</p>
                 </div>
               </div>
             </div>
@@ -488,28 +478,28 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
           {/* Charts Grid - Pure Flowbite Design */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Category Spending Pie Chart */}
-            <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
               <div className="flex justify-between items-start w-full mb-4">
                 <div className="flex-col items-center">
                   <div className="flex items-center mb-1">
-                    <h5 className="text-xl font-bold leading-none text-foreground me-1">Category Breakdown</h5>
+                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white me-1">Category Breakdown</h5>
                   </div>
-                  <p className="text-sm font-normal text-muted-foreground">Spending by category</p>
+                  <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Spending by category</p>
                 </div>
               </div>
               <div ref={pieChartRef} className="h-96"></div>
             </div>
 
             {/* Budget vs Actual Bar Chart */}
-            <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
-              <div className="flex justify-between pb-4 mb-4 border-b border-border">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+              <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
-                    <Chart className="w-6 h-6 text-muted-foreground" />
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+                    <Chart className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   </div>
                   <div>
-                    <h5 className="leading-none text-xl font-bold text-foreground pb-1">Budget Comparison</h5>
-                    <p className="text-sm font-normal text-muted-foreground">Budget vs Actual spending</p>
+                    <h5 className="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Budget Comparison</h5>
+                    <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Budget vs Actual spending</p>
                   </div>
                 </div>
               </div>
@@ -517,15 +507,15 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             </div>
 
             {/* Monthly Trends Area Chart */}
-            <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
-              <div className="flex justify-between pb-4 mb-4 border-b border-border">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+              <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
-                    <TrendingUp className="w-6 h-6 text-muted-foreground" />
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+                    <TrendingUp className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                   </div>
                   <div>
-                    <h5 className="leading-none text-xl font-bold text-foreground pb-1">Monthly Trends</h5>
-                    <p className="text-sm font-normal text-muted-foreground">Spending over time</p>
+                    <h5 className="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Monthly Trends</h5>
+                    <p className="text-sm font-normal text-gray-500 dark:text-gray-400">Spending over time</p>
                   </div>
                 </div>
               </div>
@@ -533,10 +523,10 @@ export function BudgetAnalyzer({ expenses, budgets }: BudgetAnalyzerProps) {
             </div>
 
             {/* Budget Performance Donut Chart */}
-            <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 md:p-6">
               <div className="flex justify-between mb-3">
                 <div className="flex justify-center items-center">
-                  <h5 className="text-xl font-bold leading-none text-foreground pe-1">Budget Performance</h5>
+                  <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">Budget Performance</h5>
                 </div>
               </div>
               <div ref={donutChartRef} className="h-96"></div>

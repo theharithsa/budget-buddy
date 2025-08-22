@@ -97,6 +97,13 @@ self.addEventListener('fetch', (event) => {
 // Cache First Strategy - for static assets
 async function cacheFirstStrategy(request, cacheName) {
   try {
+    // Skip unsupported schemes
+    if (request.url.startsWith('chrome-extension://') || 
+        request.url.startsWith('moz-extension://') || 
+        request.url.startsWith('safari-extension://')) {
+      return fetch(request);
+    }
+
     const cache = await caches.open(cacheName);
     const cachedResponse = await cache.match(request);
     
@@ -124,6 +131,13 @@ async function cacheFirstStrategy(request, cacheName) {
 // Network First Strategy - for API calls and dynamic content
 async function networkFirstStrategy(request, cacheName) {
   try {
+    // Skip unsupported schemes
+    if (request.url.startsWith('chrome-extension://') || 
+        request.url.startsWith('moz-extension://') || 
+        request.url.startsWith('safari-extension://')) {
+      return fetch(request);
+    }
+
     // Try network first
     const networkResponse = await fetch(request);
     
