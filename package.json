@@ -1,7 +1,7 @@
 {
     "name": "finbuddy",
     "private": true,
-    "version": "2.5.1",
+    "version": "2.5.3",
     "type": "module",
     "scripts": {
         "dev": "vite",

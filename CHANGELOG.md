@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.3] - 2025-08-23
+
+### Fixed
+
+- **Achievement Cards Design & Scoring**: Enhanced gamification system with improved visual design and accurate calculations
+  - **Card Design Improvements**:
+    - Replaced harsh green highlighting with subtle gradient background for completed achievements
+    - Added elegant ring effect and shadow to completed achievement icons
+    - Improved contrast and readability with better text colors for completed vs. incomplete achievements
+    - Enhanced progress bars with color coding and better visual feedback
+    - Redesigned completion badges with checkmark icons and refined styling
+  - **Scoring Algorithm Fixes**:
+    - **Budget Compliance**: Fixed calculation to properly show 100% when under budget, decreasing appropriately when over budget
+    - **Frugal Genius Achievement**: Completely rewritten logic to accurately track spending less than 80% of budget
+    - **Consistency Score**: Enhanced algorithm using coefficient of variation for more accurate spending pattern analysis
+    - **Savings Rate**: Improved calculation based on actual budget vs spending ratio rather than arbitrary day counting
+    - **Overall Score**: Rebalanced weighted calculation (40% budget compliance, 30% consistency, 20% savings, 10% streak)
+  - **Dynamic Updates**: All scores now correctly update in real-time as expenses are added
+  - **Visual Polish**: Achievement cards now properly differentiate between unlocked/locked states with appropriate styling
+
+### Technical Improvements
+
+- Enhanced `GamificationSystem.tsx` with robust calculation algorithms
+- Improved achievement card responsive design and accessibility
+- Added proper TypeScript typing for all scoring calculations
+- Optimized achievement progress tracking for better performance
+
+## [2.5.2] - 2025-08-23
+
+### Fixed
+
+- **Dashboard Chart Rendering Issue**: Fixed charts disappearing when switching between dashboard tabs
+  - **Problem**: Charts in the Overview tab would disappear when users switched to other tabs (Advanced, Behavior, etc.) and returned to Overview
+  - **Root Cause**: ApexCharts instances were losing connection to DOM containers when tab content was hidden/shown
+  - **Solution**: Implemented proper chart lifecycle management with controlled tab state
+  - **Technical Improvements**:
+    - Added tab state tracking with `useState` for active tab management
+    - Implemented chart instance references for proper cleanup
+    - Added chart re-rendering trigger when returning to Overview tab
+    - Enhanced useEffect dependencies to include tab state changes
+    - Added unique keys to chart containers to force re-rendering
+    - Improved chart cleanup on component unmount
+  - **Impact**: Dashboard charts now remain visible and functional when switching between tabs
+  - **Testing**: Verified on all dashboard tabs (Overview, Advanced, Behavior, Achievements, Budgets)
+
+### Technical Notes
+
+- Enhanced Dashboard.tsx with proper chart lifecycle management
+- Improved ApexCharts integration with React tab system
+- Added forced re-rendering mechanism for tab switching
+- Maintained chart performance while fixing visibility issues
+
 ## [2.5.1] - 2025-08-23
 
 ### Changed

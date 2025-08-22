@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo, useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -42,6 +42,10 @@ export function Dashboard({
   publicPeople,
   onNavigate 
 }: DashboardProps) {
+  // State to track active tab and force chart re-rendering
+  const [activeTab, setActiveTab] = useState('overview');
+  const [chartKey, setChartKey] = useState(0);
+
   // Flowbite Chart References
   const areaChartRef = useRef<HTMLDivElement>(null);
   const columnChartRef = useRef<HTMLDivElement>(null);
@@ -49,6 +53,12 @@ export function Dashboard({
   const donutChartRef = useRef<HTMLDivElement>(null);
   const lineChartRef = useRef<HTMLDivElement>(null);
   const barChartRef = useRef<HTMLDivElement>(null);
+
+  // Chart instance references for cleanup
+  const areaChartInstance = useRef<ApexCharts | null>(null);
+  const columnChartInstance = useRef<ApexCharts | null>(null);
+  const pieChartInstance = useRef<ApexCharts | null>(null);
+  const donutChartInstance = useRef<ApexCharts | null>(null);
 
   // Calculate key metrics
   const dashboardMetrics = useMemo(() => {
@@ -154,9 +164,43 @@ export function Dashboard({
     };
   }, [expenses, budgets, customCategories]);
 
+  // Handle tab changes and force chart re-rendering when returning to overview
+  const handleTabChange = (value: string) => {
+    if (value === 'overview' && activeTab !== 'overview') {
+      // Force chart re-rendering by incrementing the key
+      setChartKey(prev => prev + 1);
+    }
+    setActiveTab(value);
+  };
+
+  // Cleanup function for chart instances
+  const cleanupCharts = () => {
+    if (areaChartInstance.current) {
+      areaChartInstance.current.destroy();
+      areaChartInstance.current = null;
+    }
+    if (columnChartInstance.current) {
+      columnChartInstance.current.destroy();
+      columnChartInstance.current = null;
+    }
+    if (pieChartInstance.current) {
+      pieChartInstance.current.destroy();
+      pieChartInstance.current = null;
+    }
+    if (donutChartInstance.current) {
+      donutChartInstance.current.destroy();
+      donutChartInstance.current = null;
+    }
+  };
+
   // Area Chart - Monthly Spending Trends (Flowbite Style)
   useEffect(() => {
-    if (areaChartRef.current && dashboardMetrics.monthlyTrends.length > 0) {
+    if (areaChartRef.current && dashboardMetrics.monthlyTrends.length > 0 && activeTab === 'overview') {
+      // Cleanup existing chart
+      if (areaChartInstance.current) {
+        areaChartInstance.current.destroy();
+      }
+
       const areaChart = new ApexCharts(areaChartRef.current, {
         chart: {
           height: 320,
@@ -232,13 +276,25 @@ export function Dashboard({
       });
 
       areaChart.render();
-      return () => areaChart.destroy();
+      areaChartInstance.current = areaChart;
+      
+      return () => {
+        if (areaChartInstance.current) {
+          areaChartInstance.current.destroy();
+          areaChartInstance.current = null;
+        }
+      };
     }
-  }, [dashboardMetrics.monthlyTrends]);
+  }, [dashboardMetrics.monthlyTrends, activeTab, chartKey]);
 
   // Column Chart - Weekly Performance (Flowbite Style)
   useEffect(() => {
-    if (columnChartRef.current) {
+    if (columnChartRef.current && activeTab === 'overview') {
+      // Cleanup existing chart
+      if (columnChartInstance.current) {
+        columnChartInstance.current.destroy();
+      }
+
       const columnChart = new ApexCharts(columnChartRef.current, {
         chart: {
           height: 320,
@@ -331,13 +387,25 @@ export function Dashboard({
       });
 
       columnChart.render();
-      return () => columnChart.destroy();
+      columnChartInstance.current = columnChart;
+      
+      return () => {
+        if (columnChartInstance.current) {
+          columnChartInstance.current.destroy();
+          columnChartInstance.current = null;
+        }
+      };
     }
-  }, [dashboardMetrics.totalSpent]);
+  }, [dashboardMetrics.totalSpent, activeTab, chartKey]);
 
   // Pie Chart - Category Distribution (Flowbite Style)
   useEffect(() => {
-    if (pieChartRef.current && dashboardMetrics.categoryData.length > 0) {
+    if (pieChartRef.current && dashboardMetrics.categoryData.length > 0 && activeTab === 'overview') {
+      // Cleanup existing chart
+      if (pieChartInstance.current) {
+        pieChartInstance.current.destroy();
+      }
+
       const pieChart = new ApexCharts(pieChartRef.current, {
         chart: {
           height: 420,
@@ -373,13 +441,24 @@ export function Dashboard({
       });
 
       pieChart.render();
-      return () => pieChart.destroy();
+      pieChartInstance.current = pieChart;
+      
+      return () => {
+        if (pieChartInstance.current) {
+          pieChartInstance.current.destroy();
+          pieChartInstance.current = null;
+        }
+      };
     }
-  }, [dashboardMetrics.categoryData]);
+  }, [dashboardMetrics.categoryData, activeTab, chartKey]);
 
   // Donut Chart - Budget Performance (Flowbite Style)
   useEffect(() => {
-    if (donutChartRef.current && dashboardMetrics.budgetProgress.length > 0) {
+    if (donutChartRef.current && dashboardMetrics.budgetProgress.length > 0 && activeTab === 'overview') {
+      // Cleanup existing chart
+      if (donutChartInstance.current) {
+        donutChartInstance.current.destroy();
+      }
       const donutChart = new ApexCharts(donutChartRef.current, {
         chart: {
           height: 420,
@@ -448,9 +527,23 @@ export function Dashboard({
       });
 
       donutChart.render();
-      return () => donutChart.destroy();
+      donutChartInstance.current = donutChart;
+      
+      return () => {
+        if (donutChartInstance.current) {
+          donutChartInstance.current.destroy();
+          donutChartInstance.current = null;
+        }
+      };
     }
-  }, [dashboardMetrics.budgetProgress]);
+  }, [dashboardMetrics.budgetProgress, activeTab, chartKey]);
+
+  // Cleanup all charts when component unmounts
+  useEffect(() => {
+    return () => {
+      cleanupCharts();
+    };
+  }, []);
 
   return (
     <div className="p-6 space-y-8">
@@ -541,7 +634,7 @@ export function Dashboard({
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
@@ -566,7 +659,7 @@ export function Dashboard({
         </TabsList>
 
         {/* Overview Tab - Pure Flowbite Design */}
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6" key={`overview-${chartKey}`}>
           {/* Flowbite Charts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             
@@ -601,7 +694,7 @@ export function Dashboard({
                 </div>
               </div>
 
-              <div ref={areaChartRef} className="h-64"></div>
+              <div ref={areaChartRef} className="h-64" key={`area-chart-${chartKey}`}></div>
               
               <div className="grid grid-cols-1 items-center border-border border-t justify-between mt-4">
                 <div className="flex justify-between items-center pt-5">
@@ -638,7 +731,7 @@ export function Dashboard({
                 </dl>
               </div>
 
-              <div ref={columnChartRef} className="h-64"></div>
+              <div ref={columnChartRef} className="h-64" key={`column-chart-${chartKey}`}></div>
               
               <div className="grid grid-cols-1 items-center border-border border-t justify-between mt-4">
                 <div className="flex justify-between items-center pt-5">
@@ -677,7 +770,7 @@ export function Dashboard({
                 </button>
               </div>
 
-              <div ref={pieChartRef} className="h-64"></div>
+              <div ref={pieChartRef} className="h-64" key={`pie-chart-${chartKey}`}></div>
 
               <div className="grid grid-cols-1 items-center border-border border-t justify-between mt-4">
                 <div className="flex justify-between items-center pt-5">
@@ -731,7 +824,7 @@ export function Dashboard({
                 </div>
               </div>
 
-              <div ref={donutChartRef} className="h-64"></div>
+              <div ref={donutChartRef} className="h-64" key={`donut-chart-${chartKey}`}></div>
 
               <div className="grid grid-cols-1 items-center border-border border-t justify-between mt-4">
                 <div className="flex justify-between items-center pt-5">
