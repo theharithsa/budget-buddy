@@ -215,7 +215,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
               Create Template
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingTemplate ? 'Edit Template' : 'Create New Template'}
@@ -304,7 +304,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
       </div>
 
       {/* Quick Tips */}
-      <Card className="bg-accent/10 border-accent/20">
+      <Card className="bg-accent/10 shadow-lg hover:shadow-xl transition-shadow">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
             <div className="text-accent">💡</div>
@@ -325,7 +325,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
           <h3 className="text-lg font-medium">Your Templates</h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {customTemplates.map((template) => (
-              <Card key={template.id} className="relative group">
+              <Card key={template.id} className="relative group shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -403,7 +403,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
             {defaultTemplates
               .filter(template => template.frequency === 'monthly')
               .map((template) => (
-                <Card key={template.id} className="hover:shadow-md transition-shadow">
+                <Card key={template.id} className="shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
                       <ArrowsClockwise className="w-4 h-4 text-muted-foreground" />
@@ -440,7 +440,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
               {defaultTemplates
                 .filter(template => template.frequency === 'quarterly')
                 .map((template) => (
-                  <Card key={template.id} className="hover:shadow-md transition-shadow">
+                  <Card key={template.id} className="shadow-lg hover:shadow-xl transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm flex items-center gap-2">
                         <ArrowsClockwise className="w-4 h-4 text-orange-500" />
@@ -478,7 +478,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
               {defaultTemplates
                 .filter(template => template.frequency === 'yearly')
                 .map((template) => (
-                  <Card key={template.id} className="hover:shadow-md transition-shadow">
+                  <Card key={template.id} className="shadow-lg hover:shadow-xl transition-shadow">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm flex items-center gap-2">
                         <ArrowsClockwise className="w-4 h-4 text-purple-500" />

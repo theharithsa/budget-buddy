@@ -10,12 +10,6 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        env:
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-        with:
-          secrets_to_redact: '["${{ github.token }}","${{ secrets.DYNATRACE_ENDPOINT }}","${{ secrets.DYNATRACE_TOKEN }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
       - uses: actions/checkout@v4
       - run: npm ci && npm run build
       - name: Deploy to Firebase Hosting
@@ -26,11 +20,12 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           channelId: live
           projectId: finbuddy-2025
+      
       # Send success event to Dynatrace
       - name: Send deployment success to Dynatrace
         if: success()
         run: |
-          curl -X POST "${{ secrets.DYNATRACE_ENDPOINT }}" \
+          curl -X POST "${{ vars.DYNATRACE_ENDPOINT }}" \
             -H "Authorization: Api-Token ${{ secrets.DYNATRACE_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '[{
@@ -49,11 +44,12 @@ jobs:
               "workflow.run_id": "'$GITHUB_RUN_ID'",
               "workflow.run_number": "'$GITHUB_RUN_NUMBER'"
             }]'
+      
       # Send failure event to Dynatrace
       - name: Send deployment failure to Dynatrace
         if: failure()
         run: |
-          curl -X POST "${{ secrets.DYNATRACE_ENDPOINT }}" \
+          curl -X POST "${{ vars.DYNATRACE_ENDPOINT }}" \
             -H "Authorization: Api-Token ${{ secrets.DYNATRACE_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '[{
@@ -72,5 +68,3 @@ jobs:
               "workflow.run_number": "'$GITHUB_RUN_NUMBER'",
               "deployment.error": "Firebase deployment failed"
             }]'
-    permissions:
-      actions: read

@@ -19,6 +19,8 @@ import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { Navigation } from '@/components/Navigation';
+import { BottomNavigation } from '@/components/BottomNavigation';
+import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
@@ -229,8 +231,10 @@ function FinanceApp() {
         {/* Header */}
         <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
         
-        {/* Content with proper spacing */}
-        <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+        {/* Content with proper spacing and bottom padding for mobile nav */}
+        <div className={`flex-1 max-w-7xl mx-auto px-4 py-6 w-full ${
+          activeTab !== 'dashboard' ? 'pb-20 md:pb-6' : 'pb-6'
+        }`}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             {/* Hidden TabsList for functionality only */}
             <TabsList className="hidden">
@@ -480,6 +484,13 @@ function FinanceApp() {
       <PWAUpdatePrompt />
       <PWAConnectionStatus />
       
+      {/* Bottom Navigation for Mobile - Hidden on Dashboard/Overview */}
+      <BottomNavigation 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        isVisible={activeTab !== 'dashboard'}
+      />
+      
       <Toaster position="top-right" />
 
       {/* Add Expense Modal */}
@@ -504,6 +515,9 @@ function FinanceApp() {
           publicPeople={publicPeople}
         />
       )}
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

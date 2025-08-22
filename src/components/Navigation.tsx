@@ -17,6 +17,7 @@ import {
   Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getNavigationVersion } from '@/lib/version';
 
 interface NavigationProps {
   activeTab: string;
@@ -77,11 +78,13 @@ const navigationItems: NavigationItem[] = [
 ];
 
 // Desktop Sidebar Component
-function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse }: {
+function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse, title, version }: {
   activeTab: string;
   onTabChange: (tab: string) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  title: string;
+  version: string;
 }) {
   return (
     <div 
@@ -105,8 +108,8 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div>
-              <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>FinBuddy</h2>
-              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>v2.2.1</p>
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>{title}</h2>
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>{version}</p>
             </div>
           )}
           <Button
@@ -170,6 +173,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
 export function Navigation({ activeTab, onTabChange, onSidebarToggle }: NavigationProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { title, version } = getNavigationVersion();
 
   // Check if screen is mobile size
   useEffect(() => {
@@ -212,6 +216,8 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
       onTabChange={onTabChange}
       isCollapsed={isCollapsed}
       onToggleCollapse={handleToggleCollapse}
+      title={title}
+      version={version}
     />
   );
 }

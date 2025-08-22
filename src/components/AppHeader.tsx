@@ -10,9 +10,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users } from 'lucide-react';
+import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady, auth } from '@/lib/firebase';
+import { getVersionSubtitle, getNavigationVersion, APP_DISPLAY_NAME } from '@/lib/version';
 import { toast } from 'sonner';
 import { pwaManager } from '@/lib/pwa';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -86,6 +87,11 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
       onTabChange(tab);
       setMobileMenuOpen(false); // Close mobile menu after selection
     }
+  };
+
+  const getPageTitle = (tab: string) => {
+    const item = navigationItems.find(item => item.id === tab);
+    return item?.label || 'FinBuddy';
   };
 
   const handleLogout = async () => {
@@ -210,25 +216,41 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
     : user.email?.[0].toUpperCase() || 'U';
 
   return (
-    <div className="border-b bg-card">
+    <div className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Mobile Navigation Menu */}
-            <div className="lg:hidden">
-              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="sm" className="p-2">
-                    <Menu className="w-5 h-5" />
-                    <span className="sr-only">Open navigation menu</span>
-                  </Button>
-                </SheetTrigger>
+            {/* Mobile Back Button for non-dashboard pages */}
+            {activeTab !== 'dashboard' && (
+              <div className="lg:hidden">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="p-2"
+                  onClick={() => onTabChange?.('dashboard')}
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span className="sr-only">Back to dashboard</span>
+                </Button>
+              </div>
+            )}
+            
+            {/* Mobile Navigation Menu - Only show on dashboard */}
+            {activeTab === 'dashboard' && (
+              <div className="lg:hidden">
+                <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="sm" className="p-2">
+                      <Menu className="w-5 h-5" />
+                      <span className="sr-only">Open navigation menu</span>
+                    </Button>
+                  </SheetTrigger>
                 <SheetContent side="left" className="w-80 p-0">
                   <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="p-6 border-b border-border">
-                      <h2 className="text-lg font-semibold text-foreground">FinBuddy</h2>
-                      <p className="text-sm text-muted-foreground mt-1">v2.2.1 • Navigate to any section</p>
+                      <h2 className="text-lg font-semibold text-foreground">{APP_DISPLAY_NAME}</h2>
+                      <p className="text-sm text-muted-foreground mt-1">{getNavigationVersion().subtitle}</p>
                     </div>
 
                     {/* Navigation Items */}
@@ -273,11 +295,14 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                 </SheetContent>
               </Sheet>
             </div>
+            )}
 
             <div>
-              <h1 className="text-2xl font-bold">FinBuddy</h1>
+              <h1 className="text-2xl font-bold">
+                {activeTab === 'dashboard' ? APP_DISPLAY_NAME : getPageTitle(activeTab!)}
+              </h1>
               <p className="text-sm text-muted-foreground">
-                Track your expenses, manage budgets • v2.2.1
+                {getVersionSubtitle(activeTab === 'dashboard' ? 'dashboard' : 'other')}
               </p>
             </div>
           </div>

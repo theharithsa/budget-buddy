@@ -1,4 +1,4 @@
-# 🔥 Firebase Setup Guide - Budget Buddy v2.2.1
+# 🔥 Firebase Setup Guide - Budget Buddy v2.2.2
 
 This comprehensive guide will help you configure Firebase backend services for Budget Buddy, including Authentication, Firestore Database, and Cloud Storage with proper security rules.
 

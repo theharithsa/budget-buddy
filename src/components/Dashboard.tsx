@@ -465,83 +465,79 @@ export function Dashboard({
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-6 w-full" style={{ 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        display: 'grid'
-      }}>
+      <div 
+        className="gap-4 px-2"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '1rem'
+        }}
+      >
         {/* Total Spent Card */}
-        <div className="bg-card text-card-foreground border-border border rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-primary" />
-              </div>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card w-full border-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 py-3">
+            <CardTitle className="text-sm font-semibold text-foreground">Total Spent</CardTitle>
+            <div className="p-2 rounded-md" style={{ backgroundColor: 'rgb(196 181 253)', color: 'rgb(91 33 182)' }}>
+              <DollarSign className="h-4 w-4" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
-              <p className="text-2xl font-bold text-foreground truncate">
-                {formatCurrency(dashboardMetrics.totalSpent)}
-              </p>
-              <p className="text-xs text-muted-foreground">All time spending</p>
-            </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="text-2xl font-bold text-foreground mb-1">{formatCurrency(dashboardMetrics.totalSpent)}</div>
+            <p className="text-xs text-muted-foreground">
+              All time spending
+            </p>
+          </CardContent>
+        </Card>
 
         {/* This Month Card */}
-        <div className="bg-card text-card-foreground border-border border rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-blue-500" />
-              </div>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card w-full border-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 py-3">
+            <CardTitle className="text-sm font-semibold text-foreground">This Month</CardTitle>
+            <div className="p-2 rounded-md" style={{ backgroundColor: 'rgb(147 197 253)', color: 'rgb(30 64 175)' }}>
+              <Calendar className="h-4 w-4" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-muted-foreground">This Month</p>
-              <p className="text-2xl font-bold text-foreground truncate">
-                {formatCurrency(dashboardMetrics.monthlySpent)}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {formatCurrency(dashboardMetrics.totalBudget - dashboardMetrics.monthlySpent)} remaining
-              </p>
-            </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="text-2xl font-bold text-foreground mb-1">{formatCurrency(dashboardMetrics.monthlySpent)}</div>
+            <p className="text-xs text-muted-foreground">
+              {formatCurrency(dashboardMetrics.totalBudget - dashboardMetrics.monthlySpent)} remaining
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Budget Status Card */}
-        <div className="bg-card text-card-foreground border-border border rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <Target className="w-6 h-6 text-green-500" />
-              </div>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card w-full border-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 py-3">
+            <CardTitle className="text-sm font-semibold text-foreground">Budget Status</CardTitle>
+            <div className="p-2 rounded-md" style={{ backgroundColor: 'rgb(134 239 172)', color: 'rgb(21 128 61)' }}>
+              <Target className="h-4 w-4" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-muted-foreground">Budget Status</p>
-              <p className="text-2xl font-bold text-foreground">
-                {dashboardMetrics.totalBudget > 0 ? Math.round(dashboardMetrics.budgetUtilization) : 0}%
-              </p>
-              <p className="text-xs text-muted-foreground">of budget used</p>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="text-2xl font-bold text-foreground mb-1">
+              {dashboardMetrics.totalBudget > 0 ? Math.round(dashboardMetrics.budgetUtilization) : 0}%
             </div>
-          </div>
-        </div>
+            <p className="text-xs text-muted-foreground">
+              of budget used
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Transactions Card */}
-        <div className="bg-card text-card-foreground border-border border rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-                <Receipt className="w-6 h-6 text-orange-500" />
-              </div>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card w-full border-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 py-3">
+            <CardTitle className="text-sm font-semibold text-foreground">Transactions</CardTitle>
+            <div className="p-2 rounded-md" style={{ backgroundColor: 'rgb(253 186 116)', color: 'rgb(154 52 18)' }}>
+              <Receipt className="h-4 w-4" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-muted-foreground">Transactions</p>
-              <p className="text-2xl font-bold text-foreground">
-                {expenses.length}
-              </p>
-              <p className="text-xs text-muted-foreground">Total recorded expenses</p>
-            </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="text-2xl font-bold text-foreground mb-1">{expenses.length}</div>
+            <p className="text-xs text-muted-foreground">
+              Total recorded expenses
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Tabs */}
@@ -549,23 +545,23 @@ export function Dashboard({
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
-            Overview
+            <span className="hidden sm:inline">Overview</span>
           </TabsTrigger>
           <TabsTrigger value="advanced" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
-            Advanced
+            <span className="hidden sm:inline">Advanced</span>
           </TabsTrigger>
           <TabsTrigger value="behavior" className="flex items-center gap-2">
             <Brain className="h-4 w-4" />
-            Behavior
+            <span className="hidden sm:inline">Behavior</span>
           </TabsTrigger>
           <TabsTrigger value="achievements" className="flex items-center gap-2">
             <Trophy className="h-4 w-4" />
-            Achievements
+            <span className="hidden sm:inline">Achievements</span>
           </TabsTrigger>
           <TabsTrigger value="budgets" className="flex items-center gap-2">
             <Target className="h-4 w-4" />
-            Budgets
+            <span className="hidden sm:inline">Budgets</span>
           </TabsTrigger>
         </TabsList>
 

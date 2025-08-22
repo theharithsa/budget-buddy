@@ -69,7 +69,7 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
   // Render list view layout
   if (viewMode === 'list') {
     return (
-      <Card className="expense-animation">
+      <Card className="expense-animation shadow-lg hover:shadow-xl transition-shadow">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -155,7 +155,7 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
 
   // Render grid view layout (existing layout)
   return (
-    <Card className={`expense-animation ${viewMode === 'grid' ? 'h-full flex flex-col' : ''}`}>
+    <Card className={`expense-animation shadow-lg hover:shadow-xl transition-shadow ${viewMode === 'grid' ? 'h-full flex flex-col' : ''}`}>
       <CardHeader className={`pb-3 ${viewMode === 'grid' ? 'flex-shrink-0' : ''}`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

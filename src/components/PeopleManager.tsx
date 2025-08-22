@@ -209,7 +209,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
               Add Person
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingPerson ? 'Edit Person' : 'Add New Person'}
@@ -254,8 +254,8 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
                     <button
                       key={icon}
                       type="button"
-                      className={`p-2 text-lg rounded border ${
-                        formData.icon === icon ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'
+                      className={`p-2 text-lg rounded border transition-colors ${
+                        formData.icon === icon ? 'bg-primary/10 border-primary' : 'bg-muted hover:bg-muted/80 border-border'
                       }`}
                       onClick={() => setFormData(prev => ({ ...prev, icon }))}
                     >
@@ -332,10 +332,10 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
         </TabsList>
 
         <TabsContent value="my-people" className="space-y-4">
-          <div className="grid gap-3">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {/* Default People */}
             {allPeople.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div key={person.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
@@ -350,7 +350,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
                         {person.relationship}
                       </Badge>
                     )}
-                    <div className="text-sm text-gray-500">Default person</div>
+                    <div className="text-sm text-muted-foreground">Default person</div>
                   </div>
                 </div>
               </div>
@@ -358,7 +358,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
 
             {/* Custom People */}
             {customPeople.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+              <div key={person.id} className="flex items-center justify-between p-3 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
@@ -421,9 +421,9 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
         </TabsContent>
 
         <TabsContent value="public-people" className="space-y-4">
-          <div className="grid gap-3">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {publicPeople.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+              <div key={person.id} className="flex items-center justify-between p-3 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
