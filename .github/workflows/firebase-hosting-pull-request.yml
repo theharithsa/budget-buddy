@@ -7,11 +7,18 @@ permissions:
   checks: write
   contents: read
   pull-requests: write
+  actions: read
 jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
+      - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
+        env:
+          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+        with:
+          secrets_to_redact: '["${{ github.token }}","${{ secrets.DYNATRACE_TOKEN }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
       - uses: actions/checkout@v4
       - run: npm ci && npm run build
       - name: Deploy to Firebase Preview
@@ -21,7 +28,6 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           projectId: finbuddy-2025
-      
       # Send success event to Dynatrace
       - name: Send preview deployment success to Dynatrace
         if: success()
@@ -45,7 +51,6 @@ jobs:
               "workflow.run_number": "'$GITHUB_RUN_NUMBER'",
               "pull_request.number": "'$GITHUB_EVENT_NUMBER'"
             }]'
-      
       # Send failure event to Dynatrace
       - name: Send preview deployment failure to Dynatrace
         if: failure()
