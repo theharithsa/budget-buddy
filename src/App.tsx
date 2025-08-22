@@ -393,7 +393,7 @@ function FinanceApp() {
                 className={viewMode === 'grid' ? "gap-4" : "space-y-4"}
                 style={viewMode === 'grid' ? {
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
                   gap: '1rem'
                 } : {}}
               >
