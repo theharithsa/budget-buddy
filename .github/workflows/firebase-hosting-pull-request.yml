@@ -28,52 +28,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           projectId: finbuddy-2025
-      # Send success event to Dynatrace
-      - name: Send preview deployment success to Dynatrace
-        if: success()
-        run: |
-          curl -X POST "${{ vars.DYNATRACE_ENDPOINT }}" \
-            -H "Authorization: Api-Token ${{ secrets.DYNATRACE_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '[{
-              "source": "finbuddy",
-              "event.id": "'$GITHUB_RUN_ID'",
-              "event.type": "deployment",
-              "deployment.status": "success",
-              "deployment.environment": "preview",
-              "deployment.platform": "firebase",
-              "deployment.timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)'",
-              "project.name": "budget-buddy",
-              "git.commit": "'$GITHUB_SHA'",
-              "git.branch": "'$GITHUB_HEAD_REF'",
-              "git.author": "'$GITHUB_ACTOR'",
-              "workflow.run_id": "'$GITHUB_RUN_ID'",
-              "workflow.run_number": "'$GITHUB_RUN_NUMBER'",
-              "pull_request.number": "'$GITHUB_EVENT_NUMBER'"
-            }]'
-      # Send failure event to Dynatrace
-      - name: Send preview deployment failure to Dynatrace
-        if: failure()
-        run: |
-          curl -X POST "${{ vars.DYNATRACE_ENDPOINT }}" \
-            -H "Authorization: Api-Token ${{ secrets.DYNATRACE_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '[{
-              "source": "finbuddy",
-              "event.id": "'$GITHUB_RUN_ID'",
-              "event.type": "deployment",
-              "deployment.status": "failed",
-              "deployment.environment": "preview",
-              "deployment.platform": "firebase",
-              "deployment.timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)'",
-              "project.name": "budget-buddy",
-              "git.commit": "'$GITHUB_SHA'",
-              "git.branch": "'$GITHUB_HEAD_REF'",
-              "git.author": "'$GITHUB_ACTOR'",
-              "workflow.run_id": "'$GITHUB_RUN_ID'",
-              "workflow.run_number": "'$GITHUB_RUN_NUMBER'",
-              "pull_request.number": "'$GITHUB_EVENT_NUMBER'",
-              "deployment.error": "Firebase preview deployment failed"
-            }]'
     permissions:
       actions: read
