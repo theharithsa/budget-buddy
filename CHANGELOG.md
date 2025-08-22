@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.1] - 2025-08-23
+
+### Changed
+
+- **Authentication Improvements**: Enhanced authentication reliability and compatibility
+  - Simplified Firebase configuration for better stability
+  - Improved Google OAuth authentication flow
+  - Streamlined authentication codebase for enhanced performance
+  - Updated app to version 2.5.1 with better compatibility across all browsers
+
+### Fixed
+
+- **Firebase Authentication Issues**: Resolved authentication errors and improved connectivity
+  - Fixed Firebase internal errors during Google sign-in
+  - Improved authentication state management
+  - Enhanced error handling for authentication flows
+  - Better compatibility with different browser environments
+
 ## [2.3.0] - 2025-01-27
 
 ### Added

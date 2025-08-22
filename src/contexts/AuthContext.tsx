@@ -35,27 +35,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let isMounted = true;
 
     // log.info('Auth', 'Initializing authentication context');
-    console.log('Auth: Initializing authentication context');
+    console.log('🔐 Auth: Initializing authentication context');
+    console.log('🔧 Current URL at auth init:', window.location.href);
 
     // Check for redirect result first
+    console.log('🔍 Auth: Checking for redirect result...');
     checkRedirectResult()
       .then((redirectUser) => {
-        if (isMounted && redirectUser) {
-          // log.info('Auth', 'User authenticated via redirect', {
-          //   userId: redirectUser.uid,
-          //   email: redirectUser.email,
-          //   provider: redirectUser.providerData[0]?.providerId
-          // });
-          console.log('Auth: User authenticated via redirect', redirectUser.uid);
-          setUser(redirectUser);
-          setLoading(false);
-          // Set user context in logger
-          // log.setUser(redirectUser.uid);
+        if (isMounted) {
+          if (redirectUser) {
+            // log.info('Auth', 'User authenticated via redirect', {
+            //   userId: redirectUser.uid,
+            //   email: redirectUser.email,
+            //   provider: redirectUser.providerData[0]?.providerId
+            // });
+            console.log('✅ Auth: User authenticated via redirect:', {
+              userId: redirectUser.uid,
+              email: redirectUser.email,
+              displayName: redirectUser.displayName
+            });
+            setUser(redirectUser);
+            setLoading(false);
+            // Set user context in logger
+            // log.setUser(redirectUser.uid);
+          } else {
+            console.log('ℹ️ Auth: No redirect result found, proceeding with auth state listener');
+          }
         }
       })
       .catch((error) => {
-        // log.error('Auth', 'Redirect result error', { error: error.message }, error);
-        console.error('Auth: Redirect result error', error);
+        if (isMounted) {
+          // log.error('Auth', 'Redirect result error', { error: error.message }, error);
+          console.error('❌ Auth: Redirect result error:', error);
+          console.error('❌ Auth: Error details:', {
+            code: error.code,
+            message: error.message
+          });
+        }
       });
 
     // Set up auth state listener
