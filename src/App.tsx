@@ -90,6 +90,19 @@ function FinanceApp() {
     localStorage.setItem('budget-buddy-view-mode', viewMode);
   }, [viewMode]);
   
+  // Dynatrace user identification
+  useEffect(() => {
+    // Check if user is authenticated, has email, and dtrum is available
+    if (user && user.email && (window as any).dtrum) {
+      try {
+        (window as any).dtrum.identifyUser(user.email);
+        console.log('Dynatrace: User identified:', user.email);
+      } catch (error) {
+        console.error('Dynatrace: Failed to identify user:', error);
+      }
+    }
+  }, [user]); // Re-run when user changes
+  
   // Initialize date range to current month
   const [dateRange, setDateRange] = useState<DateRange>(() => {
     const now = new Date();
