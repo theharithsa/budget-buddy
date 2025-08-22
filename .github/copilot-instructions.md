@@ -2,28 +2,34 @@
 
 ## 🎯 Project Overview
 
-**Budget Buddy** is a comprehensive personal finance management application built with modern web technologies. It provides expense tracking, budget management, AI-powered financial insights, and secure cloud synchronization with full PWA support.
+**Budget Buddy** is a comprehensive personal finance management application built with modern web technologies. It provides expense tracking, budget management, AI-powered financial insights, advanced dashboard analytics, gamification system, and secure cloud synchronization with full PWA support.
 
 ### Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS + Radix UI components
 - **Backend**: Firebase (Auth, Firestore, Storage)
+- **Charts**: ApexCharts for advanced data visualization
 - **AI Integration**: OpenAI GPT-4 + Spark AI fallbacks
 - **PWA**: Service Worker + Installation Prompts + Offline Support
 - **Navigation**: Collapsible sidebar with responsive design
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable)
-- **Version**: Currently v1.5.3 with grid/list views and enhanced filtering
+- **Version**: Currently v2.5.3 with advanced dashboard, analytics, and gamification system
 
 ## 📁 Architecture & File Structure
 
 ### Core Application Files
 ```
 src/
-├── App.tsx                 # Main application with tab navigation, grid/list views, enhanced filters
+├── App.tsx                 # Main application with comprehensive tab navigation
 ├── main.tsx               # Application entry point & error boundaries
 ├── components/            # React components
 │   ├── ui/               # Radix UI component library
+│   ├── analytics/        # Analytics & gamification components
+│   │   ├── GamificationSystem.tsx    # Achievement tracking & financial scoring
+│   │   ├── AdvancedCharts.tsx        # Complex chart visualizations
+│   │   └── SpendingBehaviorInsights.tsx # AI-powered behavior analysis
+│   ├── Dashboard.tsx     # Advanced dashboard with ApexCharts integration
 │   ├── AddExpenseModal.tsx # Fixed people selection using getAllPeople()
 │   ├── EditExpenseModal.tsx # Consistent people data flow
 │   ├── BudgetAnalyzer.tsx # AI-powered budget analysis
@@ -57,7 +63,7 @@ src/
 - `tailwind.config.js` - Styling configuration
 - `components.json` - Radix UI component configuration
 - `tsconfig.json` - TypeScript configuration
-- `package.json` - Dependencies & scripts (v1.5.3)
+- `package.json` - Dependencies & scripts (v2.5.3)
 - `manifest.json` - PWA manifest for installation
 - `sw.js` - Service worker for offline functionality
 
@@ -66,9 +72,50 @@ src/
 ### Component Architecture
 - **UI Components**: Located in `src/components/ui/` (Radix UI based)
 - **Feature Components**: Direct children of `src/components/`
+- **Analytics Components**: Located in `src/components/analytics/` for dashboard features
 - **Props Interface**: Always define TypeScript interfaces for component props
 - **Error Boundaries**: Use React Error Boundary for component-level error handling
 - **View Mode Support**: Components should accept `viewMode` prop for list/grid rendering
+
+### Dashboard & Analytics Architecture
+The dashboard system uses ApexCharts with careful lifecycle management:
+
+```typescript
+// Dashboard tab state management (CRITICAL for chart rendering)
+const [activeTab, setActiveTab] = useState('overview');
+const [chartKey, setChartKey] = useState(0);
+
+const handleTabChange = (value: string) => {
+  setActiveTab(value);
+  // Force chart re-render when returning to overview - REQUIRED for ApexCharts
+  if (value === 'overview') {
+    setChartKey(prev => prev + 1);
+  }
+};
+
+// Chart instance refs for proper cleanup
+const areaChartInstance = useRef<ApexCharts | null>(null);
+const columnChartInstance = useRef<ApexCharts | null>(null);
+```
+
+### Gamification System Patterns
+```typescript
+// Achievement calculation pattern
+const calculateBudgetCompliance = (expenses: Expense[], budget: number) => {
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  return budget > 0 
+    ? Math.max(0, Math.min(100, (1 - totalExpenses / budget) * 100))
+    : 0;
+};
+
+// Weighted scoring system
+const overallScore = (
+  budgetCompliance * 0.4 +        // 40% weight - most important
+  consistencyScore * 0.3 +        // 30% weight - spending patterns
+  savingsRate * 0.2 +             // 20% weight - financial health
+  (currentStreak / 30) * 100 * 0.1 // 10% weight - streak bonus
+);
+```
 
 ### State Management
 - **Authentication**: React Context (`AuthContext.tsx`)
@@ -77,6 +124,46 @@ src/
 - **Form Handling**: React Hook Form with Zod validation
 - **User Preferences**: localStorage persistence for view modes, filters, and settings
 
+## 📊 ApexCharts Integration Critical Patterns
+
+### Chart Lifecycle Management (ESSENTIAL)
+ApexCharts in React requires careful DOM lifecycle management, especially with tab switching:
+
+```typescript
+// CRITICAL: Tab switching pattern for charts
+useEffect(() => {
+  // Clean up existing chart instances
+  if (areaChartInstance.current) {
+    areaChartInstance.current.destroy();
+    areaChartInstance.current = null;
+  }
+  
+  // Re-initialize charts when tab changes to overview
+  if (activeTab === 'overview' && areaChartRef.current) {
+    // Chart initialization logic
+  }
+}, [activeTab, chartKey, expenses, budgets]);
+
+// CRITICAL: Force re-render for chart visibility
+const handleTabChange = (value: string) => {
+  setActiveTab(value);
+  if (value === 'overview') {
+    setChartKey(prev => prev + 1); // Forces useEffect re-run
+  }
+};
+```
+
+### Chart Container Pattern
+```typescript
+// Chart containers MUST have unique keys for re-rendering
+<div 
+  key={`area-chart-${chartKey}`} 
+  ref={areaChartRef} 
+  className="w-full h-64"
+/>
+```
+
+**WARNING**: Never skip the chartKey increment - charts will disappear on tab switches!
 ### Data Flow Patterns
 ```typescript
 // Expense Management Example
@@ -507,36 +594,99 @@ VITE_DYNATRACE_TOKEN=your-dynatrace-token
 - **Environment Variables**: Configure in deployment platform
 - **Build Optimization**: Production builds are optimized for performance
 
-## 📋 Recent Developments (v1.5.1-1.5.3)
+## 📋 Recent Developments (v2.5.1-2.5.3)
 
 ### Major Feature Additions
 
-#### **List/Grid View Toggle (v1.5.1-1.5.2)**
-- **Implementation**: Persistent view mode toggle with localStorage
-- **Component Integration**: ExpenseCard supports both viewMode props
-- **Responsive Grid**: 1-4 column responsive layouts with proper breakpoints
-- **User Preference**: State persisted across sessions
-- **Pattern**: `viewMode` prop pattern for consistent component behavior
+#### **Advanced Dashboard System (v2.5.0-2.5.2)**
+- **ApexCharts Integration**: Professional data visualization with multiple chart types
+- **Tab-based Navigation**: Overview, Advanced, Behavior, Achievements, Budgets tabs
+- **Critical Fix (v2.5.2)**: Resolved chart disappearing issue when switching tabs
+- **Chart Lifecycle Management**: Proper DOM connection handling for React integration
+- **Responsive Design**: Mobile-optimized dashboard with adaptive layouts
 
-#### **Enhanced Filtering System (v1.5.3)**
-- **People Filter**: New filter to show expenses by associated people
-- **UI Organization**: Primary/secondary filter groupings for better UX
-- **Data Integration**: Uses getAllPeople() for consistent people data
-- **Visual Enhancement**: Background panels and organized layout
-- **State Management**: Centralized filter state in App.tsx
+#### **Gamification System (v2.5.3)**
+- **Achievement Tracking**: Financial milestones with progress visualization
+- **Scoring Algorithms**: Budget compliance, consistency, savings rate calculations
+- **Visual Design**: Subtle gradient styling for completed achievements
+- **Real-time Updates**: Dynamic score updates as expenses are added
+- **Progress Indicators**: Ring effects, progress bars, and completion badges
 
-#### **Clear Cache Functionality (v1.5.3)**
-- **Comprehensive Clearing**: localStorage, sessionStorage, service worker caches
-- **User Access**: Available via AppHeader user dropdown menu
-- **Auto Refresh**: Automatic page reload after cache clearing
-- **User Feedback**: Toast notifications during process
-- **Use Cases**: Resolves app conflicts, clears preferences, fresh state
+#### **Enhanced Analytics (v2.5.0+)**
+- **Spending Behavior Insights**: AI-powered spending pattern analysis
+- **Advanced Charts**: Multiple visualization types for financial data
+- **Financial Scoring**: Comprehensive scoring system with weighted components
+- **Achievement System**: Gamified financial goal tracking
 
-#### **Enhanced Navigation System**
-- **Collapsible Sidebar**: Desktop sidebar with expand/collapse functionality
-- **Mobile Sheet**: Mobile-friendly navigation drawer
-- **Persistent State**: Navigation state preserved across sessions
-- **Icon Integration**: Lucide icons for consistent visual language
+### Critical Bug Fixes
+
+#### **Dashboard Chart Rendering (v2.5.2)**
+- **Problem**: Charts disappeared when switching between dashboard tabs
+- **Root Cause**: ApexCharts DOM connection loss during React tab switching
+- **Solution**: Implemented controlled tab state with forced re-rendering
+- **Implementation**: Enhanced useEffect dependencies and chart instance management
+
+#### **Achievement Card Styling (v2.5.3)**
+- **Problem**: Excessive green highlighting on achievement cards
+- **Solution**: Replaced harsh styling with subtle gradient backgrounds
+- **Scoring Fixes**: Corrected budget compliance and achievement calculations
+- **Visual Polish**: Added ring effects and improved visual hierarchy
+
+### Key Component Updates
+
+#### **TimeframePicker**
+- **Preset Options**: Quick presets (current month, last 30 days, etc.)
+- **Custom Ranges**: Full date picker with validation
+- **Visual Feedback**: Day count and formatted date display
+- **Reset Functionality**: Quick reset to current month
+- **Integration**: Used throughout app for date filtering
+
+#### **PeopleManager** 
+- **Public/Private Sharing**: People can be shared publicly or kept private
+- **Icon & Color Selection**: Full customization with predefined options
+- **Relationship Types**: Categorize people by relationship
+- **Adoption System**: Users can adopt public people to their collection
+- **CRUD Operations**: Full create, read, update, delete functionality
+
+#### **PWAComponents**
+- **Install Prompts**: Automatic and manual installation prompts
+- **Update Management**: Service worker update handling
+- **Connection Status**: Online/offline status indicators
+- **Manual Instructions**: Browser-specific installation guides
+- **Event-Driven**: Custom events for PWA lifecycle management
+
+### Data Flow Improvements
+
+#### **People Data Consistency**
+```typescript
+// Consistent people data pattern
+const allPeople = getAllPeople([...customPeople, ...publicPeople]);
+const selectedPeopleData = selectedPeople.map(id => 
+  allPeople.find(person => person.id === id)
+).filter(Boolean);
+```
+
+#### **View Mode State Pattern**
+```typescript
+// Persistent view mode implementation
+const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+  const saved = localStorage.getItem('budget-buddy-view-mode');
+  return (saved as 'list' | 'grid') || 'grid';
+});
+
+useEffect(() => {
+  localStorage.setItem('budget-buddy-view-mode', viewMode);
+}, [viewMode]);
+```
+
+#### **Filter State Organization**
+```typescript
+// Centralized filter state in App.tsx
+const [searchTerm, setSearchTerm] = useState('');
+const [categoryFilter, setCategoryFilter] = useState('all');
+const [peopleFilter, setPeopleFilter] = useState('all');
+const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
+```
 
 ### Key Component Updates
 
@@ -616,6 +766,10 @@ const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 - People management: `src/components/PeopleManager.tsx`
 - Timeframe picker: `src/components/TimeframePicker.tsx`
 - PWA components: `src/components/PWAComponents.tsx`
+- Dashboard: `src/components/Dashboard.tsx`
+- Analytics components: `src/components/analytics/`
+- Gamification system: `src/components/analytics/GamificationSystem.tsx`
+- Advanced charts: `src/components/analytics/AdvancedCharts.tsx`
 
 ### Useful Commands
 ```bash
@@ -637,7 +791,7 @@ npm run version:major # Bump major version
 - [ ] PWA manifest configured
 - [ ] Service worker tested
 
-### Current Feature Status (v1.5.3)
+### Current Feature Status (v2.5.3)
 - ✅ Grid/List view toggle with persistence
 - ✅ Enhanced filtering system with people filter
 - ✅ Clear cache functionality
@@ -646,5 +800,10 @@ npm run version:major # Bump major version
 - ✅ People management with public/private sharing
 - ✅ Advanced timeframe selection
 - ✅ Synchronized version management
+- ✅ Advanced dashboard with ApexCharts integration
+- ✅ Gamification system with achievement tracking
+- ✅ Financial scoring and analytics
+- ✅ Chart lifecycle management for tab switching
+- ✅ Real-time score updates and visual polish
 
 This guide should help AI coding agents understand the Budget Buddy codebase structure, implementation patterns, and development workflows to be immediately productive when working on the project.
