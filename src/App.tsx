@@ -277,115 +277,140 @@ function FinanceApp() {
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                   {/* Primary Filters Row */}
                   <div className="flex flex-col sm:flex-row gap-3 flex-1 min-w-0">
-                    <div className="relative flex-1 max-w-sm">
-                      <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search expenses..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
+                    <div className="flex flex-col gap-1">
+                      <div className="relative flex-1 max-w-sm">
+                        <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search expenses..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-10"
+                          title="Search by description, category, or amount"
+                        />
+                      </div>
+                      <span className="text-xs text-muted-foreground ml-1">Find Expenses</span>
                     </div>
                     
-                    <TimeframePicker 
-                      dateRange={dateRange} 
-                      onDateRangeChange={setDateRange}
-                      className="w-60"
-                    />
+                    <div className="flex flex-col gap-1">
+                      <TimeframePicker 
+                        dateRange={dateRange} 
+                        onDateRangeChange={setDateRange}
+                        className="w-60"
+                      />
+                      <span className="text-xs text-muted-foreground ml-1">Date Range</span>
+                    </div>
                   </div>
 
                   {/* View Controls */}
                   <div className="flex gap-2 items-center">
                     {/* View Mode Toggle */}
-                    <div className="flex bg-background rounded-lg p-1 border">
-                      <Button
-                        variant={viewMode === 'list' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('list')}
-                        className="h-8 px-3"
-                      >
-                        <List className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('grid')}
-                        className="h-8 px-3"
-                      >
-                        <LayoutGrid className="w-4 h-4" />
-                      </Button>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex bg-background rounded-lg p-1 border">
+                        <Button
+                          variant={viewMode === 'list' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setViewMode('list')}
+                          className="h-8 px-3"
+                          title="List View"
+                        >
+                          <List className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setViewMode('grid')}
+                          className="h-8 px-3"
+                          title="Grid View"
+                        >
+                          <LayoutGrid className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <span className="text-xs text-muted-foreground">View Mode</span>
                     </div>
                     
-                    <Button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Add Expense button clicked');
-                        setShowAddExpense(true);
-                      }}
-                      className="shrink-0"
-                    >
-                      Add Expense
-                    </Button>
+                    <div className="flex flex-col items-center gap-1">
+                      <Button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Add Expense button clicked');
+                          setShowAddExpense(true);
+                        }}
+                        className="shrink-0"
+                        title="Add New Expense"
+                      >
+                        Add Expense
+                      </Button>
+                      <span className="text-xs text-muted-foreground">New Entry</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Secondary Filters Row */}
                 <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border/50">
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Filter by category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {getAllCategories(customCategories).map((category) => (
-                        <SelectItem key={category.name} value={category.name}>
+                  <div className="flex flex-col gap-1">
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Filter by category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {getAllCategories(customCategories).map((category) => (
+                          <SelectItem key={category.name} value={category.name}>
+                            <div className="flex items-center gap-2">
+                              <span>{category.icon}</span>
+                              {category.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-xs text-muted-foreground">Category Filter</span>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <Select value={peopleFilter} onValueChange={setPeopleFilter}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Filter by person" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All People</SelectItem>
+                        {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
+                          <SelectItem key={person.id} value={person.id!}>
+                            <div className="flex items-center gap-2">
+                              <span 
+                                className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                                style={{ backgroundColor: person.color }}
+                              >
+                                {person.icon}
+                              </span>
+                              {person.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-xs text-muted-foreground">People Filter</span>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder="Sort by" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="date">
                           <div className="flex items-center gap-2">
-                            <span>{category.icon}</span>
-                            {category.name}
+                            <List className="w-4 h-4" />
+                            Date
                           </div>
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={peopleFilter} onValueChange={setPeopleFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Filter by person" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All People</SelectItem>
-                      {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
-                        <SelectItem key={person.id} value={person.id!}>
-                          <div className="flex items-center gap-2">
-                            <span 
-                              className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
-                              style={{ backgroundColor: person.color }}
-                            >
-                              {person.icon}
-                            </span>
-                            {person.name}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="date">
-                        <div className="flex items-center gap-2">
-                          <List className="w-4 h-4" />
-                          Date
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="amount">Amount</SelectItem>
-                      <SelectItem value="category">Category</SelectItem>
-                    </SelectContent>
-                  </Select>
+                        <SelectItem value="amount">Amount</SelectItem>
+                        <SelectItem value="category">Category</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span className="text-xs text-muted-foreground">Sort Order</span>
+                  </div>
                 </div>
               </div>
 

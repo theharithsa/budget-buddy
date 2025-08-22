@@ -24,6 +24,7 @@ import { type Expense, type Budget, type Person, formatCurrency, getAllCategorie
 import { SpendingBehaviorInsights } from '@/components/analytics/SpendingBehaviorInsights';
 import { AdvancedCharts } from '@/components/analytics/AdvancedCharts';
 import { GamificationSystem } from '@/components/analytics/GamificationSystem';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface DashboardProps {
   expenses: Expense[];
@@ -42,9 +43,30 @@ export function Dashboard({
   publicPeople,
   onNavigate 
 }: DashboardProps) {
+  // Theme context for theme-aware charts
+  const { theme } = useTheme();
+  
   // State to track active tab and force chart re-rendering
   const [activeTab, setActiveTab] = useState('overview');
   const [chartKey, setChartKey] = useState(0);
+
+  // Helper function for theme-aware chart configuration
+  const getChartThemeConfig = () => {
+    const isDark = theme === 'dark';
+    return {
+      fontFamily: 'Titillium Web, sans-serif',
+      colors: {
+        primary: isDark ? '#3b82f6' : '#2563eb',
+        secondary: isDark ? '#10b981' : '#059669',
+        tertiary: isDark ? '#f59e0b' : '#d97706',
+        quaternary: isDark ? '#ef4444' : '#dc2626',
+        text: isDark ? '#f8fafc' : '#0f1419',
+        textMuted: isDark ? '#94a3b8' : '#64748b',
+        grid: isDark ? '#374151' : '#e2e8f0',
+        background: isDark ? '#1f2937' : '#ffffff'
+      }
+    };
+  };
 
   // Flowbite Chart References
   const areaChartRef = useRef<HTMLDivElement>(null);
@@ -201,11 +223,12 @@ export function Dashboard({
         areaChartInstance.current.destroy();
       }
 
+      const themeConfig = getChartThemeConfig();
       const areaChart = new ApexCharts(areaChartRef.current, {
         chart: {
           height: 320,
           type: 'area',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           dropShadow: {
             enabled: false,
           },
@@ -218,6 +241,10 @@ export function Dashboard({
           x: {
             show: false,
           },
+          style: {
+            fontSize: '12px',
+            fontFamily: themeConfig.fontFamily,
+          },
         },
         legend: {
           show: false
@@ -227,8 +254,8 @@ export function Dashboard({
           gradient: {
             opacityFrom: 0.55,
             opacityTo: 0,
-            shade: '#1C64F2',
-            gradientToColors: ['#1C64F2'],
+            shade: themeConfig.colors.primary,
+            gradientToColors: [themeConfig.colors.primary],
           },
         },
         dataLabels: {
@@ -250,7 +277,7 @@ export function Dashboard({
           {
             name: 'Monthly Spending',
             data: dashboardMetrics.monthlyTrends.map(item => item.amount),
-            color: '#1A56DB',
+            color: themeConfig.colors.primary,
           },
         ],
         xaxis: {
@@ -285,7 +312,7 @@ export function Dashboard({
         }
       };
     }
-  }, [dashboardMetrics.monthlyTrends, activeTab, chartKey]);
+  }, [dashboardMetrics.monthlyTrends, activeTab, chartKey, theme]);
 
   // Column Chart - Weekly Performance (Flowbite Style)
   useEffect(() => {
@@ -295,11 +322,12 @@ export function Dashboard({
         columnChartInstance.current.destroy();
       }
 
+      const themeConfig = getChartThemeConfig();
       const columnChart = new ApexCharts(columnChartRef.current, {
         chart: {
           height: 320,
           type: 'bar',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           toolbar: {
             show: false,
           },
@@ -316,7 +344,7 @@ export function Dashboard({
           shared: true,
           intersect: false,
           style: {
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: themeConfig.fontFamily,
           },
         },
         states: {
@@ -352,8 +380,8 @@ export function Dashboard({
           labels: {
             show: true,
             style: {
-              fontFamily: 'Inter, sans-serif',
-              cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+              fontFamily: themeConfig.fontFamily,
+              cssClass: theme === 'dark' ? 'text-xs font-normal fill-gray-400' : 'text-xs font-normal fill-gray-500'
             }
           },
           axisBorder: {
@@ -372,7 +400,7 @@ export function Dashboard({
         series: [
           {
             name: 'Daily Spending',
-            color: '#1A56DB',
+            color: themeConfig.colors.primary,
             data: [
               { x: 'Mon', y: dashboardMetrics.totalSpent * 0.1 },
               { x: 'Tue', y: dashboardMetrics.totalSpent * 0.15 },
@@ -396,7 +424,7 @@ export function Dashboard({
         }
       };
     }
-  }, [dashboardMetrics.totalSpent, activeTab, chartKey]);
+  }, [dashboardMetrics.totalSpent, activeTab, chartKey, theme]);
 
   // Pie Chart - Category Distribution (Flowbite Style)
   useEffect(() => {
@@ -406,11 +434,12 @@ export function Dashboard({
         pieChartInstance.current.destroy();
       }
 
+      const themeConfig = getChartThemeConfig();
       const pieChart = new ApexCharts(pieChartRef.current, {
         chart: {
           height: 420,
           type: 'pie',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         dataLabels: {
           enabled: false,
@@ -428,7 +457,13 @@ export function Dashboard({
         },
         labels: dashboardMetrics.categoryData.map(item => item.name),
         series: dashboardMetrics.categoryData.map(item => item.amount),
-        colors: ['#1C64F2', '#16BDCA', '#9061F9', '#FDBA8C', '#E74694'],
+        colors: [
+          themeConfig.colors.primary,
+          themeConfig.colors.secondary,
+          themeConfig.colors.tertiary,
+          themeConfig.colors.quaternary,
+          '#8b5cf6'
+        ],
         legend: {
           show: false,
         },
@@ -436,6 +471,10 @@ export function Dashboard({
           enabled: true,
           x: {
             show: false,
+          },
+          style: {
+            fontSize: '12px',
+            fontFamily: themeConfig.fontFamily,
           },
         }
       });
@@ -450,7 +489,7 @@ export function Dashboard({
         }
       };
     }
-  }, [dashboardMetrics.categoryData, activeTab, chartKey]);
+  }, [dashboardMetrics.categoryData, activeTab, chartKey, theme]);
 
   // Donut Chart - Budget Performance (Flowbite Style)
   useEffect(() => {
@@ -459,11 +498,13 @@ export function Dashboard({
       if (donutChartInstance.current) {
         donutChartInstance.current.destroy();
       }
+      
+      const themeConfig = getChartThemeConfig();
       const donutChart = new ApexCharts(donutChartRef.current, {
         chart: {
           height: 420,
           type: 'donut',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         stroke: {
           colors: ['transparent'],
@@ -476,14 +517,14 @@ export function Dashboard({
                 show: true,
                 name: {
                   show: true,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: themeConfig.fontFamily,
                   offsetY: 20,
                 },
                 total: {
                   showAlways: true,
                   show: true,
                   label: 'Budgets',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: themeConfig.fontFamily,
                   formatter: function (w) {
                     const sum = w.globals.seriesTotals.reduce((a, b) => {
                       return a + b
@@ -493,7 +534,7 @@ export function Dashboard({
                 },
                 value: {
                   show: true,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: themeConfig.fontFamily,
                   offsetY: -20,
                   formatter: function (value) {
                     return value
@@ -511,7 +552,7 @@ export function Dashboard({
         },
         labels: dashboardMetrics.budgetProgress.map(item => item.category),
         series: dashboardMetrics.budgetProgress.map(item => item.progress),
-        colors: ['#16BDCA', '#FDBA8C', '#E74694'],
+        colors: [themeConfig.colors.secondary, themeConfig.colors.tertiary, themeConfig.colors.quaternary],
         legend: {
           show: false,
         },
@@ -519,6 +560,10 @@ export function Dashboard({
           enabled: true,
           x: {
             show: false,
+          },
+          style: {
+            fontSize: '12px',
+            fontFamily: themeConfig.fontFamily,
           },
         },
         dataLabels: {
@@ -536,7 +581,7 @@ export function Dashboard({
         }
       };
     }
-  }, [dashboardMetrics.budgetProgress, activeTab, chartKey]);
+  }, [dashboardMetrics.budgetProgress, activeTab, chartKey, theme]);
 
   // Cleanup all charts when component unmounts
   useEffect(() => {
