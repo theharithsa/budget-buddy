@@ -265,7 +265,7 @@ export function BudgetManager({
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {budgets.map((budget) => {
                 const allCategories = getAllCategories(customCategories);
                 const category = allCategories.find(cat => cat.name === budget.category);
@@ -274,7 +274,7 @@ export function BudgetManager({
                 const isNearLimit = percentage >= 80 && !isOverBudget;
                 
                 return (
-                  <Card key={budget.category} className={isOverBudget ? 'border-destructive' : ''}>
+                  <Card key={budget.category} className={`shadow-lg hover:shadow-xl transition-shadow ${isOverBudget ? 'border-destructive' : ''}`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">

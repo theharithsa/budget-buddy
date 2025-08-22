@@ -1,7 +1,7 @@
 # 🔒 Security Policy - Budget Buddy
 
-**Version**: 2.2.1  
-**Last Updated**: August 2025  
+**Version**: 2.2.2  
+**Last Updated**: August 22, 2025  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 
 Budget Buddy takes security seriously. This document outlines our security practices, vulnerability reporting process, and data protection measures.

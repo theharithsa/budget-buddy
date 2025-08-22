@@ -350,7 +350,7 @@ export function CategoryManager({
             <h3 className="text-lg font-medium">Default Categories</h3>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {DEFAULT_CATEGORIES.map((category) => (
-                <Card key={category.name} className="border-muted">
+                <Card key={category.name} className="shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div 
@@ -376,7 +376,7 @@ export function CategoryManager({
                 <h3 className="text-lg font-medium">Your Custom Categories</h3>
                 <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                   {customCategories.map((category) => (
-                    <Card key={category.id} className="relative group">
+                    <Card key={category.id} className="relative group shadow-lg hover:shadow-xl transition-shadow">
                       <CardHeader className="pb-2">
                         <div className="flex items-center gap-3">
                           <div 
@@ -464,7 +464,7 @@ export function CategoryManager({
           {filteredPublicCategories.length > 0 ? (
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredPublicCategories.map((category) => (
-                <Card key={category.id} className="hover:shadow-md transition-shadow">
+                <Card key={category.id} className="shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div 

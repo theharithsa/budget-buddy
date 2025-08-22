@@ -1,7 +1,7 @@
 {
     "name": "finbuddy",
     "private": true,
-    "version": "2.2.1",
+    "version": "2.3.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -11,6 +11,16 @@
         "start": "node server.js",
         "serve": "npm run build && npm start",
         "serve:tracked": "npm run build:tracked && npm start",
+        "test": "vitest",
+        "test:ui": "vitest --ui",
+        "test:run": "vitest run",
+        "test:coverage": "vitest run --coverage",
+        "test:unit": "vitest run tests/unit",
+        "test:integration": "vitest run tests/integration",
+        "test:e2e": "vitest run tests/e2e",
+        "test:watch": "vitest watch",
+        "test:ci": "vitest run --reporter=verbose --coverage",
+        "test:pre-deploy": "npm run lint && npm run test:run && npm run build",
         "test:dynatrace": "node scripts/test-dynatrace.js",
         "lint": "eslint .",
         "optimize": "vite optimize",
@@ -100,18 +110,24 @@
     "devDependencies": {
         "@eslint/js": "^9.21.0",
         "@tailwindcss/postcss": "^4.1.8",
+        "@testing-library/jest-dom": "^6.8.0",
+        "@testing-library/react": "^16.3.0",
+        "@testing-library/user-event": "^14.6.1",
         "@types/react": "^19.0.10",
         "@types/react-dom": "^19.0.4",
         "@vitejs/plugin-react": "^5.0.1",
         "@vitejs/plugin-react-swc": "^3.10.1",
+        "@vitest/ui": "^3.2.4",
         "eslint": "^9.28.0",
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-react-refresh": "^0.4.19",
         "globals": "^16.0.0",
+        "jsdom": "^26.1.0",
         "tailwindcss": "^4.1.11",
         "typescript": "~5.7.2",
         "typescript-eslint": "^8.38.0",
-        "vite": "^6.3.5"
+        "vite": "^6.3.5",
+        "vitest": "^3.2.4"
     },
     "workspaces": {
         "packages": [

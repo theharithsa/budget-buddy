@@ -7,6 +7,104 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2025-01-27
+
+### Added
+
+- **Typography Enhancement**: Integrated Titillium Web as the primary font family throughout the application
+  - Added Google Fonts import for Titillium Web and Saira fonts
+  - Updated CSS font-family variables and comprehensive font weight classes
+  - Enhanced visual hierarchy and readability across all components
+
+- **Copyright Footer**: Added professional Footer component with InspiLabs copyright
+  - Displays "Copyright 2023-2025 InspiLabs" across all pages
+  - Responsive design with proper theme integration
+  - Seamless integration with existing layout system
+
+- **Professional Shadow Design System**: Implemented elegant card styling across all components
+  - Added shadow-lg hover:shadow-xl effects to all cards (Expenses, People, Budgets, Templates, Categories)
+  - Enhanced visual depth with smooth transition animations
+  - Consistent shadow implementation for professional appearance
+
+- **Responsive Grid Layouts**: Enhanced space utilization across People and Budget management
+  - Implemented 3-column responsive grids (md:grid-cols-2 lg:grid-cols-3) for People pages
+  - Added responsive grid layouts for Budget management cards
+  - Optimized card spacing and eliminated wasted vertical space
+
+- **Sticky Header with Glass Morphism**: Enhanced navigation accessibility
+  - Header now stays fixed at top during page scrolling (sticky top-0 z-50)
+  - Added glass morphism effect with backdrop blur (bg-card/95 backdrop-blur)
+  - Improved user experience with constant navigation access
+
+- **Enhanced Modal Dialog System**: Improved form interaction experience
+  - All dialog forms (Expenses, People, Templates) now open as proper centered modals
+  - Added backdrop blur effects (backdrop-blur-sm) for better focus
+  - Implemented max-w-2xl sizing with proper overflow handling (max-h-[90vh] overflow-y-auto)
+
+### Fixed
+
+- **Dashboard Layout**: Improved summary cards responsive grid layout
+  - Fixed vertical card stacking issues on mobile devices
+  - Implemented proper responsive grid: 1 column (mobile), 2 columns (tablet), 4 columns (desktop)
+  - Replaced inline CSS with Tailwind CSS classes for better maintainability
+  - Enhanced mobile user experience with optimal card arrangement
+
+- **Dark Mode Theme Context**: Complete theme compatibility fixes
+  - Fixed People cards and all components for proper dark mode rendering
+  - Enhanced theme-aware backgrounds (bg-card, bg-muted/50) throughout the application
+  - Resolved theme switching issues across all components
+
+- **Border Design System**: Removed black borders for cleaner aesthetic
+  - Eliminated border class from base Card component (src/components/ui/card.tsx)
+  - Universal border removal across entire application
+  - Improved visual clarity with shadow-based card separation
+
+- **Mobile Tab Navigation**: Optimized dashboard navigation for mobile screens
+  - Hidden tab text on mobile devices, showing only icons for cleaner interface
+  - Implemented responsive text display (hidden sm:inline) for better mobile UX
+  - Enhanced thumb-friendly navigation experience
+
+### Changed
+
+- **Design System**: Updated font hierarchy to use Titillium Web as primary typeface
+- **Layout Improvements**: Better responsive behavior for dashboard components
+- **User Experience**: Enhanced visual consistency across all application screens
+
+## [2.2.2] - 2025-08-22
+
+### Added
+
+#### **📱 Enhanced Mobile Navigation Experience**
+
+- **Bottom Navigation Bar**: Implemented thumb-friendly bottom navigation for mobile devices
+  - 4 primary navigation items: Home (Dashboard), Expenses, Budgets, AI Analyzer
+  - Fixed positioning with backdrop blur effect and elevated styling
+  - Active state animations with scale effects and color transitions
+  - Auto-hide on desktop screens using responsive design patterns
+
+- **Smart Navigation Context Logic**: 
+  - **Dashboard Page**: Shows mobile menu button for full navigation drawer access
+  - **Other Pages**: Shows back button + bottom navigation bar for quick section switching
+  - Dynamic page titles in header reflecting current section
+  - Contextual content spacing accounting for bottom navigation bar
+
+- **Enhanced Mobile UX**:
+  - One-hand operation optimization for mobile device usage
+  - Native mobile app feel with proper touch targets and spacing
+  - Faster navigation between core application sections
+  - Reduced cognitive load with contextual navigation patterns
+
+### Technical Improvements
+
+- **New Component**: `BottomNavigation.tsx` with responsive visibility logic
+- **Enhanced AppHeader**: Added back button and dynamic title logic for mobile
+- **Improved Content Spacing**: Dynamic bottom padding for mobile navigation compatibility
+- **Mobile Detection**: Leveraged existing `useIsMobile` hook for responsive behavior
+
+### Version Updates
+
+- **Application Version**: Updated to v2.2.2 across all UI components and documentation
+
 ## [2.2.1] - 2025-08-22
 
 ### Fixed
