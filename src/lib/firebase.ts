@@ -110,14 +110,15 @@ export const deleteFile = async (path: string): Promise<void> => {
 
 /**
  * Generate a unique file path for receipt storage
- * @param expenseId - The ID of the expense
+ * @param userId - The user ID for organizing files
  * @param fileName - The original file name
  * @returns A unique storage path
  */
-export const generateReceiptPath = (expenseId: string, fileName: string): string => {
+export const generateReceiptPath = (userId: string, fileName: string): string => {
   const timestamp = Date.now();
   const extension = fileName.split('.').pop();
-  return `receipts/${expenseId}_${timestamp}.${extension}`;
+  const cleanFileName = fileName.replace(/[^a-zA-Z0-9.]/g, '_'); // Clean filename
+  return `receipts/${userId}/${timestamp}_${cleanFileName}`;
 };
 
 /**

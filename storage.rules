@@ -1,0 +1,24 @@
+rules_version = '2';
+
+// Firebase Storage Security Rules for Budget Buddy
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Rules for receipts folder - allow authenticated users to read/write their own files only
+    match /receipts/{userId}/{allPaths=**} {
+      // Allow authenticated users to upload, read, update, and delete only their own receipt files
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Legacy support for receipts without user folder structure (less secure but needed for existing files)
+    match /receipts/{allPaths=**} {
+      // Allow authenticated users to read/write receipt files (for backward compatibility)
+      allow read, write: if request.auth != null;
+    }
+    
+    // Deny all other storage access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
