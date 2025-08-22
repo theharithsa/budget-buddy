@@ -75,3 +75,5 @@ jobs:
               "pull_request.number": "'$GITHUB_EVENT_NUMBER'",
               "deployment.error": "Firebase preview deployment failed"
             }]'
+    permissions:
+      actions: read
