@@ -19,7 +19,11 @@
         "version:major": "npm run version:bump major",
         "version:minor": "npm run version:bump minor",
         "version:patch": "npm run version:bump patch",
-        "changelog": "code CHANGELOG.md"
+        "changelog": "code CHANGELOG.md",
+        "deploy:build": "npm run build",
+        "deploy:firebase": "firebase deploy --only hosting",
+        "deploy": "npm run deploy:build && npm run deploy:firebase",
+        "deploy:preview": "npm run deploy:build && firebase hosting:channel:deploy preview"
     },
     "dependencies": {
         "@github/spark": "^0.39.130",
