@@ -1,7 +1,7 @@
 {
     "name": "finbuddy",
     "private": true,
-    "version": "1.0.1",
+    "version": "2.2.1",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -14,7 +14,16 @@
         "test:dynatrace": "node scripts/test-dynatrace.js",
         "lint": "eslint .",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "version:bump": "node scripts/version-bump.js",
+        "version:major": "npm run version:bump major",
+        "version:minor": "npm run version:bump minor",
+        "version:patch": "npm run version:bump patch",
+        "changelog": "code CHANGELOG.md",
+        "deploy:build": "npm run build",
+        "deploy:firebase": "firebase deploy --only hosting",
+        "deploy": "npm run deploy:build && npm run deploy:firebase",
+        "deploy:preview": "npm run deploy:build && firebase hosting:channel:deploy preview"
     },
     "dependencies": {
         "@github/spark": "^0.39.130",
@@ -52,6 +61,8 @@
         "@tailwindcss/container-queries": "^0.1.1",
         "@tailwindcss/vite": "^4.1.11",
         "@tanstack/react-query": "^5.83.1",
+        "apexcharts": "^5.3.3",
+        "chart.js": "^4.5.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "cmdk": "^1.1.1",
@@ -60,6 +71,8 @@
         "embla-carousel-react": "^8.5.2",
         "express": "^5.1.0",
         "firebase": "^12.1.0",
+        "flowbite": "^3.1.2",
+        "flowbite-react": "^0.12.7",
         "framer-motion": "^12.6.2",
         "input-otp": "^1.4.2",
         "install": "^0.13.0",
@@ -68,6 +81,8 @@
         "next-themes": "^0.4.6",
         "octokit": "^5.0.3",
         "react": "^19.0.0",
+        "react-apexcharts": "^1.7.0",
+        "react-chartjs-2": "^5.3.0",
         "react-day-picker": "^9.6.7",
         "react-dom": "^19.0.0",
         "react-error-boundary": "^6.0.0",

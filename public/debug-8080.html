@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Debug - Port 8080</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px; 
+            background: #f0f2f5;
+            color: #333;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { 
+            background: white; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .status { 
+            padding: 12px; 
+            margin: 8px 0; 
+            border-radius: 6px; 
+            border-left: 4px solid;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; border-color: #28a745; }
+        .warning { background: #fff3cd; color: #856404; border-color: #ffc107; }
+        .error { background: #f8d7da; color: #721c24; border-color: #dc3545; }
+        .info { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
+        button { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        .install-btn { background: #28a745; font-size: 16px; padding: 15px 30px; }
+        .install-btn:hover { background: #218838; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 PWA Debug Tool - localhost:8080</h1>
+        <p>Testing PWA installation on your Express server</p>
+        
+        <div class="card">
+            <h2>🚀 Install FinBuddy</h2>
+            <button id="installBtn" class="install-btn" onclick="attemptInstall()">
+                📱 Install App
+            </button>
+            <div id="installResult"></div>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>📋 PWA Requirements</h3>
+                <div id="requirements"></div>
+                <button onclick="checkRequirements()">Check Requirements</button>
+            </div>
+            
+            <div class="card">
+                <h3>🔍 Browser Detection</h3>
+                <div id="browserInfo"></div>
+                <button onclick="checkBrowser()">Detect Browser</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>📄 Manifest Analysis</h2>
+            <div id="manifestInfo"></div>
+            <button onclick="checkManifest()">Analyze Manifest</button>
+        </div>
+        
+        <div class="card">
+            <h2>⚙️ Service Worker Status</h2>
+            <div id="swInfo"></div>
+            <button onclick="checkServiceWorker()">Check Service Worker</button>
+        </div>
+        
+        <div class="card">
+            <h2>🎯 Installation Troubleshooting</h2>
+            <div id="troubleshooting">
+                <p>Common reasons why install prompt doesn't appear:</p>
+                <ul>
+                    <li>App is already installed</li>
+                    <li>User hasn't engaged with the site enough</li>
+                    <li>Browser doesn't support PWA installation</li>
+                    <li>App doesn't meet installability criteria</li>
+                    <li>User previously dismissed the install prompt</li>
+                </ul>
+            </div>
+            <button onclick="runTroubleshooting()">Run Full Diagnostics</button>
+        </div>
+        
+        <div class="card">
+            <h2>🔗 Quick Actions</h2>
+            <button onclick="clearCache()">Clear Cache & Reload</button>
+            <button onclick="forceUpdate()">Force SW Update</button>
+            <button onclick="window.location.href='/'">← Back to App</button>
+        </div>
+    </div>
+
+    <script>
+        let deferredPrompt = null;
+        let installAttempted = false;
+        
+        // Listen for install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('🎉 beforeinstallprompt event fired!');
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            document.getElementById('installResult').innerHTML = 
+                '<div class="status success">✅ Install prompt is available! Click the button above.</div>';
+            
+            const btn = document.getElementById('installBtn');
+            btn.style.background = '#28a745';
+            btn.innerHTML = '📱 Install App (Ready!)';
+        });
+        
+        // Listen for successful installation
+        window.addEventListener('appinstalled', () => {
+            console.log('🎉 App installed successfully!');
+            document.getElementById('installResult').innerHTML = 
+                '<div class="status success">🎉 App installed successfully! You can now find it on your device.</div>';
+        });
+        
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            document.getElementById('installResult').innerHTML = 
+                '<div class="status info">📱 App is already installed and running in standalone mode!</div>';
+        }
+        
+        async function attemptInstall() {
+            const btn = document.getElementById('installBtn');
+            const result = document.getElementById('installResult');
+            
+            if (installAttempted && !deferredPrompt) {
+                result.innerHTML = '<div class="status warning">⚠️ Install prompt not available. Try manual installation:<br><br>' +
+                    '<strong>Chrome/Edge:</strong> Look for install icon in address bar<br>' +
+                    '<strong>Mobile:</strong> Use "Add to Home Screen" from browser menu</div>';
+                return;
+            }
+            
+            if (!deferredPrompt) {
+                result.innerHTML = '<div class="status warning">⚠️ Waiting for install prompt... Interact with the page more.</div>';
+                installAttempted = true;
+                
+                // Simulate some user interaction
+                setTimeout(() => {
+                    if (!deferredPrompt) {
+                        result.innerHTML = '<div class="status error">❌ Install prompt not triggered. This might mean:<br>' +
+                            '• Browser doesn\'t support PWA<br>' +
+                            '• App doesn\'t meet criteria<br>' +
+                            '• User previously dismissed prompt<br><br>' +
+                            'Try manual installation methods.</div>';
+                    }
+                }, 3000);
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Installing...';
+            
+            try {
+                deferredPrompt.prompt();
+                const choiceResult = await deferredPrompt.userChoice;
+                
+                if (choiceResult.outcome === 'accepted') {
+                    result.innerHTML = '<div class="status success">✅ User accepted the install prompt!</div>';
+                } else {
+                    result.innerHTML = '<div class="status info">ℹ️ User dismissed the install prompt.</div>';
+                }
+            } catch (error) {
+                console.error('Install error:', error);
+                result.innerHTML = '<div class="status error">❌ Install failed: ' + error.message + '</div>';
+            } finally {
+                deferredPrompt = null;
+                btn.disabled = false;
+                btn.innerHTML = '📱 Install App';
+            }
+        }
+        
+        function checkRequirements() {
+            const div = document.getElementById('requirements');
+            let checks = [];
+            
+            // HTTPS check
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                checks.push('<div class="status success">✅ HTTPS/localhost requirement met</div>');
+            } else {
+                checks.push('<div class="status error">❌ HTTPS required for PWA</div>');
+            }
+            
+            // Service Worker support
+            if ('serviceWorker' in navigator) {
+                checks.push('<div class="status success">✅ Service Worker supported</div>');
+            } else {
+                checks.push('<div class="status error">❌ Service Worker not supported</div>');
+            }
+            
+            // Manifest support
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                checks.push('<div class="status success">✅ Manifest link found</div>');
+            } else {
+                checks.push('<div class="status error">❌ Manifest link missing</div>');
+            }
+            
+            // beforeinstallprompt support
+            if ('onbeforeinstallprompt' in window) {
+                checks.push('<div class="status success">✅ Install prompt supported</div>');
+            } else {
+                checks.push('<div class="status warning">⚠️ Install prompt may not be supported</div>');
+            }
+            
+            // Standalone mode check
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                checks.push('<div class="status info">📱 Running in standalone mode</div>');
+            } else {
+                checks.push('<div class="status info">🌐 Running in browser mode</div>');
+            }
+            
+            div.innerHTML = checks.join('');
+        }
+        
+        function checkBrowser() {
+            const div = document.getElementById('browserInfo');
+            const ua = navigator.userAgent;
+            
+            let browser = 'Unknown';
+            let pwaSupport = 'Unknown';
+            
+            if (ua.includes('Chrome') && !ua.includes('Edg')) {
+                browser = 'Chrome';
+                pwaSupport = 'Full PWA support';
+            } else if (ua.includes('Edg')) {
+                browser = 'Edge';
+                pwaSupport = 'Full PWA support';
+            } else if (ua.includes('Firefox')) {
+                browser = 'Firefox';
+                pwaSupport = 'Limited PWA support';
+            } else if (ua.includes('Safari')) {
+                browser = 'Safari';
+                pwaSupport = 'Basic PWA support (Add to Home Screen)';
+            }
+            
+            div.innerHTML = `
+                <div class="status info">Browser: ${browser}</div>
+                <div class="status info">PWA Support: ${pwaSupport}</div>
+                <div class="status info">User Agent: ${ua}</div>
+                <div class="status info">Platform: ${navigator.platform}</div>
+            `;
+        }
+        
+        async function checkManifest() {
+            const div = document.getElementById('manifestInfo');
+            
+            try {
+                const response = await fetch('/manifest.json');
+                if (!response.ok) throw new Error('Failed to fetch manifest');
+                
+                const manifest = await response.json();
+                
+                let html = '<div class="status success">✅ Manifest loaded successfully</div>';
+                html += '<pre>' + JSON.stringify(manifest, null, 2) + '</pre>';
+                
+                // Check critical fields
+                if (manifest.name) html += '<div class="status success">✅ App name: ' + manifest.name + '</div>';
+                if (manifest.start_url) html += '<div class="status success">✅ Start URL: ' + manifest.start_url + '</div>';
+                if (manifest.display) html += '<div class="status success">✅ Display mode: ' + manifest.display + '</div>';
+                if (manifest.icons && manifest.icons.length > 0) {
+                    html += '<div class="status success">✅ Icons: ' + manifest.icons.length + ' defined</div>';
+                }
+                
+                div.innerHTML = html;
+            } catch (error) {
+                div.innerHTML = '<div class="status error">❌ Failed to load manifest: ' + error.message + '</div>';
+            }
+        }
+        
+        async function checkServiceWorker() {
+            const div = document.getElementById('swInfo');
+            
+            if (!('serviceWorker' in navigator)) {
+                div.innerHTML = '<div class="status error">❌ Service Worker not supported</div>';
+                return;
+            }
+            
+            try {
+                // Check if SW is registered
+                const registration = await navigator.serviceWorker.getRegistration();
+                
+                if (registration) {
+                    let html = '<div class="status success">✅ Service Worker registered</div>';
+                    html += '<div class="status info">Scope: ' + registration.scope + '</div>';
+                    
+                    if (registration.active) {
+                        html += '<div class="status success">✅ Service Worker active</div>';
+                        html += '<div class="status info">State: ' + registration.active.state + '</div>';
+                    }
+                    
+                    if (registration.waiting) {
+                        html += '<div class="status warning">⚠️ Service Worker update waiting</div>';
+                    }
+                    
+                    div.innerHTML = html;
+                } else {
+                    // Try to register
+                    div.innerHTML = '<div class="status warning">⚠️ Registering Service Worker...</div>';
+                    
+                    const newRegistration = await navigator.serviceWorker.register('/sw.js');
+                    div.innerHTML = '<div class="status success">✅ Service Worker registered successfully</div>';
+                }
+            } catch (error) {
+                div.innerHTML = '<div class="status error">❌ Service Worker error: ' + error.message + '</div>';
+            }
+        }
+        
+        async function runTroubleshooting() {
+            const div = document.getElementById('troubleshooting');
+            div.innerHTML = '<div class="status info">⏳ Running diagnostics...</div>';
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            let issues = [];
+            let solutions = [];
+            
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                issues.push('App is already installed');
+                solutions.push('Uninstall the app first, then try installing again');
+            }
+            
+            // Check manifest
+            try {
+                const manifest = await fetch('/manifest.json').then(r => r.json());
+                if (!manifest.name || !manifest.start_url || !manifest.icons) {
+                    issues.push('Invalid manifest.json');
+                    solutions.push('Check manifest.json has required fields');
+                }
+            } catch (e) {
+                issues.push('Manifest not accessible');
+                solutions.push('Ensure manifest.json is served correctly');
+            }
+            
+            // Check service worker
+            if (!('serviceWorker' in navigator)) {
+                issues.push('Service Worker not supported');
+                solutions.push('Use a modern browser (Chrome, Edge, Firefox)');
+            }
+            
+            // Check beforeinstallprompt
+            if (!deferredPrompt && !installAttempted) {
+                issues.push('Install prompt not triggered');
+                solutions.push('Interact more with the page, wait a few seconds');
+            }
+            
+            let html = '';
+            if (issues.length > 0) {
+                html += '<h4>🔍 Issues Found:</h4>';
+                issues.forEach(issue => html += '<div class="status warning">⚠️ ' + issue + '</div>');
+                html += '<h4>💡 Suggested Solutions:</h4>';
+                solutions.forEach(solution => html += '<div class="status info">💡 ' + solution + '</div>');
+            } else {
+                html += '<div class="status success">✅ No issues found! App should be installable.</div>';
+            }
+            
+            div.innerHTML = html;
+        }
+        
+        function clearCache() {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            localStorage.clear();
+            sessionStorage.clear();
+            location.reload();
+        }
+        
+        async function forceUpdate() {
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.getRegistration();
+                if (registration) {
+                    await registration.update();
+                    location.reload();
+                }
+            }
+        }
+        
+        // Auto-run initial checks
+        window.addEventListener('load', () => {
+            checkRequirements();
+            checkBrowser();
+            
+            // Try to trigger install prompt after interaction
+            setTimeout(() => {
+                if (!deferredPrompt) {
+                    console.log('📱 Install prompt not yet available, waiting...');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

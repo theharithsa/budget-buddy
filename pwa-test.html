@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Icon Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .icon-test { margin: 20px 0; }
+        img { margin: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>PWA Icon Test</h1>
+    
+    <div class="icon-test">
+        <h3>32x32 Icon (Favicon)</h3>
+        <img src="./public/icons/icon-32x32.svg" alt="32x32 Icon" width="32" height="32">
+    </div>
+    
+    <div class="icon-test">
+        <h3>192x192 Icon</h3>
+        <img src="./public/icons/icon-192x192.svg" alt="192x192 Icon" width="192" height="192">
+    </div>
+    
+    <div class="icon-test">
+        <h3>512x512 Icon</h3>
+        <img src="./public/icons/icon-512x512.svg" alt="512x512 Icon" width="512" height="512">
+    </div>
+    
+    <div class="icon-test">
+        <h3>Manifest Check</h3>
+        <p>Check the browser console for PWA readiness:</p>
+        <button onclick="checkPWA()">Check PWA Status</button>
+        <div id="pwa-status"></div>
+    </div>
+    
+    <script>
+        function checkPWA() {
+            const status = document.getElementById('pwa-status');
+            let html = '<ul>';
+            
+            if ('serviceWorker' in navigator) {
+                html += '<li>✅ Service Worker supported</li>';
+            } else {
+                html += '<li>❌ Service Worker not supported</li>';
+            }
+            
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                html += '<li>✅ Running in standalone mode</li>';
+            } else {
+                html += '<li>📱 Not in standalone mode (can be installed)</li>';
+            }
+            
+            // Check if manifest is accessible
+            fetch('./manifest.json')
+                .then(response => response.json())
+                .then(manifest => {
+                    html += '<li>✅ Manifest.json accessible</li>';
+                    html += `<li>App Name: ${manifest.name}</li>`;
+                    html += `<li>Icons: ${manifest.icons.length} defined</li>`;
+                    html += '</ul>';
+                    status.innerHTML = html;
+                })
+                .catch(() => {
+                    html += '<li>❌ Manifest.json not accessible</li>';
+                    html += '</ul>';
+                    status.innerHTML = html;
+                });
+        }
+    </script>
+</body>
+</html>

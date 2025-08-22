@@ -1,16 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2 as Trash, Calendar, Tag, Receipt, Eye } from 'lucide-react';
-import { type Expense, DEFAULT_CATEGORIES, formatCurrency, formatDate } from '@/lib/types';
+import { Badge } from '@/components/ui/badge';
+import { Trash2 as Trash, Calendar, Tag, Receipt, Eye, Users, Edit } from 'lucide-react';
+import { type Expense, type Person, DEFAULT_CATEGORIES, getAllPeople, formatCurrency, formatDate } from '@/lib/types';
 
 interface ExpenseCardProps {
   expense: Expense;
   onDelete: (id: string) => void;
+  onEdit?: () => void;
+  customPeople?: Person[];
+  viewMode?: 'list' | 'grid';
 }
 
-export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
+export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], viewMode = 'grid' }: ExpenseCardProps) {
   const category = DEFAULT_CATEGORIES.find(cat => cat.name === expense.category);
+  const allPeople = getAllPeople(customPeople);
+  
+  // Get people associated with this expense
+  const associatedPeople = expense.peopleIds 
+    ? allPeople.filter(person => expense.peopleIds?.includes(person.id!))
+    : [];
   
   const ReceiptViewer = () => {
     if (!expense.receiptUrl) return null;
@@ -56,9 +66,97 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
     );
   };
   
+  // Render list view layout
+  if (viewMode === 'list') {
+    return (
+      <Card className="expense-animation">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div 
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
+                style={{ backgroundColor: category?.color || 'oklch(0.6 0.1 240)' }}
+              >
+                {category?.icon || '📝'}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-4 mb-1">
+                  <h3 className="font-semibold text-lg">{formatCurrency(expense.amount)}</h3>
+                  <span className="text-sm text-muted-foreground">{expense.description}</span>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Tag className="w-4 h-4" />
+                    {expense.category}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {formatDate(expense.date)}
+                  </div>
+                  {associatedPeople.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      <div className="flex gap-1">
+                        {associatedPeople.map((person) => (
+                          <Badge 
+                            key={person.id} 
+                            variant="secondary" 
+                            className="text-xs flex items-center gap-1"
+                          >
+                            <span 
+                              className="w-3 h-3 rounded-full flex items-center justify-center text-[10px]"
+                              style={{ backgroundColor: person.color }}
+                            >
+                              {person.icon}
+                            </span>
+                            {person.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {expense.receiptUrl && (
+                    <div className="flex items-center gap-1">
+                      <Receipt className="w-4 h-4" />
+                      Receipt
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              {expense.receiptUrl && <ReceiptViewer />}
+              {onEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-primary hover:text-primary/80 hover:bg-primary/10"
+                  onClick={onEdit}
+                  aria-label="Edit expense"
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+                onClick={() => onDelete(expense.id)}
+                aria-label="Delete expense"
+              >
+                <Trash className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Render grid view layout (existing layout)
   return (
-    <Card className="expense-animation">
-      <CardHeader className="pb-3">
+    <Card className={`expense-animation ${viewMode === 'grid' ? 'h-full flex flex-col' : ''}`}>
+      <CardHeader className={`pb-3 ${viewMode === 'grid' ? 'flex-shrink-0' : ''}`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div 
@@ -74,36 +172,79 @@ export function ExpenseCard({ expense, onDelete }: ExpenseCardProps) {
               <p className="text-sm text-muted-foreground">{expense.description}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
-            onClick={() => onDelete(expense.id)}
-            aria-label="Delete expense"
-          >
-            <Trash className="w-4 h-4" />
-          </Button>
+          <div className="flex gap-1">
+            {onEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-primary hover:text-primary/80 hover:bg-primary/10"
+                onClick={onEdit}
+                aria-label="Edit expense"
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+              onClick={() => onDelete(expense.id)}
+              aria-label="Delete expense"
+            >
+              <Trash className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Tag className="w-4 h-4" />
-              {expense.category}
-            </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
-              {formatDate(expense.date)}
-            </div>
-            {expense.receiptUrl && (
-              <div className="flex items-center gap-1">
-                <Receipt className="w-4 h-4" />
-                Receipt
+      <CardContent className={`pt-0 ${viewMode === 'grid' ? 'flex-grow flex flex-col justify-between' : ''}`}>
+        <div className="space-y-3">
+          {/* People Section */}
+          {associatedPeople.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Users className="w-4 h-4" />
+                <span>For:</span>
               </div>
-            )}
+              <div className="flex gap-1 flex-wrap">
+                {associatedPeople.map((person) => (
+                  <Badge 
+                    key={person.id} 
+                    variant="secondary" 
+                    className="text-xs flex items-center gap-1"
+                  >
+                    <span 
+                      className="w-3 h-3 rounded-full flex items-center justify-center text-[10px]"
+                      style={{ backgroundColor: person.color }}
+                    >
+                      {person.icon}
+                    </span>
+                    {person.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Existing info section */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Tag className="w-4 h-4" />
+                {expense.category}
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                {formatDate(expense.date)}
+              </div>
+              {expense.receiptUrl && (
+                <div className="flex items-center gap-1">
+                  <Receipt className="w-4 h-4" />
+                  Receipt
+                </div>
+              )}
+            </div>
+            {expense.receiptUrl && <ReceiptViewer />}
           </div>
-          {expense.receiptUrl && <ReceiptViewer />}
         </div>
       </CardContent>
     </Card>

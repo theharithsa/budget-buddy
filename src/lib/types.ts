@@ -7,6 +7,7 @@ export interface Expense {
   createdAt: string;
   receiptUrl?: string;
   receiptFileName?: string;
+  peopleIds?: string[]; // IDs of people this expense was spent for
 }
 
 export interface Budget {
@@ -31,6 +32,18 @@ export interface CustomCategory {
   isPublic: boolean;
   createdAt: string;
   createdBy: string; // User's display name
+}
+
+export interface Person {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  userId: string;
+  isPublic: boolean;
+  createdAt: string;
+  createdBy: string; // User's display name
+  relationship?: string; // e.g., "Family", "Friend", "Colleague", etc.
 }
 
 export interface RecurringTemplate {
@@ -96,6 +109,13 @@ export const getCurrentMonth = (): string => {
 
 export const getMonthlyExpenses = (expenses: Expense[], month: string): Expense[] => {
   return expenses.filter(expense => expense.date.startsWith(month));
+};
+
+export const getExpensesByDateRange = (expenses: Expense[], fromDate: string, toDate: string): Expense[] => {
+  return expenses.filter(expense => {
+    const expenseDate = expense.date;
+    return expenseDate >= fromDate && expenseDate <= toDate;
+  });
 };
 
 export const calculateCategorySpending = (expenses: Expense[], category: string): number => {
@@ -426,6 +446,17 @@ export const DEFAULT_RECURRING_TEMPLATES: RecurringTemplate[] = [
   }
 ];
 
+// Default people for common expense sharing
+export const DEFAULT_PEOPLE: { name: string; color: string; icon: string; relationship: string }[] = [
+  { name: 'Myself', color: 'oklch(0.6 0.2 260)', icon: '👤', relationship: 'Self' },
+  { name: 'Spouse/Partner', color: 'oklch(0.65 0.25 350)', icon: '💑', relationship: 'Family' },
+  { name: 'Family', color: 'oklch(0.7 0.2 30)', icon: '👨‍👩‍👧‍👦', relationship: 'Family' },
+  { name: 'Kids', color: 'oklch(0.75 0.25 120)', icon: '👶', relationship: 'Family' },
+  { name: 'Parents', color: 'oklch(0.6 0.15 60)', icon: '👴', relationship: 'Family' },
+  { name: 'Friends', color: 'oklch(0.65 0.2 180)', icon: '👫', relationship: 'Friends' },
+  { name: 'Colleagues', color: 'oklch(0.55 0.2 220)', icon: '👥', relationship: 'Work' },
+];
+
 // Helper function to get all available categories (default + custom)
 export const getAllCategories = (customCategories: CustomCategory[] = []): Category[] => {
   const customAsCategory = customCategories.map(cat => ({
@@ -435,4 +466,22 @@ export const getAllCategories = (customCategories: CustomCategory[] = []): Categ
   }));
   
   return [...DEFAULT_CATEGORIES, ...customAsCategory];
+};
+
+// Helper function to get all available people (default + custom)
+export const getAllPeople = (customPeople: Person[] = []): { name: string; color: string; icon: string; id?: string; relationship?: string }[] => {
+  const defaultPeople = DEFAULT_PEOPLE.map((person, index) => ({
+    ...person,
+    id: `default-${index}`
+  }));
+  
+  const customAsPeople = customPeople.map(person => ({
+    name: person.name,
+    color: person.color,
+    icon: person.icon,
+    id: person.id,
+    relationship: person.relationship
+  }));
+  
+  return [...defaultPeople, ...customAsPeople];
 };

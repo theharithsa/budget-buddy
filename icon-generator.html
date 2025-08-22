@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons for FinBuddy</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon-preview { border: 1px solid #ccc; margin: 10px; display: inline-block; }
+        canvas { background: white; }
+    </style>
+</head>
+<body>
+    <h1>FinBuddy PWA Icon Generator</h1>
+    <p>This will generate basic PWA icons. Run this HTML file in a browser and right-click to save each icon.</p>
+    
+    <div id="icons"></div>
+
+    <script>
+        const sizes = [16, 32, 72, 96, 128, 144, 152, 192, 384, 512];
+        const iconsContainer = document.getElementById('icons');
+
+        sizes.forEach(size => {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Create a simple gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#3b82f6'); // Blue
+            gradient.addColorStop(1, '#1d4ed8'); // Darker blue
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Add rounded corners
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            const radius = size * 0.2;
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+
+            // Add dollar sign symbol
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('$', size / 2, size / 2);
+
+            // Create container
+            const container = document.createElement('div');
+            container.className = 'icon-preview';
+            container.innerHTML = `<h3>icon-${size}x${size}.png</h3>`;
+            container.appendChild(canvas);
+
+            // Add download link
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.textContent = 'Download';
+            link.style.display = 'block';
+            container.appendChild(link);
+
+            iconsContainer.appendChild(container);
+        });
+
+        // Helper function for rounded rectangles
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+            return this;
+        };
+    </script>
+</body>
+</html>

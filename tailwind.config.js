@@ -138,10 +138,18 @@ const defaultTheme = {
     80: "var(--size-80)",
     96: "var(--size-96)",
   },
-  darkMode: ["selector", '[data-appearance="dark"]'],
+  darkMode: "class",
 }
 
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html", 
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/flowbite/**/*.js",
+    "./node_modules/flowbite-react/lib/**/*.js"
+  ],
   theme: { ...defaultTheme, ...theme },
+  plugins: [
+    require('flowbite/plugin')
+  ],
 };

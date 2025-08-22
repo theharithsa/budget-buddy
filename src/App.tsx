@@ -6,28 +6,32 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Toaster } from '@/components/ui/sonner';
 import { AddExpenseModal } from '@/components/AddExpenseModal';
+import { EditExpenseModal } from '@/components/EditExpenseModal';
 import { ExpenseCard } from '@/components/ExpenseCard';
+import { TimeframePicker, type DateRange } from '@/components/TimeframePicker';
+import { Dashboard } from '@/components/Dashboard';
 import { BudgetManager } from '@/components/BudgetManager';
-import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
+import { PeopleManager } from '@/components/PeopleManager';
 import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
+import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
+import { Navigation } from '@/components/Navigation';
+import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
-  Receipt, 
-  Wallet, 
-  TrendingUp as TrendUp, 
-  Search as MagnifyingGlass, 
-  List, 
-  RefreshCw as ArrowsClockwise, 
-  Palette as Swatches, 
-  Lightbulb 
+  Search as MagnifyingGlass,
+  Receipt,
+  List,
+  Grid3x3,
+  LayoutGrid
 } from 'lucide-react';
-import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, formatCurrency, getCurrentMonth, getMonthlyExpenses, calculateCategorySpending } from '@/lib/types';
+import { type Expense, type Budget, DEFAULT_CATEGORIES, getAllCategories, getAllPeople, formatCurrency, getCurrentMonth, getMonthlyExpenses, getExpensesByDateRange, calculateCategorySpending } from '@/lib/types';
 import { toast } from 'sonner';
+import { PWAManager } from '@/lib/pwa';
 
 function FinanceApp() {
   const { user, loading: authLoading } = useAuth();
@@ -37,78 +41,102 @@ function FinanceApp() {
     templates,
     customCategories,
     publicCategories,
+    customPeople,
+    publicPeople,
     budgetTemplates,
     publicBudgetTemplates,
     loading: dataLoading,
     addExpense,
     deleteExpense,
+    updateExpense,
     addBudget,
-    updateBudget,
     deleteBudget,
+    updateBudget,
     addTemplate,
     deleteTemplate,
     addCustomCategory,
     updateCustomCategory,
     deleteCustomCategory,
     adoptCategory,
+    addPerson,
+    deletePerson,
+    adoptPerson,
+    updatePerson,
     addBudgetTemplate,
     updateBudgetTemplate,
     deleteBudgetTemplate,
     adoptBudgetTemplate,
   } = useFirestoreData();
-  
+
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [showAddExpense, setShowAddExpense] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [peopleFilter, setPeopleFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
-  const [activeTab, setActiveTab] = useState('expenses');
-
-  // Update budget spending when expenses change
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Initialize view mode with localStorage persistence
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+    const saved = localStorage.getItem('budget-buddy-view-mode');
+    return (saved as 'list' | 'grid') || 'grid';
+  });
+  
+  // Save view mode to localStorage whenever it changes
   useEffect(() => {
-    if (!user || !budgets.length) return;
-
-    const currentMonth = getCurrentMonth();
-    const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
-    
-    // Update budgets with current spending
-    budgets.forEach(budget => {
-      const spent = calculateCategorySpending(monthlyExpenses, budget.category);
-      if (budget.spent !== spent) {
-        updateBudget(budget.id, { spent });
-      }
-    });
-  }, [expenses, budgets, user, updateBudget]);
+    localStorage.setItem('budget-buddy-view-mode', viewMode);
+  }, [viewMode]);
+  
+  // Initialize date range to current month
+  const [dateRange, setDateRange] = useState<DateRange>(() => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return { 
+      from: start.toISOString().split('T')[0], 
+      to: end.toISOString().split('T')[0] 
+    };
+  });
 
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
-      console.log('handleAddExpense called with:', expenseData);
-      console.log('Current user:', user?.uid);
-      
-      if (!user) {
-        toast.error('You must be signed in to add expenses');
-        return;
-      }
-      
       await addExpense(expenseData);
-      toast.success('Expense added successfully');
-    } catch (error: any) {
-      console.error('Error in handleAddExpense:', error);
-      const errorMessage = error?.message || 'Failed to add expense';
-      toast.error(errorMessage);
+      setShowAddExpense(false);
+      toast.success('Expense added successfully!');
+    } catch (error) {
+      console.error('Error adding expense:', error);
+      toast.error('Failed to add expense');
     }
   };
 
-  const handleDeleteExpense = async (id: string) => {
+  const handleUpdateExpense = async (expenseId: string, expenseData: Partial<Expense>) => {
     try {
-      await deleteExpense(id);
-      toast.success('Expense deleted');
+      await updateExpense(expenseId, expenseData);
+      setEditingExpense(null);
+      toast.success('Expense updated successfully!');
+    } catch (error) {
+      console.error('Error updating expense:', error);
+      toast.error('Failed to update expense');
+    }
+  };
+
+  const handleDeleteExpense = async (expenseId: string) => {
+    try {
+      await deleteExpense(expenseId);
+      toast.success('Expense deleted successfully!');
     } catch (error) {
       console.error('Error deleting expense:', error);
       toast.error('Failed to delete expense');
     }
   };
 
-  const handleUpdateBudgets = (newBudgets: Budget[]) => {
-    // Handle budget updates through the BudgetManager component
+  const handleUpdateBudgets = (budgets: Budget[]) => {
+    // This is a placeholder for bulk budget updates
+    console.log('Bulk budget update:', budgets);
+  };
+
+  const handleQuickAdd = (templateData: any) => {
     // The component will call the appropriate Firebase functions
   };
 
@@ -135,7 +163,16 @@ function FinanceApp() {
       const matchesSearch = expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            expense.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || expense.category === categoryFilter;
-      return matchesSearch && matchesCategory;
+      
+      // Check if expense includes the selected person
+      const matchesPeople = peopleFilter === 'all' || 
+                           (expense.peopleIds && expense.peopleIds.includes(peopleFilter));
+      
+      // Check if expense date falls within the selected date range
+      const expenseDate = expense.date;
+      const matchesDateRange = expenseDate >= dateRange.from && expenseDate <= dateRange.to;
+      
+      return matchesSearch && matchesCategory && matchesPeople && matchesDateRange;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -151,305 +188,322 @@ function FinanceApp() {
 
   const currentMonth = getCurrentMonth();
   const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
-  const totalSpent = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+  
+  // Calculate total spent for the selected date range
+  const totalSpent = filteredAndSortedExpenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
 
+  // Helper function to get display label for date range
+  const getDateRangeLabel = () => {
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+    
+    if (dateRange.from === currentMonthStart && dateRange.to === currentMonthEnd) {
+      return "This Month Spent";
+    }
+    
+    const fromDate = new Date(dateRange.from + 'T00:00:00');
+    const toDate = new Date(dateRange.to + 'T00:00:00');
+    
+    if (dateRange.from === dateRange.to) {
+      return `Spent on ${fromDate.toLocaleDateString()}`;
+    }
+    
+    return `Spent ${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`;
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-16 md:pb-0">
-      <AppHeader />
+    <div className="min-h-screen bg-background">
+      {/* Sidebar Navigation */}
+      <Navigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        onSidebarToggle={setSidebarCollapsed}
+      />
       
-      <div className="container mx-auto px-4 py-8">
-        {/* Monthly Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">This Month Spent</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{formatCurrency(totalSpent)}</div>
-              <p className="text-xs text-muted-foreground">
-                {monthlyExpenses.length} transactions
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Budget</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{formatCurrency(totalBudget)}</div>
-              <p className="text-xs text-muted-foreground">
-                {budgets.length} categories
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Remaining</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className={`text-3xl font-bold ${totalBudget > 0 && totalSpent > totalBudget ? 'text-destructive' : 'text-accent'}`}>
-                {formatCurrency(Math.max(0, totalBudget - totalSpent))}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {totalBudget > 0 ? `${((totalSpent / totalBudget) * 100).toFixed(1)}% used` : 'Set budgets to track'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          {/* Desktop Layout */}
-          <TabsList className="hidden md:grid grid-cols-6 w-full max-w-4xl">
-            <TabsTrigger value="expenses" className="flex items-center gap-2">
-              <Receipt className="w-4 h-4" />
-              Expenses
-            </TabsTrigger>
-            <TabsTrigger value="budgets" className="flex items-center gap-2">
-              <Wallet className="w-4 h-4" />
-              Budgets
-            </TabsTrigger>
-            <TabsTrigger value="templates" className="flex items-center gap-2">
-              <ArrowsClockwise className="w-4 h-4" />
-              Templates
-            </TabsTrigger>
-            <TabsTrigger value="categories" className="flex items-center gap-2">
-              <Swatches className="w-4 h-4" />
-              Categories
-            </TabsTrigger>
-            <TabsTrigger value="analyzer" className="flex items-center gap-2">
-              <Lightbulb className="w-4 h-4" />
-              AI Analyzer
-            </TabsTrigger>
-            <TabsTrigger value="trends" className="flex items-center gap-2">
-              <TrendUp className="w-4 h-4" />
-              Trends
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Mobile Layout - Hidden, bottom nav handles it */}
-          <div className="md:hidden">
+      {/* Main Content Area - with dynamic left margin for desktop sidebar */}
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${
+        sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
+      }`}>
+        {/* Header */}
+        <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        
+        {/* Content with proper spacing */}
+        <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            {/* Hidden TabsList for functionality only */}
             <TabsList className="hidden">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="expenses">Expenses</TabsTrigger>
               <TabsTrigger value="budgets">Budgets</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
+              <TabsTrigger value="people">People</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
-              <TabsTrigger value="trends">Trends</TabsTrigger>
             </TabsList>
-          </div>
 
-          <TabsContent value="expenses" className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <div className="relative flex-1 max-w-sm">
-                  <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search expenses..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
+            <TabsContent value="dashboard">
+              <Dashboard 
+                expenses={expenses}
+                budgets={budgets}
+                customCategories={customCategories}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
+                onNavigate={setActiveTab}
+              />
+            </TabsContent>
+
+            <TabsContent value="expenses" className="space-y-6">
+              {/* Filters Section */}
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                  {/* Primary Filters Row */}
+                  <div className="flex flex-col sm:flex-row gap-3 flex-1 min-w-0">
+                    <div className="relative flex-1 max-w-sm">
+                      <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search expenses..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    
+                    <TimeframePicker 
+                      dateRange={dateRange} 
+                      onDateRangeChange={setDateRange}
+                      className="w-60"
+                    />
+                  </div>
+
+                  {/* View Controls */}
+                  <div className="flex gap-2 items-center">
+                    {/* View Mode Toggle */}
+                    <div className="flex bg-background rounded-lg p-1 border">
+                      <Button
+                        variant={viewMode === 'list' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('list')}
+                        className="h-8 px-3"
+                      >
+                        <List className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('grid')}
+                        className="h-8 px-3"
+                      >
+                        <LayoutGrid className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <Button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Add Expense button clicked');
+                        setShowAddExpense(true);
+                      }}
+                      className="shrink-0"
+                    >
+                      Add Expense
+                    </Button>
+                  </div>
                 </div>
-                
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Filter by category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {getAllCategories(customCategories).map((category) => (
-                      <SelectItem key={category.name} value={category.name}>
+
+                {/* Secondary Filters Row */}
+                <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border/50">
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filter by category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {getAllCategories(customCategories).map((category) => (
+                        <SelectItem key={category.name} value={category.name}>
+                          <div className="flex items-center gap-2">
+                            <span>{category.icon}</span>
+                            {category.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={peopleFilter} onValueChange={setPeopleFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filter by person" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All People</SelectItem>
+                      {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
+                        <SelectItem key={person.id} value={person.id!}>
+                          <div className="flex items-center gap-2">
+                            <span 
+                              className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              style={{ backgroundColor: person.color }}
+                            >
+                              {person.icon}
+                            </span>
+                            {person.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="date">
                         <div className="flex items-center gap-2">
-                          <span>{category.icon}</span>
-                          {category.name}
+                          <List className="w-4 h-4" />
+                          Date
                         </div>
                       </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
-                  <SelectTrigger className="w-40">
-                    <List className="w-4 h-4" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="date">Sort by Date</SelectItem>
-                    <SelectItem value="amount">Sort by Amount</SelectItem>
-                    <SelectItem value="category">Sort by Category</SelectItem>
-                  </SelectContent>
-                </Select>
+                      <SelectItem value="amount">Amount</SelectItem>
+                      <SelectItem value="category">Category</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} />
-            </div>
-
-            {dataLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Loading expenses...</p>
-              </div>
-            ) : filteredAndSortedExpenses.length === 0 ? (
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center py-8">
-                    <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      {expenses.length === 0 ? 'No expenses yet' : 'No expenses match your filters'}
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      {expenses.length === 0 
-                        ? 'Start tracking your spending by adding your first expense.'
-                        : 'Try adjusting your search or filter criteria.'
-                      }
-                    </p>
-                    {expenses.length === 0 && (
-                      <AddExpenseModal onAddExpense={handleAddExpense} customCategories={customCategories} />
-                    )}
+              <div 
+                className={viewMode === 'grid' ? "gap-4" : "space-y-4"}
+                style={viewMode === 'grid' ? {
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '1rem'
+                } : {}}
+              >
+                {filteredAndSortedExpenses.length > 0 ? (
+                  filteredAndSortedExpenses.map((expense) => (
+                    <ExpenseCard
+                      key={expense.id}
+                      expense={expense}
+                      onDelete={() => handleDeleteExpense(expense.id)}
+                      onEdit={() => setEditingExpense(expense)}
+                      customPeople={[...customPeople, ...publicPeople]}
+                      viewMode={viewMode}
+                    />
+                  ))
+                ) : (
+                  <div className={viewMode === 'grid' ? "col-span-full" : ""}>
+                    <Card className="p-8 text-center">
+                      <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium mb-2">No expenses found</h3>
+                      <p className="text-muted-foreground mb-4">
+                        {searchTerm || categoryFilter !== 'all' 
+                          ? 'Try adjusting your search or filter criteria'
+                          : 'Start by adding your first expense'
+                        }
+                      </p>
+                      {(!searchTerm && categoryFilter === 'all') && (
+                        <Button onClick={() => setShowAddExpense(true)}>
+                          Add Your First Expense
+                        </Button>
+                      )}
+                    </Card>
                   </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4">
-                {filteredAndSortedExpenses.map((expense) => (
-                  <ExpenseCard
-                    key={expense.id}
-                    expense={expense}
-                    onDelete={handleDeleteExpense}
-                  />
-                ))}
+                )}
               </div>
-            )}
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="budgets">
-            <BudgetManager 
-              budgets={budgets} 
-              budgetTemplates={budgetTemplates}
-              publicBudgetTemplates={publicBudgetTemplates}
-              onUpdateBudgets={handleUpdateBudgets}
-              onAddBudget={addBudget}
-              onUpdateBudget={updateBudget}
-              onDeleteBudget={deleteBudget}
-              onAddBudgetTemplate={addBudgetTemplate}
-              onUpdateBudgetTemplate={updateBudgetTemplate}
-              onDeleteBudgetTemplate={deleteBudgetTemplate}
-              onAdoptBudgetTemplate={adoptBudgetTemplate}
-              customCategories={customCategories}
-            />
-          </TabsContent>
+            <TabsContent value="budgets">
+              <BudgetManager 
+                budgets={budgets}
+                onAddBudget={addBudget}
+                onDeleteBudget={deleteBudget}
+                onUpdateBudget={updateBudget}
+                onUpdateBudgets={handleUpdateBudgets}
+                customCategories={customCategories}
+                budgetTemplates={budgetTemplates}
+                publicBudgetTemplates={publicBudgetTemplates}
+                onAdoptBudgetTemplate={adoptBudgetTemplate}
+                onAddBudgetTemplate={addBudgetTemplate}
+                onUpdateBudgetTemplate={updateBudgetTemplate}
+                onDeleteBudgetTemplate={deleteBudgetTemplate}
+              />
+            </TabsContent>
 
-          <TabsContent value="templates">
-            <RecurringTemplates 
-              onAddExpense={handleAddExpense}
-              onAddTemplate={addTemplate}
-              onDeleteTemplate={deleteTemplate}
-              customCategories={customCategories}
-            />
-          </TabsContent>
+            <TabsContent value="templates">
+              <RecurringTemplates 
+                onAddExpense={handleAddExpense}
+                onAddTemplate={addTemplate}
+                onDeleteTemplate={deleteTemplate}
+                customCategories={customCategories}
+              />
+            </TabsContent>
 
-          <TabsContent value="categories">
-            <CategoryManager
-              customCategories={customCategories}
-              publicCategories={publicCategories}
-              onAddCategory={addCustomCategory}
-              onUpdateCategory={updateCustomCategory}
-              onDeleteCategory={deleteCustomCategory}
-              onAdoptCategory={adoptCategory}
-            />
-          </TabsContent>
+            <TabsContent value="categories">
+              <CategoryManager 
+                customCategories={customCategories}
+                publicCategories={publicCategories}
+                onAddCategory={addCustomCategory}
+                onUpdateCategory={updateCustomCategory}
+                onDeleteCategory={deleteCustomCategory}
+                onAdoptCategory={adoptCategory}
+              />
+            </TabsContent>
 
-          <TabsContent value="analyzer">
-            <BudgetAnalyzer expenses={expenses} budgets={budgets} />
-          </TabsContent>
+            <TabsContent value="people">
+              <PeopleManager 
+                user={user}
+              />
+            </TabsContent>
 
-          <TabsContent value="trends">
-            <SpendingTrends expenses={expenses} />
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border">
-        <div className="grid grid-cols-6 h-16">
-          <button
-            onClick={() => setActiveTab('expenses')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === 'expenses' 
-                ? 'text-primary bg-primary/10' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Receipt className="w-5 h-5" />
-            <span className="text-xs font-medium">Expenses</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('budgets')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === 'budgets' 
-                ? 'text-primary bg-primary/10' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Wallet className="w-5 h-5" />
-            <span className="text-xs font-medium">Budgets</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === 'templates' 
-                ? 'text-primary bg-primary/10' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <ArrowsClockwise className="w-5 h-5" />
-            <span className="text-xs font-medium">Templates</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('categories')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === 'categories' 
-                ? 'text-primary bg-primary/10' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Swatches className="w-5 h-5" />
-            <span className="text-xs font-medium">Categories</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('analyzer')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === 'analyzer' 
-                ? 'text-primary bg-primary/10' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Lightbulb className="w-5 h-5" />
-            <span className="text-xs font-medium">AI Analyzer</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('trends')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === 'trends' 
-                ? 'text-primary bg-primary/10' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <TrendUp className="w-5 h-5" />
-            <span className="text-xs font-medium">Trends</span>
-          </button>
+            <TabsContent value="analyzer">
+              <ComingSoon 
+                title="AI Analyzer"
+                description="Advanced AI-powered financial insights and recommendations"
+                version="4.0"
+                features={[
+                  "Smart Budget Insights",
+                  "Predictive Spending Analytics", 
+                  "AI-Powered Categorization",
+                  "Personalized Recommendations",
+                  "Goal Achievement Tracking",
+                  "Anomaly Detection"
+                ]}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
+      <PWAConnectionStatus />
+      
       <Toaster position="top-right" />
+
+      {/* Add Expense Modal */}
+      <AddExpenseModal
+        isOpen={showAddExpense}
+        onClose={() => setShowAddExpense(false)}
+        onAddExpense={handleAddExpense}
+        customCategories={customCategories}
+        customPeople={customPeople}
+        publicPeople={publicPeople}
+      />
+
+      {/* Edit Expense Modal */}
+      {editingExpense && (
+        <EditExpenseModal
+          expense={editingExpense}
+          isOpen={!!editingExpense}
+          onClose={() => setEditingExpense(null)}
+          onUpdate={handleUpdateExpense}
+          customCategories={customCategories}
+          customPeople={customPeople}
+          publicPeople={publicPeople}
+        />
+      )}
     </div>
   );
 }

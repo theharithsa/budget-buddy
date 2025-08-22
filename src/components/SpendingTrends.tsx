@@ -1,219 +1,478 @@
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { TrendingUp } from 'lucide-react';
-import { type Expense, DEFAULT_CATEGORIES, formatCurrency, getCurrentMonth, getMonthlyExpenses } from '@/lib/types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import ApexCharts from 'apexcharts';
+import { TrendingUp, TrendingDown, Calendar, DollarSign, BarChart3, Activity } from 'lucide-react';
+import { type Expense, type Budget, formatCurrency } from '@/lib/types';
 
 interface SpendingTrendsProps {
   expenses: Expense[];
+  budgets: Budget[];
 }
 
-export function SpendingTrends({ expenses }: SpendingTrendsProps) {
-  const currentMonth = getCurrentMonth();
-  const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
+export function SpendingTrends({ expenses, budgets }: SpendingTrendsProps) {
+  // Flowbite Chart References
+  const monthlyAreaChartRef = useRef<HTMLDivElement>(null);
+  const categoryBarChartRef = useRef<HTMLDivElement>(null);
+  const weeklyColumnChartRef = useRef<HTMLDivElement>(null);
+  const dailyLineChartRef = useRef<HTMLDivElement>(null);
 
-  const categoryData = useMemo(() => {
-    const categoryTotals = DEFAULT_CATEGORIES.map(category => {
-      const total = monthlyExpenses
-        .filter(expense => expense.category === category.name)
-        .reduce((sum, expense) => sum + expense.amount, 0);
-      
+  // Calculate trends data
+  const trendsData = useMemo(() => {
+    if (!expenses || expenses.length === 0) {
       return {
-        name: category.name,
-        value: total,
-        color: category.color,
-        icon: category.icon,
+        monthlyTrends: [],
+        categoryTrends: [],
+        weeklyTrends: [],
+        dailyTrends: [],
+        totalSpent: 0,
+        avgDaily: 0,
+        growth: 0
       };
-    }).filter(item => item.value > 0);
+    }
 
-    return categoryTotals.sort((a, b) => b.value - a.value);
-  }, [monthlyExpenses]);
-
-  const last6MonthsData = useMemo(() => {
-    const months = [];
-    const now = new Date();
-    
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthKey = date.toISOString().slice(0, 7);
-      const monthExpenses = getMonthlyExpenses(expenses, monthKey);
-      const total = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-      
-      months.push({
-        month: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        amount: total,
+    // Monthly trends (last 12 months)
+    const monthlyTrends: { month: string; amount: number; year: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthExpenses = expenses.filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate.getMonth() === date.getMonth() && 
+               expenseDate.getFullYear() === date.getFullYear();
+      });
+      const monthTotal = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+      monthlyTrends.push({
+        month: date.toLocaleDateString('en-US', { month: 'short' }),
+        amount: monthTotal,
+        year: date.getFullYear()
       });
     }
-    
-    return months;
+
+    // Category trends
+    const categoryMap = new Map();
+    expenses.forEach(expense => {
+      const category = expense.category;
+      categoryMap.set(category, (categoryMap.get(category) || 0) + expense.amount);
+    });
+    const categoryTrends = Array.from(categoryMap.entries())
+      .map(([category, amount]) => ({ category, amount }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 8);
+
+    // Weekly trends (last 8 weeks)
+    const weeklyTrends: { week: string; amount: number }[] = [];
+    for (let i = 7; i >= 0; i--) {
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() - (i * 7));
+      const startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - 6);
+      
+      const weekExpenses = expenses.filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= startDate && expenseDate <= endDate;
+      });
+      const weekTotal = weekExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+      weeklyTrends.push({
+        week: `Week ${8 - i}`,
+        amount: weekTotal
+      });
+    }
+
+    // Daily trends (last 30 days)
+    const dailyTrends: { day: string; amount: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dayExpenses = expenses.filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate.toDateString() === date.toDateString();
+      });
+      const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+      dailyTrends.push({
+        day: date.getDate().toString(),
+        amount: dayTotal
+      });
+    }
+
+    const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const avgDaily = totalSpent / 30;
+    const lastMonthSpent = monthlyTrends[monthlyTrends.length - 1]?.amount || 0;
+    const prevMonthSpent = monthlyTrends[monthlyTrends.length - 2]?.amount || 0;
+    const growth = prevMonthSpent > 0 ? ((lastMonthSpent - prevMonthSpent) / prevMonthSpent) * 100 : 0;
+
+    return {
+      monthlyTrends,
+      categoryTrends,
+      weeklyTrends,
+      dailyTrends,
+      totalSpent,
+      avgDaily,
+      growth
+    };
   }, [expenses]);
 
-  const totalSpent = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-card p-3 border rounded-lg shadow-lg">
-          <p className="font-medium">{`${label}: ${formatCurrency(payload[0].value)}`}</p>
-        </div>
-      );
+  // Monthly Area Chart - Flowbite Style
+  useEffect(() => {
+    if (monthlyAreaChartRef.current && trendsData.monthlyTrends.length > 0) {
+      const chart = new ApexCharts(monthlyAreaChartRef.current, {
+        chart: {
+          height: 400,
+          type: 'area',
+          fontFamily: 'Inter, sans-serif',
+          dropShadow: { enabled: false },
+          toolbar: { show: false },
+        },
+        tooltip: { enabled: true, x: { show: false } },
+        legend: { show: false },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            opacityFrom: 0.55,
+            opacityTo: 0,
+            shade: '#1C64F2',
+            gradientToColors: ['#1C64F2'],
+          },
+        },
+        dataLabels: { enabled: false },
+        stroke: { width: 6 },
+        grid: {
+          show: false,
+          strokeDashArray: 4,
+          padding: { left: 2, right: 2, top: 0 },
+        },
+        series: [{
+          name: 'Monthly Spending',
+          data: trendsData.monthlyTrends.map(item => item.amount),
+          color: '#1A56DB',
+        }],
+        xaxis: {
+          categories: trendsData.monthlyTrends.map(item => item.month),
+          labels: { show: true },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: {
+          show: true,
+          labels: {
+            formatter: function (value) {
+              return formatCurrency(value);
+            }
+          }
+        },
+      });
+      chart.render();
+      return () => chart.destroy();
     }
-    return null;
-  };
+  }, [trendsData.monthlyTrends]);
 
-  if (expenses.length === 0) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <TrendingUp size={24} className="text-primary" />
-          <h2 className="text-2xl font-bold">Spending Trends</h2>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <TrendingUp size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No spending data</h3>
-              <p className="text-muted-foreground">
-                Add some expenses to see your spending trends and patterns.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Category Bar Chart - Flowbite Style
+  useEffect(() => {
+    if (categoryBarChartRef.current && trendsData.categoryTrends.length > 0) {
+      const chart = new ApexCharts(categoryBarChartRef.current, {
+        chart: {
+          height: 400,
+          type: 'bar',
+          fontFamily: 'Inter, sans-serif',
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            columnWidth: '70%',
+            borderRadiusApplication: 'end',
+            borderRadius: 8,
+          },
+        },
+        tooltip: {
+          shared: true,
+          intersect: false,
+          style: { fontFamily: 'Inter, sans-serif' },
+        },
+        states: {
+          hover: {
+            filter: { type: 'darken', value: 1 },
+          },
+        },
+        stroke: { show: true, width: 0, colors: ['transparent'] },
+        grid: {
+          show: false,
+          strokeDashArray: 4,
+          padding: { left: 2, right: 2, top: -14 },
+        },
+        dataLabels: { enabled: false },
+        legend: { show: false },
+        xaxis: {
+          floating: false,
+          labels: {
+            show: true,
+            style: {
+              fontFamily: 'Inter, sans-serif',
+              cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+            }
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: { show: true },
+        fill: { opacity: 1 },
+        series: [{
+          name: 'Category Spending',
+          color: '#1A56DB',
+          data: trendsData.categoryTrends.map(item => ({
+            x: item.category,
+            y: item.amount
+          })),
+        }],
+      });
+      chart.render();
+      return () => chart.destroy();
+    }
+  }, [trendsData.categoryTrends]);
+
+  // Weekly Column Chart - Flowbite Style
+  useEffect(() => {
+    if (weeklyColumnChartRef.current && trendsData.weeklyTrends.length > 0) {
+      const chart = new ApexCharts(weeklyColumnChartRef.current, {
+        chart: {
+          height: 350,
+          type: 'bar',
+          fontFamily: 'Inter, sans-serif',
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '70%',
+            borderRadiusApplication: 'end',
+            borderRadius: 8,
+          },
+        },
+        tooltip: {
+          shared: true,
+          intersect: false,
+          style: { fontFamily: 'Inter, sans-serif' },
+        },
+        states: {
+          hover: {
+            filter: { type: 'darken', value: 1 },
+          },
+        },
+        stroke: { show: true, width: 0, colors: ['transparent'] },
+        grid: {
+          show: false,
+          strokeDashArray: 4,
+          padding: { left: 2, right: 2, top: -14 },
+        },
+        dataLabels: { enabled: false },
+        legend: { show: false },
+        xaxis: {
+          floating: false,
+          labels: {
+            show: true,
+            style: {
+              fontFamily: 'Inter, sans-serif',
+              cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+            }
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: { show: false },
+        fill: { opacity: 1 },
+        series: [{
+          name: 'Weekly Spending',
+          color: '#16BDCA',
+          data: trendsData.weeklyTrends.map(item => ({
+            x: item.week,
+            y: item.amount
+          })),
+        }],
+      });
+      chart.render();
+      return () => chart.destroy();
+    }
+  }, [trendsData.weeklyTrends]);
+
+  // Daily Line Chart - Flowbite Style
+  useEffect(() => {
+    if (dailyLineChartRef.current && trendsData.dailyTrends.length > 0) {
+      const chart = new ApexCharts(dailyLineChartRef.current, {
+        chart: {
+          height: 350,
+          type: 'line',
+          fontFamily: 'Inter, sans-serif',
+          dropShadow: { enabled: false },
+          toolbar: { show: false },
+        },
+        tooltip: { enabled: true, x: { show: false } },
+        legend: { show: false },
+        dataLabels: { enabled: false },
+        stroke: { width: 6, curve: 'smooth' },
+        grid: {
+          show: true,
+          strokeDashArray: 4,
+          padding: { left: 2, right: 2, top: 0 },
+        },
+        series: [{
+          name: 'Daily Spending',
+          data: trendsData.dailyTrends.map(item => item.amount),
+          color: '#9061F9',
+        }],
+        xaxis: {
+          categories: trendsData.dailyTrends.map(item => item.day),
+          labels: { show: true },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: {
+          show: true,
+          labels: {
+            formatter: function (value) {
+              return formatCurrency(value);
+            }
+          }
+        },
+      });
+      chart.render();
+      return () => chart.destroy();
+    }
+  }, [trendsData.dailyTrends]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <TrendingUp size={24} className="text-primary" />
-        <h2 className="text-2xl font-bold">Spending Trends</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">This Month</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalSpent)}</div>
-            <p className="text-xs text-muted-foreground">
-              {monthlyExpenses.length} transactions
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Top Category</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {categoryData[0]?.name || 'None'}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {categoryData[0] ? formatCurrency(categoryData[0].value) : '$0.00'}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Average/Day</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(totalSpent / new Date().getDate())}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Based on current month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {categoryData.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Spending by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={(entry) => `${entry.name}: ${formatCurrency(entry.value)}`}
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Category Breakdown</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {categoryData.map((category, index) => {
-                  const percentage = (category.value / totalSpent) * 100;
-                  return (
-                    <div key={category.name} className="flex items-center gap-3">
-                      <div 
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                        style={{ backgroundColor: category.color }}
-                      >
-                        {category.icon}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-medium">{category.name}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {percentage.toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <div className="text-sm font-semibold">
-                            {formatCurrency(category.value)}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
+    <div className="p-6 space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Spending Trends</h1>
+          <p className="text-muted-foreground">
+            Analyze your spending patterns over time
+          </p>
         </div>
-      )}
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>6-Month Spending Trend</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={last6MonthsData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis tickFormatter={(value) => `$${value}`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="amount" fill="oklch(0.45 0.15 240)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-card rounded-lg shadow border border-border p-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center me-3">
+              <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+                {formatCurrency(trendsData.totalSpent)}
+              </h5>
+              <p className="text-sm font-normal text-muted-foreground">Total Spending</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-card rounded-lg shadow border border-border p-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center me-3">
+              <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+                {formatCurrency(trendsData.avgDaily)}
+              </h5>
+              <p className="text-sm font-normal text-muted-foreground">Daily Average</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-card rounded-lg shadow border border-border p-6">
+          <div className="flex items-center">
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center me-3 ${
+              trendsData.growth >= 0 
+                ? 'bg-red-100 dark:bg-red-900' 
+                : 'bg-green-100 dark:bg-green-900'
+            }`}>
+              {trendsData.growth >= 0 ? (
+                <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
+              ) : (
+                <TrendingDown className="w-6 h-6 text-green-600 dark:text-green-400" />
+              )}
+            </div>
+            <div>
+              <h5 className="leading-none text-2xl font-bold text-foreground pb-1">
+                {Math.abs(trendsData.growth).toFixed(1)}%
+              </h5>
+              <p className="text-sm font-normal text-muted-foreground">
+                {trendsData.growth >= 0 ? 'Increase' : 'Decrease'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Grid - Pure Flowbite Design */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {/* Monthly Trends */}
+        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
+                <BarChart3 className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Monthly Trends</h5>
+                <p className="text-sm font-normal text-muted-foreground">Last 12 months spending</p>
+              </div>
+            </div>
+          </div>
+          <div ref={monthlyAreaChartRef} className="h-96"></div>
+        </div>
+
+        {/* Category Breakdown */}
+        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
+                <Activity className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Top Categories</h5>
+                <p className="text-sm font-normal text-muted-foreground">Spending by category</p>
+              </div>
+            </div>
+          </div>
+          <div ref={categoryBarChartRef} className="h-96"></div>
+        </div>
+
+        {/* Weekly Trends */}
+        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
+                <TrendingUp className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Weekly Performance</h5>
+                <p className="text-sm font-normal text-muted-foreground">Last 8 weeks</p>
+              </div>
+            </div>
+          </div>
+          <div ref={weeklyColumnChartRef} className="h-80"></div>
+        </div>
+
+        {/* Daily Trends */}
+        <div className="bg-card rounded-lg shadow border border-border p-4 md:p-6">
+          <div className="flex justify-between pb-4 mb-4 border-b border-border">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center me-3">
+                <Calendar className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h5 className="leading-none text-xl font-bold text-foreground pb-1">Daily Activity</h5>
+                <p className="text-sm font-normal text-muted-foreground">Last 30 days</p>
+              </div>
+            </div>
+          </div>
+          <div ref={dailyLineChartRef} className="h-80"></div>
+        </div>
+      </div>
     </div>
   );
 }
