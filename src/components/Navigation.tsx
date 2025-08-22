@@ -106,7 +106,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse 
           {!isCollapsed && (
             <div>
               <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>FinBuddy</h2>
-              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>v2.1.0</p>
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>v2.2.1</p>
             </div>
           )}
           <Button

@@ -228,7 +228,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                     {/* Header */}
                     <div className="p-6 border-b border-border">
                       <h2 className="text-lg font-semibold text-foreground">FinBuddy</h2>
-                      <p className="text-sm text-muted-foreground mt-1">v2.1.0 • Navigate to any section</p>
+                      <p className="text-sm text-muted-foreground mt-1">v2.2.1 • Navigate to any section</p>
                     </div>
 
                     {/* Navigation Items */}
@@ -277,7 +277,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
             <div>
               <h1 className="text-2xl font-bold">FinBuddy</h1>
               <p className="text-sm text-muted-foreground">
-                Track your expenses, manage budgets • v2.1.0
+                Track your expenses, manage budgets • v2.2.1
               </p>
             </div>
           </div>
