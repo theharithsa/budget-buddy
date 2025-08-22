@@ -1,6 +1,6 @@
 # 🔒 Security Policy - Budget Buddy
 
-**Version**: 2.2.2  
+**Version**: 2.5.1  
 **Last Updated**: August 22, 2025  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 
@@ -399,6 +399,6 @@ npm run security:check    # Complete security check
 - ✅ **Continuous Improvement**: Regular security updates and patches
 - ✅ **Responsible Disclosure**: Clear vulnerability reporting process
 
-**Last Security Review**: August 2025 (v2.2.1)  
-**Next Scheduled Review**: November 2025 (v2.3.0)  
+**Last Security Review**: August 2025 (v2.5.1)  
+**Next Scheduled Review**: November 2025 (v2.6.0)  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)

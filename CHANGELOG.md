@@ -123,7 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Application Version**: Updated to v2.2.2 across all UI components and documentation
 
-## [2.2.1] - 2025-08-22
+## [2.2.1] - 2025-08-21
 
 ### Fixed
 
@@ -153,7 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSS Grid Implementation**: Enhanced grid layout with auto-responsive column distribution
 - **Theme System**: Strengthened CSS variable integration across all PWA and dashboard components
 
-## [2.2.0] - 2025-08-22
+## [2.2.0] - 2025-08-20
 
 ### Added
 

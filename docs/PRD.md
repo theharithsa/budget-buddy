@@ -1,7 +1,7 @@
 # Budget Buddy - Product Requirements Document (PRD)
 
-**Version**: 2.2.2  
-**Last Updated**: August 22, 2025  
+**Version**: 2.5.1  
+**Last Updated**: August 23, 2025  
 **Status**: ✅ Current Release
 
 A comprehensive personal finance analytics platform that empowers users to track expenses, set meaningful budgets, and visualize spending patterns to make informed financial decisions through AI-powered insights and professional data visualization.
@@ -117,7 +117,7 @@ A comprehensive personal finance analytics platform that empowers users to track
 - **Interactive Elements**: Hover states, tooltips, click-to-drill-down
 - **Export Capabilities**: PNG, SVG, PDF export for reports
 
-### **Mobile Navigation System (v2.2.2)**
+### **Mobile Navigation System (v2.5.1)**
 - **Bottom Navigation**: Thumb-friendly navigation bar with 4 primary sections
 - **Smart Context Logic**: 
   - **Dashboard**: Shows menu button for full navigation drawer
