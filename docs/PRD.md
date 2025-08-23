@@ -1,6 +1,6 @@
 # Budget Buddy - Product Requirements Document (PRD)
 
-**Version**: 2.5.1  
+**Version**: 2.5.5  
 **Last Updated**: August 23, 2025  
 **Status**: ✅ Current Release
 
@@ -58,7 +58,9 @@ A comprehensive personal finance analytics platform that empowers users to track
   - Real-time progress visualization with color-coded status
   - Predictive spending alerts based on historical patterns
   - Budget template system for common setups
-- **User Flow**: Budget Setup → AI suggests limits based on history → User adjusts → Set alert thresholds → Monitor progress → Receive smart notifications
+  - **Month Selector (v2.5.5)**: Historical budget performance analysis across different months
+  - **Historical Analysis**: View budget utilization for any past month with dynamic calculations
+- **User Flow**: Budget Setup → AI suggests limits based on history → User adjusts → Set alert thresholds → Monitor progress → Receive smart notifications → Analyze historical performance
 - **Success Criteria**: Budget adherence improvement >25%, reduced overspending incidents, accurate spending predictions
 
 ### 📈 **Advanced Analytics Dashboard**

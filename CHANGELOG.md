@@ -7,33 +7,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.5] - 2025-08-23
+
+### Added
+
+- **Month Selector for Budget Page**: New dropdown to view budget utilization across different months
+- Historical budget performance analysis with month-by-month breakdown
+- Dynamic spending calculation based on selected month's expenses
+- Enhanced budget tracking with time-based filtering capabilities
+
+### Changed
+
+- Budget Manager now accepts expenses prop for historical analysis
+- Budget spending calculations updated to support month selection
+- Improved budget cards to display month-specific spending data
+
+### Enhanced
+
+- Budget utilization visualization with historical context
+- User ability to analyze spending patterns across months
+- Better financial tracking with temporal budget insights
+- Comprehensive budget performance review functionality
+
+### Technical
+
+- Updated BudgetManager component interface to include expenses
+- Added selectedMonth state management with current month default
+- Implemented dynamic spending calculation based on month selection
+- Enhanced calculateCategorySpending utility for month-specific data
+
 ## [2.5.4] - 2024-12-28
 
 ### Added
+
 - Descriptive text labels for all expense page action icons to improve user guidance
 - Theme-aware color schemes for all ApexCharts components
 - Comprehensive dark/light mode support for dashboard and analytics charts
 - ThemeContext integration across all chart components
 
 ### Changed
+
 - Updated all chart components to use consistent Titillium Web font family
 - Replaced Inter font references with application's primary typography
 - Enhanced chart readability in both light and dark themes
 - Improved accessibility with better UI element descriptions
 
 ### Improved
+
 - User experience with clearer icon descriptions on expense management page
 - Visual consistency across all data visualization components
 - Theme switching performance and visual transitions
 - Typography standardization across dashboard and analytics
 
 ### Technical
+
 - Integrated useTheme hook in Dashboard.tsx, FlowbiteCharts.tsx, and AdvancedCharts.tsx
 - Added getChartThemeConfig() helper function for consistent theming
 - Updated all ApexCharts configurations with theme-aware colors and fonts
 - Maintained TypeScript compatibility and build optimization
 
 ### Fixed
+
 - Font inconsistencies between chart components and main application
 - Theme color mismatches in data visualization elements
 - Missing user guidance for expense page control elements

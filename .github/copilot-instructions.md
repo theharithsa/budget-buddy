@@ -14,7 +14,7 @@
 - **Navigation**: Collapsible sidebar with responsive design
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable)
-- **Version**: Currently v2.5.3 with advanced dashboard, analytics, and gamification system
+- **Version**: Currently v2.5.5 with advanced dashboard, analytics, gamification system, and historical budget analysis
 
 ## 📁 Architecture & File Structure
 
@@ -63,7 +63,7 @@ src/
 - `tailwind.config.js` - Styling configuration
 - `components.json` - Radix UI component configuration
 - `tsconfig.json` - TypeScript configuration
-- `package.json` - Dependencies & scripts (v2.5.3)
+- `package.json` - Dependencies & scripts (v2.5.5)
 - `manifest.json` - PWA manifest for installation
 - `sw.js` - Service worker for offline functionality
 
@@ -594,7 +594,7 @@ VITE_DYNATRACE_TOKEN=your-dynatrace-token
 - **Environment Variables**: Configure in deployment platform
 - **Build Optimization**: Production builds are optimized for performance
 
-## 📋 Recent Developments (v2.5.1-2.5.3)
+## 📋 Recent Developments (v2.5.1-2.5.5)
 
 ### Major Feature Additions
 
@@ -617,6 +617,13 @@ VITE_DYNATRACE_TOKEN=your-dynatrace-token
 - **Advanced Charts**: Multiple visualization types for financial data
 - **Financial Scoring**: Comprehensive scoring system with weighted components
 - **Achievement System**: Gamified financial goal tracking
+
+#### **Historical Budget Analysis (v2.5.5)**
+- **Month Selector**: Dropdown to view budget performance for any past month
+- **Dynamic Calculations**: Real-time spending calculations based on selected month
+- **Historical Insights**: Compare budget utilization across different time periods
+- **Temporal Analysis**: Enhanced budget tracking with time-based filtering
+- **User Experience**: Seamless month navigation with current month as default
 
 ### Critical Bug Fixes
 
@@ -791,7 +798,7 @@ npm run version:major # Bump major version
 - [ ] PWA manifest configured
 - [ ] Service worker tested
 
-### Current Feature Status (v2.5.3)
+### Current Feature Status (v2.5.5)
 - ✅ Grid/List view toggle with persistence
 - ✅ Enhanced filtering system with people filter
 - ✅ Clear cache functionality
@@ -805,5 +812,6 @@ npm run version:major # Bump major version
 - ✅ Financial scoring and analytics
 - ✅ Chart lifecycle management for tab switching
 - ✅ Real-time score updates and visual polish
+- ✅ Historical budget analysis with month selector
 
 This guide should help AI coding agents understand the Budget Buddy codebase structure, implementation patterns, and development workflows to be immediately productive when working on the project.

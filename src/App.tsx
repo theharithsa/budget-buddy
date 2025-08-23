@@ -458,6 +458,7 @@ function FinanceApp() {
             <TabsContent value="budgets">
               <BudgetManager 
                 budgets={budgets}
+                expenses={expenses}
                 onAddBudget={addBudget}
                 onDeleteBudget={deleteBudget}
                 onUpdateBudget={updateBudget}

@@ -1,6 +1,6 @@
 # 📚 Budget Buddy Documentation Center
 
-Welcome to the comprehensive documentation for Budget Buddy v2.5.4 - a modern personal finance analytics platform built with React, TypeScript, and Firebase.
+Welcome to the comprehensive documentation for Budget Buddy v2.5.5 - a modern personal finance analytics platform built with React, TypeScript, and Firebase.
 
 ## 🏁 Quick Start Guide
 

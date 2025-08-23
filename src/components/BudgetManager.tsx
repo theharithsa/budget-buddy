@@ -14,15 +14,28 @@ import {
   Calculator, 
   Trash2 as Trash, 
   Book as BookOpen, 
-  Globe 
+  Globe,
+  Calendar
 } from 'lucide-react';
-import { DEFAULT_CATEGORIES, getAllCategories, type Budget, type CustomCategory, type BudgetTemplate, formatCurrency } from '@/lib/types';
+import { 
+  DEFAULT_CATEGORIES, 
+  getAllCategories, 
+  type Budget, 
+  type Expense,
+  type CustomCategory, 
+  type BudgetTemplate, 
+  formatCurrency,
+  getCurrentMonth,
+  getMonthlyExpenses,
+  calculateCategorySpending
+} from '@/lib/types';
 import { BudgetSetupWizard } from '@/components/BudgetSetupWizard';
 import { BudgetCommunity } from '@/components/BudgetCommunity';
 import { toast } from 'sonner';
 
 interface BudgetManagerProps {
   budgets: Budget[];
+  expenses: Expense[];
   budgetTemplates?: BudgetTemplate[];
   publicBudgetTemplates?: BudgetTemplate[];
   onUpdateBudgets: (budgets: Budget[]) => void;
@@ -38,6 +51,7 @@ interface BudgetManagerProps {
 
 export function BudgetManager({ 
   budgets, 
+  expenses,
   budgetTemplates = [],
   publicBudgetTemplates = [],
   onUpdateBudgets, 
@@ -55,6 +69,43 @@ export function BudgetManager({
   const [category, setCategory] = useState('');
   const [limit, setLimit] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Month selector state - default to current month
+  const [selectedMonth, setSelectedMonth] = useState(() => getCurrentMonth());
+  
+  // Generate list of available months from expenses
+  const getAvailableMonths = () => {
+    const months = new Set<string>();
+    
+    // Add current month
+    months.add(getCurrentMonth());
+    
+    // Add months from expenses
+    expenses.forEach(expense => {
+      const monthKey = expense.date.slice(0, 7); // YYYY-MM format
+      months.add(monthKey);
+    });
+    
+    // Convert to sorted array (most recent first)
+    return Array.from(months)
+      .sort((a, b) => b.localeCompare(a))
+      .map(monthKey => {
+        const date = new Date(monthKey + '-01');
+        return {
+          value: monthKey,
+          label: date.toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+          })
+        };
+      });
+  };
+  
+  // Calculate spending for selected month
+  const getSpendingForMonth = (categoryName: string, month: string) => {
+    const monthlyExpenses = getMonthlyExpenses(expenses, month);
+    return calculateCategorySpending(monthlyExpenses, categoryName);
+  };
 
   const handleApplyTemplate = async (template: BudgetTemplate) => {
     try {
@@ -170,7 +221,7 @@ export function BudgetManager({
         </TabsList>
 
         <TabsContent value="budgets" className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Wallet size={24} className="text-primary" />
               <h2 className="text-2xl font-bold">Budget Overview</h2>
@@ -242,6 +293,37 @@ export function BudgetManager({
             </div>
           </div>
 
+          {/* Month Selector */}
+          <div className="flex items-center justify-between bg-muted/50 p-4 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Calendar className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <h3 className="font-semibold text-sm">Budget Period</h3>
+                <p className="text-xs text-muted-foreground">View budget utilization by month</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="month-selector" className="text-sm font-medium">Month:</Label>
+              <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                <SelectTrigger id="month-selector" className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAvailableMonths().map((month) => (
+                    <SelectItem key={month.value} value={month.value}>
+                      {month.label}
+                      {month.value === getCurrentMonth() && (
+                        <span className="ml-2 text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
+                          Current
+                        </span>
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           {budgets.length === 0 ? (
             <Card>
               <CardContent className="pt-6">
@@ -252,10 +334,13 @@ export function BudgetManager({
                     Set spending limits for your categories to better track your finances.
                   </p>
                   <div className="flex gap-2 justify-center">
-                    <BudgetSetupWizard 
-                      existingBudgets={budgets}
-                      onAddBudget={onAddBudget}
-                    />
+                    <Button 
+                      onClick={() => setWizardOpen(true)} 
+                      className="gap-2"
+                    >
+                      <Calculator className="w-4 h-4" />
+                      Budget Wizard
+                    </Button>
                     <Button onClick={() => setOpen(true)} variant="outline" className="gap-2">
                       <Plus className="w-4 h-4" />
                       Manual Setup
@@ -269,8 +354,11 @@ export function BudgetManager({
               {budgets.map((budget) => {
                 const allCategories = getAllCategories(customCategories);
                 const category = allCategories.find(cat => cat.name === budget.category);
-                const percentage = Math.min((budget.spent / budget.limit) * 100, 100);
-                const isOverBudget = budget.spent > budget.limit;
+                
+                // Use selected month's spending instead of budget.spent
+                const monthlySpent = getSpendingForMonth(budget.category, selectedMonth);
+                const percentage = Math.min((monthlySpent / budget.limit) * 100, 100);
+                const isOverBudget = monthlySpent > budget.limit;
                 const isNearLimit = percentage >= 80 && !isOverBudget;
                 
                 return (
@@ -287,7 +375,7 @@ export function BudgetManager({
                           <div>
                             <CardTitle className="text-lg">{budget.category}</CardTitle>
                             <p className="text-sm text-muted-foreground">
-                              {formatCurrency(budget.spent)} of {formatCurrency(budget.limit)}
+                              {formatCurrency(monthlySpent)} of {formatCurrency(budget.limit)}
                             </p>
                           </div>
                         </div>
@@ -321,12 +409,12 @@ export function BudgetManager({
                             {percentage.toFixed(1)}% used
                           </span>
                           <span className="text-muted-foreground">
-                            {formatCurrency(budget.limit - budget.spent)} remaining
+                            {formatCurrency(budget.limit - monthlySpent)} remaining
                           </span>
                         </div>
                         {isOverBudget && (
                           <p className="text-sm text-destructive font-medium">
-                            Over budget by {formatCurrency(budget.spent - budget.limit)}
+                            Over budget by {formatCurrency(monthlySpent - budget.limit)}
                           </p>
                         )}
                       </div>

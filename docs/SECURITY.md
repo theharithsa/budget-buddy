@@ -1,6 +1,6 @@
 # Security Policy - Budget Buddy
 
-**Version**: 2.5.4  
+**Version**: 2.5.5  
 **Last Updated**: August 23, 2025  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 

@@ -1,7 +1,7 @@
 # Budget Buddy - Smart Personal Finance Manager
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.5.4-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.5.5-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
@@ -33,6 +33,7 @@
 - **Real-time Alerts**: Get notified when you're approaching budget limits
 - **Multiple Timeframes**: Set daily, weekly, monthly, or custom budget periods
 - **Category Budgets**: Create separate budgets for different spending categories
+- **Historical Analysis**: Month selector to view budget performance across different time periods
 
 ### AI-Powered Insights
 
