@@ -1,5 +1,6 @@
-const CACHE_NAME = 'finbuddy-v1.0.0';
-const API_CACHE_NAME = 'finbuddy-api-v1.0.0';
+const CACHE_NAME = 'finbuddy-v2.5.5';
+const API_CACHE_NAME = 'finbuddy-api-v2.5.5';
+const VERSION = '2.5.5';
 
 // Files to cache for offline functionality
 const STATIC_CACHE_URLS = [
@@ -19,7 +20,7 @@ const API_CACHE_URLS = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('🔧 Service Worker: Installing...');
+  console.log(`🔧 Service Worker v${VERSION}: Installing...`);
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -29,6 +30,7 @@ self.addEventListener('install', (event) => {
       })
       .then(() => {
         console.log('✅ Service Worker: Installation complete');
+        // Force immediate activation for updates
         return self.skipWaiting();
       })
       .catch((error) => {
@@ -37,13 +39,14 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and take control
 self.addEventListener('activate', (event) => {
-  console.log('🚀 Service Worker: Activating...');
+  console.log(`🚀 Service Worker v${VERSION}: Activating...`);
   
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
+    Promise.all([
+      // Clean up old caches
+      caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME && cacheName !== API_CACHE_NAME) {
@@ -52,12 +55,39 @@ self.addEventListener('activate', (event) => {
             }
           })
         );
-      })
-      .then(() => {
-        console.log('✅ Service Worker: Activation complete');
-        return self.clients.claim();
-      })
+      }),
+      // Take control of all clients immediately
+      self.clients.claim()
+    ]).then(() => {
+      console.log('✅ Service Worker: Activation complete');
+      // Notify clients about the update
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'SW_UPDATED',
+            version: VERSION
+          });
+        });
+      });
+    })
   );
+});
+
+// Message event - handle messages from main app
+self.addEventListener('message', (event) => {
+  console.log('📩 Service Worker: Received message', event.data);
+  
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('⚡ Service Worker: Skipping waiting');
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({
+      type: 'VERSION',
+      version: VERSION
+    });
+  }
 });
 
 // Fetch event - implement caching strategies

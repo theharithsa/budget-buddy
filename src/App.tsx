@@ -22,6 +22,7 @@ import { Navigation } from '@/components/Navigation';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
+import { UpdateNotification } from '@/components/UpdateNotification';
 import { CookieBanner } from '@/components/CookieBanner';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
@@ -523,6 +524,7 @@ function FinanceApp() {
       <PWAInstallPrompt user={user} />
       <PWAUpdatePrompt />
       <PWAConnectionStatus />
+      <UpdateNotification />
       
       {/* Bottom Navigation for Mobile - Hidden on Dashboard/Overview */}
       <BottomNavigation 
