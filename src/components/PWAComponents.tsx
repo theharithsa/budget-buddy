@@ -6,9 +6,10 @@ import { pwaManager } from '../lib/pwa';
 
 interface PWAPromptProps {
   className?: string;
+  user?: any; // User object from AuthContext
 }
 
-export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
+export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className, user }) => {
   const [canInstall, setCanInstall] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
@@ -19,15 +20,60 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     setIsInstalled(isStandalone);
     
-    // Always show install prompt if not installed (we'll handle the logic inside)
-    if (!isStandalone) {
+    // Only proceed if user is logged in
+    if (!user) {
+      setShowPrompt(false);
+      return;
+    }
+    
+    // Check if user has already been shown the install prompt or dismissed it
+    const hasSeenInstallPrompt = localStorage.getItem('finbuddy-pwa-install-prompt-shown') === 'true';
+    const hasDismissedPrompt = localStorage.getItem('finbuddy-pwa-install-dismissed') === 'true';
+    const hasCompletedInstall = localStorage.getItem('finbuddy-pwa-install-completed') === 'true';
+    
+    // Debug logging
+    console.log('PWA Prompt Check:', {
+      isStandalone,
+      hasUser: !!user,
+      hasSeenInstallPrompt,
+      hasDismissedPrompt,
+      hasCompletedInstall
+    });
+    
+    // Only show install prompt if:
+    // 1. Not running as PWA
+    // 2. User is logged in
+    // 3. User hasn't seen the prompt before
+    // 4. User hasn't dismissed the prompt before
+    // 5. User hasn't completed installation before
+    const shouldShowPrompt = !isStandalone && user && !hasSeenInstallPrompt && !hasDismissedPrompt && !hasCompletedInstall;
+    
+    if (shouldShowPrompt) {
       setShowPrompt(true);
+      // Mark that we've shown the prompt to this user
+      localStorage.setItem('finbuddy-pwa-install-prompt-shown', 'true');
+      localStorage.setItem('finbuddy-pwa-install-prompt-date', new Date().toISOString());
+      console.log('PWA prompt shown and marked in localStorage');
+    } else {
+      setShowPrompt(false);
+      console.log('PWA prompt not shown due to conditions');
     }
 
     // Listen for PWA events
     const handleInstallAvailable = () => {
       setCanInstall(true);
-      setShowPrompt(true);
+      // Re-check conditions when install becomes available
+      const currentHasSeenPrompt = localStorage.getItem('finbuddy-pwa-install-prompt-shown') === 'true';
+      const currentHasDismissed = localStorage.getItem('finbuddy-pwa-install-dismissed') === 'true';
+      const currentHasCompleted = localStorage.getItem('finbuddy-pwa-install-completed') === 'true';
+      
+      // Only show if user is logged in and hasn't seen/dismissed prompt before
+      if (user && !currentHasSeenPrompt && !currentHasDismissed && !currentHasCompleted) {
+        setShowPrompt(true);
+        localStorage.setItem('finbuddy-pwa-install-prompt-shown', 'true');
+        localStorage.setItem('finbuddy-pwa-install-prompt-date', new Date().toISOString());
+        console.log('PWA prompt shown on install available event');
+      }
     };
 
     const handleInstallCompleted = () => {
@@ -43,7 +89,7 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
       window.removeEventListener('pwa-install-available', handleInstallAvailable);
       window.removeEventListener('pwa-install-completed', handleInstallCompleted);
     };
-  }, []);
+  }, [user]); // Add user to dependency array
 
   const handleInstall = async () => {
     setIsInstalling(true);
@@ -51,6 +97,10 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
       const success = await pwaManager.promptInstall();
       if (success) {
         setShowPrompt(false);
+        // Mark as installed so it doesn't show again
+        localStorage.setItem('finbuddy-pwa-install-completed', 'true');
+        localStorage.setItem('finbuddy-pwa-install-completed-date', new Date().toISOString());
+        console.log('PWA installation completed and marked in localStorage');
       } else {
         // Open the installation guide page
         window.open('/install-guide.html', '_blank');
@@ -66,6 +116,10 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    // Mark that user has dismissed the prompt, so it won't show again
+    localStorage.setItem('finbuddy-pwa-install-dismissed', 'true');
+    localStorage.setItem('finbuddy-pwa-install-dismissed-date', new Date().toISOString());
+    console.log('PWA prompt dismissed and marked in localStorage');
   };
 
   if (!showPrompt || isInstalled) {

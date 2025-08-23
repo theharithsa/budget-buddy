@@ -33,7 +33,8 @@ import {
   Shield,
   Zap,
   AlertTriangle,
-  Settings
+  Settings,
+  BookOpen
 } from 'lucide-react';
 import { toast } from 'sonner';
 // import { log } from '@/lib/logger';
@@ -296,6 +297,17 @@ export function LoginPage() {
     // log.debug('Login', 'Firebase debug information displayed');
   };
 
+  const openDocumentation = () => {
+    try {
+      // Open documentation in new tab
+      window.open('/docs/index.html', '_blank');
+      toast.success('Documentation opened in new tab');
+    } catch (error) {
+      console.error('Failed to open documentation:', error);
+      toast.error('Failed to open documentation');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md space-y-6">
@@ -308,7 +320,7 @@ export function LoginPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Budget Buddy
+              FinBuddy
             </h1>
             <p className="text-muted-foreground mt-2 text-sm">
               Your smart financial companion for expense tracking and budget management
@@ -626,14 +638,40 @@ export function LoginPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-3">
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              onClick={openDocumentation}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 text-xs h-8"
+            >
+              <BookOpen className="w-3 h-3" />
+              Documentation
+            </Button>
+          </div>
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <Shield className="w-3 h-3" />
             <span>Your data is encrypted and securely stored</span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            By signing in, you agree to our terms of service and privacy policy.
-          </p>
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <span>By signing in, you agree to our</span>
+            <a 
+              href="/docs/terms-and-conditions.html" 
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              Terms & Conditions
+            </a>
+            <span>and</span>
+            <a 
+              href="/docs/privacy-policy.html" 
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </div>
     </div>

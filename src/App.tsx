@@ -22,6 +22,7 @@ import { Navigation } from '@/components/Navigation';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
+import { CookieBanner } from '@/components/CookieBanner';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
@@ -81,13 +82,13 @@ function FinanceApp() {
   
   // Initialize view mode with localStorage persistence
   const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
-    const saved = localStorage.getItem('budget-buddy-view-mode');
+    const saved = localStorage.getItem('finbuddy-view-mode');
     return (saved as 'list' | 'grid') || 'grid';
   });
   
   // Save view mode to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('budget-buddy-view-mode', viewMode);
+    localStorage.setItem('finbuddy-view-mode', viewMode);
   }, [viewMode]);
   
   // Dynatrace user identification
@@ -519,7 +520,7 @@ function FinanceApp() {
       </div>
       
       {/* PWA Components */}
-      <PWAInstallPrompt />
+      <PWAInstallPrompt user={user} />
       <PWAUpdatePrompt />
       <PWAConnectionStatus />
       
@@ -557,6 +558,12 @@ function FinanceApp() {
 
       {/* Footer */}
       <Footer />
+      
+      {/* Cookie Banner */}
+      <CookieBanner 
+        onAccept={() => toast.success("Cookie preferences saved")} 
+        onDecline={() => toast.info("Cookies declined - some features may be limited")}
+      />
     </div>
   );
 }

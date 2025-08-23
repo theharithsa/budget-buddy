@@ -1,4 +1,4 @@
-# Budget Buddy - Smart Personal Finance Manager
+# FinBuddy - Smart Personal Finance Manager
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
 [![Version](https://img.shields.io/badge/Version-2.5.5-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
@@ -12,7 +12,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0-06b6d4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![AI Powered](https://img.shields.io/badge/AI-Powered-ff6b6b?style=flat-square&logo=openai)](https://openai.com/)
 
-> **Take control of your finances with intelligent insights, beautiful design, and powerful features. Budget Buddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
+> **Take control of your finances with intelligent insights, beautiful design, and powerful features. FinBuddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
 
 **Perfect for:** Students, professionals, families, and anyone who wants to improve their financial health with modern technology.
 
@@ -75,7 +75,7 @@
 
 ### Mobile Installation (PWA)
 
-1. **Open** Budget Buddy in your mobile browser
+1. **Open** FinBuddy in your mobile browser
 2. **Look for** the "Install App" prompt or use browser menu
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and push notifications
@@ -103,7 +103,7 @@ Will be updated soon
 
 ## How to Contribute
 
-We welcome contributions from the community! Here's how you can help make Budget Buddy even better:
+We welcome contributions from the community! Here's how you can help make FinBuddy even better:
 
 ### Report Issues
 
@@ -144,7 +144,7 @@ Help us improve our documentation:
 
 ## Changelog & Updates
 
-Stay up to date with Budget Buddy's latest improvements:
+Stay up to date with FinBuddy's latest improvements:
 
 - **[Changelog](./CHANGELOG.md)** - Complete version history with detailed release notes
 - **[Version 2.5.4](./CHANGELOG.md#254)** - Latest features and improvements
@@ -152,7 +152,7 @@ Stay up to date with Budget Buddy's latest improvements:
 
 ## Support & Help
 
-Need help using Budget Buddy? Here are your options:
+Need help using FinBuddy? Here are your options:
 
 ### Documentation
 
@@ -176,7 +176,7 @@ For technical problems:
 
 ## System Requirements
 
-Budget Buddy works on all modern devices:
+FinBuddy works on all modern devices:
 
 ### Desktop Browsers
 
@@ -211,7 +211,7 @@ Read our complete [Privacy Policy](./docs/PRIVACY.md) and [Security Guidelines](
 
 ## Recognition
 
-Budget Buddy has been recognized for:
+FinBuddy has been recognized for:
 
 - **Innovation**: Modern approach to personal finance management
 - **Design**: Clean, intuitive user interface
@@ -233,6 +233,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Star this repository** if Budget Buddy helps you manage your finances better!
+**Star this repository** if FinBuddy helps you manage your finances better!
 
 Made with care by the InspiLabs team & Vishruth Harithsa
