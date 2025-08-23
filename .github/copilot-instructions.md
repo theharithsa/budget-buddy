@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-**Budget Buddy** is a comprehensive personal finance management application built with modern web technologies. It provides expense tracking, budget management, AI-powered financial insights, advanced dashboard analytics, gamification system, and secure cloud synchronization with full PWA support.
+**Budget Buddy** (aka FinBuddy) is a comprehensive personal finance management application built with modern web technologies. It provides expense tracking, budget management, AI-powered financial insights, advanced dashboard analytics, gamification system, and secure cloud synchronization with full PWA support.
 
 ### Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite
@@ -15,6 +15,15 @@
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable)
 - **Version**: Currently v2.5.5 with advanced dashboard, analytics, gamification system, and historical budget analysis
+
+### Critical Development Commands
+```bash
+npm run dev              # Start dev server on port 5000
+npm run build           # Production build  
+npm run lint            # ESLint check
+npm run test:run        # Run all tests
+npm run version:patch   # Bump patch version + update CHANGELOG.md
+```
 
 ## 📁 Architecture & File Structure
 
@@ -76,6 +85,24 @@ src/
 - **Props Interface**: Always define TypeScript interfaces for component props
 - **Error Boundaries**: Use React Error Boundary for component-level error handling
 - **View Mode Support**: Components should accept `viewMode` prop for list/grid rendering
+
+### Critical Data Flow Pattern
+```typescript
+// ALWAYS use getAllPeople() for consistent people data across components
+const allPeople = getAllPeople([...customPeople, ...publicPeople]);
+const selectedPeopleData = selectedPeople.map(id => 
+  allPeople.find(person => person.id === id)
+).filter(Boolean);
+```
+
+### Firebase Authentication Check (Required Pattern)
+```typescript
+// EVERY Firebase operation must start with this check
+if (!user) {
+  toast.error("Please sign in to continue");
+  return;
+}
+```
 
 ### Dashboard & Analytics Architecture
 The dashboard system uses ApexCharts with careful lifecycle management:
@@ -164,7 +191,8 @@ const handleTabChange = (value: string) => {
 ```
 
 **WARNING**: Never skip the chartKey increment - charts will disappear on tab switches!
-### Data Flow Patterns
+
+### Firebase Operations Pattern (CRITICAL)
 ```typescript
 // Expense Management Example
 interface Expense {
@@ -173,24 +201,31 @@ interface Expense {
   category: string;
   description: string;
   date: string;
-  receatedAt: string;
+  createdAt: string;
   receiptUrl?: string;
-  people?: string[]; // Array of person IDs
+  peopleIds?: string[]; // Array of person IDs (Note: peopleIds not people)
 }
-
-// People Management Pattern - Use getAllPeople() for consistent data
-const allPeople = getAllPeople([...customPeople, ...publicPeople]);
-const selectedPeopleData = selectedPeople.map(id => 
-  allPeople.find(person => person.id === id)
-).filter(Boolean);
 
 // Firebase Operations Pattern
 const addExpense = async (expense: Omit<Expense, 'id'>) => {
-  // Validate user authentication
+  if (!user) throw new Error('User not authenticated');
   // Add to Firestore with proper error handling
   // Update local state
   // Show user feedback via toast
 };
+```
+
+### useFirestoreData Hook Pattern
+```typescript
+// ALWAYS destructure what you need from the hook
+const {
+  expenses,
+  customPeople,
+  publicPeople,
+  addExpense,
+  updateExpense,
+  deleteExpense
+} = useFirestoreData();
 ```
 
 ### View Mode Implementation Pattern
@@ -778,9 +813,9 @@ const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 - Gamification system: `src/components/analytics/GamificationSystem.tsx`
 - Advanced charts: `src/components/analytics/AdvancedCharts.tsx`
 
-### Useful Commands
+### Essential Commands
 ```bash
-npm run dev          # Start development server
+npm run dev          # Start development server (port 5000)
 npm run build        # Production build
 npm run lint         # Check code quality
 npm run preview      # Preview production build
@@ -789,14 +824,38 @@ npm run version:minor # Bump minor version
 npm run version:major # Bump major version
 ```
 
+### Critical Debugging Tips
+```bash
+# Clear all caches when charts/PWA acting up
+# Use AppHeader "Clear Cache" button OR:
+# 1. Clear localStorage/sessionStorage
+# 2. Clear service worker caches
+# 3. Hard refresh (Ctrl+Shift+R)
+
+# Firebase debug commands
+# Check Firebase Auth status in DevTools Console:
+firebase.auth().currentUser
+
+# Check Firestore rules in Firebase Console
+# Enable/disable Firebase Debug mode
+```
+
 ### Environment Setup Checklist
-- [ ] Firebase project configured
-- [ ] OpenAI API key set (optional)
-- [ ] Authentication domains configured
-- [ ] Firestore rules deployed
-- [ ] Storage bucket configured
-- [ ] PWA manifest configured
-- [ ] Service worker tested
+- [ ] Firebase project configured with web app
+- [ ] OpenAI API key set in environment (optional for AI features)
+- [ ] Authentication domains configured in Firebase Console
+- [ ] Firestore rules deployed (`npm run deploy` or Firebase Console)
+- [ ] Storage bucket configured with proper CORS
+- [ ] PWA manifest configured for target domain
+- [ ] Service worker tested and registering properly
+
+### Common Gotchas & Solutions
+1. **Charts Disappearing**: Always increment `chartKey` when switching to overview tab
+2. **People Data Missing**: Use `getAllPeople()` helper, not direct array access
+3. **Firebase Auth Errors**: Check user exists before any Firestore operations
+4. **PWA Not Installing**: Check manifest.json and service worker registration
+5. **Build Failures**: Clear node_modules and reinstall if TypeScript errors persist
+6. **ApexCharts Errors**: Ensure DOM refs are current before chart initialization
 
 ### Current Feature Status (v2.5.5)
 - ✅ Grid/List view toggle with persistence

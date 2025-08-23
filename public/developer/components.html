@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Components Reference - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            color: #000;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        pre {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .component-card {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .component-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .component-type {
+            background: #000;
+            color: #fff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .props-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .props-table th,
+        .props-table td {
+            border: 1px solid #ccc;
+            padding: 0.6rem;
+            text-align: left;
+        }
+
+        .props-table th {
+            background: #e8e8e8;
+            font-weight: 600;
+        }
+
+        .props-table code {
+            font-size: 0.8rem;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .nav-section {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.8rem;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 2px solid #000;
+            margin-top: 3rem;
+            color: #666;
+        }
+
+        footer a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .component-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .props-table {
+                font-size: 0.8rem;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="./index.html">Developer Docs</a> > Components Documentation
+            </div>
+            <h1>⚛️ Components Documentation</h1>
+            <p>Detailed documentation for every React component in Budget Buddy</p>
+        </header>
+
+        <div class="nav-section">
+            <h3>Quick Navigation</h3>
+            <div class="nav-grid">
+                <a href="#main-components" class="nav-link">Main Components</a>
+                <a href="#modal-components" class="nav-link">Modal Components</a>
+                <a href="#dashboard-components" class="nav-link">Dashboard Components</a>
+                <a href="#analytics-components" class="nav-link">Analytics Components</a>
+                <a href="#pwa-components" class="nav-link">PWA Components</a>
+                <a href="#utility-components" class="nav-link">Utility Components</a>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>Component Guidelines:</strong> All components follow TypeScript interfaces, Radix UI patterns, and responsive design principles. Props are validated at runtime and design is mobile-first.
+        </div>
+
+        <h2 id="main-components">Main Application Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">App.tsx</div>
+                <div class="component-type">Main Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/App.tsx</code></p>
+            <p><strong>Purpose:</strong> Root application component managing tabs, filters, and global state</p>
+            
+            <h4>Key Features</h4>
+            <ul>
+                <li>Tab-based navigation (Dashboard, Expenses, Budgets, etc.)</li>
+                <li>Global filter state management (search, category, people, sort)</li>
+                <li>View mode persistence (list/grid)</li>
+                <li>PWA component integration</li>
+                <li>Authentication state handling</li>
+            </ul>
+
+            <h4>State Management</h4>
+            <pre><code>// Main filter states - Controls what expenses are displayed
+const [searchTerm, setSearchTerm] = useState(''); // Text search filter
+const [categoryFilter, setCategoryFilter] = useState('all'); // Category dropdown filter
+const [peopleFilter, setPeopleFilter] = useState('all'); // People involved filter
+const [sortBy, setSortBy] = useState&lt;'date' | 'amount' | 'category'&gt;('date'); // Sort order
+
+// View mode with localStorage persistence - Remembers user's preferred layout
+const [viewMode, setViewMode] = useState&lt;'list' | 'grid'&gt;(() => {
+  const saved = localStorage.getItem('budget-buddy-view-mode'); // Check saved preference
+  return (saved as 'list' | 'grid') || 'grid'; // Default to grid if no preference
+});
+
+// Date range management - Controls time period for expense filtering
+const [dateRange, setDateRange] = useState&lt;DateRange&gt;({
+  from: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // First day of current month
+  to: new Date() // Today's date
+});</code></pre>
+
+            <h4>Data Flow</h4>
+            <pre><code>// Firebase data integration - Custom hook provides all database operations
+const {
+  expenses, budgets, templates, // Core financial data arrays
+  customCategories, publicCategories, // User-created and shared categories
+  customPeople, publicPeople, // User's people and publicly shared people
+  addExpense, updateExpense, deleteExpense, // CRUD operations for expenses
+  // ... other operations like addBudget, updateBudget, addPerson, etc.
+} = useFirestoreData(); // Centralized data management hook</code></pre>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">Navigation.tsx</div>
+                <div class="component-type">Layout Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/Navigation.tsx</code></p>
+            <p><strong>Purpose:</strong> Collapsible sidebar navigation with responsive design</p>
+            
+            <h4>Props Interface</h4>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Prop</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>activeTab</code></td>
+                        <td><code>string</code></td>
+                        <td>Yes</td>
+                        <td>Currently active tab identifier</td>
+                    </tr>
+                    <tr>
+                        <td><code>onTabChange</code></td>
+                        <td><code>(tab: string) => void</code></td>
+                        <td>Yes</td>
+                        <td>Tab change handler</td>
+                    </tr>
+                    <tr>
+                        <td><code>isCollapsed</code></td>
+                        <td><code>boolean</code></td>
+                        <td>Yes</td>
+                        <td>Sidebar collapse state</td>
+                    </tr>
+                    <tr>
+                        <td><code>onToggle</code></td>
+                        <td><code>() => void</code></td>
+                        <td>Yes</td>
+                        <td>Toggle collapse handler</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Usage Example</h4>
+            <pre><code>// Navigation component integration in main App component
+&lt;Navigation
+  activeTab={activeTab} // Current active tab ('dashboard', 'expenses', etc.)
+  onTabChange={setActiveTab} // Handler to update active tab state
+  isCollapsed={isNavCollapsed} // Boolean state for sidebar collapse
+  onToggle={() => setIsNavCollapsed(!isNavCollapsed)} // Toggle collapse state
+/&gt;</code></pre>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">AppHeader.tsx</div>
+                <div class="component-type">Layout Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/AppHeader.tsx</code></p>
+            <p><strong>Purpose:</strong> Application header with user profile, cache management, and navigation</p>
+            
+            <h4>Key Features</h4>
+            <ul>
+                <li>User profile dropdown with avatar</li>
+                <li>Cache clearing functionality</li>
+                <li>Release notes access</li>
+                <li>Responsive design with mobile menu</li>
+            </ul>
+
+            <h4>Cache Management</h4>
+            <pre><code>// Comprehensive cache clearing for troubleshooting PWA and performance issues
+const handleClearCache = async () => {
+  try {
+    // Clear localStorage - removes user preferences, view modes, etc.
+    localStorage.clear();
+    
+    // Clear sessionStorage - removes temporary session data
+    sessionStorage.clear();
+    
+    // Clear service worker caches - removes PWA cached files
+    if ('caches' in window) {
+      const cacheNames = await caches.keys(); // Get all cache storage names
+      await Promise.all(
+        cacheNames.map(cacheName => caches.delete(cacheName)) // Delete each cache
+      );
+    }
+    
+    toast.success("Cache cleared successfully");
+    setTimeout(() => window.location.reload(), 1000); // Reload after 1 second
+  } catch (error) {
+    console.error('Cache clear failed:', error);
+    toast.error("Failed to clear cache");
+  }
+};</code></pre>
+        </div>
+
+        <h2 id="modal-components">Modal Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">AddExpenseModal.tsx</div>
+                <div class="component-type">Modal Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/AddExpenseModal.tsx</code></p>
+            <p><strong>Purpose:</strong> Modal for adding new expenses with form validation and receipt upload</p>
+            
+            <h4>Props Interface</h4>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Prop</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>isOpen</code></td>
+                        <td><code>boolean</code></td>
+                        <td>Yes</td>
+                        <td>Modal visibility state</td>
+                    </tr>
+                    <tr>
+                        <td><code>onClose</code></td>
+                        <td><code>() => void</code></td>
+                        <td>Yes</td>
+                        <td>Modal close handler</td>
+                    </tr>
+                    <tr>
+                        <td><code>onAddExpense</code></td>
+                        <td><code>(expense: Omit&lt;Expense, 'id'&gt;) => void</code></td>
+                        <td>Yes</td>
+                        <td>Expense submission handler</td>
+                    </tr>
+                    <tr>
+                        <td><code>categories</code></td>
+                        <td><code>string[]</code></td>
+                        <td>Yes</td>
+                        <td>Available categories list</td>
+                    </tr>
+                    <tr>
+                        <td><code>allPeople</code></td>
+                        <td><code>Person[]</code></td>
+                        <td>Yes</td>
+                        <td>Available people for expense sharing</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Form Validation</h4>
+            <pre><code>// Zod schema for expense form validation - ensures data integrity
+const formSchema = z.object({
+  amount: z.number().min(0.01, "Amount must be greater than 0"), // Positive number required
+  category: z.string().min(1, "Category is required"), // Must select a category
+  description: z.string().min(1, "Description is required"), // Descriptive text required
+  date: z.string().min(1, "Date is required"), // Date selection required
+  peopleIds: z.array(z.string()).optional() // Optional array of person IDs for sharing
+});</code></pre>
+
+            <h4>People Data Integration</h4>
+            <pre><code>// CRITICAL: Use getAllPeople helper for consistent data access across all components
+const allPeople = getAllPeople([...customPeople, ...publicPeople]); // Merges user's people with public people
+const selectedPeopleData = selectedPeople.map(id => 
+  allPeople.find(person => person.id === id) // Find person object by ID
+).filter(Boolean); // Remove any undefined values (deleted people)</code></pre>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">EditExpenseModal.tsx</div>
+                <div class="component-type">Modal Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/EditExpenseModal.tsx</code></p>
+            <p><strong>Purpose:</strong> Modal for editing existing expenses with pre-populated data</p>
+            
+            <h4>Key Features</h4>
+            <ul>
+                <li>Pre-populated form fields from existing expense</li>
+                <li>Receipt management (view, replace, delete)</li>
+                <li>People selection with existing data</li>
+                <li>Form validation with error handling</li>
+            </ul>
+
+            <div class="warning">
+                <strong>Important:</strong> Uses the same people data pattern as AddExpenseModal for consistency.
+            </div>
+        </div>
+
+        <h2 id="dashboard-components">Dashboard Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">Dashboard.tsx</div>
+                <div class="component-type">Dashboard Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/Dashboard.tsx</code></p>
+            <p><strong>Purpose:</strong> Main dashboard with tabs, charts, and analytics integration</p>
+            
+            <h4>Tab Management (Critical for Charts)</h4>
+            <pre><code>// CRITICAL: Chart lifecycle management for ApexCharts in React
+const [activeTab, setActiveTab] = useState('overview'); // Current dashboard tab
+const [chartKey, setChartKey] = useState(0); // Forces chart re-render
+
+const handleTabChange = (value: string) => {
+  setActiveTab(value); // Update active tab
+  // Force chart re-render when returning to overview - REQUIRED for ApexCharts
+  // ApexCharts lose DOM connection when hidden/shown, this fixes the issue
+  if (value === 'overview') {
+    setChartKey(prev => prev + 1); // Increment key forces useEffect re-run
+  }
+};</code></pre>
+
+            <h4>Chart Instance Management</h4>
+            <pre><code>// Chart instance refs for proper cleanup - prevents memory leaks
+const areaChartInstance = useRef&lt;ApexCharts | null&gt;(null);
+const columnChartInstance = useRef&lt;ApexCharts | null&gt;(null);
+
+useEffect(() => {
+  // Clean up existing chart instances before creating new ones
+  if (areaChartInstance.current) {
+    areaChartInstance.current.destroy(); // Destroy existing chart
+    areaChartInstance.current = null; // Clear reference
+  }
+  
+  // Re-initialize charts when tab changes to overview
+  if (activeTab === 'overview' && areaChartRef.current) {
+    // Chart initialization logic - create new ApexCharts instance
+    // This ensures charts render properly after tab switching
+  }
+}, [activeTab, chartKey, expenses, budgets]); // Re-run when data or tab changes</code></pre>
+
+            <div class="warning">
+                <strong>Critical Pattern:</strong> Never skip the chartKey increment - charts will disappear on tab switches!
+            </div>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">BudgetManager.tsx</div>
+                <div class="component-type">Management Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/BudgetManager.tsx</code></p>
+            <p><strong>Purpose:</strong> Budget creation, editing, and progress tracking with historical analysis</p>
+            
+            <h4>Historical Budget Analysis (v2.5.5)</h4>
+            <pre><code>// Month selector for historical analysis - allows viewing past budget performance
+const [selectedMonth, setSelectedMonth] = useState(() => getCurrentMonth());
+
+// Dynamic calculations based on selected month - filters expenses by month
+const selectedMonthExpenses = useMemo(() => {
+  return getMonthlyExpenses(expenses, selectedMonth); // Custom helper function
+}, [expenses, selectedMonth]); // Recalculate when expenses or month changes
+
+// Budget utilization calculation - compares actual spending vs budget limits
+const budgetUtilization = useMemo(() => {
+  return budgets.map(budget => {
+    // Find expenses in selected category for the selected month
+    const categoryExpenses = selectedMonthExpenses.filter(
+      expense => expense.category === budget.category
+    );
+    // Calculate total spent in this category
+    const spent = categoryExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    
+    return {
+      ...budget, // Include all budget properties
+      spent, // Actual amount spent
+      percentage: budget.limit > 0 ? (spent / budget.limit) * 100 : 0 // Percentage utilization
+    };
+  });
+}, [budgets, selectedMonthExpenses]); // Recalculate when budgets or expenses change</code></pre>
+        </div>
+
+        <h2 id="analytics-components">Analytics Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">GamificationSystem.tsx</div>
+                <div class="component-type">Analytics Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/analytics/GamificationSystem.tsx</code></p>
+            <p><strong>Purpose:</strong> Achievement tracking and financial scoring system</p>
+            
+            <h4>Scoring Algorithm</h4>
+            <pre><code>// Budget compliance calculation - measures how well user stays within budget
+const calculateBudgetCompliance = (expenses: Expense[], budget: number) => {
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0); // Sum all expenses
+  return budget > 0 
+    ? Math.max(0, Math.min(100, (1 - totalExpenses / budget) * 100)) // 0-100% scale
+    : 0; // Return 0 if no budget set
+};
+
+// Weighted overall score - combines multiple financial health metrics
+const overallScore = (
+  budgetCompliance * 0.4 +        // 40% weight - most important factor
+  consistencyScore * 0.3 +        // 30% weight - regular spending patterns
+  savingsRate * 0.2 +             // 20% weight - money saved vs income
+  (currentStreak / 30) * 100 * 0.1 // 10% weight - streak bonus (days within budget)
+);</code></pre>
+
+            <h4>Achievement System</h4>
+            <pre><code>// Achievement interface - defines structure for financial milestones
+interface Achievement {
+  id: string; // Unique identifier for the achievement
+  title: string; // Display name (e.g., "Budget Master")
+  description: string; // What the user needs to do to earn it
+  icon: string; // Icon name from Lucide React
+  target: number; // Target value to reach (e.g., 30 for "30 days within budget")
+  current: number; // Current progress towards target
+  completed: boolean; // Whether achievement has been earned
+  category: 'budget' | 'consistency' | 'savings' | 'streak'; // Achievement type
+}</code></pre>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">AdvancedCharts.tsx</div>
+                <div class="component-type">Analytics Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/analytics/AdvancedCharts.tsx</code></p>
+            <p><strong>Purpose:</strong> Advanced chart visualizations using ApexCharts</p>
+            
+            <h4>Chart Types Supported</h4>
+            <ul>
+                <li><strong>Area Charts:</strong> Spending trends over time</li>
+                <li><strong>Column Charts:</strong> Category-wise spending</li>
+                <li><strong>Pie Charts:</strong> Budget allocation</li>
+                <li><strong>Line Charts:</strong> Financial trends</li>
+            </ul>
+
+            <h4>Chart Configuration Pattern</h4>
+            <pre><code>// Standard chart configuration for ApexCharts - ensures consistent styling
+const chartOptions = {
+  chart: {
+    type: 'area', // Chart type: area, line, bar, pie, etc.
+    height: 350, // Chart height in pixels
+    toolbar: { show: false } // Hide toolbar for cleaner look
+  },
+  colors: ['#000000', '#666666'], // Color palette for chart elements
+  theme: { mode: 'light' }, // Light/dark theme setting
+  responsive: [{ // Responsive breakpoints for mobile
+    breakpoint: 768, // Mobile breakpoint (768px)
+    options: {
+      chart: { height: 250 }, // Smaller height on mobile
+      legend: { position: 'bottom' } // Move legend below chart on mobile
+    }
+  }]
+};</code></pre>
+        </div>
+
+        <h2 id="pwa-components">PWA Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">PWAComponents.tsx</div>
+                <div class="component-type">PWA Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/PWAComponents.tsx</code></p>
+            <p><strong>Purpose:</strong> PWA installation prompts, update notifications, and connection status</p>
+            
+            <h4>Install Prompt Logic</h4>
+            <pre><code>// Smart install banner (login-aware) - shows PWA install prompt at optimal time
+useEffect(() => {
+  const hasShownInstallPrompt = localStorage.getItem('pwa-install-prompted'); // Check if already shown
+  const isLoggedIn = !!user; // Convert user object to boolean
+  
+  // Only show install prompt during login process, not after
+  if (canInstall && !hasShownInstallPrompt && !isLoggedIn) {
+    setShowPrompt(true); // Show during initial app exploration
+  } else if (isLoggedIn && hasShownInstallPrompt !== 'dismissed') {
+    // User logged in, mark as prompted to prevent showing again
+    localStorage.setItem('pwa-install-prompted', 'auto-dismissed');
+  }
+}, [canInstall, user]); // Re-run when install capability or user state changes</code></pre>
+
+            <h4>Components Included</h4>
+            <ul>
+                <li><code>PWAInstallPrompt</code> - Installation banner and modal</li>
+                <li><code>PWAUpdatePrompt</code> - Update notifications</li>
+                <li><code>PWAConnectionStatus</code> - Online/offline indicator</li>
+            </ul>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">UpdateNotification.tsx</div>
+                <div class="component-type">PWA Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/UpdateNotification.tsx</code></p>
+            <p><strong>Purpose:</strong> Force update mechanism with version tracking</p>
+            
+            <h4>Update Types</h4>
+            <pre><code>// Update type enumeration - controls how updates are presented
+type UpdateType = 'none' | 'available' | 'force';
+
+// Update detection logic - checks for new versions periodically
+useEffect(() => {
+  const checkVersion = async () => {
+    const hasUpdate = await pwaManager.checkForVersionUpdate(); // Check remote version
+    if (hasUpdate) {
+      // Determine update urgency based on version difference
+      setUpdateType(hasUpdate.isForceUpdate ? 'force' : 'available');
+    }
+  };
+  
+  checkVersion(); // Check immediately on component mount
+  const interval = setInterval(checkVersion, 60 * 60 * 1000); // Check hourly
+  return () => clearInterval(interval); // Cleanup interval on unmount
+}, []);</code></pre>
+
+            <h4>Force Update Modal</h4>
+            <pre><code>// Non-dismissible force update modal - blocks app usage until updated
+{updateType === 'force' && (
+  &lt;div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center"&gt;
+    &lt;div className="bg-white p-8 rounded-lg shadow-xl max-w-md mx-4"&gt;
+      &lt;h3 className="text-xl font-semibold mb-4"&gt;Update Required&lt;/h3&gt;
+      &lt;p className="text-gray-600 mb-6"&gt;
+        A new version is available. Please update to continue using the app.
+      &lt;/p&gt;
+      &lt;Button onClick={handleForceUpdate} className="w-full"&gt;
+        Update Now
+      &lt;/Button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+)}</code></pre>
+        </div>
+
+        <h2 id="utility-components">Utility Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">TimeframePicker.tsx</div>
+                <div class="component-type">Utility Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/TimeframePicker.tsx</code></p>
+            <p><strong>Purpose:</strong> Advanced date range selection with presets and custom ranges</p>
+            
+            <h4>Props Interface</h4>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Prop</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>dateRange</code></td>
+                        <td><code>DateRange</code></td>
+                        <td>Yes</td>
+                        <td>Current date range selection</td>
+                    </tr>
+                    <tr>
+                        <td><code>onDateRangeChange</code></td>
+                        <td><code>(range: DateRange) => void</code></td>
+                        <td>Yes</td>
+                        <td>Date range change handler</td>
+                    </tr>
+                    <tr>
+                        <td><code>className</code></td>
+                        <td><code>string</code></td>
+                        <td>No</td>
+                        <td>Additional CSS classes</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Preset Options</h4>
+            <pre><code>// Predefined date range options for common use cases
+const presetRanges = [
+  {
+    label: "Current Month", // Most common selection
+    value: () => ({
+      from: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // First day of month
+      to: new Date() // Today
+    })
+  },
+  {
+    label: "Last 30 Days", // Rolling 30-day window
+    value: () => ({
+      from: subDays(new Date(), 30), // 30 days ago using date-fns
+      to: new Date()
+    })
+  },
+  {
+    label: "Last 3 Months", // Quarterly view
+    value: () => ({
+      from: subMonths(new Date(), 3), // 3 months ago using date-fns
+      to: new Date()
+    })
+  }
+];</code></pre>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">ExpenseCard.tsx</div>
+                <div class="component-type">Display Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/ExpenseCard.tsx</code></p>
+            <p><strong>Purpose:</strong> Individual expense display with support for list/grid view modes</p>
+            
+            <h4>View Mode Support</h4>
+            <pre><code>// Component props interface with view mode support
+interface ExpenseCardProps {
+  expense: Expense; // The expense data to display
+  viewMode: 'list' | 'grid'; // Layout mode from parent component
+  allPeople: Person[]; // People data for showing shared expense participants
+  onEdit: (expense: Expense) => void; // Edit handler callback
+  onDelete: (id: string) => void; // Delete handler callback
+}
+
+// Conditional styling based on view mode - adapts layout dynamically
+&lt;div className={cn(
+  "border rounded-lg p-4 transition-all duration-200", // Base styles
+  viewMode === 'list' 
+    ? "flex items-center justify-between hover:shadow-sm" // Horizontal layout for list
+    : "hover:shadow-md" // Vertical layout for grid
+)}&gt;</code></pre>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">CookieBanner.tsx</div>
+                <div class="component-type">Legal Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/CookieBanner.tsx</code></p>
+            <p><strong>Purpose:</strong> GDPR-compliant cookie consent banner</p>
+            
+            <h4>Consent Management</h4>
+            <pre><code>// Cookie consent state management for GDPR compliance
+const [showBanner, setShowBanner] = useState(false);
+
+useEffect(() => {
+  const hasConsented = localStorage.getItem('cookie-consent'); // Check previous consent
+  if (!hasConsented) {
+    setShowBanner(true); // Show banner if no consent recorded
+  }
+}, []);
+
+// Accept cookies - enables analytics and other tracking
+const handleAccept = () => {
+  localStorage.setItem('cookie-consent', 'accepted'); // Save consent preference
+  setShowBanner(false); // Hide banner
+  // Initialize analytics services here
+};
+
+// Decline cookies - disables non-essential tracking
+const handleDecline = () => {
+  localStorage.setItem('cookie-consent', 'declined'); // Save decline preference
+  setShowBanner(false); // Hide banner
+  // Disable analytics services here
+};</code></pre>
+        </div>
+
+        <div class="success">
+            <strong>Component Development Guidelines:</strong>
+            <ul>
+                <li>Always define TypeScript interfaces for props</li>
+                <li>Use Radix UI primitives for consistent behavior</li>
+                <li>Implement responsive design with Tailwind CSS</li>
+                <li>Handle loading and error states appropriately</li>
+                <li>Follow the established naming conventions</li>
+                <li>Include accessibility features (ARIA labels, keyboard navigation)</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | 
+               <a href="./index.html">Back to Index</a> | 
+               <a href="./architecture.html">Architecture</a> |
+               <a href="./hooks.html">Hooks & State</a>
+            </p>
+            <p>Last Updated: August 23, 2025 | Version 2.5.5</p>
+        </footer>
+    </div>
+</body>
+</html>

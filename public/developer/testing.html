@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing & Quality Assurance - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            color: #000;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        pre {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .test-case {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .test-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .test-type {
+            background: #000;
+            color: #fff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .checklist {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .checklist h4 {
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .checklist li:before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .checklist li.checked:before {
+            content: "☑";
+            color: #000;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .nav-section {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.8rem;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .test-scenario {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #000;
+        }
+
+        .scenario-title {
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .scenario-steps {
+            margin: 1rem 0;
+        }
+
+        .scenario-steps ol {
+            padding-left: 1.5rem;
+        }
+
+        .scenario-steps li {
+            margin: 0.5rem 0;
+        }
+
+        .expected-result {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 4px;
+            padding: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 2px solid #000;
+            margin-top: 3rem;
+            color: #666;
+        }
+
+        footer a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .test-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="./index.html">Developer Docs</a> > Testing & Quality Assurance
+            </div>
+            <h1>🧪 Testing & Quality Assurance</h1>
+            <p>Comprehensive testing strategies, quality assurance procedures, and debugging techniques for Budget Buddy</p>
+        </header>
+
+        <div class="nav-section">
+            <h3>Quick Navigation</h3>
+            <div class="nav-grid">
+                <a href="#testing-strategy" class="nav-link">Testing Strategy</a>
+                <a href="#manual-testing" class="nav-link">Manual Testing</a>
+                <a href="#automated-testing" class="nav-link">Automated Testing</a>
+                <a href="#quality-checklist" class="nav-link">Quality Checklist</a>
+                <a href="#performance-testing" class="nav-link">Performance Testing</a>
+                <a href="#security-testing" class="nav-link">Security Testing</a>
+            </div>
+        </div>
+
+        <h2 id="testing-strategy">Testing Strategy</h2>
+
+        <div class="info">
+            <strong>Testing Philosophy:</strong> Budget Buddy follows a comprehensive testing approach covering unit testing, integration testing, manual testing, and user acceptance testing to ensure reliability and quality.
+        </div>
+
+        <h3>Testing Pyramid</h3>
+        <pre><code>            /\
+           /  \     E2E Tests (Few)
+          /____\    - Critical user flows
+         /      \   - Cross-browser testing
+        /        \  
+       /          \ Integration Tests (Some)
+      /__________\ - Component interactions
+     /            \ - Firebase operations
+    /              \
+   /                \ Unit Tests (Many)
+  /__________________\ - Pure functions
+                      - Utility functions
+                      - Component logic</code></pre>
+
+        <h3>Current Testing Status</h3>
+        <div class="warning">
+            <strong>Development Status:</strong> Currently focusing on manual testing and quality assurance. Automated test suite to be implemented in future iterations.
+        </div>
+
+        <h2 id="manual-testing">Manual Testing Procedures</h2>
+
+        <h3>Core Feature Testing</h3>
+
+        <div class="test-scenario">
+            <div class="scenario-title">🔐 Authentication Flow Testing</div>
+            <div class="scenario-steps">
+                <h4>Test Steps:</h4>
+                <ol>
+                    <li>Navigate to Budget Buddy application</li>
+                    <li>Click "Sign in with Google" button</li>
+                    <li>Complete Google OAuth flow</li>
+                    <li>Verify successful authentication and redirect to dashboard</li>
+                    <li>Test logout functionality</li>
+                    <li>Verify proper cleanup of user data on logout</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> Smooth authentication flow with proper user state management and secure logout
+            </div>
+        </div>
+
+        <div class="test-scenario">
+            <div class="scenario-title">💰 Expense Management Testing</div>
+            <div class="scenario-steps">
+                <h4>Test Steps:</h4>
+                <ol>
+                    <li>Click "Add Expense" button</li>
+                    <li>Fill in expense details (amount, category, description, date)</li>
+                    <li>Upload receipt image (optional)</li>
+                    <li>Select people for shared expense (optional)</li>
+                    <li>Submit expense</li>
+                    <li>Verify expense appears in expense list</li>
+                    <li>Test editing existing expense</li>
+                    <li>Test deleting expense</li>
+                    <li>Verify receipt deletion from Firebase Storage</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> All CRUD operations work correctly with proper data persistence and real-time updates
+            </div>
+        </div>
+
+        <div class="test-scenario">
+            <div class="scenario-title">📊 Dashboard & Analytics Testing</div>
+            <div class="scenario-steps">
+                <h4>Test Steps:</h4>
+                <ol>
+                    <li>Navigate to Dashboard tab</li>
+                    <li>Verify charts render correctly</li>
+                    <li>Switch between dashboard tabs (Overview, Advanced, Behavior, etc.)</li>
+                    <li>Verify charts remain visible after tab switching</li>
+                    <li>Test different date ranges with TimeframePicker</li>
+                    <li>Verify data updates dynamically</li>
+                    <li>Test gamification system scoring</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> Charts render properly, maintain visibility across tab switches, and data updates correctly
+            </div>
+        </div>
+
+        <div class="test-scenario">
+            <div class="scenario-title">📱 PWA Functionality Testing</div>
+            <div class="scenario-steps">
+                <h4>Test Steps:</h4>
+                <ol>
+                    <li>Test PWA installation prompt</li>
+                    <li>Install app on mobile device</li>
+                    <li>Test offline functionality</li>
+                    <li>Test app update notifications</li>
+                    <li>Verify force update functionality</li>
+                    <li>Test cache clearing</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> PWA installs correctly, works offline, and handles updates properly
+            </div>
+        </div>
+
+        <h3>Cross-Browser Testing</h3>
+
+        <div class="checklist">
+            <h4>Browser Compatibility Checklist</h4>
+            <ul>
+                <li>Chrome (Latest) - Primary browser</li>
+                <li>Firefox (Latest) - Secondary browser</li>
+                <li>Safari (Latest) - iOS compatibility</li>
+                <li>Edge (Latest) - Windows compatibility</li>
+                <li>Mobile Safari - Touch interactions</li>
+                <li>Chrome Mobile - Android compatibility</li>
+            </ul>
+        </div>
+
+        <h3>Responsive Design Testing</h3>
+
+        <div class="checklist">
+            <h4>Device Testing Checklist</h4>
+            <ul>
+                <li>Desktop (1920x1080+) - Full feature access</li>
+                <li>Laptop (1366x768) - Compact layouts</li>
+                <li>Tablet Portrait (768x1024) - Touch-friendly</li>
+                <li>Tablet Landscape (1024x768) - Optimized sidebar</li>
+                <li>Mobile Portrait (375x667) - Collapsible navigation</li>
+                <li>Mobile Landscape (667x375) - Horizontal scrolling</li>
+            </ul>
+        </div>
+
+        <h2 id="automated-testing">Automated Testing Framework</h2>
+
+        <h3>Unit Testing Setup</h3>
+
+        <div class="test-case">
+            <div class="test-header">
+                <div class="test-name">Utility Functions Testing</div>
+                <div class="test-type">Unit Tests</div>
+            </div>
+
+            <h4>Example Test Structure</h4>
+            <pre><code>// tests/utils.test.ts
+import { getAllPeople, getExpensesByDateRange, calculateCategorySpending } from '../src/lib/types';
+
+describe('Utility Functions', () => {
+  describe('getAllPeople', () => {
+    test('should combine custom and public people correctly', () => {
+      const customPeople = [
+        { id: '1', name: 'John', color: '#000', icon: 'user', userId: 'user1', isPublic: false, createdAt: '2025-01-01', createdBy: 'User' }
+      ];
+      const publicPeople = [
+        { id: '2', name: 'Jane', color: '#111', icon: 'user', userId: 'user2', isPublic: true, createdAt: '2025-01-01', createdBy: 'User2' }
+      ];
+
+      const result = getAllPeople(customPeople, publicPeople);
+      
+      expect(result).toHaveLength(2);
+      expect(result[0]).toEqual(customPeople[0]);
+      expect(result[1]).toEqual(publicPeople[0]);
+    });
+
+    test('should handle duplicate IDs correctly', () => {
+      const customPeople = [
+        { id: '1', name: 'John', color: '#000', icon: 'user', userId: 'user1', isPublic: false, createdAt: '2025-01-01', createdBy: 'User' }
+      ];
+      const publicPeople = [
+        { id: '1', name: 'John Public', color: '#111', icon: 'user', userId: 'user2', isPublic: true, createdAt: '2025-01-01', createdBy: 'User2' }
+      ];
+
+      const result = getAllPeople(customPeople, publicPeople);
+      
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('John'); // Custom takes precedence
+    });
+  });
+
+  describe('calculateCategorySpending', () => {
+    test('should calculate category totals correctly', () => {
+      const expenses = [
+        { id: '1', amount: 50, category: 'Food', description: 'Lunch', date: '2025-08-01', createdAt: '2025-08-01T12:00:00Z' },
+        { id: '2', amount: 30, category: 'Food', description: 'Snack', date: '2025-08-01', createdAt: '2025-08-01T15:00:00Z' },
+        { id: '3', amount: 100, category: 'Transport', description: 'Gas', date: '2025-08-01', createdAt: '2025-08-01T18:00:00Z' }
+      ];
+
+      const result = calculateCategorySpending(expenses);
+      
+      expect(result).toEqual({
+        'Food': 80,
+        'Transport': 100
+      });
+    });
+  });
+});</code></pre>
+        </div>
+
+        <h3>Component Testing</h3>
+
+        <div class="test-case">
+            <div class="test-header">
+                <div class="test-name">React Component Testing</div>
+                <div class="test-type">Integration Tests</div>
+            </div>
+
+            <h4>Example Component Test</h4>
+            <pre><code>// tests/components/ExpenseCard.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ExpenseCard } from '../../src/components/ExpenseCard';
+
+const mockExpense = {
+  id: '1',
+  amount: 50.00,
+  category: 'Food',
+  description: 'Lunch at restaurant',
+  date: '2025-08-23',
+  createdAt: '2025-08-23T12:00:00Z'
+};
+
+describe('ExpenseCard', () => {
+  test('renders expense information correctly', () => {
+    render(
+      &lt;ExpenseCard 
+        expense={mockExpense} 
+        viewMode="grid" 
+        onEdit={jest.fn()} 
+        onDelete={jest.fn()} 
+      /&gt;
+    );
+
+    expect(screen.getByText('$50.00')).toBeInTheDocument();
+    expect(screen.getByText('Food')).toBeInTheDocument();
+    expect(screen.getByText('Lunch at restaurant')).toBeInTheDocument();
+  });
+
+  test('calls onEdit when edit button is clicked', () => {
+    const mockOnEdit = jest.fn();
+    
+    render(
+      &lt;ExpenseCard 
+        expense={mockExpense} 
+        viewMode="grid" 
+        onEdit={mockOnEdit} 
+        onDelete={jest.fn()} 
+      /&gt;
+    );
+
+    fireEvent.click(screen.getByLabelText('Edit expense'));
+    expect(mockOnEdit).toHaveBeenCalledWith(mockExpense);
+  });
+});</code></pre>
+        </div>
+
+        <h3>Firebase Integration Testing</h3>
+
+        <div class="test-case">
+            <div class="test-header">
+                <div class="test-name">Firebase Operations Testing</div>
+                <div class="test-type">Integration Tests</div>
+            </div>
+
+            <h4>Mock Firebase Testing</h4>
+            <pre><code>// tests/firebase.test.ts
+import { addExpenseToFirestore, subscribeToExpenses } from '../src/lib/firebase';
+
+// Mock Firebase
+jest.mock('firebase/firestore', () => ({
+  collection: jest.fn(),
+  addDoc: jest.fn(),
+  onSnapshot: jest.fn(),
+  query: jest.fn(),
+  where: jest.fn(),
+  orderBy: jest.fn()
+}));
+
+describe('Firebase Operations', () => {
+  test('addExpenseToFirestore should add expense to correct collection', async () => {
+    const mockAddDoc = require('firebase/firestore').addDoc;
+    mockAddDoc.mockResolvedValue({ id: 'new-expense-id' });
+
+    const expense = {
+      amount: 50,
+      category: 'Food',
+      description: 'Test expense',
+      date: '2025-08-23',
+      createdAt: '2025-08-23T12:00:00Z'
+    };
+
+    await addExpenseToFirestore('user123', expense);
+
+    expect(mockAddDoc).toHaveBeenCalledWith(
+      expect.any(Object), // collection reference
+      expense
+    );
+  });
+});</code></pre>
+        </div>
+
+        <h2 id="quality-checklist">Quality Assurance Checklist</h2>
+
+        <div class="checklist">
+            <h4>🔍 Code Quality Checklist</h4>
+            <ul>
+                <li>TypeScript strict mode enabled and no type errors</li>
+                <li>ESLint rules passing with no warnings</li>
+                <li>Prettier formatting applied consistently</li>
+                <li>All components have proper TypeScript interfaces</li>
+                <li>Error boundaries implemented for component isolation</li>
+                <li>Proper error handling in async operations</li>
+                <li>Loading states implemented for all async operations</li>
+                <li>User feedback provided for all actions (toast notifications)</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>🎨 UI/UX Quality Checklist</h4>
+            <ul>
+                <li>Responsive design works on all screen sizes</li>
+                <li>Touch targets are appropriately sized (minimum 44px)</li>
+                <li>Color contrast meets WCAG accessibility standards</li>
+                <li>Keyboard navigation works for all interactive elements</li>
+                <li>Screen reader compatibility with proper ARIA labels</li>
+                <li>Loading skeletons prevent layout shift</li>
+                <li>Consistent spacing and typography throughout</li>
+                <li>Icons and visual elements are meaningful and consistent</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>🔐 Security Quality Checklist</h4>
+            <ul>
+                <li>Firebase security rules properly configured</li>
+                <li>User authentication required for all data operations</li>
+                <li>API keys properly secured and not exposed in client code</li>
+                <li>File upload validation and size limits enforced</li>
+                <li>XSS prevention measures in place</li>
+                <li>HTTPS enforced for all communications</li>
+                <li>Sensitive data not logged or exposed</li>
+                <li>Proper session management and logout functionality</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>⚡ Performance Quality Checklist</h4>
+            <ul>
+                <li>Bundle size optimized (under 1MB gzipped)</li>
+                <li>Images optimized and properly compressed</li>
+                <li>Unnecessary re-renders prevented with React.memo</li>
+                <li>Firebase queries optimized and properly indexed</li>
+                <li>Service worker configured for offline functionality</li>
+                <li>Critical CSS inlined for faster rendering</li>
+                <li>Lazy loading implemented for non-critical components</li>
+                <li>Memory leaks prevented (subscription cleanup)</li>
+            </ul>
+        </div>
+
+        <h2 id="performance-testing">Performance Testing</h2>
+
+        <h3>Core Web Vitals Monitoring</h3>
+
+        <div class="test-case">
+            <div class="test-header">
+                <div class="test-name">Performance Metrics</div>
+                <div class="test-type">Performance Test</div>
+            </div>
+
+            <h4>Target Metrics</h4>
+            <pre><code>Performance Targets:
+- First Contentful Paint (FCP): &lt; 1.5s
+- Largest Contentful Paint (LCP): &lt; 2.5s
+- First Input Delay (FID): &lt; 100ms
+- Cumulative Layout Shift (CLS): &lt; 0.1
+- Time to Interactive (TTI): &lt; 3.0s
+
+Bundle Size Targets:
+- Main bundle: &lt; 500KB (gzipped)
+- Vendor bundle: &lt; 300KB (gzipped)
+- Total initial load: &lt; 1MB (gzipped)</code></pre>
+
+            <h4>Performance Testing Commands</h4>
+            <pre><code># Lighthouse CI testing
+npm install -g @lhci/cli
+lhci autorun
+
+# Bundle analysis
+npm run build
+npm run analyze
+
+# Performance profiling
+npm run dev
+# Open Chrome DevTools > Performance tab
+# Record performance during critical user flows</code></pre>
+        </div>
+
+        <h3>Load Testing</h3>
+
+        <div class="test-scenario">
+            <div class="scenario-title">📈 Database Load Testing</div>
+            <div class="scenario-steps">
+                <h4>Test Scenarios:</h4>
+                <ol>
+                    <li>Simulate 100+ expenses per user</li>
+                    <li>Test real-time updates with multiple sessions</li>
+                    <li>Verify pagination performance</li>
+                    <li>Test concurrent user operations</li>
+                    <li>Monitor Firestore read/write quotas</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> Application remains responsive under load with proper error handling
+            </div>
+        </div>
+
+        <h2 id="security-testing">Security Testing</h2>
+
+        <h3>Authentication Security</h3>
+
+        <div class="test-scenario">
+            <div class="scenario-title">🔐 Authentication Security Testing</div>
+            <div class="scenario-steps">
+                <h4>Test Cases:</h4>
+                <ol>
+                    <li>Attempt to access protected routes without authentication</li>
+                    <li>Verify token expiration handling</li>
+                    <li>Test logout functionality clears all user data</li>
+                    <li>Verify cross-user data isolation</li>
+                    <li>Test session timeout handling</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> All protected resources properly secured, users cannot access other users' data
+            </div>
+        </div>
+
+        <h3>Data Security Testing</h3>
+
+        <div class="test-scenario">
+            <div class="scenario-title">🛡️ Data Protection Testing</div>
+            <div class="scenario-steps">
+                <h4>Firebase Security Rules Testing:</h4>
+                <ol>
+                    <li>Test user can only read/write their own expenses</li>
+                    <li>Verify public people can be read by all authenticated users</li>
+                    <li>Test private people are only accessible to creator</li>
+                    <li>Verify file upload restrictions (size, type, ownership)</li>
+                    <li>Test that unauthenticated users cannot access any data</li>
+                </ol>
+            </div>
+            <div class="expected-result">
+                <strong>Expected Result:</strong> All data access properly restricted according to security rules
+            </div>
+        </div>
+
+        <h3>Input Validation Testing</h3>
+
+        <div class="checklist">
+            <h4>🔍 Input Validation Test Cases</h4>
+            <ul>
+                <li>Test negative expense amounts (should be rejected)</li>
+                <li>Test extremely large numbers (boundary testing)</li>
+                <li>Test special characters in descriptions</li>
+                <li>Test XSS attempts in text fields</li>
+                <li>Test file upload with invalid file types</li>
+                <li>Test file upload with oversized files</li>
+                <li>Test empty required fields</li>
+                <li>Test invalid date formats</li>
+            </ul>
+        </div>
+
+        <h3>Debugging and Testing Commands</h3>
+
+        <div class="test-case">
+            <div class="test-header">
+                <div class="test-name">Development Testing Commands</div>
+                <div class="test-type">Debug Commands</div>
+            </div>
+
+            <h4>Firebase Debugging</h4>
+            <pre><code># Enable Firestore debugging
+localStorage.setItem('firestore_debug', 'true');
+
+# Check Firebase connection
+console.log('Auth state:', firebase.auth().currentUser);
+console.log('Firestore settings:', firebase.firestore().settings);
+
+# Test security rules
+npm install -g firebase-tools
+firebase emulators:start --only firestore
+# Run security rules tests in emulator</code></pre>
+
+            <h4>Performance Debugging</h4>
+            <pre><code># React DevTools Profiler
+npm install -g react-devtools
+
+# Bundle analysis
+npm run build
+npm install -g webpack-bundle-analyzer
+npx webpack-bundle-analyzer dist/assets/*.js
+
+# Memory leak detection
+# Chrome DevTools > Memory tab > Take heap snapshots</code></pre>
+
+            <h4>PWA Debugging</h4>
+            <pre><code># Service Worker debugging
+navigator.serviceWorker.getRegistrations().then(registrations => {
+  console.log('SW registrations:', registrations);
+});
+
+# Cache inspection
+caches.keys().then(cacheNames => {
+  console.log('Cache names:', cacheNames);
+});
+
+# Force PWA update
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready.then(registration => {
+    registration.update();
+  });
+}</code></pre>
+        </div>
+
+        <div class="warning">
+            <strong>Testing Best Practices:</strong>
+            <ul>
+                <li>Always test with real Firebase data, not just mock data</li>
+                <li>Test on actual mobile devices, not just browser dev tools</li>
+                <li>Verify offline functionality with actual network disconnection</li>
+                <li>Test with different user accounts to verify data isolation</li>
+                <li>Monitor browser console for errors during all testing</li>
+                <li>Test PWA installation on different platforms and browsers</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | 
+               <a href="./index.html">Back to Index</a> | 
+               <a href="./troubleshooting.html">Troubleshooting</a> |
+               <a href="./api-reference.html">API Reference</a>
+            </p>
+            <p>Last Updated: August 23, 2025 | Version 2.5.5</p>
+        </footer>
+    </div>
+</body>
+</html>

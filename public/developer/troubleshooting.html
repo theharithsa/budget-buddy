@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting Guide - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            color: #000;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        pre {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .issue-card {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .issue-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .issue-severity {
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .critical {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .high {
+            background: #fd7e14;
+            color: #fff;
+        }
+
+        .medium {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .low {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .solution {
+            background: #e8f5e8;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .quick-fixes {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .quick-fixes h3 {
+            margin-top: 0;
+            color: #000;
+        }
+
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            position: relative;
+            padding-left: 2rem;
+            margin: 0.5rem 0;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 2px solid #000;
+            margin-top: 3rem;
+            color: #666;
+        }
+
+        footer a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .issue-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="./index.html">Developer Docs</a> > Troubleshooting Guide
+            </div>
+            <h1>🔧 Troubleshooting Guide</h1>
+            <p>Common issues, debugging techniques, and problem resolution strategies</p>
+        </header>
+
+        <div class="quick-fixes">
+            <h3>🚀 Quick Diagnostic Checklist</h3>
+            <ul class="checklist">
+                <li>Check browser console for JavaScript errors</li>
+                <li>Verify Firebase configuration in <code>src/lib/firebase.ts</code></li>
+                <li>Ensure user is authenticated for Firebase operations</li>
+                <li>Check network connectivity and Firebase status</li>
+                <li>Clear browser cache and localStorage if needed</li>
+                <li>Verify environment variables are properly set</li>
+            </ul>
+        </div>
+
+        <h2>Firebase Issues</h2>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Permission Denied Errors</div>
+                <div class="issue-severity critical">Critical</div>
+            </div>
+            
+            <h4>Symptoms</h4>
+            <ul>
+                <li>Console errors: <code>FirebaseError: Missing or insufficient permissions</code></li>
+                <li>Data not loading or saving</li>
+                <li>Public categories/people not accessible</li>
+            </ul>
+
+            <h4>Common Causes</h4>
+            <ul>
+                <li>Firestore security rules not deployed</li>
+                <li>User not properly authenticated</li>
+                <li>Incorrect rule configuration</li>
+                <li>App Check misconfiguration</li>
+            </ul>
+
+            <div class="solution">
+                <h4>Solutions</h4>
+                <ol>
+                    <li><strong>Check Authentication:</strong>
+                        <pre><code>// Verify user is authenticated
+console.log('Current user:', auth.currentUser);
+if (!auth.currentUser) {
+  console.error('User not authenticated');
+}</code></pre>
+                    </li>
+                    <li><strong>Deploy Security Rules:</strong>
+                        <pre><code># Deploy Firestore rules
+firebase deploy --only firestore:rules
+
+# Deploy Storage rules  
+firebase deploy --only storage:rules</code></pre>
+                    </li>
+                    <li><strong>Verify Rule Configuration:</strong>
+                        <pre><code># Check current rules
+firebase firestore:rules:get
+firebase storage:rules:get</code></pre>
+                    </li>
+                    <li><strong>Test with Firebase Emulator:</strong>
+                        <pre><code># Start emulator for testing
+firebase emulators:start --only firestore,auth</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Firebase Configuration Errors</div>
+                <div class="issue-severity high">High</div>
+            </div>
+            
+            <h4>Symptoms</h4>
+            <ul>
+                <li>App crashes on Firebase operations</li>
+                <li><code>Firebase project not found</code> errors</li>
+                <li>Authentication not working</li>
+            </ul>
+
+            <div class="solution">
+                <h4>Solutions</h4>
+                <ol>
+                    <li><strong>Verify Configuration:</strong>
+                        <pre><code>// Check Firebase config in src/lib/firebase.ts
+const firebaseConfig = {
+  apiKey: "your-api-key",           // Must be valid
+  authDomain: "project.firebaseapp.com",
+  projectId: "your-project-id",     // Must match Firebase project
+  storageBucket: "project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id"
+};</code></pre>
+                    </li>
+                    <li><strong>Check Project Status:</strong>
+                        <pre><code># List Firebase projects
+firebase projects:list
+
+# Switch to correct project
+firebase use your-project-id</code></pre>
+                    </li>
+                    <li><strong>Verify Services Enabled:</strong>
+                        <ul>
+                            <li>Authentication → Sign-in method → Google (Enabled)</li>
+                            <li>Firestore Database → Create database</li>
+                            <li>Storage → Get started</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <h2>Chart and Dashboard Issues</h2>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Charts Disappearing on Tab Switch</div>
+                <div class="issue-severity critical">Critical</div>
+            </div>
+            
+            <h4>Symptoms</h4>
+            <ul>
+                <li>Charts visible initially but disappear when switching tabs</li>
+                <li>Empty chart containers after tab navigation</li>
+                <li>ApexCharts not re-rendering</li>
+            </ul>
+
+            <div class="error">
+                <strong>Root Cause:</strong> ApexCharts loses DOM connection during React tab switching without proper lifecycle management.
+            </div>
+
+            <div class="solution">
+                <h4>Solution (CRITICAL Pattern)</h4>
+                <pre><code>// REQUIRED: Tab switching pattern for charts
+const [activeTab, setActiveTab] = useState('overview');
+const [chartKey, setChartKey] = useState(0);
+
+// Chart instance refs for cleanup
+const areaChartInstance = useRef&lt;ApexCharts | null&gt;(null);
+
+// CRITICAL: Force re-render for chart visibility
+const handleTabChange = (value: string) => {
+  setActiveTab(value);
+  if (value === 'overview') {
+    setChartKey(prev => prev + 1); // MUST increment for ApexCharts
+  }
+};
+
+// Chart lifecycle management
+useEffect(() => {
+  // Clean up existing chart instances
+  if (areaChartInstance.current) {
+    areaChartInstance.current.destroy();
+    areaChartInstance.current = null;
+  }
+  
+  // Re-initialize when tab changes to overview
+  if (activeTab === 'overview' && areaChartRef.current) {
+    // Chart initialization logic
+  }
+}, [activeTab, chartKey, expenses, budgets]);
+
+// Chart containers MUST have unique keys
+&lt;div 
+  key={`area-chart-${chartKey}`} 
+  ref={areaChartRef} 
+  className="w-full h-64"
+/&gt;</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>Never skip the chartKey increment - charts will disappear on tab switches!</strong>
+            </div>
+        </div>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Chart Data Not Updating</div>
+                <div class="issue-severity medium">Medium</div>
+            </div>
+            
+            <h4>Symptoms</h4>
+            <ul>
+                <li>Charts show stale data</li>
+                <li>New expenses not reflected in charts</li>
+                <li>Chart updates laggy or inconsistent</li>
+            </ul>
+
+            <div class="solution">
+                <h4>Solutions</h4>
+                <ol>
+                    <li><strong>Check useEffect Dependencies:</strong>
+                        <pre><code>// Ensure all dependencies are included
+useEffect(() => {
+  updateChartData();
+}, [expenses, budgets, dateRange, categoryFilter]); // Include ALL deps</code></pre>
+                    </li>
+                    <li><strong>Force Chart Update:</strong>
+                        <pre><code>// Force chart re-render
+if (chartInstance.current) {
+  chartInstance.current.updateSeries(newData);
+  // Or destroy and recreate
+  chartInstance.current.destroy();
+  initializeChart();
+}</code></pre>
+                    </li>
+                    <li><strong>Data Validation:</strong>
+                        <pre><code>// Validate data before chart update
+const validData = expenses.filter(expense => 
+  expense.amount > 0 && expense.date
+);
+console.log('Chart data:', validData);</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <h2>PWA and Service Worker Issues</h2>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">PWA Not Installing</div>
+                <div class="issue-severity medium">Medium</div>
+            </div>
+            
+            <h4>Symptoms</h4>
+            <ul>
+                <li>Install prompt not appearing</li>
+                <li>App not showing in browser's PWA menu</li>
+                <li>Service worker registration failing</li>
+            </ul>
+
+            <div class="solution">
+                <h4>Solutions</h4>
+                <ol>
+                    <li><strong>Check PWA Requirements:</strong>
+                        <pre><code>// Verify manifest.json exists and is valid
+fetch('/manifest.json')
+  .then(response => response.json())
+  .then(manifest => console.log('Manifest:', manifest))
+  .catch(error => console.error('Manifest error:', error));
+
+// Check service worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => console.log('SW registrations:', registrations));
+}</code></pre>
+                    </li>
+                    <li><strong>HTTPS Requirement:</strong>
+                        <ul>
+                            <li>PWAs require HTTPS in production</li>
+                            <li>localhost is exempt for development</li>
+                            <li>Check SSL certificate validity</li>
+                        </ul>
+                    </li>
+                    <li><strong>Browser Developer Tools:</strong>
+                        <ul>
+                            <li>Open Application tab → Manifest</li>
+                            <li>Check for manifest errors</li>
+                            <li>Verify icon sizes and formats</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Force Update Not Working</div>
+                <div class="issue-severity high">High</div>
+            </div>
+            
+            <h4>Symptoms</h4>
+            <ul>
+                <li>Users not receiving update notifications</li>
+                <li>Old version persisting after deployment</li>
+                <li>Cache not clearing properly</li>
+            </ul>
+
+            <div class="solution">
+                <h4>Solutions</h4>
+                <ol>
+                    <li><strong>Verify Version Numbers:</strong>
+                        <pre><code>// Check version in pwa.ts
+const currentVersion = '2.5.5'; // Must match deployment
+
+// Check service worker version
+const VERSION = '2.5.5'; // Must match pwa.ts</code></pre>
+                    </li>
+                    <li><strong>Test Update Mechanism:</strong>
+                        <pre><code>// Manually trigger update check
+import { pwaManager } from '@/lib/pwa';
+
+const testUpdate = async () => {
+  const hasUpdate = await pwaManager.checkForVersionUpdate();
+  console.log('Update available:', hasUpdate);
+};</code></pre>
+                    </li>
+                    <li><strong>Clear All Caches:</strong>
+                        <pre><code>// Clear caches programmatically
+const clearAllCaches = async () => {
+  const cacheNames = await caches.keys();
+  await Promise.all(
+    cacheNames.map(cacheName => caches.delete(cacheName))
+  );
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.reload();
+};</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <h2>Performance Issues</h2>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">App Loading Slowly</div>
+                <div class="issue-severity medium">Medium</div>
+            </div>
+            
+            <h4>Common Causes</h4>
+            <ul>
+                <li>Large Firebase real-time subscriptions</li>
+                <li>Unoptimized images and assets</li>
+                <li>Memory leaks from uncleanup subscriptions</li>
+                <li>Too many re-renders</li>
+            </ul>
+
+            <div class="solution">
+                <h4>Performance Optimization</h4>
+                <ol>
+                    <li><strong>Optimize Firebase Queries:</strong>
+                        <pre><code>// Limit query results
+const expensesQuery = query(
+  collection(db, 'users', userId, 'expenses'),
+  orderBy('date', 'desc'),
+  limit(100) // Limit initial load
+);
+
+// Use pagination for large datasets
+const getNextPage = (lastDoc) => {
+  return query(expensesQuery, startAfter(lastDoc), limit(25));
+};</code></pre>
+                    </li>
+                    <li><strong>Implement React.memo:</strong>
+                        <pre><code>// Memoize expensive components
+const ExpenseCard = React.memo(({ expense, onEdit, onDelete }) => {
+  // Component implementation
+});
+
+// Memoize callback functions
+const handleExpenseEdit = useCallback((expense) => {
+  // Edit logic
+}, []);
+
+// Memoize expensive calculations
+const expenseStats = useMemo(() => {
+  return calculateExpenseStatistics(expenses);
+}, [expenses]);</code></pre>
+                    </li>
+                    <li><strong>Clean Up Subscriptions:</strong>
+                        <pre><code>useEffect(() => {
+  const unsubscribeFunctions = [];
+  
+  // Set up subscriptions
+  const unsubscribe = subscribeToExpenses(userId, setExpenses);
+  unsubscribeFunctions.push(unsubscribe);
+  
+  // CRITICAL: Clean up on unmount
+  return () => {
+    unsubscribeFunctions.forEach(fn => fn && fn());
+  };
+}, [userId]);</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <h2>Development Issues</h2>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">TypeScript Compilation Errors</div>
+                <div class="issue-severity medium">Medium</div>
+            </div>
+            
+            <div class="solution">
+                <h4>Common Solutions</h4>
+                <ol>
+                    <li><strong>Check Type Definitions:</strong>
+                        <pre><code>// Ensure proper interface imports
+import { Expense, Budget, Person } from '@/lib/types';
+
+// Verify component prop types
+interface ComponentProps {
+  expenses: Expense[];
+  onAddExpense: (expense: Omit&lt;Expense, 'id'&gt;) => void;
+}</code></pre>
+                    </li>
+                    <li><strong>Fix Import Path Issues:</strong>
+                        <pre><code>// Use path aliases defined in vite.config.ts
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+
+// Check tsconfig.json paths configuration</code></pre>
+                    </li>
+                    <li><strong>Type Assertion for Firebase:</strong>
+                        <pre><code>// Proper Firebase document typing
+const expenses = snapshot.docs.map(doc => ({
+  id: doc.id,
+  ...doc.data()
+})) as Expense[];</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Build Failures</div>
+                <div class="issue-severity high">High</div>
+            </div>
+            
+            <div class="solution">
+                <h4>Build Troubleshooting</h4>
+                <ol>
+                    <li><strong>Clear Node Modules:</strong>
+                        <pre><code># Clear and reinstall dependencies
+rm -rf node_modules package-lock.json
+npm install
+
+# Or with npm
+npm ci</code></pre>
+                    </li>
+                    <li><strong>Check Environment Variables:</strong>
+                        <pre><code># Verify .env files are properly configured
+# Development: .env.local
+# Production: Set in deployment platform
+
+VITE_FIREBASE_API_KEY=your-api-key
+VITE_OPENAI_API_KEY=your-openai-key</code></pre>
+                    </li>
+                    <li><strong>Vite Build Issues:</strong>
+                        <pre><code># Build with verbose output
+npm run build -- --mode production
+
+# Check vite.config.ts configuration
+# Verify all imports resolve correctly</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <h2>Debug Utilities</h2>
+
+        <div class="issue-card">
+            <div class="issue-header">
+                <div class="issue-title">Debug Console Commands</div>
+                <div class="issue-type">Utilities</div>
+            </div>
+            
+            <h4>Firebase Debug Commands</h4>
+            <pre><code># Check Firebase project status
+firebase projects:list
+firebase use --add
+
+# Test authentication
+firebase auth:export users.json --format=json
+
+# Monitor Firestore activity
+firebase firestore:databases:list
+
+# Check security rules
+firebase firestore:rules:get
+firebase storage:rules:get
+
+# Local testing with emulators
+firebase emulators:start</code></pre>
+
+            <h4>Browser Console Debug</h4>
+            <pre><code>// Check Firebase configuration
+console.log('Firebase config:', firebase.apps[0].options);
+
+// Check authentication state
+console.log('Current user:', firebase.auth().currentUser);
+
+// Monitor Firestore operations
+firebase.firestore().enableNetwork()
+  .then(() => console.log('Firestore online'))
+  .catch(err => console.error('Firestore offline:', err));
+
+// Check localStorage data
+console.log('Stored view mode:', localStorage.getItem('budget-buddy-view-mode'));
+console.log('PWA install status:', localStorage.getItem('pwa-install-prompted'));</code></pre>
+
+            <h4>Network Debugging</h4>
+            <pre><code>// Check API connectivity
+fetch('https://api.openai.com/v1/models', {
+  headers: { 'Authorization': 'Bearer YOUR_API_KEY' }
+})
+.then(response => console.log('OpenAI API status:', response.status))
+.catch(error => console.error('OpenAI API error:', error));
+
+// Monitor Firebase connection
+firebase.database().ref('.info/connected').on('value', (snapshot) => {
+  console.log('Firebase connected:', snapshot.val());
+});</code></pre>
+        </div>
+
+        <div class="info">
+            <h3>🆘 Getting Help</h3>
+            <ul>
+                <li><strong>GitHub Issues:</strong> <a href="https://github.com/theharithsa/budget-buddy/issues">Report bugs and feature requests</a></li>
+                <li><strong>Firebase Support:</strong> <a href="https://firebase.google.com/support">Official Firebase documentation</a></li>
+                <li><strong>React Documentation:</strong> <a href="https://react.dev">React official docs</a></li>
+                <li><strong>Vite Troubleshooting:</strong> <a href="https://vitejs.dev/guide/troubleshooting.html">Vite troubleshooting guide</a></li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | 
+               <a href="./index.html">Back to Index</a> | 
+               <a href="./architecture.html">Architecture</a> |
+               <a href="./firebase.html">Firebase</a>
+            </p>
+            <p>Last Updated: August 23, 2025 | Version 2.5.5</p>
+        </footer>
+    </div>
+</body>
+</html>
