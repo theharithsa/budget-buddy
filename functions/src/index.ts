@@ -1,6 +1,6 @@
 /**
  * Budget Buddy - Gemini AI Integration
- * Firebase Functions for intelligent expense management
+ * Firebase Functions for intelligent expense management with CORS support
  */
 
 import {setGlobalOptions} from "firebase-functions";
@@ -21,11 +21,24 @@ setGlobalOptions({maxInstances: 10});
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 
 /**
- * Main chat function for Gemini AI integration
+ * Format currency in Indian Rupees with proper comma formatting
+ */
+function formatIndianCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(amount);
+}
+
+/**
+ * Main chat function for Gemini AI integration with CORS support
  * Handles natural language queries about expenses and budgets
  */
 export const chatWithGemini = onCall({
   secrets: [geminiApiKey],
+  cors: true, // Enable CORS for all origins
 }, async (request) => {
   try {
     const {userId, message, context} = request.data;
@@ -58,47 +71,38 @@ export const chatWithGemini = onCall({
     
     logger.info("Generated response", {userId, responseLength: response.length});
     
+    // Extract actionable items
+    const actionItems = extractActionableItems(response);
+    
     return {
-      response,
+      success: true,
+      response: response,
       timestamp: new Date().toISOString(),
-      context: extractActionableItems(response),
-      success: true
+      actionItems: actionItems
     };
     
   } catch (error) {
-    logger.error("Chat function error", error);
-    return {
-      response: "Sorry, I encountered an error. Please try again.",
-      timestamp: new Date().toISOString(),
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
-    };
+    logger.error("Error in chatWithGemini", {error});
+    throw new Error(`AI chat error: ${error}`);
   }
 });
 
 /**
  * Get user's financial data from Firestore
  */
-async function getUserFinancialData(userId: string) {
-  const db = getFirestore();
-  
+async function getUserFinancialData(userId: string): Promise<any> {
   try {
-    // Get recent expenses (last 100)
-    const expensesSnapshot = await db
-      .collection(`users/${userId}/expenses`)
-      .orderBy("date", "desc")
-      .limit(100)
-      .get();
+    const db = getFirestore();
     
-    // Get active budgets
-    const budgetsSnapshot = await db
-      .collection(`users/${userId}/budgets`)
-      .get();
-    
-    // Get custom categories
-    const categoriesSnapshot = await db
-      .collection(`users/${userId}/customCategories`)
-      .get();
+    // Get recent expenses, budgets, and categories
+    const [expensesSnapshot, budgetsSnapshot, categoriesSnapshot] = await Promise.all([
+      db.collection(`users/${userId}/expenses`)
+        .orderBy('date', 'desc')
+        .limit(100)
+        .get(),
+      db.collection(`users/${userId}/budgets`).get(),
+      db.collection(`users/${userId}/customCategories`).get()
+    ]);
     
     const expenses = expensesSnapshot.docs.map(doc => ({
       id: doc.id,
@@ -139,7 +143,7 @@ async function getUserFinancialData(userId: string) {
 }
 
 /**
- * Create a context-aware prompt for Gemini AI
+ * Create a context-aware prompt for Gemini AI with proper Indian currency formatting
  */
 function createFinancialPrompt(
   userMessage: string, 
@@ -169,25 +173,27 @@ function createFinancialPrompt(
   const prompt = `You are an AI financial assistant for Budget Buddy, a personal expense tracking app. 
 You help users understand their spending patterns, manage budgets, and make better financial decisions.
 
+IMPORTANT: Always use Indian Rupees (₹) for all currency amounts. The user is based in India.
+
 CURRENT USER CONTEXT:
 - Total expenses tracked: ${totalExpenses}
-- Current month (${currentMonth}) expenses: $${totalCurrentMonth.toFixed(2)}
+- Current month (${currentMonth}) expenses: ${formatIndianCurrency(totalCurrentMonth)}
 - Current month transactions: ${currentMonthExpenses.length}
 - Date range: ${dateRange?.newest || "N/A"} to ${dateRange?.oldest || "N/A"}
 
 RECENT EXPENSES (last 10):
 ${expenses.slice(0, 10).map((exp: any, idx: number) => 
-  `${idx + 1}. $${exp.amount || 0} - ${exp.category || "Other"} - ${exp.description || "No description"} (${exp.date || "No date"})`
+  `${idx + 1}. ${formatIndianCurrency(exp.amount || 0)} - ${exp.category || "Other"} - ${exp.description || "No description"} (${exp.date || "No date"})`
 ).join("\n")}
 
 CURRENT MONTH SPENDING BY CATEGORY:
 ${Object.entries(categoryTotals).map(([cat, amount]) => 
-  `- ${cat}: $${(amount as number).toFixed(2)}`
+  `- ${cat}: ${formatIndianCurrency(amount as number)}`
 ).join("\n")}
 
 ACTIVE BUDGETS:
 ${budgets.length > 0 ? budgets.map((budget: any) => 
-  `- ${budget.category || "Unknown"}: $${budget.amount || 0} (${budget.period || "monthly"})`
+  `- ${budget.category || "Unknown"}: ${formatIndianCurrency(budget.amount || 0)} (${budget.period || "monthly"})`
 ).join("\n") : "No active budgets"}
 
 USER QUESTION: "${userMessage}"
@@ -197,8 +203,13 @@ Please provide a helpful, conversational response that:
 2. Provides specific insights based on their spending patterns
 3. Offers actionable advice when appropriate
 4. Uses a friendly, encouraging tone
-5. Formats numbers clearly (e.g., $123.45)
-6. Keeps responses concise but informative
+5. Always formats currency in Indian Rupees using proper formatting (e.g., ₹1,23,456.78)
+6. Format your response using markdown for better readability:
+   - Use **bold** for important numbers or categories
+   - Use bullet points for lists
+   - Use headers (##) for sections when appropriate
+   - Keep it conversational and easy to read
+7. Keep responses concise but informative (max 300 words)
 
 If the user is asking to add an expense, respond with guidance on how to do that in the app.
 If they're asking about spending patterns, provide specific analysis.
@@ -221,24 +232,12 @@ function extractActionableItems(response: string): any {
   }
   
   if (response.toLowerCase().includes("budget")) {
-    actions.push({type: "view_budget", suggestion: "Review your budgets"});
+    actions.push({type: "manage_budget", suggestion: "Review budgets"});
   }
   
-  if (response.toLowerCase().includes("category") || response.toLowerCase().includes("categories")) {
-    actions.push({type: "view_categories", suggestion: "Manage categories"});
+  if (response.toLowerCase().includes("save") || response.toLowerCase().includes("reduce")) {
+    actions.push({type: "save_money", suggestion: "Explore savings tips"});
   }
   
   return actions;
 }
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });

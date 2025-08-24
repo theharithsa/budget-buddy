@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -136,7 +137,7 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
     "How am I doing with my budget?",
     "What's my biggest expense category?",
     "Compare spending to last month",
-    "Add expense: $15 lunch",
+    "Add expense: ₹150 lunch",
   ];
 
   const handleQuickAction = (action: string) => {
@@ -150,7 +151,7 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl h-[80vh] flex flex-col">
+      <Card className="w-full max-w-3xl h-[85vh] flex flex-col overflow-hidden">
         <CardHeader className="flex-shrink-0 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -177,10 +178,10 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col p-0">
+        <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
           {/* Messages */}
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
+          <ScrollArea className="flex-1 p-4 overflow-y-auto">
+            <div className="space-y-4 min-h-0">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -205,14 +206,34 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                   </Avatar>
                   
                   <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
-                    <div className={`inline-block max-w-[80%] p-3 rounded-lg ${
+                    <div className={`inline-block max-w-[85%] p-3 rounded-lg break-words ${
                       message.role === 'user'
                         ? 'bg-blue-500 text-white'
                         : message.isError
                         ? 'bg-red-50 border border-red-200 text-red-800'
                         : 'bg-muted'
                     }`}>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      {message.role === 'assistant' && !message.isError ? (
+                        <div className="text-sm prose prose-sm max-w-none overflow-hidden">
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => <p className="mb-2 last:mb-0 break-words">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                              li: ({ children }) => <li className="mb-1 break-words text-sm">{children}</li>,
+                              strong: ({ children }) => <strong className="font-semibold text-blue-600">{children}</strong>,
+                              em: ({ children }) => <em className="italic">{children}</em>,
+                              code: ({ children }) => <code className="bg-slate-100 px-1 py-0.5 rounded text-xs break-all">{children}</code>,
+                              h2: ({ children }) => <h2 className="text-sm font-semibold mb-2 mt-3 first:mt-0">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 mt-2 first:mt-0">{children}</h3>,
+                            }}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                      )}
                     </div>
                     
                     <p className="text-xs text-muted-foreground mt-1">

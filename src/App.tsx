@@ -15,6 +15,7 @@ import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
 import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
+import { AIChatPage } from '@/components/AIChatPage';
 import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
@@ -248,6 +249,7 @@ function FinanceApp() {
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
+              <TabsTrigger value="ai-chat">AI Chat</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard">
@@ -477,6 +479,10 @@ function FinanceApp() {
                   "Anomaly Detection"
                 ]}
               />
+            </TabsContent>
+
+            <TabsContent value="ai-chat" className="h-full">
+              <AIChatPage />
             </TabsContent>
           </Tabs>
         </div>

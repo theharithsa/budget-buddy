@@ -19,21 +19,34 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     setIsInstalled(isStandalone);
     
-    // Always show install prompt if not installed (we'll handle the logic inside)
-    if (!isStandalone) {
-      setShowPrompt(true);
+    // Check if user has dismissed the prompt in this session
+    const hasUserDismissed = sessionStorage.getItem('pwa-install-dismissed') === 'true';
+    
+    // Only show install prompt if not installed and user hasn't dismissed it
+    if (!isStandalone && !hasUserDismissed) {
+      // Check if PWA is installable (Chrome)
+      if ('serviceWorker' in navigator && 'BeforeInstallPromptEvent' in window) {
+        setCanInstall(true);
+        setShowPrompt(true);
+      } else {
+        // For other browsers, show manual install guide
+        setShowPrompt(true);
+      }
     }
 
     // Listen for PWA events
     const handleInstallAvailable = () => {
-      setCanInstall(true);
-      setShowPrompt(true);
+      if (!hasUserDismissed) {
+        setCanInstall(true);
+        setShowPrompt(true);
+      }
     };
 
     const handleInstallCompleted = () => {
       setCanInstall(false);
       setIsInstalled(true);
       setShowPrompt(false);
+      sessionStorage.removeItem('pwa-install-dismissed');
     };
 
     window.addEventListener('pwa-install-available', handleInstallAvailable);
@@ -66,6 +79,8 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    // Store dismissal in session storage so it doesn't show again this session
+    sessionStorage.setItem('pwa-install-dismissed', 'true');
   };
 
   if (!showPrompt || isInstalled) {
