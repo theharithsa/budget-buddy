@@ -87,13 +87,13 @@ function FinanceApp() {
   
   // Initialize view mode with localStorage persistence
   const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
-    const saved = localStorage.getItem('budget-buddy-view-mode');
+    const saved = localStorage.getItem('finbuddy-view-mode');
     return (saved as 'list' | 'grid') || 'grid';
   });
   
   // Save view mode to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('budget-buddy-view-mode', viewMode);
+    localStorage.setItem('finbuddy-view-mode', viewMode);
   }, [viewMode]);
   
   // Initialize date range to current month
@@ -535,6 +535,20 @@ function FinanceApp() {
           expenses={filteredAndSortedExpenses}
           budgets={budgets}
           onClose={() => setShowAIChat(false)}
+          onAddExpense={addExpense}
+          onUpdateExpense={updateExpense}
+          onDeleteExpense={deleteExpense}
+          onAddBudget={addBudget}
+          onUpdateBudget={updateBudget}
+          onDeleteBudget={deleteBudget}
+          onAddCategory={addCustomCategory}
+          onUpdateCategory={updateCustomCategory}
+          onDeleteCategory={deleteCustomCategory}
+          onAddPerson={addPerson}
+          onUpdatePerson={updatePerson}
+          onDeletePerson={deletePerson}
+          onAddTemplate={addTemplate}
+          onDeleteTemplate={deleteTemplate}
         />
       )}
 

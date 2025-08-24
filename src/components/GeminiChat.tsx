@@ -25,19 +25,50 @@ interface GeminiChatProps {
   expenses?: any[];
   budgets?: any[];
   onClose: () => void;
+  // CRUD operation callbacks - matching actual function signatures
+  onAddExpense?: (expense: any) => Promise<string>;
+  onUpdateExpense?: (expenseId: string, expense: Partial<any>) => Promise<void>;
+  onDeleteExpense?: (expenseId: string) => Promise<void>;
+  onAddBudget?: (budget: any) => Promise<string>;
+  onUpdateBudget?: (budgetId: string, budget: Partial<any>) => Promise<void>;
+  onDeleteBudget?: (budgetId: string) => Promise<void>;
+  onAddCategory?: (category: any) => Promise<string>;
+  onUpdateCategory?: (categoryId: string, category: Partial<any>) => Promise<void>;
+  onDeleteCategory?: (categoryId: string) => Promise<void>;
+  onAddPerson?: (person: any) => Promise<void>;
+  onUpdatePerson?: (personId: string, person: Partial<any>) => Promise<void>;
+  onDeletePerson?: (personId: string) => Promise<void>;
+  onAddTemplate?: (template: any) => Promise<void>;
+  onUpdateTemplate?: (templateId: string, template: Partial<any>) => Promise<void>;
+  onDeleteTemplate?: (templateId: string) => Promise<void>;
 }
 
 export const GeminiChat: React.FC<GeminiChatProps> = ({ 
   expenses = [], 
   budgets = [], 
-  onClose 
+  onClose,
+  onAddExpense,
+  onUpdateExpense,
+  onDeleteExpense,
+  onAddBudget,
+  onUpdateBudget,
+  onDeleteBudget,
+  onAddCategory,
+  onUpdateCategory,
+  onDeleteCategory,
+  onAddPerson,
+  onUpdatePerson,
+  onDeletePerson,
+  onAddTemplate,
+  onUpdateTemplate,
+  onDeleteTemplate,
 }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       role: 'assistant',
-      content: 'Hi! I\'m your AI financial assistant. I can help you understand your spending, manage budgets, and answer questions about your finances. What would you like to know?',
+      content: 'Hi! I\'m KautilyaAI, your intelligent financial co-pilot. I can help you understand your spending, manage budgets, and answer questions about your finances. What would you like to know?',
       timestamp: new Date(),
     }
   ]);
@@ -88,13 +119,167 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
       const data = result.data as any;
       
       if (data.success) {
+        // Handle executed actions (CRUD operations)
+        if (data.executedActions && data.executedActions.length > 0) {
+          for (const action of data.executedActions) {
+            if (action.success) {
+              
+              // Execute frontend CRUD operations to update UI state
+              if (action.type === 'add_expense' && action.data && onAddExpense) {
+                try {
+                  await onAddExpense(action.data);
+                  toast.success(`✅ Expense added: ₹${action.data.amount} for ${action.data.category}`, {
+                    description: `ID: ${action.data.id} - ${action.data.description}`,
+                    duration: 5000
+                  });
+                } catch (error) {
+                  toast.error(`❌ Failed to sync expense to UI`);
+                }
+              } 
+              
+              else if (action.type === 'add_budget' && action.data && onAddBudget) {
+                try {
+                  await onAddBudget(action.data);
+                  toast.success(`✅ Budget created: ₹${action.data.limit} for ${action.data.category}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync budget to UI`);
+                }
+              } 
+              
+              else if (action.type === 'update_budget' && action.data && onUpdateBudget) {
+                try {
+                  await onUpdateBudget(action.data.id, action.data);
+                  toast.success(`✅ Budget updated: ₹${action.data.limit} for ${action.data.category}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync budget update to UI`);
+                }
+              } 
+              
+              else if (action.type === 'delete_expense' && action.data && onDeleteExpense) {
+                try {
+                  await onDeleteExpense(action.data.id);
+                  toast.success(`✅ Expense deleted successfully`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync expense deletion to UI`);
+                }
+              } 
+              
+              else if (action.type === 'delete_budget' && action.data && onDeleteBudget) {
+                try {
+                  await onDeleteBudget(action.data.id);
+                  toast.success(`✅ Budget deleted successfully`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync budget deletion to UI`);
+                }
+              } 
+              
+              else if (action.type === 'add_category' && action.data && onAddCategory) {
+                try {
+                  await onAddCategory(action.data);
+                  toast.success(`✅ Category created: ${action.data.name}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync category to UI`);
+                  console.error('Category sync error:', error);
+                }
+              } 
+              
+              else if (action.type === 'update_category' && action.data && onUpdateCategory) {
+                try {
+                  await onUpdateCategory(action.data.id, action.data);
+                  toast.success(`✅ Category updated: ${action.data.name}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync category update to UI`);
+                }
+              } 
+              
+              else if (action.type === 'delete_category' && action.data && onDeleteCategory) {
+                try {
+                  await onDeleteCategory(action.data.id);
+                  toast.success(`✅ Category deleted successfully`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync category deletion to UI`);
+                }
+              }
+              
+              // Handle other operations with frontend callbacks
+              else if (action.type === 'add_person' && action.data && onAddPerson) {
+                try {
+                  await onAddPerson(action.data);
+                  toast.success(`✅ Person added: ${action.data.name} (${action.data.relationship})`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync person to UI`);
+                  console.error('Person sync error:', error);
+                }
+              } else if (action.type === 'update_person' && action.data && onUpdatePerson) {
+                try {
+                  await onUpdatePerson(action.data.id, action.data);
+                  toast.success(`✅ Person updated: ${action.data.newName || action.data.name}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync person update to UI`);
+                  console.error('Person update sync error:', error);
+                }
+              } else if (action.type === 'delete_person' && action.data && onDeletePerson) {
+                try {
+                  await onDeletePerson(action.data.id);
+                  toast.success(`✅ Person deleted: ${action.data.name}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync person deletion to UI`);
+                  console.error('Person deletion sync error:', error);
+                }
+              } else if (action.type === 'add_template' && action.data && onAddTemplate) {
+                try {
+                  await onAddTemplate(action.data);
+                  toast.success(`✅ Template created: ${action.data.title}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync template to UI`);
+                  console.error('Template sync error:', error);
+                }
+              } else if (action.type === 'update_template' && action.data && onUpdateTemplate) {
+                try {
+                  await onUpdateTemplate(action.data.id, action.data);
+                  toast.success(`✅ Template updated: ${action.data.title}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync template update to UI`);
+                  console.error('Template update sync error:', error);
+                }
+              } else if (action.type === 'delete_template' && action.data && onDeleteTemplate) {
+                try {
+                  await onDeleteTemplate(action.data.id);
+                  toast.success(`✅ Template deleted: ${action.data.title}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync template deletion to UI`);
+                  console.error('Template deletion sync error:', error);
+                }
+              }
+              
+              // Handle operations without frontend callbacks (fallback toast only)
+              else if (action.type === 'add_person' && action.data) {
+                toast.success(`✅ Person added: ${action.data.name} (${action.data.relationship})`);
+              } else if (action.type === 'update_person' && action.data) {
+                toast.success(`✅ Person updated: ${action.data.newName || action.data.name}`);
+              } else if (action.type === 'delete_person' && action.data) {
+                toast.success(`✅ Person deleted: ${action.data.name}`);
+              } else if (action.type === 'add_template' && action.data) {
+                toast.success(`✅ Template created: ${action.data.title}`);
+              } else if (action.type === 'update_template' && action.data) {
+                toast.success(`✅ Template updated: ${action.data.title}`);
+              } else if (action.type === 'delete_template' && action.data) {
+                toast.success(`✅ Template deleted: ${action.data.title}`);
+              }
+              
+            } else {
+              toast.error(`❌ Action failed: ${action.error || 'Unknown error'}`);
+            }
+          }
+        }
+
         // Add AI response
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
           content: data.response,
           timestamp: new Date(),
-          actionItems: data.context || []
+          actionItems: data.actionItems || []
         };
         
         setMessages(prev => [...prev, aiMessage]);
@@ -150,8 +335,8 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-3xl h-[85vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-3xl h-[85vh] flex flex-col overflow-hidden shadow-2xl">
         <CardHeader className="flex-shrink-0 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -161,7 +346,7 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="text-lg">AI Financial Assistant</CardTitle>
+                <CardTitle className="text-lg">KautilyaAI Co-Pilot</CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Powered by Gemini AI
                 </p>

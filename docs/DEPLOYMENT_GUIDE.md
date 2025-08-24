@@ -1,6 +1,6 @@
 # 🚀 Deployment Guide - Budget Buddy
 
-**Application**: Budget Buddy v2.5.1  
+**Application**: FinBuddy v2.6.0  
 **Last Updated**: August 23, 2025  
 **Deployment Status**: Production Ready
 
@@ -385,7 +385,7 @@ npm run build:analyze
 
 ```javascript
 // Service Worker Cache Strategy
-const CACHE_NAME = 'budget-buddy-v2.2.1';
+const CACHE_NAME = 'finbuddy-v2.6.0';
 const STATIC_CACHE = [
   '/',
   '/static/js/main.js',

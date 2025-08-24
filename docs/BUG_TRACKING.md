@@ -411,7 +411,7 @@ For future bug reports, please include:
   - Toggle buttons in muted background with active/inactive states
   - List view: Single row per expense with all info inline
   - Grid view: Card-based responsive columns (1-4 based on screen size)
-- **Persistence**: User preference saved to localStorage as 'budget-buddy-view-mode'
+- **Persistence**: User preference saved to localStorage as 'finbuddy-view-mode'
 - **Default**: Grid view (maintains current user experience)
 - **Files Modified**: `src/App.tsx`, `src/components/ExpenseCard.tsx`
 - **Testing**: ✅ Verified both view modes work correctly, toggle persists across sessions

@@ -116,13 +116,13 @@ interface ComponentProps {
 
 // In main App component
 const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
-  const saved = localStorage.getItem('budget-buddy-view-mode');
+  const saved = localStorage.getItem('finbuddy-view-mode');
   return (saved as 'list' | 'grid') || 'grid';
 });
 
 // Persist view mode changes
 useEffect(() => {
-  localStorage.setItem('budget-buddy-view-mode', viewMode);
+  localStorage.setItem('finbuddy-view-mode', viewMode);
 }, [viewMode]);
 
 // Conditional rendering based on view mode
@@ -576,12 +576,12 @@ const selectedPeopleData = selectedPeople.map(id =>
 ```typescript
 // Persistent view mode implementation
 const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
-  const saved = localStorage.getItem('budget-buddy-view-mode');
+  const saved = localStorage.getItem('finbuddy-view-mode');
   return (saved as 'list' | 'grid') || 'grid';
 });
 
 useEffect(() => {
-  localStorage.setItem('budget-buddy-view-mode', viewMode);
+  localStorage.setItem('finbuddy-view-mode', viewMode);
 }, [viewMode]);
 ```
 

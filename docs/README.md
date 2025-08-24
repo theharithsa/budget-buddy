@@ -1,10 +1,20 @@
-# 📚 Budget Buddy Documentation Center
+# 📚 FinBuddy Documentation Center
 
-Welcome to the comprehensive documentation for Budget Buddy v2.5.5 - a modern personal finance analytics platform built with React, TypeScript, and Firebase.
+Welcome to the comprehensive documentation for FinBuddy v2.6.0 - a revolutionary AI-powered personal finance management platform featuring KautilyaAI Co-Pilot for complete conversational CRUD operations.
+
+## 🚀 What's New in v2.6.0
+
+### 🤖 **KautilyaAI Co-Pilot Revolution**
+- **Complete Conversational CRUD**: Manage ALL financial data through natural language
+- **Real-Time UI Synchronization**: Every chat operation instantly updates the interface  
+- **Context-Aware Intelligence**: AI remembers conversation history for smart interactions
+- **Enhanced Firebase Functions v2**: 20+ regex patterns for sophisticated language processing
+
+**Try it now:** "Add ₹500 for education" → Creates category if needed + adds expense instantly!
 
 ## 🏁 Quick Start Guide
 
-New to Budget Buddy? Start here:
+New to FinBuddy? Start here:
 
 1. **[Firebase Setup Guide](./FIREBASE_SETUP.md)** - Configure your backend services
 2. **[Product Requirements Document](./PRD.md)** - Understand application features
@@ -104,7 +114,7 @@ Historical documentation:
 - [Azure Deployment Guides](./AZURE_DEPLOYMENT_GUIDE.md)
 - [Old Version Changelogs](./CHANGELOG_v2.1.0.md)
 
-## 🏗️ Current Architecture (v2.5.1)
+## 🏗️ Current Architecture (v2.6.0)
 
 ### **Frontend Stack**
 - **React 18** with TypeScript and Vite
@@ -141,7 +151,7 @@ Historical documentation:
 
 ## 🔄 Version Information
 
-- **Current Version**: v2.5.1
+- **Current Version**: v2.6.0
 - **Release Management**: [Version Management Guide](./VERSION_MANAGEMENT.md)
 - **Changelog**: See main [CHANGELOG.md](../CHANGELOG.md)
 - **Semantic Versioning**: Major.Minor.Patch format
@@ -186,6 +196,6 @@ This documentation is actively maintained and updated with each release.
 
 **Last Updated**: v2.5.1 (August 2025)  
 **Status**: ✅ Current and Complete  
-**Maintainer**: Budget Buddy Development Team
+**Maintainer**: FinBuddy Development Team
 
 [← Back to Main Project](../README.md)

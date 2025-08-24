@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Integration - Budget Buddy Developer Docs</title>
+    <title>Firebase Integration - FinBuddy Developer Docs</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -228,7 +228,7 @@
                 <a href="./index.html">Developer Docs</a> > Firebase Integration
             </div>
             <h1>🔥 Firebase Integration</h1>
-            <p>Complete Firebase setup, configuration, and usage patterns for Budget Buddy</p>
+            <p>Complete Firebase setup, configuration, and usage patterns for FinBuddy</p>
         </header>
 
         <div class="info">
@@ -640,6 +640,251 @@ service firebase.storage {
 }</code></pre>
         </div>
 
+        <h2>🤖 KautilyaAI Co-Pilot Integration (v2.6.0)</h2>
+
+        <div class="section-card">
+            <h3>Firebase Functions v2 Backend</h3>
+            <p><strong>Location:</strong> <code>functions/src/index.ts</code></p>
+            
+            <p>The KautilyaAI Co-Pilot system uses Firebase Functions v2 to process natural language commands and perform comprehensive CRUD operations across all FinBuddy data types.</p>
+
+            <h4>Function Definition</h4>
+            <pre><code>// Firebase Functions v2 with CORS and enhanced error handling
+export const chatWithGemini = onRequest(
+  {
+    cors: true,                    // Enable cross-origin requests
+    timeoutSeconds: 60,           // Extended timeout for AI processing
+    memory: "1GiB",               // Increased memory for complex operations
+    region: "us-central1"         // Optimal region for performance
+  },
+  async (request: Request, response: Response) => {
+    try {
+      // CORS headers for client compatibility
+      response.set("Access-Control-Allow-Origin", "*");
+      response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      response.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+      if (request.method === "OPTIONS") {
+        response.status(200).send();
+        return;
+      }
+
+      // Extract conversation data and user context
+      const { message, conversationId, userId, userContext } = request.body;
+      
+      // Process with enhanced parseAndExecuteActions
+      const result = await parseAndExecuteActions(
+        message, conversationId, userId, userContext
+      );
+      
+      response.status(200).json({ 
+        response: result.response,
+        executedActions: result.executedActions 
+      });
+    } catch (error) {
+      console.error("Chat function error:", error);
+      response.status(500).json({ error: "Internal server error" });
+    }
+  }
+);</code></pre>
+
+            <h4>Enhanced CRUD Processing</h4>
+            <pre><code>// Comprehensive natural language processing with 20+ regex patterns
+async function parseAndExecuteActions(
+  message: string,
+  conversationId: string,
+  userId: string,
+  userContext: any
+): Promise&lt;{ response: string; executedActions: any }&gt; {
+  
+  const executedActions: any = {};
+  let processedMessage = message.toLowerCase();
+
+  // Enhanced category detection with fuzzy matching
+  const categoryPatterns = [
+    /(?:add|create|new).*?(?:category|cat).*?(?:called|named|for)\s*["']?([^"'\n]+)["']?/i,
+    /(?:category|cat).*?["']([^"']+)["']/i,
+    /for\s+([a-zA-Z\s]+?)(?:\s+category)?(?:\s|$)/i,
+    /in\s+([a-zA-Z\s]+?)(?:\s+category)?(?:\s|$)/i,
+    // ... 16+ more sophisticated patterns
+  ];
+
+  // Smart category mapping with common variations
+  const categoryMapping: { [key: string]: string } = {
+    "food": "Food & Dining",
+    "transport": "Transportation", 
+    "education": "Education",
+    "entertainment": "Entertainment",
+    "health": "Healthcare",
+    // ... comprehensive category mappings
+  };
+
+  // Context-aware conversation memory
+  if (!conversationMemory.has(conversationId)) {
+    conversationMemory.set(conversationId, {
+      recentExpenses: [],
+      recentBudgets: [],
+      recentCategories: [],
+      lastOperations: []
+    });
+  }
+
+  // Process expense operations
+  const expenseMatch = processedMessage.match(/add.*?₹?(\d+(?:\.\d{2})?).*?(?:for|in)\s+(.+?)(?:\s|$)/i);
+  if (expenseMatch) {
+    const amount = parseFloat(expenseMatch[1]);
+    let category = expenseMatch[2]?.trim();
+    
+    // Smart category detection and creation
+    category = categoryMapping[category.toLowerCase()] || 
+               category.charAt(0).toUpperCase() + category.slice(1);
+
+    const expense = {
+      amount,
+      category,
+      description: `${category} expense`,
+      date: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString()
+    };
+
+    // Add to Firebase and update memory
+    await addExpenseToFirestore(userId, expense);
+    executedActions.addedExpense = expense;
+    
+    // Update conversation memory
+    const memory = conversationMemory.get(conversationId);
+    memory.recentExpenses.unshift({ ...expense, id: 'temp-id' });
+    if (memory.recentExpenses.length > 10) memory.recentExpenses.pop();
+  }
+
+  // Enhanced deletion with context awareness
+  const deleteMatch = processedMessage.match(/delete.*?(?:last|recent)?\s*(.+?)(?:\s+expense)?/i);
+  if (deleteMatch) {
+    const memory = conversationMemory.get(conversationId);
+    const recentExpenses = memory?.recentExpenses || [];
+    
+    if (recentExpenses.length > 0) {
+      const expenseToDelete = recentExpenses[0];
+      await deleteExpenseFromFirestore(userId, expenseToDelete.id);
+      executedActions.deletedExpense = expenseToDelete;
+      memory.recentExpenses.shift(); // Remove from memory
+    }
+  }
+
+  // Template operations with comprehensive update support
+  const templateUpdateMatch = processedMessage.match(/update.*?template.*?(title|name|amount).*?to\s+(.+)/i);
+  if (templateUpdateMatch) {
+    const field = templateUpdateMatch[1].toLowerCase();
+    const newValue = templateUpdateMatch[2].trim();
+    
+    // Process template updates based on field type
+    if (field === 'amount') {
+      const amount = parseFloat(newValue.replace(/[₹,]/g, ''));
+      executedActions.updatedTemplate = { field, value: amount };
+    } else {
+      executedActions.updatedTemplate = { field, value: newValue };
+    }
+  }
+
+  // Generate contextual AI response using Gemini 2.0 Flash
+  const response = await generateGeminiResponse(message, executedActions, userContext);
+  
+  return { response, executedActions };
+}</code></pre>
+
+            <h3>Frontend Integration Pipeline</h3>
+            <p><strong>Location:</strong> <code>src/components/GeminiChat.tsx</code></p>
+
+            <h4>ExecutedActions Processing</h4>
+            <pre><code>// Comprehensive frontend callback execution for real-time UI updates
+const handleExecutedActions = async (executedActions: any) => {
+  try {
+    // Expense operations with immediate UI synchronization
+    if (executedActions.addedExpense) {
+      await onAddExpense(executedActions.addedExpense);
+      toast.success(`Added expense: ₹${executedActions.addedExpense.amount} for ${executedActions.addedExpense.category}`);
+    }
+
+    if (executedActions.updatedExpense) {
+      await onUpdateExpense(executedActions.updatedExpense.id, executedActions.updatedExpense.updates);
+      toast.success("Expense updated successfully");
+    }
+
+    if (executedActions.deletedExpense) {
+      await onDeleteExpense(executedActions.deletedExpense.id);
+      toast.success("Expense deleted successfully");
+    }
+
+    // Category operations with instant UI reflection
+    if (executedActions.addedCategory) {
+      await onAddCategory(executedActions.addedCategory);
+      toast.success(`Created category: ${executedActions.addedCategory.name}`);
+    }
+
+    if (executedActions.deletedCategory) {
+      await onDeleteCategory(executedActions.deletedCategory.id);
+      toast.success("Category deleted successfully");
+    }
+
+    // Budget operations with real-time updates
+    if (executedActions.addedBudget) {
+      await onAddBudget(executedActions.addedBudget);
+      toast.success(`Created budget: ₹${executedActions.addedBudget.limit} for ${executedActions.addedBudget.category}`);
+    }
+
+    if (executedActions.updatedBudget) {
+      await onUpdateBudget(executedActions.updatedBudget.id, executedActions.updatedBudget.updates);
+      toast.success("Budget updated successfully");
+    }
+
+    // People and template operations
+    if (executedActions.addedPerson) {
+      await onAddPerson(executedActions.addedPerson);
+      toast.success(`Added person: ${executedActions.addedPerson.name}`);
+    }
+
+    if (executedActions.addedTemplate) {
+      await onAddTemplate(executedActions.addedTemplate);
+      toast.success(`Created template: ${executedActions.addedTemplate.description}`);
+    }
+
+    if (executedActions.updatedTemplate) {
+      const { field, value } = executedActions.updatedTemplate;
+      toast.success(`Updated template ${field} to: ${value}`);
+    }
+
+  } catch (error) {
+    console.error('Error executing actions:', error);
+    toast.error('Failed to execute some operations');
+  }
+};</code></pre>
+
+            <h4>Chat Interface Integration</h4>
+            <pre><code>// Complete CRUD callback props for comprehensive data management
+interface GeminiChatProps {
+  onAddExpense: (expense: Omit&lt;Expense, 'id'&gt;) => Promise&lt;void&gt;;
+  onUpdateExpense: (id: string, updates: Partial&lt;Expense&gt;) => Promise&lt;void&gt;;
+  onDeleteExpense: (id: string) => Promise&lt;void&gt;;
+  onAddBudget: (budget: Omit&lt;Budget, 'id'&gt;) => Promise&lt;void&gt;;
+  onUpdateBudget: (id: string, updates: Partial&lt;Budget&gt;) => Promise&lt;void&gt;;
+  onDeleteBudget: (id: string) => Promise&lt;void&gt;;
+  onAddCategory: (category: Omit&lt;CustomCategory, 'id'&gt;) => Promise&lt;void&gt;;
+  onDeleteCategory: (id: string) => Promise&lt;void&gt;;
+  onAddPerson: (person: Omit&lt;Person, 'id'&gt;) => Promise&lt;void&gt;;
+  onUpdatePerson: (id: string, updates: Partial&lt;Person&gt;) => Promise&lt;void&gt;;
+  onDeletePerson: (id: string) => Promise&lt;void&gt;;
+  onAddTemplate: (template: Omit&lt;RecurringTemplate, 'id'&gt;) => Promise&lt;void&gt;;
+  onDeleteTemplate: (id: string) => Promise&lt;void&gt;;
+  userContext?: {
+    expenses: Expense[];
+    budgets: Budget[];
+    categories: CustomCategory[];
+    people: Person[];
+    templates: RecurringTemplate[];
+  };
+}</code></pre>
+        </div>
+
         <h2>Data Management Hook</h2>
 
         <div class="section-card">
@@ -804,7 +1049,7 @@ const batchAddExpenses = async (userId: string, expenses: Omit&lt;Expense, 'id'&
 
         <h2>🚀 Firebase Functions v2 Integration (v2.6.0)</h2>
         
-        <p>Budget Buddy v2.6.0 introduces Firebase Functions v2 with enhanced AI Chat capabilities and improved CORS handling.</p>
+        <p>FinBuddy v2.6.0 introduces Firebase Functions v2 with enhanced AI Chat capabilities and improved CORS handling.</p>
 
         <h3>Firebase Functions Setup</h3>
         <div class="code-block">
@@ -846,7 +1091,7 @@ export const chatWithAI = onRequest({
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
         
-        const prompt = `You are a personal finance assistant for Budget Buddy.
+        const prompt = `You are a personal finance assistant for FinBuddy.
         User message: ${message}
         User expenses: ${JSON.stringify(expenses)}
         User budgets: ${JSON.stringify(budgets)}
@@ -971,7 +1216,7 @@ service cloud.firestore {
         </div>
 
         <footer>
-            <p>&copy; 2025 Budget Buddy Developer Documentation | 
+            <p>&copy; 2025 FinBuddy Developer Documentation | 
                <a href="./index.html">Back to Index</a> | 
                <a href="./architecture.html">Architecture</a> |
                <a href="./api-reference.html">API Reference</a>

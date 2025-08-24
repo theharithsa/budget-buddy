@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Budget Buddy will be documented in this file.
+All notable changes to FinBuddy will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -11,24 +11,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🚀 Major Features Added
 
-- **🤖 AI Chat Integration**: Revolutionary conversational AI assistant powered by Google Gemini 2.5 Flash
-  - Dedicated AI Chat page with persistent conversation history
-  - Natural language financial queries and insights
-  - Real-time expense analysis and budget recommendations
-  - Markdown-formatted responses with rich text and lists
-  - Context-aware financial advice tailored to user spending patterns
+- **🤖 KautilyaAI Co-Pilot**: Revolutionary conversational CRUD system powered by Google Gemini 2.0 Flash
+  - Complete natural language data management for all FinBuddy operations
+  - Real-time UI synchronization with comprehensive CRUD operations
+  - Context-aware conversation memory for intelligent interactions
+  - Smart category detection with fuzzy matching algorithms
+  - Enhanced backdrop blur design for premium AI experience
 
-- **💬 Conversational Finance Management**:
-  - Ask questions like "How much did I spend on food last month?"
-  - Get personalized savings recommendations
-  - Receive budget alerts and spending analysis through chat
-  - Quick action buttons for common financial queries
+- **💬 Complete Conversational Data Management**:
+  - **Expenses**: "Add ₹500 for education" → Creates category if needed + adds expense
+  - **Categories**: "Create new category Transportation" → Appears immediately in UI
+  - **Budgets**: "Set ₹5000 budget for groceries" → Creates budget with real-time updates
+  - **People**: "Add person John for shared expenses" → Full people management
+  - **Templates**: "Create template for monthly rent ₹15000" → Template CRUD operations
+  - Context-aware deletions: "Delete the last grocery expense" → Remembers conversation context
 
-- **🔥 Firebase Functions v2 Backend**: Complete serverless architecture
-  - Cloud Functions with CORS support for cross-origin requests
-  - Secure API key management and environment variable handling
-  - Error handling and logging for production reliability
-  - Scalable architecture ready for high-traffic usage
+- **🔥 Enhanced Firebase Functions v2**: Comprehensive CRUD backend architecture
+  - 20+ advanced regex patterns for natural language processing
+  - Smart category mapping with intelligent fuzzy matching
+  - Conversation memory system for context-aware operations
+  - Template update operations (title changes, amount modifications)
+  - Complete error handling with detailed user feedback
+
+- **⚡ Real-Time UI State Synchronization**:
+  - ExecutedActions pipeline calling frontend CRUD functions
+  - Immediate UI reflection of all chat-based operations
+  - Enhanced toast notifications for operation feedback
+  - Complete TypeScript interface integration
 
 ### 🌍 Localization & Regional Support
 

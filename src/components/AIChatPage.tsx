@@ -75,14 +75,13 @@ export const AIChatPage: React.FC = () => {
       setLoadingHistory(false);
     }, 10000); // 10 second timeout
 
-    // Load chat sessions first
-    const loadSessions = async () => {
+    // Load chat sessions with real-time updates
+    const sessionsRef = collection(db, `users/${user.uid}/chatSessions`);
+    const q = query(sessionsRef, orderBy('lastActivity', 'desc'), limit(10));
+    
+    const unsubscribeSessions = onSnapshot(q, async (snapshot) => {
       try {
-        console.log('Loading chat sessions for user:', user.uid);
-        const sessionsRef = collection(db, `users/${user.uid}/chatSessions`);
-        const q = query(sessionsRef, orderBy('lastActivity', 'desc'), limit(10));
-        const snapshot = await getDocs(q);
-        
+        console.log('Sessions updated, loading new data...');
         const loadedSessions: ChatSession[] = [];
         snapshot.docs.forEach(doc => {
           const data = doc.data();
@@ -96,14 +95,14 @@ export const AIChatPage: React.FC = () => {
           });
         });
 
-        console.log('Loaded sessions:', loadedSessions.length);
+        console.log('Real-time sessions update:', loadedSessions.length);
         setSessions(loadedSessions);
 
         // Set current session (most recent or create new)
         if (loadedSessions.length > 0 && !currentSessionId) {
           console.log('Setting current session to:', loadedSessions[0].id);
           setCurrentSessionId(loadedSessions[0].id);
-        } else if (loadedSessions.length === 0) {
+        } else if (loadedSessions.length === 0 && !currentSessionId) {
           // Create new session
           console.log('Creating new session');
           const newSessionId = await createNewSession();
@@ -118,16 +117,20 @@ export const AIChatPage: React.FC = () => {
         }
         
         clearTimeout(loadingTimeout);
+        setLoadingHistory(false);
       } catch (error) {
-        console.error('Error loading sessions:', error);
+        console.error('Error in sessions listener:', error);
         clearTimeout(loadingTimeout);
         setLoadingHistory(false);
       }
-    };
-
-    loadSessions();
+    }, (error) => {
+      console.error('Sessions listener error:', error);
+      clearTimeout(loadingTimeout);
+      setLoadingHistory(false);
+    });
 
     return () => {
+      unsubscribeSessions();
       clearTimeout(loadingTimeout);
     };
   }, [user]);
@@ -488,53 +491,67 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <Card className="mb-4">
-        <CardHeader className="pb-3">
+      <Card className="mb-4 shadow-lg border-0">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Sparkles className="h-6 w-6 text-primary" />
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-primary to-primary/80 rounded-xl shadow-lg">
+                <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl">KautilyaAI Co-Pilot</CardTitle>
-                <p className="text-sm text-muted-foreground">
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  KautilyaAI Co-Pilot
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
                   Your intelligent financial advisor - bringing ancient wisdom to modern wealth
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               {/* Chat Sessions */}
               <Sheet open={showSessions} onOpenChange={setShowSessions}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="shadow-md hover:shadow-lg transition-shadow border-0">
                     <History className="h-4 w-4" />
                     <span className="hidden sm:ml-1 sm:inline">Chat History</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-80">
-                  <SheetHeader>
-                    <SheetTitle className="flex items-center space-x-2">
-                      <MessageSquare className="h-5 w-5" />
+                <SheetContent side="right" className="w-80 backdrop-blur-md bg-background/95 shadow-2xl border-0">
+                  <SheetHeader className="pb-4">
+                    <SheetTitle className="flex items-center space-x-2 text-lg">
+                      <div className="p-2 bg-primary/10 rounded-lg shadow-sm">
+                        <MessageSquare className="h-5 w-5 text-primary" />
+                      </div>
                       <span>Chat Sessions</span>
                     </SheetTitle>
                   </SheetHeader>
-                  <div className="mt-6 space-y-4">
-                    <Button onClick={createNewChatSession} className="w-full" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      New Chat Session
-                    </Button>
+                  <div className="mt-6 space-y-4 px-4">
+                    {/* New Chat Button - Centered and styled */}
+                    <div className="flex justify-center px-2">
+                      <Button 
+                        onClick={createNewChatSession} 
+                        className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-shadow px-6 py-2 rounded-lg font-medium text-sm border-0" 
+                        size="sm"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        New Chat Session
+                      </Button>
+                    </div>
                     
-                    <div className="space-y-2">
+                    {/* Session List with improved styling */}
+                    <div className="space-y-3 px-2">
                       {sessions.map((session) => (
                         <div 
                           key={session.id} 
-                          className={`group relative p-3 rounded-lg border transition-colors hover:bg-muted/50 cursor-pointer ${
-                            currentSessionId === session.id ? 'ring-2 ring-primary bg-muted/30' : ''
+                          className={`group relative p-3 mx-1 rounded-xl transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg ${
+                            currentSessionId === session.id 
+                              ? 'bg-primary/5 shadow-lg ring-1 ring-primary/20' 
+                              : 'bg-card hover:bg-muted/30'
                           }`}
                           onClick={() => switchToSession(session.id)}
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0 pr-2">
                               {editingSessionId === session.id ? (
                                 <Input
                                   value={editingTitle}
@@ -555,7 +572,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                                       setEditingSessionId(null);
                                     }
                                   }}
-                                  className="h-6 text-sm"
+                                  className="h-7 text-sm font-medium shadow-sm border-0 focus:ring-2 focus:ring-primary/50"
                                   autoFocus
                                   onClick={(e) => e.stopPropagation()}
                                 />
@@ -566,26 +583,35 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                                     setEditingSessionId(session.id);
                                     setEditingTitle(session.title);
                                   }}
-                                  className="cursor-text"
+                                  className="cursor-text group/title"
                                 >
-                                  <h4 className="font-medium text-sm truncate hover:text-primary">
+                                  <h4 className="font-semibold text-sm truncate text-foreground group-hover/title:text-primary transition-colors">
                                     {session.title}
                                   </h4>
                                 </div>
                               )}
-                              <div className="flex items-center space-x-2 mt-1">
-                                <span className="text-xs text-muted-foreground">
-                                  {session.messageCount} msgs
-                                </span>
-                                <span className="text-xs text-muted-foreground">
-                                  {session.lastActivity.toLocaleDateString()}
-                                </span>
+                              <div className="flex items-center space-x-3 mt-2">
+                                <div className="flex items-center space-x-1">
+                                  <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+                                  <span className="text-xs text-muted-foreground font-medium">
+                                    {session.messageCount} msgs
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <div className="w-2 h-2 rounded-full bg-muted-foreground/40"></div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {session.lastActivity.toLocaleDateString()}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                             
-                            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {/* Action buttons */}
+                            <div className="flex items-center space-x-1">
                               {currentSessionId === session.id && (
-                                <Badge variant="default" className="text-xs">Active</Badge>
+                                <Badge variant="default" className="text-xs px-2 py-1 bg-primary/10 text-primary shadow-sm border-0">
+                                  Active
+                                </Badge>
                               )}
                               <Button
                                 variant="ghost"
@@ -594,9 +620,9 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                                   e.stopPropagation();
                                   deleteSession(session.id);
                                 }}
-                                className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                                className="h-7 w-7 p-0 text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
                               >
-                                <Trash2 className="h-3 w-3" />
+                                <Trash2 className="h-3.5 w-3.5" />
                               </Button>
                             </div>
                           </div>
@@ -604,9 +630,11 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                       ))}
                       
                       {sessions.length === 0 && (
-                        <div className="text-center py-6 text-muted-foreground">
-                          <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                          <p className="text-sm">No chat sessions yet</p>
+                        <div className="text-center py-8 text-muted-foreground">
+                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
+                            <MessageSquare className="h-8 w-8 opacity-50" />
+                          </div>
+                          <h3 className="font-medium text-sm mb-1">No chat sessions yet</h3>
                           <p className="text-xs">Start a conversation to create your first session</p>
                         </div>
                       )}
@@ -615,7 +643,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                 </SheetContent>
               </Sheet>
 
-              <Badge variant="secondary" className="hidden sm:flex">
+              <Badge variant="secondary" className="hidden sm:flex shadow-md bg-muted/80 backdrop-blur-sm">
                 <MessageSquare className="h-3 w-3 mr-1" />
                 {messages.filter(m => m.id !== 'welcome').length} messages
               </Badge>
@@ -623,7 +651,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                 variant="outline"
                 size="sm"
                 onClick={deleteCurrentSession}
-                className="text-red-600 hover:text-red-700"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 shadow-md hover:shadow-lg transition-all border-0"
               >
                 <Trash2 className="h-4 w-4" />
                 <span className="hidden sm:ml-1 sm:inline">Delete Chat</span>
@@ -634,10 +662,10 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
       </Card>
 
       {/* Chat Messages */}
-      <Card className="flex-1 flex flex-col min-h-0">
-        <CardContent className="flex-1 flex flex-col p-4 min-h-0">
+      <Card className="flex-1 flex flex-col min-h-0 shadow-xl border-0">
+        <CardContent className="flex-1 flex flex-col p-6 min-h-0">
           <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4">
+            <div className="space-y-6">
               {messages.map((message) => (
                 <div key={message.id} className="flex items-start space-x-3">
                   <Avatar className="h-8 w-8 shrink-0">

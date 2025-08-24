@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Buddy Developer Documentation</title>
+    <title>FinBuddy Developer Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -218,29 +218,29 @@
     <div class="container">
         <header>
             <h1>🔧 Developer Documentation</h1>
-            <p class="subtitle">Comprehensive development guide for Budget Buddy v2.6.0</p>
+            <p class="subtitle">Comprehensive development guide for FinBuddy v2.6.0</p>
             <span class="version-badge">Developer Edition</span>
         </header>
 
         <!-- What's New in v2.6.0 Section -->
-        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
-            <h2 style="color: white; margin-bottom: 1rem;">🚀 What's New in v2.6.0</h2>
+        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: white; margin-bottom: 1rem;">🚀 What's New in v2.6.0: KautilyaAI Co-Pilot</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                 <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
-                    <h4 style="color: white; margin-bottom: 0.5rem;">🔥 Firebase Functions v2</h4>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Upgraded to Firebase Functions v2 with improved CORS handling and AI Chat integration.</p>
+                    <h4 style="color: white; margin-bottom: 0.5rem;">🤖 Complete CRUD System</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Revolutionary conversational data management with Google Gemini 2.0 Flash supporting all FinBuddy operations.</p>
                 </div>
                 <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
-                    <h4 style="color: white; margin-bottom: 0.5rem;">🤖 Gemini 2.0 Flash</h4>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Integrated Google's latest Gemini 2.0 Flash model for enhanced AI Chat capabilities.</p>
+                    <h4 style="color: white; margin-bottom: 0.5rem;">⚡ Real-Time UI Sync</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">ExecutedActions pipeline with comprehensive frontend callback integration for instant UI updates.</p>
                 </div>
                 <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
-                    <h4 style="color: white; margin-bottom: 0.5rem;">🇮🇳 Localization</h4>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Full Indian Rupee (₹) support with proper number formatting and cultural context.</p>
+                    <h4 style="color: white; margin-bottom: 0.5rem;">🧠 Context-Aware Memory</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Advanced conversation memory system with smart category detection and 20+ regex patterns.</p>
                 </div>
                 <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
-                    <h4 style="color: white; margin-bottom: 0.5rem;">⚡ Performance</h4>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">React-markdown integration, enhanced authentication flows, and optimized PWA features.</p>
+                    <h4 style="color: white; margin-bottom: 0.5rem;">🔥 Enhanced Firebase v2</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Comprehensive CRUD backend with template operations, fuzzy matching, and enhanced error handling.</p>
                 </div>
             </div>
         </div>
@@ -248,7 +248,8 @@
         <div class="quick-links">
             <h2>Quick Access</h2>
             <div class="links-grid">
-                <a href="./firebase.html" class="quick-link">🔥 Firebase v2.6.0 (Updated!)</a>
+                <a href="./kautilyaai-copilot.html" class="quick-link">🤖 KautilyaAI Co-Pilot (New!)</a>
+                <a href="./firebase.html" class="quick-link">🔥 Firebase v2.6.0</a>
                 <a href="./architecture.html" class="quick-link">Architecture</a>
                 <a href="./components.html" class="quick-link">Components</a>
                 <a href="./api-reference.html" class="quick-link">API Reference</a>
@@ -259,7 +260,7 @@
 
         <div class="overview">
             <h2>Project Overview</h2>
-            <p>Budget Buddy is a comprehensive personal finance management application built with modern web technologies. This documentation provides detailed technical information for developers working on the codebase.</p>
+            <p>FinBuddy is a comprehensive personal finance management application built with modern web technologies. This documentation provides detailed technical information for developers working on the codebase.</p>
             
             <div class="tech-stack">
                 <div class="tech-item">
@@ -275,7 +276,7 @@
                     <strong>Charts:</strong> ApexCharts
                 </div>
                 <div class="tech-item">
-                    <strong>AI:</strong> Google Gemini 2.0 Flash + OpenAI GPT-4 (Fallback)
+                    <strong>AI:</strong> Google Gemini 2.0 Flash (KautilyaAI Co-Pilot) + OpenAI GPT-4 (Fallback)
                 </div>
                 <div class="tech-item">
                     <strong>PWA:</strong> Service Worker + Offline Support
@@ -284,6 +285,17 @@
         </div>
 
         <div class="nav-grid">
+            <a href="./kautilyaai-copilot.html" class="nav-card">
+                <h3>🤖 KautilyaAI Co-Pilot</h3>
+                <p>Complete implementation guide for the revolutionary conversational CRUD system powered by Google Gemini 2.0 Flash.</p>
+                <ul>
+                    <li>Firebase Functions v2 backend</li>
+                    <li>Natural language processing patterns</li>
+                    <li>Real-time UI synchronization</li>
+                    <li>Context-aware conversation memory</li>
+                </ul>
+            </a>
+
             <a href="./architecture.html" class="nav-card">
                 <h3>🏗️ Architecture & Structure</h3>
                 <p>Complete application architecture, file structure, and design patterns used throughout the codebase.</p>
@@ -440,7 +452,7 @@
 
             <a href="./best-practices.html" class="nav-card">
                 <h3>✨ Best Practices</h3>
-                <p>Development guidelines, coding standards, and recommended patterns for Budget Buddy.</p>
+                <p>Development guidelines, coding standards, and recommended patterns for FinBuddy.</p>
                 <ul>
                     <li>Coding standards</li>
                     <li>Component patterns</li>
@@ -451,7 +463,7 @@
 
             <a href="./contributing.html" class="nav-card">
                 <h3>🤝 Contributing Guide</h3>
-                <p>Guidelines for contributing to Budget Buddy, including setup, workflow, and submission process.</p>
+                <p>Guidelines for contributing to FinBuddy, including setup, workflow, and submission process.</p>
                 <ul>
                     <li>Development setup</li>
                     <li>Workflow guidelines</li>
@@ -462,7 +474,7 @@
         </div>
 
         <footer>
-            <p>&copy; 2025 Budget Buddy Developer Documentation | 
+            <p>&copy; 2025 FinBuddy Developer Documentation | 
                <a href="../docs/index.html">User Documentation</a> | 
                <a href="../docs/privacy-policy.html">Privacy Policy</a> | 
                <a href="../docs/terms-conditions.html">Terms & Conditions</a>

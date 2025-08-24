@@ -1,8 +1,8 @@
-# Gemini Firebase AI Integration Plan for Budget Buddy
+# Gemini Firebase AI Integration Plan for FinBuddy
 
 ## 📋 Overview
 
-This document outlines the comprehensive plan to integrate Gemini Firebase AI into Budget Buddy for enhanced conversational expense management and intelligent financial insights.
+This document outlines the comprehensive plan to integrate Gemini Firebase AI into FinBuddy for enhanced conversational expense management and intelligent financial insights.
 
 ## 🎯 Objectives
 
@@ -17,7 +17,7 @@ This document outlines the comprehensive plan to integrate Gemini Firebase AI in
 ### Current State
 
 ```text
-Budget Buddy App (React + TypeScript)
+FinBuddy App (React + TypeScript)
 ├── Firebase Auth
 ├── Firestore Database (expenses, budgets, people, categories)
 ├── Firebase Storage (receipts)
@@ -28,7 +28,7 @@ Budget Buddy App (React + TypeScript)
 ### Proposed Architecture with Gemini
 
 ```text
-Budget Buddy App (React + TypeScript)
+FinBuddy App (React + TypeScript)
 ├── Firebase Auth
 ├── Firestore Database
 ├── Firebase Storage
@@ -493,4 +493,4 @@ Week 10:    Production rollout
 
 ---
 
-This integration will transform Budget Buddy from a simple expense tracker into an intelligent financial assistant! 🚀
+This integration will transform FinBuddy from a simple expense tracker into an intelligent financial assistant! 🚀

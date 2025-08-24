@@ -1,4 +1,4 @@
-# 💰 Budget Buddy - Smart Personal Finance Manager
+# 💰 FinBuddy - Smart Personal Finance Manager
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
 [![Version](https://img.shields.io/badge/Version-2.6.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
@@ -13,7 +13,7 @@
 [![AI Powered](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-ff6b6b?style=flat-square&logo=google)](https://deepmind.google/technologies/gemini/)
 [![Currency](https://img.shields.io/badge/Currency-Indian%20Rupee%20%E2%82%B9-green?style=flat-square&logo=rupee)](https://en.wikipedia.org/wiki/Indian_rupee)
 
-> **Take control of your finances with intelligent insights, beautiful design, and powerful features. Budget Buddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
+> **Take control of your finances with intelligent insights, beautiful design, and powerful features. FinBuddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
 
 **🌟 Perfect for:** Students, professionals, families, and anyone who wants to improve their financial health with modern technology.
 
@@ -42,14 +42,22 @@
 - **Personalized Recommendations**: Receive AI-generated tips to improve your finances
 - **Trend Detection**: Identify spending trends and habits you might not notice
 
-### 🤖 **AI Chat Revolution** ⭐ *NEW in v2.6.0*
+### 🤖 **KautilyaAI Co-Pilot** ⭐ *NEW in v2.6.0*
 
-- **💬 Conversational Assistant**: Chat naturally about your finances with Google Gemini 2.5 Flash
-- **🧾 Natural Language Queries**: Ask "How much did I spend on food last month?" and get instant answers
-- **💰 Indian Rupee Support**: Perfect formatting (₹1,23,456.78) and localization for Indian users
-- **📚 Conversation History**: All your chats are saved and searchable for future reference
-- **⚡ Quick Actions**: One-tap buttons for common financial questions
-- **🎨 Rich Responses**: Markdown-formatted answers with bold text, lists, and structured insights
+- **💬 Complete Conversational CRUD**: Manage ALL data through natural language with Google Gemini 2.0 Flash
+- **🧾 Smart Data Operations**: "Add ₹500 for education" → Creates category if needed + adds expense instantly
+- **💰 Real-Time UI Updates**: Every chat operation immediately reflects in the interface
+- **📚 Context-Aware Memory**: "Delete the last grocery expense" → Remembers conversation context
+- **⚡ Comprehensive Coverage**: Expenses, budgets, categories, people, templates - all manageable via chat
+- **🎨 Enhanced Backdrop Blur**: Premium AI experience with beautiful design consistency
+
+### 🎯 **What You Can Do Through Chat**
+
+- **Expenses**: "Add ₹200 for coffee", "Update my last expense to ₹150", "Delete food expense"
+- **Categories**: "Create Transportation category", "Delete Entertainment category"  
+- **Budgets**: "Set ₹5000 budget for groceries", "Update food budget to ₹3000"
+- **People**: "Add person John for shared expenses", "Remove person from my list"
+- **Templates**: "Create template for monthly rent ₹15000", "Update rent template amount"
 
 ### 📱 **Modern User Experience**
 
@@ -84,19 +92,20 @@
 
 ### Mobile Installation (PWA)
 
-1. **Open** Budget Buddy in your mobile browser
+1. **Open** FinBuddy in your mobile browser
 2. **Look for** the "Install App" prompt or use browser menu
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and push notifications
 
 ## 🎨 What's New in v2.6.0
 
-### 🤖 **AI Chat Revolution**
+### 🤖 **KautilyaAI Co-Pilot Revolution**
 
-- **Conversational AI**: Chat with Google Gemini 2.5 Flash about your finances
-- **Natural Language**: Ask questions in plain English and get instant insights
-- **Indian Currency**: Perfect ₹ formatting and regional financial context
-- **Smart History**: All conversations saved and searchable
+- **Complete Conversational CRUD**: Revolutionary natural language data management system
+- **Smart Category Detection**: AI automatically creates categories when needed
+- **Context-Aware Operations**: Chat remembers conversation history for intelligent interactions
+- **Real-Time UI Synchronization**: All chat operations instantly update the interface
+- **Enhanced Firebase Functions**: 20+ advanced regex patterns for natural language processing
 
 ### � **Enhanced Authentication**
 
@@ -130,7 +139,7 @@ Will be updated soon
 
 ## 🤝 How to Contribute
 
-We welcome contributions from the community! Here's how you can help make Budget Buddy even better:
+We welcome contributions from the community! Here's how you can help make FinBuddy even better:
 
 ### 🐛 Report Issues
 
@@ -171,7 +180,7 @@ Help us improve our documentation:
 
 ## 📋 Changelog & Updates
 
-Stay up to date with Budget Buddy's latest improvements:
+Stay up to date with FinBuddy's latest improvements:
 
 - **[📝 Changelog](./CHANGELOG.md)** - Complete version history with detailed release notes
 - **[🔄 Version 2.3.0](./CHANGELOG.md#v230)** - Latest features and improvements
@@ -179,7 +188,7 @@ Stay up to date with Budget Buddy's latest improvements:
 
 ## 🆘 Support & Help
 
-Need help using Budget Buddy? Here are your options:
+Need help using FinBuddy? Here are your options:
 
 ### 📚 Documentation
 
@@ -203,7 +212,7 @@ For technical problems:
 
 ## 📱 System Requirements
 
-Budget Buddy works on all modern devices:
+FinBuddy works on all modern devices:
 
 ### 💻 Desktop Browsers
 
@@ -238,7 +247,7 @@ Read our complete [Privacy Policy](./docs/PRIVACY.md) and [Security Guidelines](
 
 ## 🏆 Recognition
 
-Budget Buddy has been recognized for:
+FinBuddy has been recognized for:
 
 - **💡 Innovation**: Modern approach to personal finance management
 - **🎨 Design**: Clean, intuitive user interface
@@ -260,6 +269,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-⭐ **Star this repository** if Budget Buddy helps you manage your finances better!
+⭐ **Star this repository** if FinBuddy helps you manage your finances better!
 
 Made with ❤️ by the InspiLabs team & Vishruth Harithsa
