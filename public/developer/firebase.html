@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Integration - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            color: #000;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        pre {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .section-card {
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 0.8rem;
+            text-align: left;
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: 600;
+        }
+
+        .db-structure {
+            font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+            font-size: 0.9rem;
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .db-structure ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .db-structure li {
+            margin: 0.2rem 0;
+        }
+
+        .collection {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .document {
+            color: #666;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 2px solid #000;
+            margin-top: 3rem;
+            color: #666;
+        }
+
+        footer a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            pre {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="./index.html">Developer Docs</a> > Firebase Integration
+            </div>
+            <h1>🔥 Firebase Integration</h1>
+            <p>Complete Firebase setup, configuration, and usage patterns for Budget Buddy</p>
+        </header>
+
+        <div class="info">
+            <strong>Firebase Services Used:</strong> Authentication (Google OAuth), Firestore Database, Cloud Storage, and Security Rules for data protection and user isolation.
+        </div>
+
+        <h2>Firebase Configuration</h2>
+
+        <div class="section-card">
+            <h3>Configuration Setup</h3>
+            <p><strong>Location:</strong> <code>src/lib/firebase.ts</code></p>
+            
+            <pre><code>// Firebase configuration object - Replace with your project details
+const firebaseConfig = {
+  apiKey: "your-api-key",                    // Public API key for client-side requests
+  authDomain: "your-project.firebaseapp.com", // Domain for authentication
+  projectId: "your-project-id",              // Unique identifier for Firestore
+  storageBucket: "your-project.appspot.com", // Cloud Storage bucket URL
+  messagingSenderId: "123456789",            // For push notifications (optional)
+  appId: "your-app-id",                      // Unique app identifier
+  measurementId: "your-measurement-id"       // For Google Analytics (optional)
+};
+
+// Initialize Firebase services - These exports are used throughout the app
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);    // Authentication service
+export const db = getFirestore(app); // Firestore database service
+export const storage = getStorage(app); // Cloud Storage service</code></pre>
+
+            <h4>Environment Setup</h4>
+            <ol>
+                <li>Create Firebase project in <a href="https://console.firebase.google.com/">Firebase Console</a></li>
+                <li>Enable Authentication with Google provider</li>
+                <li>Create Firestore Database in production mode</li>
+                <li>Set up Cloud Storage bucket</li>
+                <li>Configure authorized domains for your deployment</li>
+            </ol>
+        </div>
+
+        <h2>Database Structure</h2>
+
+        <div class="db-structure">
+Firestore Collections:
+<ul class="collection">users/
+  <ul class="document">{userId}/
+    <ul class="collection">expenses/
+      <li class="document">{expenseId} - Individual expense documents</li>
+    </ul>
+    <ul class="collection">budgets/
+      <li class="document">{budgetId} - Budget limit and tracking</li>
+    </ul>
+    <ul class="collection">templates/
+      <li class="document">{templateId} - Recurring transaction templates</li>
+    </ul>
+    <ul class="collection">budgetTemplates/
+      <li class="document">{templateId} - Budget templates</li>
+    </ul>
+  </ul>
+</ul>
+
+<ul class="collection">Global Collections:
+  <ul class="collection">customCategories/
+    <li class="document">{categoryId} - User-created categories</li>
+  </ul>
+  <ul class="collection">publicCategories/
+    <li class="document">{categoryId} - Shared categories</li>
+  </ul>
+  <ul class="collection">publicPeople/
+    <li class="document">{personId} - Shared people data</li>
+  </ul>
+  <ul class="collection">budgetTemplates/
+    <li class="document">{templateId} - Shared budget templates</li>
+  </ul>
+</ul>
+        </div>
+
+        <h3>Document Schemas</h3>
+
+        <div class="section-card">
+            <h4>Expense Document</h4>
+            <pre><code>interface Expense {
+  id: string;                    // Auto-generated document ID
+  amount: number;                // Expense amount in currency
+  category: string;              // Category name
+  description: string;           // Expense description
+  date: string;                  // Expense date (YYYY-MM-DD)
+  createdAt: string;            // Creation timestamp
+  receiptUrl?: string;          // Firebase Storage URL for receipt
+  receiptFileName?: string;     // Original filename
+  peopleIds?: string[];         // Array of person IDs for shared expenses
+}</code></pre>
+
+            <h4>Budget Document</h4>
+            <pre><code>interface Budget {
+  id: string;                   // Auto-generated document ID
+  category: string;             // Category this budget applies to
+  limit: number;               // Budget limit amount
+  spent: number;               // Currently spent amount (calculated)
+}</code></pre>
+
+            <h4>Person Document</h4>
+            <pre><code>interface Person {
+  id: string;                   // Auto-generated document ID
+  name: string;                 // Person's name
+  color: string;               // Color for UI representation
+  icon: string;                // Icon identifier
+  userId: string;              // Creator's user ID
+  isPublic: boolean;           // Whether shared publicly
+  createdAt: string;           // Creation timestamp
+  createdBy: string;           // Creator's display name
+  relationship?: string;       // Family, Friend, Colleague, etc.
+}</code></pre>
+        </div>
+
+        <h2>Authentication System</h2>
+
+        <div class="section-card">
+            <h3>Google OAuth Integration</h3>
+            <pre><code>// Google Auth Provider configuration - Ensures optimal sign-in experience
+const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope('email');    // Request access to user's email
+googleProvider.addScope('profile');  // Request access to basic profile info
+googleProvider.setCustomParameters({
+  prompt: 'select_account'  // Always show account picker for better UX
+});
+
+// Sign in function - Handles popup-based Google authentication
+export const signInWithGoogle = async (): Promise&lt;User | null&gt; => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    // result.user contains user information (email, name, photo, etc.)
+    return result.user;
+  } catch (error) {
+    console.error('Google sign-in error:', error);
+    // Handle specific error codes (popup blocked, network issues, etc.)
+    throw error;
+  }
+};</code></pre>
+
+            <h3>AuthContext Implementation</h3>
+            <p><strong>Location:</strong> <code>src/contexts/AuthContext.tsx</code></p>
+            
+            <pre><code>// AuthContext interface - Centralized authentication state management
+interface AuthContextType {
+  user: User | null;        // Firebase User object or null when not authenticated
+  loading: boolean;         // True while checking authentication state
+  signInWithGoogle: () => Promise&lt;void&gt;; // Google OAuth sign-in function
+  signOut: () => Promise&lt;void&gt;;          // Sign out function
+}
+
+// AuthProvider component - Wraps app to provide authentication context
+export const AuthProvider: React.FC&lt;{ children: React.ReactNode }&gt; = ({ children }) => {
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+  const [loading, setLoading] = useState(true); // Start as loading
+
+  useEffect(() => {
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);          // Update user state
+      setLoading(false);      // Authentication check complete
+    });
+
+    // Cleanup listener when component unmounts
+    return unsubscribe;
+  }, []);
+
+  // Provide authentication state and functions to child components
+  // Context prevents prop drilling and ensures consistent auth state
+};</code></pre>
+        </div>
+
+        <h2>Data Operations</h2>
+
+        <div class="section-card">
+            <h3>Expense Operations</h3>
+            
+            <h4>Add Expense</h4>
+            <pre><code>// Add new expense to user's private collection
+export const addExpenseToFirestore = async (
+  userId: string,                    // User's unique ID for data isolation
+  expense: Omit&lt;Expense, 'id'&gt;      // Expense data without Firestore-generated ID
+): Promise&lt;void&gt; => {
+  try {
+    // Reference to user's expenses collection
+    const expensesRef = collection(db, 'users', userId, 'expenses');
+    
+    // Add document with auto-generated ID
+    await addDoc(expensesRef, {
+      ...expense,
+      createdAt: new Date().toISOString() // Add server timestamp
+    });
+    
+    // Document automatically gets unique ID and triggers real-time listeners
+  } catch (error) {
+    console.error('Error adding expense:', error);
+    throw error; // Re-throw for component error handling
+  }
+};</code></pre>
+
+            <h4>Real-time Subscriptions</h4>
+            <pre><code>// Subscribe to real-time updates for user's expenses
+export const subscribeToExpenses = (
+  userId: string,                           // User ID for data isolation
+  callback: (expenses: Expense[]) => void  // Function called when data changes
+): Unsubscribe => {                        // Returns function to stop listening
+  
+  const expensesRef = collection(db, 'users', userId, 'expenses');
+  
+  // Query with ordering - most recent expenses first
+  const expensesQuery = query(expensesRef, orderBy('date', 'desc'));
+
+  // Set up real-time listener - triggers callback on any change
+  return onSnapshot(expensesQuery, (snapshot) => {
+    // Transform Firestore documents to typed expense objects
+    const expenses = snapshot.docs.map(doc => ({
+      id: doc.id,           // Include document ID
+      ...doc.data()         // Spread document data
+    })) as Expense[];
+    
+    callback(expenses);     // Update component state
+  }, (error) => {
+    console.error('Expenses subscription error:', error);
+    // Error handling - subscription continues unless unsubscribed
+  });
+};</code></pre>
+
+            <h4>Update Expense</h4>
+            <pre><code>// Update specific fields of an existing expense
+export const updateExpenseInFirestore = async (
+  userId: string,                      // User ID for security
+  expenseId: string,                   // Document ID to update
+  updates: Partial&lt;Expense&gt;           // Only fields that changed
+): Promise&lt;void&gt; => {
+  try {
+    // Reference to specific expense document
+    const expenseRef = doc(db, 'users', userId, 'expenses', expenseId);
+    
+    // Update only provided fields, leave others unchanged
+    await updateDoc(expenseRef, updates);
+    
+    // Real-time listeners automatically receive updated data
+  } catch (error) {
+    console.error('Error updating expense:', error);
+    throw error;
+  }
+};</code></pre>
+
+            <h4>Delete Expense</h4>
+            <pre><code>// Delete expense and associated receipt file
+export const deleteExpenseFromFirestore = async (
+  userId: string,                    // User ID for security
+  expenseId: string,                 // Document ID to delete
+  receiptUrl?: string               // Optional receipt URL for cleanup
+): Promise&lt;void&gt; => {
+  try {
+    // Delete the Firestore document
+    const expenseRef = doc(db, 'users', userId, 'expenses', expenseId);
+    await deleteDoc(expenseRef);
+
+    // Clean up associated receipt file if it exists
+    if (receiptUrl) {
+      const receiptRef = ref(storage, receiptUrl);
+      // Use catch to avoid throwing if file doesn't exist
+      await deleteObject(receiptRef).catch(console.warn);
+    }
+    
+    // Real-time listeners automatically remove from UI
+  } catch (error) {
+    console.error('Error deleting expense:', error);
+    throw error;
+  }
+};</code></pre>
+        </div>
+
+        <h2>Cloud Storage Integration</h2>
+
+        <div class="section-card">
+            <h3>Receipt Upload System</h3>
+            
+            <h4>Upload Receipt</h4>
+            <pre><code>// Upload receipt image to Cloud Storage and return download URL
+export const uploadReceipt = async (
+  userId: string,                    // User ID for organized storage structure
+  file: File                         // File object from HTML input or drag-drop
+): Promise&lt;{ url: string; fileName: string }&gt; => {
+  try {
+    // Generate unique filename to prevent conflicts
+    const timestamp = Date.now();
+    const fileName = `${timestamp}_${file.name}`;
+    
+    // Create reference in user-specific folder
+    const receiptRef = ref(storage, `receipts/${userId}/${fileName}`);
+
+    // Upload file to Cloud Storage
+    const snapshot = await uploadBytes(receiptRef, file);
+    
+    // Get public download URL for storing in Firestore
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+
+    return {
+      url: downloadUrl,        // Store this URL in expense document
+      fileName: file.name      // Original filename for display
+    };
+  } catch (error) {
+    console.error('Receipt upload error:', error);
+    throw error;
+  }
+};</code></pre>
+
+            <h4>File Size and Type Validation</h4>
+            <pre><code>// Validate uploaded files before sending to Cloud Storage
+const validateReceiptFile = (file: File): boolean => {
+  const maxSize = 10 * 1024 * 1024; // 10MB limit to control storage costs
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+  // Check file size to prevent large uploads
+  if (file.size > maxSize) {
+    throw new Error('File size must be less than 10MB');
+  }
+
+  // Ensure only image files are uploaded for security
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Only image files are allowed');
+  }
+
+  return true; // File passes validation
+};
+
+// Usage in upload component:
+// validateReceiptFile(file) before calling uploadReceipt()</code></pre>
+        </div>
+
+        <h2>Security Rules</h2>
+
+        <div class="section-card">
+            <h3>Firestore Security Rules</h3>
+            <p><strong>Location:</strong> <code>firestore.rules</code></p>
+            
+            <pre><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User-specific data - complete isolation
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == userId;
+    }
+    
+    // Custom categories - user-specific with public sharing
+    match /customCategories/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (
+        resource == null || // New documents
+        resource.data.userId == request.auth.uid // Creator only
+      );
+    }
+    
+    // Public categories - readable by all authenticated users
+    match /publicCategories/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (
+        resource == null || // New documents
+        resource.data.createdBy == request.auth.uid // Creator only
+      );
+    }
+    
+    // Public people - readable by all authenticated users
+    match /publicPeople/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (
+        resource == null || // New documents
+        resource.data.createdBy == request.auth.uid // Creator only
+      );
+    }
+    
+    // Budget templates - readable by all authenticated users
+    match /budgetTemplates/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (
+        resource == null || // New documents
+        resource.data.userId == request.auth.uid // Creator only
+      );
+    }
+  }
+}</code></pre>
+
+            <h3>Storage Security Rules</h3>
+            <p><strong>Location:</strong> <code>storage.rules</code></p>
+            
+            <pre><code>rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // User's private receipts - only accessible by the user
+    match /receipts/{userId}/{receiptId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == userId &&
+        // Limit file size to 10MB
+        request.resource.size < 10 * 1024 * 1024 &&
+        // Only allow image files
+        request.resource.contentType.matches('image/.*');
+    }
+    
+    // General user files
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == userId &&
+        request.resource.size < 10 * 1024 * 1024;
+    }
+  }
+}</code></pre>
+        </div>
+
+        <h2>Data Management Hook</h2>
+
+        <div class="section-card">
+            <h3>useFirestoreData Hook</h3>
+            <p><strong>Location:</strong> <code>src/hooks/useFirestoreData.tsx</code></p>
+            
+            <pre><code>export function useFirestoreData() {
+  const { user } = useAuth();
+  
+  // State for all data types
+  const [expenses, setExpenses] = useState&lt;Expense[]&gt;([]);
+  const [budgets, setBudgets] = useState&lt;Budget[]&gt;([]);
+  const [templates, setTemplates] = useState&lt;RecurringTemplate[]&gt;([]);
+  const [customCategories, setCustomCategories] = useState&lt;CustomCategory[]&gt;([]);
+  const [publicCategories, setPublicCategories] = useState&lt;CustomCategory[]&gt;([]);
+  const [customPeople, setCustomPeople] = useState&lt;Person[]&gt;([]);
+  const [publicPeople, setPublicPeople] = useState&lt;Person[]&gt;([]);
+  const [budgetTemplates, setBudgetTemplates] = useState&lt;BudgetTemplate[]&gt;([]);
+  const [publicBudgetTemplates, setPublicBudgetTemplates] = useState&lt;BudgetTemplate[]&gt;([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user || !user.uid) {
+      // Clear all data when user is not authenticated
+      setExpenses([]);
+      setBudgets([]);
+      // ... clear other states
+      setLoading(false);
+      return;
+    }
+
+    // Set up real-time subscriptions
+    const unsubscribeFunctions: (() => void)[] = [];
+
+    // Subscribe to expenses
+    const unsubscribeExpenses = subscribeToExpenses(user.uid, setExpenses);
+    if (unsubscribeExpenses) {
+      unsubscribeFunctions.push(unsubscribeExpenses);
+    }
+
+    // Subscribe to other collections...
+
+    return () => {
+      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+    };
+  }, [user]);
+
+  // Return data and operation functions
+  return {
+    expenses, budgets, templates,
+    customCategories, publicCategories,
+    customPeople, publicPeople,
+    budgetTemplates, publicBudgetTemplates,
+    loading,
+    addExpense: (expense: Omit&lt;Expense, 'id'&gt;) => 
+      addExpenseToFirestore(user!.uid, expense),
+    updateExpense: (expenseId: string, updates: Partial&lt;Expense&gt;) => 
+      updateExpenseInFirestore(user!.uid, expenseId, updates),
+    deleteExpense: (expenseId: string, receiptUrl?: string) => 
+      deleteExpenseFromFirestore(user!.uid, expenseId, receiptUrl),
+    // ... other operations
+  };
+}</code></pre>
+        </div>
+
+        <h2>Error Handling</h2>
+
+        <div class="section-card">
+            <h3>Firebase Error Patterns</h3>
+            
+            <pre><code>// Operation with error handling
+const performFirebaseOperation = async () => {
+  try {
+    // Firebase operation
+    const result = await addExpenseToFirestore(userId, expense);
+    toast.success("Operation completed successfully");
+    return result;
+  } catch (error: any) {
+    // Handle specific Firebase errors
+    switch (error.code) {
+      case 'permission-denied':
+        toast.error("Permission denied. Please check your access.");
+        break;
+      case 'not-found':
+        toast.error("Resource not found.");
+        break;
+      case 'unavailable':
+        toast.error("Service temporarily unavailable. Please try again.");
+        break;
+      default:
+        console.error('Firebase operation failed:', error);
+        toast.error("Operation failed. Please try again.");
+    }
+    throw error;
+  }
+};</code></pre>
+
+            <h3>Offline Handling</h3>
+            <pre><code>// Enable offline persistence
+import { enableNetwork, disableNetwork } from 'firebase/firestore';
+
+// Handle connection state
+window.addEventListener('online', () => {
+  enableNetwork(db).catch(console.error);
+});
+
+window.addEventListener('offline', () => {
+  disableNetwork(db).catch(console.error);
+});</code></pre>
+        </div>
+
+        <h2>Performance Optimization</h2>
+
+        <div class="section-card">
+            <h3>Query Optimization</h3>
+            
+            <pre><code>// Efficient queries with proper indexing
+const getExpensesByCategory = (userId: string, category: string) => {
+  const expensesRef = collection(db, 'users', userId, 'expenses');
+  return query(
+    expensesRef,
+    where('category', '==', category),
+    orderBy('date', 'desc'),
+    limit(50) // Limit results for performance
+  );
+};
+
+// Pagination for large datasets
+const getExpensesPaginated = (userId: string, lastDoc?: DocumentSnapshot) => {
+  const expensesRef = collection(db, 'users', userId, 'expenses');
+  let expensesQuery = query(
+    expensesRef,
+    orderBy('date', 'desc'),
+    limit(25)
+  );
+
+  if (lastDoc) {
+    expensesQuery = query(expensesQuery, startAfter(lastDoc));
+  }
+
+  return expensesQuery;
+};</code></pre>
+
+            <h3>Batch Operations</h3>
+            <pre><code>import { writeBatch } from 'firebase/firestore';
+
+// Batch write for multiple operations
+const batchAddExpenses = async (userId: string, expenses: Omit&lt;Expense, 'id'&gt;[]) => {
+  const batch = writeBatch(db);
+  
+  expenses.forEach(expense => {
+    const docRef = doc(collection(db, 'users', userId, 'expenses'));
+    batch.set(docRef, {
+      ...expense,
+      createdAt: new Date().toISOString()
+    });
+  });
+
+  await batch.commit();
+};</code></pre>
+        </div>
+
+        <div class="warning">
+            <strong>Important Considerations:</strong>
+            <ul>
+                <li>Always validate user authentication before Firebase operations</li>
+                <li>Use security rules to enforce data access patterns</li>
+                <li>Implement proper error handling for offline scenarios</li>
+                <li>Monitor Firestore usage to avoid excessive reads/writes</li>
+                <li>Use real-time subscriptions sparingly to control costs</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | 
+               <a href="./index.html">Back to Index</a> | 
+               <a href="./architecture.html">Architecture</a> |
+               <a href="./api-reference.html">API Reference</a>
+            </p>
+            <p>Last Updated: August 24, 2025 | Version 2.5.5</p>
+        </footer>
+    </div>
+</body>
+</html>

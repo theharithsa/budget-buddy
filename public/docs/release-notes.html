@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Dynatrace Monitoring -->
+    <script type="text/javascript" src="https://js-cdn.dynatrace.com/jstag/18b1df4492a/bf12470wrz/97ae64e6fe2c5972_complete.js" crossorigin="anonymous"></script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Release Notes - FinBuddy Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Titillium Web', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">Release Notes</h1>
+                    <p class="text-indigo-100 mt-2">Latest updates, features, and improvements</p>
+                </div>
+                <a href="index.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all">
+                    ← Back to Docs
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <!-- Current Version -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.5.5</h2>
+                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Latest</span>
+                </div>
+                <p class="text-gray-600 mb-6">Released on August 23, 2025</p>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-green-600">✨ New Features</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Month Selector for Budget Page:</strong> New dropdown to view budget utilization across different months with historical analysis
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Historical Budget Performance:</strong> Analyze spending patterns and budget utilization month-by-month
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Dynamic Spending Calculation:</strong> Real-time budget calculations based on selected month's expenses
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Enhanced Time-based Filtering:</strong> Better financial tracking with temporal budget insights
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-blue-600">🔧 Improvements</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Budget Manager now supports expenses prop for comprehensive historical analysis</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Enhanced budget cards display month-specific spending data with better visualization</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Improved financial tracking with comprehensive budget performance review functionality</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-purple-600">⚙️ Technical Updates</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Updated BudgetManager component interface to include expenses parameter</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Added selectedMonth state management with current month as default</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Enhanced calculateCategorySpending utility for month-specific data processing</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 2.5.4 -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.5.4</h2>
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">August 23, 2025</span>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-green-600">✨ New Features</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>Descriptive text labels for all expense page action icons to improve user guidance</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>Theme-aware color schemes for all ApexCharts components</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>Comprehensive dark/light mode support for dashboard and analytics charts</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-blue-600">🔧 Improvements</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Updated all chart components to use consistent Titillium Web font family</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Enhanced chart readability in both light and dark themes</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Improved accessibility with better UI element descriptions</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-red-600">🐛 Bug Fixes</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Fixed font inconsistencies between chart components and main application</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Resolved theme color mismatches in data visualization elements</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 2.5.3 -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.5.3</h2>
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">August 23, 2025</span>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-red-600">🐛 Major Bug Fixes</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Achievement Cards Design:</strong> Enhanced gamification system with improved visual design
+                                    <ul class="mt-2 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- Replaced harsh green highlighting with subtle gradient backgrounds</li>
+                                        <li>- Added elegant ring effects and shadows to completed achievements</li>
+                                        <li>- Improved contrast and readability with better text colors</li>
+                                        <li>- Enhanced progress bars with color coding and visual feedback</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Scoring Algorithm Fixes:</strong> Completely rewritten calculation logic
+                                    <ul class="mt-2 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- Fixed Budget Compliance to properly show 100% when under budget</li>
+                                        <li>- Rewritten Frugal Genius Achievement logic for accuracy</li>
+                                        <li>- Enhanced Consistency Score using coefficient of variation</li>
+                                        <li>- Improved Savings Rate calculation based on actual budget vs spending</li>
+                                        <li>- Rebalanced Overall Score with weighted calculation (40% budget, 30% consistency, 20% savings, 10% streak)</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-purple-600">⚙️ Technical Improvements</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Enhanced GamificationSystem.tsx with robust calculation algorithms</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Improved achievement card responsive design and accessibility</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Optimized achievement progress tracking for better performance</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 2.5.2 -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.5.2</h2>
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">August 23, 2025</span>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-red-600">🐛 Critical Bug Fix</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Dashboard Chart Rendering Issue:</strong> Fixed charts disappearing when switching between dashboard tabs
+                                    <ul class="mt-2 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- <strong>Problem:</strong> Charts in Overview tab would disappear when switching tabs and returning</li>
+                                        <li>- <strong>Root Cause:</strong> ApexCharts instances losing connection to DOM containers</li>
+                                        <li>- <strong>Solution:</strong> Implemented proper chart lifecycle management with controlled tab state</li>
+                                        <li>- <strong>Impact:</strong> Dashboard charts now remain visible and functional when switching between tabs</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-purple-600">⚙️ Technical Improvements</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Enhanced Dashboard.tsx with proper chart lifecycle management</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Improved ApexCharts integration with React tab system</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-500 mr-2 mt-1">•</span>
+                                <div>Added forced re-rendering mechanism for tab switching</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 2.5.1 -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.5.1</h2>
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">August 23, 2025</span>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-blue-600">🔧 Improvements</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Enhanced authentication reliability and compatibility</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Simplified Firebase configuration for better stability</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2 mt-1">•</span>
+                                <div>Improved Google OAuth authentication flow</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-red-600">🐛 Bug Fixes</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Fixed Firebase internal errors during Google sign-in</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Improved authentication state management</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Enhanced error handling for authentication flows</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 2.3.0 -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.3.0</h2>
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">January 27, 2025</span>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-green-600">✨ Major New Features</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Typography Enhancement:</strong> Integrated Titillium Web as primary font family
+                                    <ul class="mt-1 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- Added Google Fonts import for Titillium Web and Saira fonts</li>
+                                        <li>- Enhanced visual hierarchy and readability across all components</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Professional Shadow Design System:</strong> Elegant card styling across all components
+                                    <ul class="mt-1 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- Added shadow-lg hover:shadow-xl effects to all cards</li>
+                                        <li>- Enhanced visual depth with smooth transition animations</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Sticky Header with Glass Morphism:</strong> Enhanced navigation accessibility
+                                    <ul class="mt-1 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- Header stays fixed at top during page scrolling</li>
+                                        <li>- Added glass morphism effect with backdrop blur</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Copyright Footer:</strong> Professional Footer component with InspiLabs copyright
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-red-600">🐛 Bug Fixes</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Fixed dashboard layout responsive grid issues on mobile devices</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Complete dark mode theme compatibility fixes</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2 mt-1">•</span>
+                                <div>Removed black borders for cleaner aesthetic throughout the application</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 2.2.2 -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">FinBuddy v2.2.2</h2>
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">August 22, 2025</span>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 text-green-600">✨ Enhanced Mobile Experience</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Bottom Navigation Bar:</strong> Thumb-friendly navigation for mobile devices
+                                    <ul class="mt-1 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- 4 primary navigation items: Home, Expenses, Budgets, AI Analyzer</li>
+                                        <li>- Fixed positioning with backdrop blur effect and elevated styling</li>
+                                        <li>- Active state animations with scale effects and color transitions</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2 mt-1">•</span>
+                                <div>
+                                    <strong>Smart Navigation Context Logic:</strong> Dynamic navigation based on current page
+                                    <ul class="mt-1 ml-4 space-y-1 text-sm text-gray-600">
+                                        <li>- Dashboard shows mobile menu button for full navigation access</li>
+                                        <li>- Other pages show back button + bottom navigation for quick switching</li>
+                                        <li>- Dynamic page titles reflecting current section</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Older Versions Summary -->
+            <section class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg p-8">
+                <h2 class="text-2xl font-bold mb-6">🗂️ Earlier Versions</h2>
+                <p class="text-indigo-100 mb-6">
+                    FinBuddy has undergone significant evolution since its initial release. Earlier versions introduced 
+                    foundational features including the dashboard system, expense tracking, budget management, and the 
+                    comprehensive chart library.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Major Milestones</h3>
+                        <ul class="space-y-2 text-indigo-100">
+                            <li>• <strong>v2.2.0:</strong> Complete Flowbite Charts redesign with ApexCharts integration</li>
+                            <li>• <strong>v2.1.1:</strong> Professional chart components and Flowbite design system</li>
+                            <li>• <strong>v2.0.0:</strong> Advanced Financial Analytics Dashboard with 12+ chart types</li>
+                            <li>• <strong>v1.x:</strong> Core expense tracking and budget management features</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Key Achievements</h3>
+                        <ul class="space-y-2 text-indigo-100">
+                            <li>• Progressive Web App (PWA) implementation</li>
+                            <li>• AI-powered financial insights and analysis</li>
+                            <li>• Comprehensive gamification system</li>
+                            <li>• Advanced data visualization with professional charts</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-8 p-6 bg-white bg-opacity-10 rounded-lg">
+                    <h3 class="text-lg font-bold mb-3">📊 Version History Stats</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-white">50+</div>
+                            <div class="text-indigo-200">Features Added</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-white">100+</div>
+                            <div class="text-indigo-200">Bug Fixes</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-white">25+</div>
+                            <div class="text-indigo-200">Performance Improvements</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-white">15+</div>
+                            <div class="text-indigo-200">Version Releases</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <h3 class="text-xl font-bold mb-4">FinBuddy v2.5.5</h3>
+                <p class="text-gray-300 mb-6">Transform your financial future with intelligent insights and beautiful design.</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="security.html" class="text-gray-300 hover:text-white">Security</a>
+                    <a href="privacy-policy.html" class="text-gray-300 hover:text-white">Privacy</a>
+                    <a href="terms-and-conditions.html" class="text-gray-300 hover:text-white">Terms</a>
+                    <a href="troubleshooting.html" class="text-gray-300 hover:text-white">Support</a>
+                    <a href="release-notes.html" class="text-gray-300 hover:text-white">Release Notes</a>
+                    <a href="https://github.com/theharithsa/budget-buddy" target="_blank" class="text-gray-300 hover:text-white">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
