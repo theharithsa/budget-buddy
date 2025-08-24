@@ -88,12 +88,14 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
     const budgetCompliance = budgets.length > 0 
       ? budgets.reduce((acc, budget) => {
           const spent = monthlyExpensesByCategory[budget.category] || 0;
-          const compliance = Math.min(100, (1 - Math.max(0, spent - budget.limit) / budget.limit) * 100);
+          // Fixed calculation: 100% if under budget, decreasing as you go over
+          const usagePercent = Math.min(100, (spent / budget.limit) * 100);
+          const compliance = spent <= budget.limit ? 100 : Math.max(0, 100 - (usagePercent - 100));
           return acc + compliance;
         }, 0) / budgets.length
-      : 100;
+      : 50; // Default to 50% if no budgets set
 
-    // Consistency score (how regular spending is)
+    // Enhanced consistency score calculation
     const dailySpending = expenses.reduce((acc, expense) => {
       const date = expense.date;
       acc[date] = (acc[date] || 0) + expense.amount;
@@ -101,10 +103,17 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
     }, {} as Record<string, number>);
 
     const spendingAmounts = Object.values(dailySpending);
-    const avgDaily = spendingAmounts.reduce((sum, amt) => sum + amt, 0) / spendingAmounts.length || 0;
-    const variance = spendingAmounts.reduce((sum, amt) => sum + Math.pow(amt - avgDaily, 2), 0) / spendingAmounts.length || 0;
-    const standardDeviation = Math.sqrt(variance);
-    const consistencyScore = Math.max(0, 100 - (standardDeviation / (avgDaily || 1)) * 100);
+    let consistencyScore: number;
+    
+    if (spendingAmounts.length === 0) {
+      consistencyScore = 100;
+    } else {
+      const avgDaily = spendingAmounts.reduce((sum, amt) => sum + amt, 0) / spendingAmounts.length;
+      const variance = spendingAmounts.reduce((sum, amt) => sum + Math.pow(amt - avgDaily, 2), 0) / spendingAmounts.length;
+      const standardDeviation = Math.sqrt(variance);
+      const coefficientOfVariation = avgDaily > 0 ? standardDeviation / avgDaily : 0;
+      consistencyScore = Math.max(0, Math.min(100, 100 - (coefficientOfVariation * 50)));
+    }
 
     // Define achievements
     const allAchievements: Achievement[] = [
@@ -197,12 +206,25 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
         description: 'Spend less than 80% of your budget',
         icon: Medal,
         category: 'budgeting',
-        progress: Math.max(0, 100 - (budgetCompliance > 0 ? (100 - budgetCompliance) * 5 : 0)),
-        maxProgress: 100,
-        isCompleted: budgetCompliance >= 80,
+        progress: budgets.length > 0 ? 
+          budgets.reduce((acc, budget) => {
+            const spent = monthlyExpensesByCategory[budget.category] || 0;
+            const usagePercent = (spent / budget.limit) * 100;
+            return acc + Math.min(80, usagePercent);
+          }, 0) / budgets.length : 0,
+        maxProgress: 80,
+        isCompleted: budgets.length > 0 && 
+          budgets.every(budget => {
+            const spent = monthlyExpensesByCategory[budget.category] || 0;
+            return (spent / budget.limit) <= 0.8;
+          }),
         points: 400,
         rarity: 'legendary',
-        unlockedAt: budgetCompliance >= 80 ? currentDate.toISOString().split('T')[0] : undefined
+        unlockedAt: budgets.length > 0 && 
+          budgets.every(budget => {
+            const spent = monthlyExpensesByCategory[budget.category] || 0;
+            return (spent / budget.limit) <= 0.8;
+          }) ? currentDate.toISOString().split('T')[0] : undefined
       },
 
       // Consistency Achievements
@@ -227,13 +249,23 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
     const level = Math.floor(totalPoints / 100) + 1;
     const pointsToNextLevel = (level * 100) - totalPoints;
 
-    // Overall financial score
-    const overallScore = Math.round((budgetCompliance + consistencyScore + (daysSinceLastExpense * 2)) / 3);
+    // Enhanced savings rate calculation
+    const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
+    const savingsRate = totalBudget > 0 ? Math.max(0, Math.min(100, ((totalBudget - totalSpent) / totalBudget) * 100)) : 0;
+
+    // Improved overall financial score
+    const overallScore = Math.round(
+      (budgetCompliance * 0.4) + 
+      (consistencyScore * 0.3) + 
+      (savingsRate * 0.2) + 
+      (Math.min(100, daysSinceLastExpense * 5) * 0.1)
+    );
 
     const financialScore: FinancialScore = {
       overall: Math.min(100, overallScore),
       budgetCompliance: Math.round(budgetCompliance),
-      savingsRate: daysSinceLastExpense > 0 ? Math.min(100, daysSinceLastExpense * 10) : 0,
+      savingsRate: Math.round(savingsRate),
       consistency: Math.round(consistencyScore),
       level,
       pointsToNextLevel,
@@ -333,22 +365,34 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
           <Card 
             key={achievement.id} 
             className={`enhanced-card hover-lift transition-all duration-200 ${
-              achievement.isCompleted ? 'border-green-500/50 bg-green-50/50 dark:bg-green-950/20' : ''
+              achievement.isCompleted 
+                ? 'border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50/30 to-green-100/30 dark:from-green-950/20 dark:to-green-900/20 shadow-green-100/50 dark:shadow-green-900/20' 
+                : 'border-border/50'
             }`}
           >
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg ${getRarityColor(achievement.rarity)} ${
-                  achievement.isCompleted ? 'animate-pulse' : 'opacity-50'
+                <div className={`p-2 rounded-lg transition-all duration-200 ${getRarityColor(achievement.rarity)} ${
+                  achievement.isCompleted 
+                    ? 'shadow-lg ring-2 ring-white/20' 
+                    : 'opacity-60 grayscale'
                 }`}>
                   <achievement.icon className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold truncate">{achievement.title}</h3>
+                    <h3 className={`font-semibold truncate ${
+                      achievement.isCompleted ? 'text-foreground' : 'text-muted-foreground'
+                    }`}>
+                      {achievement.title}
+                    </h3>
                     <Badge 
                       variant={achievement.isCompleted ? 'default' : 'secondary'}
-                      className={`text-xs ${getRarityColor(achievement.rarity)}`}
+                      className={`text-xs capitalize ${
+                        achievement.isCompleted 
+                          ? getRarityColor(achievement.rarity) + ' text-white'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
                     >
                       {achievement.rarity}
                     </Badge>
@@ -358,19 +402,25 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
                   </p>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
-                      <span>Progress</span>
-                      <span>{achievement.progress} / {achievement.maxProgress}</span>
+                      <span className={achievement.isCompleted ? 'text-foreground' : 'text-muted-foreground'}>
+                        Progress
+                      </span>
+                      <span className={`font-medium ${achievement.isCompleted ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                        {Math.round(achievement.progress)} / {achievement.maxProgress}
+                      </span>
                     </div>
                     <Progress 
                       value={(achievement.progress / achievement.maxProgress) * 100} 
-                      className="h-1.5" 
+                      className={`h-2 ${achievement.isCompleted ? 'bg-green-100 dark:bg-green-950' : ''}`}
                     />
                   </div>
-                  <div className="flex items-center justify-between mt-2 text-xs">
-                    <span className="text-muted-foreground">{achievement.points} points</span>
+                  <div className="flex items-center justify-between mt-3 text-xs">
+                    <span className={`font-medium ${achievement.isCompleted ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                      +{achievement.points} points
+                    </span>
                     {achievement.isCompleted && (
-                      <Badge variant="default" className="bg-green-600">
-                        Completed!
+                      <Badge variant="default" className="bg-green-600 dark:bg-green-700 text-white px-2 py-0.5">
+                        ✓ Unlocked
                       </Badge>
                     )}
                   </div>

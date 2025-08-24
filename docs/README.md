@@ -1,6 +1,6 @@
 # 📚 Budget Buddy Documentation Center
 
-Welcome to the comprehensive documentation for Budget Buddy v2.3.0 - a modern personal finance analytics platform built with React, TypeScript, and Firebase.
+Welcome to the comprehensive documentation for Budget Buddy v2.5.5 - a modern personal finance analytics platform built with React, TypeScript, and Firebase.
 
 ## 🏁 Quick Start Guide
 
@@ -60,7 +60,7 @@ New to Budget Buddy? Start here:
 | **[Chart Update Summary](./CHART_UPDATE_SUMMARY.md)** | Flowbite design implementation | ✅ v2.2.0 |
 | **[Changelog v2.1.0](./CHANGELOG_v2.1.0.md)** | Version 2.1.0 release notes | 📄 Archive |
 | **[Bug Fix Summary](./BUG_FIX_SUMMARY.md)** | Recent bug fixes and resolutions | ✅ v2.2.1 |
-| **[UI Enhancement Summary](./UI_ENHANCEMENT_SUMMARY.md)** | Shadow design & responsive grids | ✅ v2.3.0 |
+| **[UI Enhancement Summary](./UI_ENHANCEMENT_SUMMARY.md)** | Shadow design & responsive grids | ✅ v2.5.1 |
 | **[Icon Fixes Summary](./ICON_FIXES_SUMMARY.md)** | UI icon resolution documentation | ✅ Current |
 
 ### 🧹 Project Maintenance
@@ -104,7 +104,7 @@ Historical documentation:
 - [Azure Deployment Guides](./AZURE_DEPLOYMENT_GUIDE.md)
 - [Old Version Changelogs](./CHANGELOG_v2.1.0.md)
 
-## 🏗️ Current Architecture (v2.3.0)
+## 🏗️ Current Architecture (v2.5.1)
 
 ### **Frontend Stack**
 - **React 18** with TypeScript and Vite
@@ -141,7 +141,7 @@ Historical documentation:
 
 ## 🔄 Version Information
 
-- **Current Version**: v2.3.0
+- **Current Version**: v2.5.1
 - **Release Management**: [Version Management Guide](./VERSION_MANAGEMENT.md)
 - **Changelog**: See main [CHANGELOG.md](../CHANGELOG.md)
 - **Semantic Versioning**: Major.Minor.Patch format
@@ -184,7 +184,7 @@ Historical documentation:
 
 This documentation is actively maintained and updated with each release. 
 
-**Last Updated**: v2.3.0 (August 2025)  
+**Last Updated**: v2.5.1 (August 2025)  
 **Status**: ✅ Current and Complete  
 **Maintainer**: Budget Buddy Development Team
 

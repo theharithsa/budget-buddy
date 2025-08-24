@@ -23,6 +23,8 @@ import { Navigation } from '@/components/Navigation';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
+import { UpdateNotification } from '@/components/UpdateNotification';
+import { CookieBanner } from '@/components/CookieBanner';
 import { GeminiChat } from '@/components/GeminiChat';
 import { FloatingAIButton } from '@/components/FloatingAIButton';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
@@ -425,6 +427,7 @@ function FinanceApp() {
             <TabsContent value="budgets">
               <BudgetManager 
                 budgets={budgets}
+                expenses={expenses}
                 onAddBudget={addBudget}
                 onDeleteBudget={deleteBudget}
                 onUpdateBudget={updateBudget}
@@ -492,6 +495,7 @@ function FinanceApp() {
       <PWAInstallPrompt />
       <PWAUpdatePrompt />
       <PWAConnectionStatus />
+      <UpdateNotification />
       
       {/* Bottom Navigation for Mobile - Hidden on Dashboard/Overview */}
       <BottomNavigation 
@@ -539,6 +543,12 @@ function FinanceApp() {
 
       {/* Footer */}
       <Footer />
+      
+      {/* Cookie Banner */}
+      <CookieBanner 
+        onAccept={() => toast.success("Cookie preferences saved")} 
+        onDecline={() => toast.info("Cookies declined - some features may be limited")}
+      />
     </div>
   );
 }

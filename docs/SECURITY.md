@@ -1,32 +1,37 @@
-# 🔒 Security Policy - Budget Buddy
+# Security Policy - Budget Buddy
 
-**Version**: 2.2.2  
-**Last Updated**: August 22, 2025  
+**Version**: 2.5.5  
+**Last Updated**: August 23, 2025  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 
 Budget Buddy takes security seriously. This document outlines our security practices, vulnerability reporting process, and data protection measures.
 
-## 🛡️ Security Overview
+## Security Overview
 
 Budget Buddy implements multiple layers of security to protect user financial data:
 
 ### **Data Protection**
-- **🔐 End-to-End Encryption**: All data encrypted in transit (HTTPS) and at rest (Firebase)
-- **🏠 Local-First Architecture**: Data processed locally with cloud sync, not cloud-dependent
-- **👤 User Isolation**: Complete data separation between users via Firebase security rules
-- **🔑 Zero-Knowledge**: We cannot access your personal financial data
+- **End-to-End Encryption**: All data encrypted in transit (HTTPS) and at rest (Firebase)
+- **Local-First Architecture**: Data processed locally with cloud sync, not cloud-dependent
+- **User Isolation**: Complete data separation between users via Firebase security rules
+- **Zero-Knowledge**: We cannot access your personal financial data
 
 ### **Authentication Security**
-- **🔒 OAuth 2.0**: Secure Google authentication with industry standards
-- **🎟️ Token Management**: Automatic token refresh with secure local storage
-- **⏰ Session Security**: Configurable timeout and automatic logout
-- **🔐 Multi-Factor Ready**: Framework supports 2FA implementation
+- **OAuth 2.0**: Secure Google authentication with industry standards
+- **Token Management**: Automatic token refresh with secure local storage
+- **Session Security**: Configurable timeout and automatic logout
+- **Multi-Factor Ready**: Framework supports 2FA implementation
 
 ### **Application Security**
-- **🛡️ XSS Protection**: React's built-in XSS prevention + Content Security Policy
-- **🔒 CSRF Protection**: Firebase SDK handles CSRF token validation
-- **📱 PWA Security**: Service Worker with integrity checks and secure caching
-- **🌐 HTTPS Only**: All connections require SSL/TLS encryption
+- **XSS Protection**: React's built-in XSS prevention + Content Security Policy
+- **CSRF Protection**: Firebase SDK handles CSRF token validation
+- **PWA Security**: Service Worker with integrity checks and secure caching
+- **HTTPS Only**: All connections require SSL/TLS encryption
+
+### **UI/UX Security (v2.5.4)**
+- **Theme-Aware Security**: All chart components maintain security standards across dark/light modes
+- **Font Consistency**: Unified typography prevents content spoofing and maintains visual integrity
+- **Accessibility Security**: Enhanced UI descriptions improve security awareness for users
 
 ## 🚨 Reporting Security Vulnerabilities
 
@@ -399,6 +404,6 @@ npm run security:check    # Complete security check
 - ✅ **Continuous Improvement**: Regular security updates and patches
 - ✅ **Responsible Disclosure**: Clear vulnerability reporting process
 
-**Last Security Review**: August 2025 (v2.2.1)  
-**Next Scheduled Review**: November 2025 (v2.3.0)  
+**Last Security Review**: August 2025 (v2.5.1)  
+**Next Scheduled Review**: November 2025 (v2.6.0)  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)

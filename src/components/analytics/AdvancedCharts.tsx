@@ -2,6 +2,7 @@ import { useMemo, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useTheme } from '@/contexts/ThemeContext';
 import ApexCharts from 'apexcharts';
 import { 
   TrendingUp, 
@@ -26,6 +27,25 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
   const donutChartRef = useRef<HTMLDivElement>(null);
   const lineChartRef = useRef<HTMLDivElement>(null);
   const barChartRef = useRef<HTMLDivElement>(null);
+
+  // Theme context for theme-aware charts
+  const { theme } = useTheme();
+
+  // Helper function for theme-aware chart configuration
+  const getChartThemeConfig = () => {
+    const isDark = theme === 'dark';
+    return {
+      fontFamily: 'Titillium Web, sans-serif',
+      colors: {
+        primary: isDark ? '#60a5fa' : '#3b82f6',
+        secondary: isDark ? '#34d399' : '#10b981',
+        tertiary: isDark ? '#f87171' : '#ef4444',
+        background: isDark ? '#1f2937' : '#ffffff',
+        text: isDark ? '#f9fafb' : '#111827',
+        border: isDark ? '#374151' : '#e5e7eb'
+      }
+    };
+  };
 
   const chartData = useMemo(() => {
     if (!expenses || expenses.length === 0) {
@@ -113,12 +133,14 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
 
   // Area Chart - Monthly Trends (Flowbite Style)
   useEffect(() => {
+    const themeConfig = getChartThemeConfig();
     if (areaChartRef.current && chartData.monthlyTrends.length > 0) {
+      const themeConfig = getChartThemeConfig();
       const chart = new ApexCharts(areaChartRef.current, {
         chart: {
           height: 400,
           type: 'area',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           dropShadow: { enabled: false },
           toolbar: { show: false },
         },
@@ -163,16 +185,17 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
       chart.render();
       return () => chart.destroy();
     }
-  }, [chartData.monthlyTrends]);
+  }, [chartData.monthlyTrends, theme]);
 
   // Column Chart - Category Breakdown (Flowbite Style)
   useEffect(() => {
+    const themeConfig = getChartThemeConfig();
     if (columnChartRef.current && chartData.categoryBreakdown.length > 0) {
       const chart = new ApexCharts(columnChartRef.current, {
         chart: {
           height: 400,
           type: 'bar',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           toolbar: { show: false },
         },
         plotOptions: {
@@ -186,7 +209,7 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
         tooltip: {
           shared: true,
           intersect: false,
-          style: { fontFamily: 'Inter, sans-serif' },
+          style: { fontFamily: themeConfig.fontFamily },
         },
         states: {
           hover: {
@@ -206,7 +229,7 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
           labels: {
             show: true,
             style: {
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: themeConfig.fontFamily,
               cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
             }
           },
@@ -227,16 +250,17 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
       chart.render();
       return () => chart.destroy();
     }
-  }, [chartData.categoryBreakdown]);
+  }, [chartData.categoryBreakdown, theme]);
 
   // Pie Chart - Category Distribution (Flowbite Style)
   useEffect(() => {
+    const themeConfig = getChartThemeConfig();
     if (pieChartRef.current && chartData.categoryBreakdown.length > 0) {
       const chart = new ApexCharts(pieChartRef.current, {
         chart: {
           height: 420,
           type: 'pie',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         dataLabels: { enabled: false },
         plotOptions: {
@@ -258,16 +282,17 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
       chart.render();
       return () => chart.destroy();
     }
-  }, [chartData.categoryBreakdown]);
+  }, [chartData.categoryBreakdown, theme]);
 
   // Donut Chart - Budget Performance (Flowbite Style)
   useEffect(() => {
+    const themeConfig = getChartThemeConfig();
     if (donutChartRef.current && chartData.budgetPerformance.length > 0) {
       const chart = new ApexCharts(donutChartRef.current, {
         chart: {
           height: 420,
           type: 'donut',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         stroke: {
           colors: ['transparent'],
@@ -280,14 +305,14 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
                 show: true,
                 name: {
                   show: true,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: themeConfig.fontFamily,
                   offsetY: 20,
                 },
                 total: {
                   showAlways: true,
                   show: true,
                   label: 'Budget Usage',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: themeConfig.fontFamily,
                   formatter: function (w) {
                     const totalSpent = chartData.totalSpent;
                     const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
@@ -297,7 +322,7 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
                 },
                 value: {
                   show: true,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: themeConfig.fontFamily,
                   offsetY: -20,
                   formatter: function (value) {
                     return value + '%';
@@ -322,16 +347,17 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
       chart.render();
       return () => chart.destroy();
     }
-  }, [chartData.budgetPerformance, chartData.totalSpent, budgets]);
+  }, [chartData.budgetPerformance, chartData.totalSpent, budgets, theme]);
 
   // Line Chart - Weekly Pattern (Flowbite Style)
   useEffect(() => {
+    const themeConfig = getChartThemeConfig();
     if (lineChartRef.current && chartData.weeklyPattern.length > 0) {
       const chart = new ApexCharts(lineChartRef.current, {
         chart: {
           height: 350,
           type: 'line',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           dropShadow: { enabled: false },
           toolbar: { show: false },
         },
@@ -367,16 +393,17 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
       chart.render();
       return () => chart.destroy();
     }
-  }, [chartData.weeklyPattern]);
+  }, [chartData.weeklyPattern, theme]);
 
   // Bar Chart - Budget vs Actual (Flowbite Style)
   useEffect(() => {
+    const themeConfig = getChartThemeConfig();
     if (barChartRef.current && chartData.budgetPerformance.length > 0) {
       const chart = new ApexCharts(barChartRef.current, {
         chart: {
           height: 400,
           type: 'bar',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           toolbar: { show: false },
         },
         plotOptions: {
@@ -390,7 +417,7 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
         tooltip: {
           shared: true,
           intersect: false,
-          style: { fontFamily: 'Inter, sans-serif' },
+          style: { fontFamily: themeConfig.fontFamily },
         },
         states: {
           hover: {
@@ -410,7 +437,7 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
           labels: {
             show: true,
             style: {
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: themeConfig.fontFamily,
               cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
             }
           },

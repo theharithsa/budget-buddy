@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User, sendSignInLinkToEmail, signInWithEmailLink, isSignInWithEmailLink, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
 import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
@@ -261,6 +261,115 @@ export const logOut = async (): Promise<void> => {
 
 export const onAuthChange = (callback: (user: User | null) => void) => {
   return onAuthStateChanged(auth, callback);
+};
+
+// Email/Password Authentication
+export const signUpWithEmail = async (email: string, password: string, displayName: string): Promise<User> => {
+  console.log('📝 Creating account with email:', email);
+  
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Update the user's display name
+    await updateProfile(result.user, {
+      displayName: displayName
+    });
+    
+    console.log('✅ Account created successfully:', result.user.uid);
+    return result.user;
+  } catch (error: any) {
+    console.error('❌ Email signup failed:', error);
+    throw new Error(error.message || 'Failed to create account');
+  }
+};
+
+export const signInWithEmail = async (email: string, password: string): Promise<User> => {
+  console.log('📝 Signing in with email:', email);
+  
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    console.log('✅ Email sign-in successful:', result.user.uid);
+    return result.user;
+  } catch (error: any) {
+    console.error('❌ Email sign-in failed:', error);
+    throw new Error(error.message || 'Failed to sign in');
+  }
+};
+
+export const resetPassword = async (email: string): Promise<void> => {
+  console.log('🔄 Sending password reset to:', email);
+  
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log('✅ Password reset email sent');
+  } catch (error: any) {
+    console.error('❌ Password reset failed:', error);
+    throw new Error(error.message || 'Failed to send password reset email');
+  }
+};
+
+// Passwordless Authentication (Magic Link)
+export const sendMagicLink = async (email: string): Promise<void> => {
+  console.log('🔗 Sending magic link to:', email);
+  
+  try {
+    const actionCodeSettings = {
+      // URL where the user will be redirected after clicking the link
+      url: window.location.origin,
+      // This must be true for email link sign-in
+      handleCodeInApp: true,
+    };
+    
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    
+    // Save the email locally so you can use it to complete the sign-in
+    localStorage.setItem('emailForSignIn', email);
+    
+    console.log('✅ Magic link sent successfully');
+  } catch (error: any) {
+    console.error('❌ Failed to send magic link:', error);
+    throw new Error(error.message || 'Failed to send magic link');
+  }
+};
+
+export const signInWithMagicLink = async (email?: string): Promise<User> => {
+  console.log('🔓 Attempting to sign in with magic link');
+  
+  try {
+    // Check if the current URL is a sign-in link
+    if (!isSignInWithEmailLink(auth, window.location.href)) {
+      throw new Error('Invalid sign-in link');
+    }
+    
+    // Get the email if not provided
+    let emailAddress = email;
+    if (!emailAddress) {
+      emailAddress = localStorage.getItem('emailForSignIn') || undefined;
+      if (!emailAddress) {
+        emailAddress = window.prompt('Please provide your email for confirmation') || undefined;
+      }
+    }
+    
+    if (!emailAddress) {
+      throw new Error('Email is required to complete sign-in');
+    }
+    
+    // Sign in the user
+    const result = await signInWithEmailLink(auth, emailAddress, window.location.href);
+    
+    // Clear the saved email
+    localStorage.removeItem('emailForSignIn');
+    
+    console.log('✅ Magic link sign-in successful:', result.user.uid);
+    return result.user;
+  } catch (error: any) {
+    console.error('❌ Magic link sign-in failed:', error);
+    throw new Error(error.message || 'Failed to sign in with magic link');
+  }
+};
+
+export const checkMagicLinkOnLoad = (): boolean => {
+  return isSignInWithEmailLink(auth, window.location.href);
 };
 
 // Firestore data functions

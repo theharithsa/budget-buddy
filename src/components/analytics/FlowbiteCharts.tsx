@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import ApexCharts from 'apexcharts';
 import { type Expense, type Budget, formatCurrency } from '@/lib/types';
+import { useTheme } from '@/contexts/ThemeContext';
 import { TrendingUp, TrendingDown, DollarSign, Users, Activity, Target } from 'lucide-react';
 
 interface FlowbiteChartsProps {
@@ -13,6 +14,25 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
   const pieChartRef = useRef<HTMLDivElement>(null);
   const columnChartRef = useRef<HTMLDivElement>(null);
   const donutChartRef = useRef<HTMLDivElement>(null);
+
+  // Theme context for theme-aware charts
+  const { theme } = useTheme();
+
+  // Helper function for theme-aware chart configuration
+  const getChartThemeConfig = () => {
+    const isDark = theme === 'dark';
+    return {
+      fontFamily: 'Titillium Web, sans-serif',
+      colors: {
+        primary: isDark ? '#60a5fa' : '#3b82f6',
+        secondary: isDark ? '#34d399' : '#10b981',
+        tertiary: isDark ? '#f87171' : '#ef4444',
+        background: isDark ? '#1f2937' : '#ffffff',
+        text: isDark ? '#f9fafb' : '#111827',
+        border: isDark ? '#374151' : '#e5e7eb'
+      }
+    };
+  };
 
   const chartData = useMemo(() => {
     if (!expenses || expenses.length === 0) {
@@ -92,11 +112,12 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
   useEffect(() => {
     // Area Chart - Monthly Spending Trends
     if (areaChartRef.current && chartData.monthlyData.length > 0) {
+      const themeConfig = getChartThemeConfig();
       const areaChart = new ApexCharts(areaChartRef.current, {
         chart: {
           height: 320,
           type: 'area',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           dropShadow: {
             enabled: false,
           },
@@ -163,16 +184,17 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         areaChart.destroy();
       };
     }
-  }, [chartData.monthlyData]);
+  }, [chartData.monthlyData, theme]);
 
   useEffect(() => {
     // Pie Chart - Category Distribution
     if (pieChartRef.current && chartData.categoryData.series.length > 0) {
+      const themeConfig = getChartThemeConfig();
       const pieChart = new ApexCharts(pieChartRef.current, {
         chart: {
           height: 320,
           type: 'pie',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         series: chartData.categoryData.series,
         colors: ['#1C64F2', '#16BDCA', '#9061F9', '#FDBA8C', '#E74694'],
@@ -182,7 +204,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         },
         legend: {
           position: 'bottom',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         tooltip: {
           enabled: true,
@@ -199,16 +221,17 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         pieChart.destroy();
       };
     }
-  }, [chartData.categoryData]);
+  }, [chartData.categoryData, theme]);
 
   useEffect(() => {
     // Column Chart - Weekly Comparison
     if (columnChartRef.current) {
+      const themeConfig = getChartThemeConfig();
       const columnChart = new ApexCharts(columnChartRef.current, {
         chart: {
           height: 320,
           type: 'bar',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
           toolbar: {
             show: false,
           },
@@ -225,7 +248,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
           shared: true,
           intersect: false,
           style: {
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: themeConfig.fontFamily,
           },
         },
         states: {
@@ -261,7 +284,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
           labels: {
             show: true,
             style: {
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: themeConfig.fontFamily,
               cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
             }
           },
@@ -300,16 +323,17 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         columnChart.destroy();
       };
     }
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     // Donut Chart - Budget Performance
     if (donutChartRef.current && chartData.budgetPerformance.series.length > 0) {
+      const themeConfig = getChartThemeConfig();
       const donutChart = new ApexCharts(donutChartRef.current, {
         chart: {
           height: 320,
           type: 'donut',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         series: chartData.budgetPerformance.series,
         colors: ['#1C64F2', '#16BDCA', '#FDBA8C', '#E74694', '#9061F9', '#10B981'],
@@ -319,7 +343,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         },
         legend: {
           position: 'bottom',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: themeConfig.fontFamily,
         },
         plotOptions: {
           pie: {
@@ -343,7 +367,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         donutChart.destroy();
       };
     }
-  }, [chartData.budgetPerformance]);
+  }, [chartData.budgetPerformance, theme]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

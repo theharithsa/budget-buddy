@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, getAllPeople, type Expense, type RecurringTemplate, type CustomCategory, type Person, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
@@ -37,6 +38,7 @@ export function AddExpenseModal({
   customPeople = [],
   publicPeople = []
 }: AddExpenseModalProps) {
+  const { user } = useAuth();
   const [templates] = useKV<RecurringTemplate[]>('recurring-templates', DEFAULT_RECURRING_TEMPLATES);
   const [open, setOpen] = useState(isOpen);
 
@@ -142,9 +144,12 @@ export function AddExpenseModal({
 
       // Upload receipt if one is selected
       if (receiptFile) {
+        if (!user) {
+          toast.error('User not authenticated');
+          return;
+        }
         console.log('Uploading receipt file...');
-        const expenseId = Date.now().toString();
-        const receiptPath = generateReceiptPath(expenseId, receiptFile.name);
+        const receiptPath = generateReceiptPath(user.uid, receiptFile.name);
         receiptUrl = await uploadFile(receiptFile, receiptPath);
         receiptFileName = receiptFile.name;
         console.log('Receipt uploaded successfully:', receiptUrl);

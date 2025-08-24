@@ -30,8 +30,8 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
-            <Eye className="w-4 h-4 mr-1" />
+          <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/5 hover:border-primary/40">
+            <Eye className="w-4 h-4 mr-2" />
             View Receipt
           </Button>
         </DialogTrigger>
@@ -226,7 +226,7 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
           )}
           
           {/* Existing info section */}
-          <div className="flex items-center justify-between">
+          <div className="space-y-2">
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Tag className="w-4 h-4" />
@@ -243,7 +243,12 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
                 </div>
               )}
             </div>
-            {expense.receiptUrl && <ReceiptViewer />}
+            {/* Receipt viewer button - displayed prominently when available */}
+            {expense.receiptUrl && (
+              <div className="flex justify-start">
+                <ReceiptViewer />
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

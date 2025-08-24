@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users, ArrowLeft } from 'lucide-react';
+import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users, ArrowLeft, BookOpen, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady, auth } from '@/lib/firebase';
 import { getVersionSubtitle, getNavigationVersion, APP_DISPLAY_NAME } from '@/lib/version';
@@ -127,7 +127,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
 
   const handleClearCache = async () => {
     try {
-      // Clear localStorage
+      // Clear localStorage (this will also reset PWA install prompt state)
       localStorage.clear();
       
       // Clear sessionStorage
@@ -141,12 +141,12 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
         );
       }
       
-      toast.success('Cache cleared successfully! Refreshing page...');
+      toast.success('Cache cleared successfully! PWA install prompt will show again on next login if applicable. Refreshing page...');
       
       // Wait a moment for the toast to show, then refresh
       setTimeout(() => {
         window.location.reload();
-      }, 1000);
+      }, 1500); // Slightly longer to read the message
       
     } catch (error) {
       console.error('Clear cache error:', error);
@@ -206,6 +206,28 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
     } catch (error: any) {
       console.error('Failed to refresh user profile:', error);
       toast.error('Failed to refresh profile');
+    }
+  };
+
+  const openDocumentation = () => {
+    try {
+      // Open documentation in new tab
+      window.open('/docs/index.html', '_blank');
+      toast.success('Documentation opened in new tab');
+    } catch (error) {
+      console.error('Failed to open documentation:', error);
+      toast.error('Failed to open documentation');
+    }
+  };
+
+  const openReleaseNotes = () => {
+    try {
+      // Open release notes in new tab
+      window.open('/docs/release-notes.html', '_blank');
+      toast.success('Release notes opened in new tab');
+    } catch (error) {
+      console.error('Failed to open release notes:', error);
+      toast.error('Failed to open release notes');
     }
   };
 
@@ -347,6 +369,20 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                 </div>
               </div>
               <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={openDocumentation}
+                className="cursor-pointer"
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Documentation
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={openReleaseNotes}
+                className="cursor-pointer"
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Release Notes
+              </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={testFirebaseConnection}
                 className="cursor-pointer"

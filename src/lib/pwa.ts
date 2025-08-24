@@ -2,6 +2,8 @@
 export class PWAManager {
   private deferredPrompt: any = null;
   private isStandalone = false;
+  private currentVersion = '2.5.5'; // Update this with each release
+  private updateAvailable = false;
 
   constructor() {
     this.init();
@@ -20,6 +22,9 @@ export class PWAManager {
     
     // Setup offline detection
     this.setupOfflineDetection();
+    
+    // Check for version updates
+    this.checkForVersionUpdate();
   }
 
   // Register service worker
@@ -52,9 +57,102 @@ export class PWAManager {
     newWorker.addEventListener('statechange', () => {
       if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
         // New content is available, show update notification
+        this.updateAvailable = true;
         this.showUpdateNotification();
       }
     });
+  }
+
+  // Check for version updates
+  private async checkForVersionUpdate() {
+    try {
+      // Get stored version
+      const storedVersion = localStorage.getItem('finbuddy-app-version');
+      
+      // If no stored version or version mismatch, force update
+      if (!storedVersion || storedVersion !== this.currentVersion) {
+        console.log(`🔄 Version update detected: ${storedVersion} → ${this.currentVersion}`);
+        
+        // Store new version
+        localStorage.setItem('finbuddy-app-version', this.currentVersion);
+        
+        // If this is an update (not first install)
+        if (storedVersion && storedVersion !== this.currentVersion) {
+          this.forceAppUpdate();
+        }
+      }
+      
+      // Check for server-side version updates every hour
+      this.scheduleVersionCheck();
+    } catch (error) {
+      console.error('❌ Version check failed:', error);
+    }
+  }
+
+  // Force app update
+  private async forceAppUpdate() {
+    console.log('🔄 Forcing app update...');
+    
+    try {
+      // Clear all caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      
+      // Update service worker
+      if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration) {
+          await registration.update();
+        }
+      }
+      
+      // Show update notification
+      this.showForceUpdateNotification();
+      
+    } catch (error) {
+      console.error('❌ Force update failed:', error);
+    }
+  }
+
+  // Show force update notification
+  private showForceUpdateNotification() {
+    const event = new CustomEvent('pwa-force-update-available', {
+      detail: { 
+        currentVersion: this.currentVersion,
+        requiresUpdate: true 
+      }
+    });
+    window.dispatchEvent(event);
+  }
+
+  // Schedule periodic version checks
+  private scheduleVersionCheck() {
+    // Check for updates every hour
+    setInterval(() => {
+      this.checkForVersionUpdate();
+    }, 60 * 60 * 1000);
+  }
+
+  // Public method to manually check for updates
+  public async checkForUpdates(): Promise<boolean> {
+    await this.checkForVersionUpdate();
+    return this.updateAvailable;
+  }
+
+  // Public method to apply pending updates
+  public async applyUpdate(): Promise<void> {
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration && registration.waiting) {
+        // Tell waiting service worker to activate
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        
+        // Reload the page to use new version
+        window.location.reload();
+      }
+    }
   }
 
   // Setup install prompt handling
