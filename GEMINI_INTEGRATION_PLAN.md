@@ -67,7 +67,7 @@ export const chatWithGemini = onCall(async (request) => {
   
   // Initialize Gemini
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   
   // Get user's expense data from Firestore
   const userData = await getUserFinancialData(userId);
