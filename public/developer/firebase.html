@@ -802,8 +802,165 @@ const batchAddExpenses = async (userId: string, expenses: Omit&lt;Expense, 'id'&
 };</code></pre>
         </div>
 
+        <h2>🚀 Firebase Functions v2 Integration (v2.6.0)</h2>
+        
+        <p>Budget Buddy v2.6.0 introduces Firebase Functions v2 with enhanced AI Chat capabilities and improved CORS handling.</p>
+
+        <h3>Firebase Functions Setup</h3>
+        <div class="code-block">
+            <pre><code>// functions/package.json dependencies
+{
+  "dependencies": {
+    "firebase-functions": "^6.0.1",
+    "firebase-admin": "^12.0.0",
+    "@google-cloud/functions-framework": "^3.1.0",
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5"
+  }
+}
+
+// functions/src/index.ts - AI Chat Function
+import { onRequest } from 'firebase-functions/v2/https';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import * as cors from 'cors';
+
+const corsHandler = cors({
+  origin: [
+    'http://localhost:5000',
+    'https://your-domain.com',
+    'https://budget-buddy-app.azurewebsites.net'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS']
+});
+
+export const chatWithAI = onRequest({
+  cors: true,
+  region: 'us-central1'
+}, async (req, res) => {
+  return new Promise((resolve) => {
+    corsHandler(req, res, async () => {
+      try {
+        const { message, expenses, budgets } = req.body;
+        
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+        
+        const prompt = `You are a personal finance assistant for Budget Buddy.
+        User message: ${message}
+        User expenses: ${JSON.stringify(expenses)}
+        User budgets: ${JSON.stringify(budgets)}
+        
+        Provide helpful financial advice and insights.`;
+        
+        const result = await model.generateContent(prompt);
+        const response = result.response.text();
+        
+        res.json({ response });
+        resolve(void 0);
+      } catch (error) {
+        console.error('AI Chat error:', error);
+        res.status(500).json({ error: 'AI chat failed' });
+        resolve(void 0);
+      }
+    });
+  });
+});</code></pre>
+        </div>
+
+        <h3>Environment Configuration</h3>
+        <div class="code-block">
+            <pre><code># functions/.env
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Firebase CLI setup
+firebase functions:config:set gemini.api_key="your_gemini_api_key"
+
+# Deploy functions
+firebase deploy --only functions</code></pre>
+        </div>
+
+        <h3>Client-Side AI Integration</h3>
+        <div class="code-block">
+            <pre><code>// src/lib/aiChat.ts
+import { httpsCallable } from 'firebase/functions';
+import { functions } from './firebase';
+
+const chatWithAI = httpsCallable(functions, 'chatWithAI');
+
+export const sendChatMessage = async (
+  message: string,
+  expenses: any[],
+  budgets: any[]
+): Promise<string> => {
+  try {
+    const result = await chatWithAI({
+      message,
+      expenses: expenses.slice(-10), // Recent expenses only
+      budgets
+    });
+    
+    return (result.data as any).response;
+  } catch (error) {
+    console.error('AI Chat failed:', error);
+    throw new Error('Failed to get AI response');
+  }
+};
+
+// Usage in components
+import { sendChatMessage } from '../lib/aiChat';
+
+const handleSendMessage = async () => {
+  try {
+    setLoading(true);
+    const response = await sendChatMessage(message, expenses, budgets);
+    setMessages(prev => [...prev, 
+      { role: 'user', content: message },
+      { role: 'assistant', content: response }
+    ]);
+  } catch (error) {
+    toast.error('Failed to send message');
+  } finally {
+    setLoading(false);
+  }
+};</code></pre>
+        </div>
+
+        <h3>Security Rules for AI Features</h3>
+        <div class="code-block">
+            <pre><code>// firestore.rules - AI chat data
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // AI chat history (user-specific)
+    match /users/{userId}/chatHistory/{chatId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId;
+    }
+    
+    // AI preferences
+    match /users/{userId}/aiPreferences/settings {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId;
+    }
+  }
+}</code></pre>
+        </div>
+
         <div class="warning">
-            <strong>Important Considerations:</strong>
+            <strong>v2.6.0 AI Integration Considerations:</strong>
+            <ul>
+                <li><strong>API Keys:</strong> Keep Gemini API keys secure in Firebase Functions config</li>
+                <li><strong>Rate Limiting:</strong> Implement client-side rate limiting for AI requests</li>
+                <li><strong>Data Privacy:</strong> Only send necessary financial data to AI services</li>
+                <li><strong>Fallback:</strong> Provide graceful degradation when AI services are unavailable</li>
+                <li><strong>Cost Management:</strong> Monitor Gemini API usage and set billing alerts</li>
+                <li><strong>CORS Configuration:</strong> Ensure proper CORS setup for production domains</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>General Firebase Considerations:</strong>
             <ul>
                 <li>Always validate user authentication before Firebase operations</li>
                 <li>Use security rules to enforce data access patterns</li>
@@ -819,7 +976,7 @@ const batchAddExpenses = async (userId: string, expenses: Omit&lt;Expense, 'id'&
                <a href="./architecture.html">Architecture</a> |
                <a href="./api-reference.html">API Reference</a>
             </p>
-            <p>Last Updated: August 24, 2025 | Version 2.5.5</p>
+            <p>Last Updated: January 20, 2025 | Version 2.6.0</p>
         </footer>
     </div>
 </body>

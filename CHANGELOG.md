@@ -7,6 +7,118 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2025-08-24
+
+### 🚀 Major Features Added
+
+- **🤖 AI Chat Integration**: Revolutionary conversational AI assistant powered by Google Gemini 2.5 Flash
+  - Dedicated AI Chat page with persistent conversation history
+  - Natural language financial queries and insights
+  - Real-time expense analysis and budget recommendations
+  - Markdown-formatted responses with rich text and lists
+  - Context-aware financial advice tailored to user spending patterns
+
+- **💬 Conversational Finance Management**:
+  - Ask questions like "How much did I spend on food last month?"
+  - Get personalized savings recommendations
+  - Receive budget alerts and spending analysis through chat
+  - Quick action buttons for common financial queries
+
+- **🔥 Firebase Functions v2 Backend**: Complete serverless architecture
+  - Cloud Functions with CORS support for cross-origin requests
+  - Secure API key management and environment variable handling
+  - Error handling and logging for production reliability
+  - Scalable architecture ready for high-traffic usage
+
+### 🌍 Localization & Regional Support
+
+- **🇮🇳 Indian Currency Support**: Complete INR (₹) localization
+  - Proper comma formatting (₹1,23,456.78) following Indian numbering system
+  - Currency symbols and formatting throughout AI responses
+  - Optimized for Indian financial contexts and spending patterns
+
+### 🔐 Enhanced Authentication System
+
+- **📧 Email/Password Authentication**: Complete traditional auth system
+  - User registration with email and password
+  - Password reset functionality via email
+  - Profile management with display name updates
+
+- **🔗 Magic Link Authentication**: Passwordless sign-in system
+  - Send secure sign-in links to email
+  - One-click authentication without remembering passwords
+  - Enhanced security with email verification
+
+- **🌐 Google OAuth Integration**: Seamless social login
+  - One-click Google sign-in with popup and redirect options
+  - Profile synchronization with Google account details
+
+### 📱 Progressive Web App Enhancements
+
+- **🚀 Smart Install Banner**: Improved PWA installation experience
+  - Session-based dismissal tracking prevents repetitive prompts
+  - Platform-specific installation instructions
+  - Enhanced user onboarding for mobile app experience
+
+- **🔄 Service Worker Optimization**: Better offline functionality
+  - Improved caching strategies for faster load times
+  - Background sync for offline expense entry
+  - Automatic updates with user notifications
+
+### 🛠️ Technical Improvements
+
+- **⚡ Performance Optimization**:
+  - React-markdown integration for rich text rendering
+  - Optimized bundle sizes and code splitting
+  - Enhanced component lifecycle management
+
+- **🔧 Developer Experience**:
+  - Complete TypeScript coverage for AI chat features
+  - Enhanced error boundaries and fallback components
+  - Comprehensive logging and debugging tools
+
+- **🎨 UI/UX Enhancements**:
+  - Fixed chat container overflow handling
+  - Improved responsive design for conversation interface
+  - Enhanced accessibility with proper ARIA labels
+  - Cookie consent banner with user preference management
+
+### 📚 Documentation Overhaul
+
+- **📖 User Documentation**: Complete user-facing guides
+  - AI Chat usage guide with examples and tips
+  - Getting started tutorials for new users
+  - Feature explanations with screenshots and examples
+
+- **🔧 Developer Documentation**: Technical implementation guides
+  - Firebase setup and configuration instructions
+  - API reference for Firebase Functions
+  - Component architecture and integration patterns
+
+### 🐛 Bug Fixes
+
+- **🔧 Navigation Improvements**: Enhanced sidebar navigation
+  - Fixed collapsible sidebar state persistence
+  - Improved mobile navigation responsiveness
+  - Better tab management and active state handling
+
+- **💾 Data Persistence**: Enhanced data management
+  - Fixed conversation history storage in Firestore
+  - Improved expense data synchronization
+  - Better error handling for failed API calls
+
+### 🔄 Migration & Compatibility
+
+- **📦 Dependency Updates**: Latest package versions
+  - Updated Firebase SDK to latest stable version
+  - Enhanced React and TypeScript compatibility
+  - Improved build tools and development server
+
+- **🔀 Architecture Migration**: Modernized codebase structure
+  - Migrated to Firebase Functions v2 for better performance
+  - Enhanced project structure for better maintainability
+  - Improved component organization and reusability
+
 ## [2.3.0] - 2025-01-27
 
 ### Added

@@ -218,16 +218,39 @@
     <div class="container">
         <header>
             <h1>🔧 Developer Documentation</h1>
-            <p class="subtitle">Comprehensive development guide for Budget Buddy v2.5.5</p>
+            <p class="subtitle">Comprehensive development guide for Budget Buddy v2.6.0</p>
             <span class="version-badge">Developer Edition</span>
         </header>
+
+        <!-- What's New in v2.6.0 Section -->
+        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: white; margin-bottom: 1rem;">🚀 What's New in v2.6.0</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
+                    <h4 style="color: white; margin-bottom: 0.5rem;">🔥 Firebase Functions v2</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Upgraded to Firebase Functions v2 with improved CORS handling and AI Chat integration.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
+                    <h4 style="color: white; margin-bottom: 0.5rem;">🤖 Gemini 2.0 Flash</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Integrated Google's latest Gemini 2.0 Flash model for enhanced AI Chat capabilities.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
+                    <h4 style="color: white; margin-bottom: 0.5rem;">🇮🇳 Localization</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Full Indian Rupee (₹) support with proper number formatting and cultural context.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px;">
+                    <h4 style="color: white; margin-bottom: 0.5rem;">⚡ Performance</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">React-markdown integration, enhanced authentication flows, and optimized PWA features.</p>
+                </div>
+            </div>
+        </div>
 
         <div class="quick-links">
             <h2>Quick Access</h2>
             <div class="links-grid">
+                <a href="./firebase.html" class="quick-link">🔥 Firebase v2.6.0 (Updated!)</a>
                 <a href="./architecture.html" class="quick-link">Architecture</a>
                 <a href="./components.html" class="quick-link">Components</a>
-                <a href="./firebase.html" class="quick-link">Firebase</a>
                 <a href="./api-reference.html" class="quick-link">API Reference</a>
                 <a href="./deployment.html" class="quick-link">Deployment</a>
                 <a href="./troubleshooting.html" class="quick-link">Troubleshooting</a>
@@ -252,7 +275,7 @@
                     <strong>Charts:</strong> ApexCharts
                 </div>
                 <div class="tech-item">
-                    <strong>AI:</strong> OpenAI GPT-4 + Spark AI
+                    <strong>AI:</strong> Google Gemini 2.0 Flash + OpenAI GPT-4 (Fallback)
                 </div>
                 <div class="tech-item">
                     <strong>PWA:</strong> Service Worker + Offline Support

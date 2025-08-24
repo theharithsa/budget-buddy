@@ -1,7 +1,7 @@
 # 💰 Budget Buddy - Smart Personal Finance Manager
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.3.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.6.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
@@ -10,7 +10,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-Cloud-ffca28?style=flat-square&logo=firebase)](https://firebase.google.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0-06b6d4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
-[![AI Powered](https://img.shields.io/badge/AI-Powered-ff6b6b?style=flat-square&logo=openai)](https://openai.com/)
+[![AI Powered](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-ff6b6b?style=flat-square&logo=google)](https://deepmind.google/technologies/gemini/)
+[![Currency](https://img.shields.io/badge/Currency-Indian%20Rupee%20%E2%82%B9-green?style=flat-square&logo=rupee)](https://en.wikipedia.org/wiki/Indian_rupee)
 
 > **Take control of your finances with intelligent insights, beautiful design, and powerful features. Budget Buddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
 
@@ -40,6 +41,15 @@
 - **Financial Health Score**: See how you're doing financially with a comprehensive score
 - **Personalized Recommendations**: Receive AI-generated tips to improve your finances
 - **Trend Detection**: Identify spending trends and habits you might not notice
+
+### 🤖 **AI Chat Revolution** ⭐ *NEW in v2.6.0*
+
+- **💬 Conversational Assistant**: Chat naturally about your finances with Google Gemini 2.5 Flash
+- **🧾 Natural Language Queries**: Ask "How much did I spend on food last month?" and get instant answers
+- **💰 Indian Rupee Support**: Perfect formatting (₹1,23,456.78) and localization for Indian users
+- **📚 Conversation History**: All your chats are saved and searchable for future reference
+- **⚡ Quick Actions**: One-tap buttons for common financial questions
+- **🎨 Rich Responses**: Markdown-formatted answers with bold text, lists, and structured insights
 
 ### 📱 **Modern User Experience**
 
@@ -79,15 +89,32 @@
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and push notifications
 
-## 🎨 What's New in v2.3.0
+## 🎨 What's New in v2.6.0
 
-- **🎨 Modern Shadow Design**: Elegant UI with professional shadow effects instead of borders
-- **📱 Enhanced Mobile Experience**: Better navigation and responsive design
-- **🏠 Sticky Header**: Header stays fixed while scrolling for easy access
-- **💬 Improved Modals**: All forms now open as proper centered dialogs
-- **🌙 Dark Mode Fixes**: Perfect theme consistency across all components
-- **✍️ Professional Typography**: Titillium Web font integration
-- **⚖️ Legal Compliance**: Copyright footer and proper attribution
+### 🤖 **AI Chat Revolution**
+
+- **Conversational AI**: Chat with Google Gemini 2.5 Flash about your finances
+- **Natural Language**: Ask questions in plain English and get instant insights
+- **Indian Currency**: Perfect ₹ formatting and regional financial context
+- **Smart History**: All conversations saved and searchable
+
+### � **Enhanced Authentication**
+
+- **Multiple Options**: Google OAuth, Email/Password, and Magic Link sign-in
+- **Passwordless Login**: Secure magic links sent to your email
+- **Better Security**: Enhanced profile management and password recovery
+
+### 📱 **PWA Improvements**
+
+- **Smart Install**: Improved installation prompts with session tracking
+- **Better Offline**: Enhanced service worker and caching strategies
+- **User Choice**: Respect user preferences for install prompts
+
+### 🛠️ **Technical Upgrades**
+
+- **Firebase Functions v2**: Modern serverless architecture with CORS support
+- **React Markdown**: Rich text formatting in AI responses
+- **Performance**: Optimized loading and better error handling
 
 ## 📱 Screenshots
 
