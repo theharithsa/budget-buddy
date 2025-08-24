@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ScrollArea } from './ui/scroll-area';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback } from './ui/avatar';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { 
   Loader2, 
   Send, 
@@ -14,10 +15,13 @@ import {
   Trash2, 
   History,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Clock,
+  Plus,
+  ChevronLeft
 } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
-import { collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc, getDocs, serverTimestamp, where, limit, updateDoc } from 'firebase/firestore';
 import { functions, db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { useFirestoreData } from '../hooks/useFirestoreData';
@@ -29,28 +33,124 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  sessionId: string;
   actionItems?: any[];
   isError?: boolean;
 }
 
+interface ChatSession {
+  id: string;
+  title: string;
+  lastMessage: string;
+  messageCount: number;
+  createdAt: Date;
+  lastActivity: Date;
+}
+
 export const AIChatPage: React.FC = () => {
   const { user } = useAuth();
-  const { expenses, budgets } = useFirestoreData();
+  const { expenses, budgets, customPeople, publicPeople } = useFirestoreData();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [currentSessionId, setCurrentSessionId] = useState<string>('');
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [showSessions, setShowSessions] = useState(false);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Load conversation history from Firestore
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoadingHistory(false);
+      return;
+    }
+
+    // Timeout fallback to ensure loading doesn't hang forever
+    const loadingTimeout = setTimeout(() => {
+      console.log('Loading timeout reached, setting loadingHistory to false');
+      setLoadingHistory(false);
+    }, 10000); // 10 second timeout
+
+    // Load chat sessions first
+    const loadSessions = async () => {
+      try {
+        console.log('Loading chat sessions for user:', user.uid);
+        const sessionsRef = collection(db, `users/${user.uid}/chatSessions`);
+        const q = query(sessionsRef, orderBy('lastActivity', 'desc'), limit(10));
+        const snapshot = await getDocs(q);
+        
+        const loadedSessions: ChatSession[] = [];
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          loadedSessions.push({
+            id: doc.id,
+            title: data.title || 'New Chat',
+            lastMessage: data.lastMessage || '',
+            messageCount: data.messageCount || 0,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            lastActivity: data.lastActivity?.toDate() || new Date(),
+          });
+        });
+
+        console.log('Loaded sessions:', loadedSessions.length);
+        setSessions(loadedSessions);
+
+        // Set current session (most recent or create new)
+        if (loadedSessions.length > 0 && !currentSessionId) {
+          console.log('Setting current session to:', loadedSessions[0].id);
+          setCurrentSessionId(loadedSessions[0].id);
+        } else if (loadedSessions.length === 0) {
+          // Create new session
+          console.log('Creating new session');
+          const newSessionId = await createNewSession();
+          console.log('Created new session:', newSessionId);
+          if (newSessionId) {
+            setCurrentSessionId(newSessionId);
+          } else {
+            // If session creation fails, just proceed without sessions
+            console.log('Session creation failed, proceeding without sessions');
+            setLoadingHistory(false);
+          }
+        }
+        
+        clearTimeout(loadingTimeout);
+      } catch (error) {
+        console.error('Error loading sessions:', error);
+        clearTimeout(loadingTimeout);
+        setLoadingHistory(false);
+      }
+    };
+
+    loadSessions();
+
+    return () => {
+      clearTimeout(loadingTimeout);
+    };
+  }, [user]);
+
+  // Load messages for current session
+  useEffect(() => {
+    if (!user || !currentSessionId) {
+      // If no user or session, stop loading
+      if (!user) setLoadingHistory(false);
+      return;
+    }
+
+    console.log('Loading messages for session:', currentSessionId);
 
     const conversationRef = collection(db, `users/${user.uid}/conversations`);
-    const q = query(conversationRef, orderBy('timestamp', 'asc'));
+    // Use only the where clause to avoid index requirements, then sort in memory
+    const q = query(
+      conversationRef, 
+      where('sessionId', '==', currentSessionId)
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log('Messages snapshot received, docs:', snapshot.docs.length);
       const loadedMessages: ChatMessage[] = [];
       
       snapshot.docs.forEach(doc => {
@@ -60,47 +160,113 @@ export const AIChatPage: React.FC = () => {
           role: data.role,
           content: data.content,
           timestamp: data.timestamp?.toDate() || new Date(),
+          sessionId: data.sessionId || currentSessionId,
           actionItems: data.actionItems,
           isError: data.isError
         });
       });
+
+      // Sort messages by timestamp in memory (since we removed orderBy to avoid index requirements)
+      loadedMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
       if (loadedMessages.length === 0) {
         // Add welcome message if no history
         loadedMessages.push({
           id: 'welcome',
           role: 'assistant',
-          content: `## Welcome to AI Chat! 🤖
+          sessionId: currentSessionId,
+          content: `## Welcome to KautilyaAI Co-Pilot! 🤖
 
-I'm your **AI Financial Assistant** for Budget Buddy. I can help you:
+I'm **KautilyaAI**, your intelligent financial advisor for Budget Buddy. Named after the ancient Indian philosopher and economist Chanakya (Kautilya), I bring wisdom to your wealth management.
+
+I can help you:
 
 - **Analyze your spending patterns** 📊
 - **Track and categorize expenses** 💰
+- **Manage shared expenses with people** 👥
 - **Create and manage budgets** 📈
 - **Get personalized financial advice** 💡
 - **Answer questions about your finances** ❓
+- **Understand the People module and relationships** 🏠
 
 Try asking me something like:
 - *"Show me my spending this month"*
 - *"How am I doing with my budget?"*
-- *"What's my biggest expense category?"*
+- *"Who do I spend the most money with?"*
+- *"Help me understand the People module"*
+- *"Show me shared expenses with family"*
+- *"How do I add new people to track expenses?"*
 
-Let's start managing your finances smarter! 🚀`,
+Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
           timestamp: new Date(),
         });
       }
 
       setMessages(loadedMessages);
       setLoadingHistory(false);
+      console.log('Messages loaded successfully, loadingHistory set to false');
+    }, (error) => {
+      console.error('Error loading messages:', error);
+      setLoadingHistory(false);
+      toast.error('Failed to load chat history');
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, currentSessionId]);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const createNewSession = async (): Promise<string> => {
+    if (!user) return '';
+
+    try {
+      const sessionsRef = collection(db, `users/${user.uid}/chatSessions`);
+      const newSession = await addDoc(sessionsRef, {
+        title: 'New Chat',
+        lastMessage: '',
+        messageCount: 0,
+        createdAt: serverTimestamp(),
+        lastActivity: serverTimestamp(),
+      });
+
+      return newSession.id;
+    } catch (error) {
+      console.error('Error creating new session:', error);
+      return '';
+    }
+  };
+
+  const updateSessionActivity = async (sessionId: string, lastMessage: string) => {
+    if (!user || !sessionId) return;
+
+    try {
+      const sessionRef = doc(db, `users/${user.uid}/chatSessions`, sessionId);
+      await updateDoc(sessionRef, {
+        lastMessage: lastMessage.substring(0, 100) + (lastMessage.length > 100 ? '...' : ''),
+        lastActivity: serverTimestamp(),
+        messageCount: messages.filter(m => m.id !== 'welcome').length + 1,
+      });
+    } catch (error) {
+      console.error('Error updating session:', error);
+    }
+  };
+
+  const switchToSession = async (sessionId: string) => {
+    setCurrentSessionId(sessionId);
+    setShowSessions(false);
+  };
+
+  const createNewChatSession = async () => {
+    const newSessionId = await createNewSession();
+    if (newSessionId) {
+      setCurrentSessionId(newSessionId);
+      setShowSessions(false);
+      toast.success('New chat session created');
+    }
+  };
 
   // Save message to Firestore
   const saveMessageToHistory = async (message: ChatMessage) => {
@@ -111,9 +277,15 @@ Let's start managing your finances smarter! 🚀`,
         role: message.role,
         content: message.content,
         timestamp: message.timestamp,
+        sessionId: message.sessionId,
         actionItems: message.actionItems || [],
         isError: message.isError || false
       });
+      
+      // Update session activity
+      if (message.sessionId) {
+        await updateSessionActivity(message.sessionId, message.content);
+      }
     } catch (error) {
       console.error('Error saving message:', error);
     }
@@ -127,6 +299,7 @@ Let's start managing your finances smarter! 🚀`,
       role: 'user',
       content: message.trim(),
       timestamp: new Date(),
+      sessionId: currentSessionId,
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -143,7 +316,9 @@ Let's start managing your finances smarter! 🚀`,
         message: message.trim(),
         context: {
           recentExpenses: expenses.slice(0, 20),
-          activeBudgets: budgets.filter(b => (b as any).isActive !== false)
+          activeBudgets: budgets.filter(b => (b as any).isActive !== false),
+          customPeople: customPeople.slice(0, 50), // Limit for performance
+          publicPeople: publicPeople.slice(0, 20)   // Limit for performance
         }
       });
 
@@ -155,6 +330,7 @@ Let's start managing your finances smarter! 🚀`,
           role: 'assistant',
           content: data.response,
           timestamp: new Date(),
+          sessionId: currentSessionId,
           actionItems: data.context
         };
 
@@ -172,6 +348,7 @@ Let's start managing your finances smarter! 🚀`,
         role: 'assistant',
         content: '**Sorry, I encountered an error.** 😔\n\nPlease try again in a moment. If the problem persists, make sure your internet connection is stable.',
         timestamp: new Date(),
+        sessionId: currentSessionId,
         isError: true
       };
       
@@ -194,21 +371,83 @@ Let's start managing your finances smarter! 🚀`,
     }
   };
 
-  const clearHistory = async () => {
-    if (!user) return;
+  const deleteCurrentSession = async () => {
+    if (!user || !currentSessionId) return;
 
     try {
+      // Clear current session messages
       const conversationRef = collection(db, `users/${user.uid}/conversations`);
-      const q = query(conversationRef);
+      const q = query(conversationRef, where('sessionId', '==', currentSessionId));
       
       const snapshot = await getDocs(q);
       const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
       
       await Promise.all(deletePromises);
-      toast.success('Chat history cleared');
+      
+      // Delete the session itself
+      await deleteDoc(doc(db, `users/${user.uid}/chatSessions`, currentSessionId));
+      
+      // Create a new session
+      const newSessionId = await createNewSession();
+      setCurrentSessionId(newSessionId);
+      
+      toast.success('Chat session deleted');
     } catch (error) {
-      console.error('Error clearing history:', error);
-      toast.error('Failed to clear history');
+      console.error('Error deleting session:', error);
+      toast.error('Failed to delete session');
+    }
+  };
+
+  const renameSession = async (sessionId: string, newTitle: string) => {
+    if (!user || !newTitle.trim()) return;
+
+    try {
+      const sessionRef = doc(db, `users/${user.uid}/chatSessions`, sessionId);
+      await updateDoc(sessionRef, {
+        title: newTitle.trim(),
+        lastActivity: new Date()
+      });
+      
+      // Update local sessions state
+      setSessions(prev => prev.map(session => 
+        session.id === sessionId 
+          ? { ...session, title: newTitle.trim() }
+          : session
+      ));
+      
+      toast.success('Session renamed');
+    } catch (error) {
+      console.error('Error renaming session:', error);
+      toast.error('Failed to rename session');
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    if (!user) return;
+
+    try {
+      // Delete all messages in the session
+      const conversationRef = collection(db, `users/${user.uid}/conversations`);
+      const q = query(conversationRef, where('sessionId', '==', sessionId));
+      
+      const snapshot = await getDocs(q);
+      const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+      
+      await Promise.all(deletePromises);
+      
+      // Delete the session itself
+      await deleteDoc(doc(db, `users/${user.uid}/chatSessions`, sessionId));
+      
+      // If this was the current session, create a new one
+      if (sessionId === currentSessionId) {
+        const newSessionId = await createNewSession();
+        setCurrentSessionId(newSessionId);
+      }
+      
+      toast.success('Session deleted');
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      toast.error('Failed to delete session');
     }
   };
 
@@ -217,9 +456,13 @@ Let's start managing your finances smarter! 🚀`,
     "Show my spending this month",
     "How am I doing with my budget?",
     "What's my biggest expense category?",
+    "Who do I spend the most money with?",
+    "Show me shared expenses with family",
+    "Help me manage my people in the app",
     "Compare spending to last month",
     `Add expense: ${formatCurrency(150)} lunch`,
-    "Create a budget plan for next month"
+    "Create a budget plan for next month",
+    "How do I add people to my expenses?"
   ];
 
   const handleQuickAction = (action: string) => {
@@ -253,25 +496,137 @@ Let's start managing your finances smarter! 🚀`,
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-xl">AI Financial Assistant</CardTitle>
+                <CardTitle className="text-xl">KautilyaAI Co-Pilot</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Get personalized insights and manage your finances with AI
+                  Your intelligent financial advisor - bringing ancient wisdom to modern wealth
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              {/* Chat Sessions */}
+              <Sheet open={showSessions} onOpenChange={setShowSessions}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <History className="h-4 w-4" />
+                    <span className="hidden sm:ml-1 sm:inline">Chat History</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-80">
+                  <SheetHeader>
+                    <SheetTitle className="flex items-center space-x-2">
+                      <MessageSquare className="h-5 w-5" />
+                      <span>Chat Sessions</span>
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4">
+                    <Button onClick={createNewChatSession} className="w-full" size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      New Chat Session
+                    </Button>
+                    
+                    <div className="space-y-2">
+                      {sessions.map((session) => (
+                        <div 
+                          key={session.id} 
+                          className={`group relative p-3 rounded-lg border transition-colors hover:bg-muted/50 cursor-pointer ${
+                            currentSessionId === session.id ? 'ring-2 ring-primary bg-muted/30' : ''
+                          }`}
+                          onClick={() => switchToSession(session.id)}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1 min-w-0">
+                              {editingSessionId === session.id ? (
+                                <Input
+                                  value={editingTitle}
+                                  onChange={(e) => setEditingTitle(e.target.value)}
+                                  onBlur={() => {
+                                    if (editingTitle.trim()) {
+                                      renameSession(session.id, editingTitle);
+                                    }
+                                    setEditingSessionId(null);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      if (editingTitle.trim()) {
+                                        renameSession(session.id, editingTitle);
+                                      }
+                                      setEditingSessionId(null);
+                                    } else if (e.key === 'Escape') {
+                                      setEditingSessionId(null);
+                                    }
+                                  }}
+                                  className="h-6 text-sm"
+                                  autoFocus
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              ) : (
+                                <div
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingSessionId(session.id);
+                                    setEditingTitle(session.title);
+                                  }}
+                                  className="cursor-text"
+                                >
+                                  <h4 className="font-medium text-sm truncate hover:text-primary">
+                                    {session.title}
+                                  </h4>
+                                </div>
+                              )}
+                              <div className="flex items-center space-x-2 mt-1">
+                                <span className="text-xs text-muted-foreground">
+                                  {session.messageCount} msgs
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {session.lastActivity.toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {currentSessionId === session.id && (
+                                <Badge variant="default" className="text-xs">Active</Badge>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteSession(session.id);
+                                }}
+                                className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {sessions.length === 0 && (
+                        <div className="text-center py-6 text-muted-foreground">
+                          <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">No chat sessions yet</p>
+                          <p className="text-xs">Start a conversation to create your first session</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
               <Badge variant="secondary" className="hidden sm:flex">
-                <History className="h-3 w-3 mr-1" />
+                <MessageSquare className="h-3 w-3 mr-1" />
                 {messages.filter(m => m.id !== 'welcome').length} messages
               </Badge>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={clearHistory}
+                onClick={deleteCurrentSession}
                 className="text-red-600 hover:text-red-700"
               >
                 <Trash2 className="h-4 w-4" />
-                <span className="hidden sm:ml-1 sm:inline">Clear History</span>
+                <span className="hidden sm:ml-1 sm:inline">Delete Chat</span>
               </Button>
             </div>
           </div>

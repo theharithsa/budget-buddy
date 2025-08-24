@@ -251,7 +251,7 @@ function FinanceApp() {
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
-              <TabsTrigger value="ai-chat">AI Chat</TabsTrigger>
+              <TabsTrigger value="ai-chat">KautilyaAI Co-Pilot</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard">

@@ -9,7 +9,8 @@ import {
   Tags,
   Users,
   Brain,
-  Home
+  Home,
+  MessageSquare
 } from 'lucide-react';
 
 interface BottomNavigationProps {
@@ -23,6 +24,7 @@ const navigationItems = [
   { id: 'expenses', label: 'Expenses', icon: Receipt },
   { id: 'budgets', label: 'Budgets', icon: Target },
   { id: 'analyzer', label: 'AI', icon: Brain },
+  { id: 'ai-chat', label: 'KautilyaAI', icon: MessageSquare },
 ];
 
 export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: BottomNavigationProps) {

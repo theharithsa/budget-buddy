@@ -78,9 +78,9 @@ const navigationItems: NavigationItem[] = [
   },
   {
     id: 'ai-chat',
-    label: 'AI Chat',
+    label: 'KautilyaAI Co-Pilot',
     icon: MessageSquare,
-    description: 'Chat with AI assistant'
+    description: 'Chat with KautilyaAI assistant'
   }
 ];
 
