@@ -539,15 +539,15 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                         <div className="text-sm prose prose-sm max-w-none overflow-hidden">
                           <ReactMarkdown
                             components={{
-                              p: ({ children }) => <p className="mb-2 last:mb-0 break-words">{children}</p>,
-                              ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                              ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                              li: ({ children }) => <li className="mb-1 break-words text-sm">{children}</li>,
-                              strong: ({ children }) => <strong className="font-semibold text-blue-600">{children}</strong>,
-                              em: ({ children }) => <em className="italic">{children}</em>,
-                              code: ({ children }) => <code className="bg-slate-100 px-1 py-0.5 rounded text-xs break-all">{children}</code>,
-                              h2: ({ children }) => <h2 className="text-sm font-semibold mb-2 mt-3 first:mt-0">{children}</h2>,
-                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 mt-2 first:mt-0">{children}</h3>,
+                              p: ({ children }) => <p className="mb-1 last:mb-0 break-words leading-relaxed">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-0.5 ml-2">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-0.5 ml-2">{children}</ol>,
+                              li: ({ children }) => <li className="mb-0.5 break-words text-sm leading-relaxed">{children}</li>,
+                              strong: ({ children }) => <strong className="font-semibold text-blue-600 dark:text-blue-400">{children}</strong>,
+                              em: ({ children }) => <em className="italic text-purple-600 dark:text-purple-400">{children}</em>,
+                              code: ({ children }) => <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs break-all">{children}</code>,
+                              h2: ({ children }) => <h2 className="text-sm font-semibold mb-1 mt-2 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 mt-1 first:mt-0 text-gray-800 dark:text-gray-200">{children}</h3>,
                             }}
                           >
                             {message.content}
@@ -576,11 +576,11 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                     {/* Wisdom Suggestions */}
                     {message.wisdomSuggestions && message.wisdomSuggestions.length > 0 && (
                       <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                        <div className="text-xs font-medium text-amber-800 dark:text-amber-200 mb-2">
+                        <div className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-2">
                           💡 Wisdom from Kautilya
                         </div>
                         {message.wisdomSuggestions.map((wisdom, idx) => (
-                          <p key={idx} className="text-xs text-amber-700 dark:text-amber-300 mb-1 last:mb-0">
+                          <p key={idx} className="text-xs text-amber-800 dark:text-amber-200 mb-1 last:mb-0">
                             {wisdom}
                           </p>
                         ))}
@@ -590,10 +590,10 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                     {/* Daily Wisdom */}
                     {message.dailyWisdom && (
                       <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
-                        <div className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">
+                        <div className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
                           📜 Daily Wisdom
                         </div>
-                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                        <p className="text-xs text-blue-800 dark:text-blue-200">
                           {message.dailyWisdom}
                         </p>
                       </div>

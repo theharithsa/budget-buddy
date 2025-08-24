@@ -248,13 +248,13 @@ export const chatWithGemini = onCall({
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-exp",
       generationConfig: {
-        temperature: 0.3,
-        topP: 0.9,
-        topK: 40,
-        maxOutputTokens: 4096,
+        temperature: 0.2,  // Lower temperature for more focused responses
+        topP: 0.8,         // Reduced for more concise outputs
+        topK: 30,          // Reduced for sharper responses
+        maxOutputTokens: 1024, // Reduced from 4096 to limit response length
         candidateCount: 1,
       },
-      systemInstruction: "You are KautilyaAI, an intelligent financial assistant combining ancient wisdom with modern financial expertise. CRUD operations are disabled - focus on providing wisdom-based guidance and analysis only."
+      systemInstruction: "You are KautilyaAI, an intelligent financial assistant combining ancient wisdom with modern financial expertise. CRUD operations are disabled - focus on providing wisdom-based guidance and analysis only. Always be CONCISE and DIRECT in your responses."
     });
     
     // Enhanced prompt with instructions
@@ -263,7 +263,10 @@ export const chatWithGemini = onCall({
 2. CRUD operations are disabled - provide guidance and analysis only
 3. If users request data modifications, explain these features are being enhanced
 4. Focus on wisdom-based financial advice and insights
-5. Include relevant Arthashastra principles naturally in your response`;
+5. Include relevant Arthashastra principles naturally in your response
+6. Keep responses CONCISE and SHARP - maximum 3-4 sentences per point
+7. Use bullet points for lists and clear, direct language
+8. Avoid lengthy explanations - focus on actionable insights`;
     
     const result = await model.generateContent(enhancedPrompt);
     const response = result.response.text();
