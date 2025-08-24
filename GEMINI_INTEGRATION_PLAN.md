@@ -67,7 +67,7 @@ export const chatWithGemini = onCall(async (request) => {
   
   // Initialize Gemini
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
   // Get user's expense data from Firestore
   const userData = await getUserFinancialData(userId);
@@ -183,7 +183,7 @@ export const processReceipt = onCall(async (request) => {
   const { userId, imageBase64 } = request.data;
   
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
   const prompt = `
     Analyze this receipt image and extract the following information in JSON format:
