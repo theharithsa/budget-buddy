@@ -22,6 +22,8 @@ import { Navigation } from '@/components/Navigation';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
+import { GeminiChat } from '@/components/GeminiChat';
+import { FloatingAIButton } from '@/components/FloatingAIButton';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
@@ -73,6 +75,7 @@ function FinanceApp() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [showAIChat, setShowAIChat] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [peopleFilter, setPeopleFilter] = useState('all');
@@ -515,6 +518,18 @@ function FinanceApp() {
           publicPeople={publicPeople}
         />
       )}
+
+      {/* Gemini AI Chat */}
+      {showAIChat && (
+        <GeminiChat
+          expenses={filteredAndSortedExpenses}
+          budgets={budgets}
+          onClose={() => setShowAIChat(false)}
+        />
+      )}
+
+      {/* Floating AI Assistant Button */}
+      <FloatingAIButton onClick={() => setShowAIChat(true)} />
 
       {/* Footer */}
       <Footer />

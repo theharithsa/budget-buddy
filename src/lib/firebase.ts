@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
 import { Person } from './types';
 // import { log } from './logger';
 
@@ -66,6 +67,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const functions = getFunctions(app);
 
 // Configure Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
@@ -140,7 +142,7 @@ export const validateReceiptFile = (file: File): boolean => {
   return true;
 };
 
-export { storage, auth, db };
+export { storage, auth, db, functions };
 
 // Authentication functions
 export const signInWithGoogle = async (useRedirect: boolean = false): Promise<User> => {
