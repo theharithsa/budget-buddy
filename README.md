@@ -15,33 +15,35 @@
 
 > **Take control of your finances with intelligent insights, beautiful design, and powerful features. FinBuddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
 
-**🌟 Perfect for:** Students, professionals, families, and anyone who wants to improve their financial health with modern technology.
+**Perfect for:** Students, professionals, families, and anyone who wants to improve their financial health with modern technology.
 
-🌐 **Try it now**: [https://finbuddy-2025.web.app](https://finbuddy-2025.web.app)
+**Try it now**: [https://finbuddy-2025.web.app](https://finbuddy-2025.web.app)
 
-## ✨ Key Features
+## Key Features
 
-### 📊 **Smart Expense Tracking**
+### Smart Expense Tracking
 
 - **Quick Entry**: Add expenses in seconds with smart categorization
 - **Receipt Scanning**: Upload and attach receipts to your expenses
 - **People Tracking**: Track shared expenses and split costs with friends and family
 - **Recurring Templates**: Set up templates for regular expenses to save time
 
-### 💰 **Intelligent Budget Management**
+### Intelligent Budget Management
 
 - **Visual Budget Tracking**: See exactly where your money goes with beautiful charts
 - **Real-time Alerts**: Get notified when you're approaching budget limits
 - **Multiple Timeframes**: Set daily, weekly, monthly, or custom budget periods
 - **Category Budgets**: Create separate budgets for different spending categories
+- **Historical Analysis**: Month selector to view budget performance across different time periods
 
-### 🧠 **AI-Powered Insights**
+### AI-Powered Insights
 
 - **Spending Analysis**: Get intelligent insights about your spending patterns
 - **Financial Health Score**: See how you're doing financially with a comprehensive score
 - **Personalized Recommendations**: Receive AI-generated tips to improve your finances
 - **Trend Detection**: Identify spending trends and habits you might not notice
 
+<<<<<<< HEAD
 ### 🤖 **KautilyaAI Co-Pilot** ⭐ *NEW in v2.6.0*
 
 - **💬 Complete Conversational CRUD**: Manage ALL data through natural language with Google Gemini 2.0 Flash
@@ -60,27 +62,30 @@
 - **Templates**: "Create template for monthly rent ₹15000", "Update rent template amount"
 
 ### 📱 **Modern User Experience**
+=======
+### Modern User Experience
+>>>>>>> origin/main
 
 - **Mobile-First Design**: Optimized for smartphones with intuitive touch controls
 - **Progressive Web App**: Install on your phone for native app experience
 - **Dark/Light Themes**: Choose your preferred appearance for comfortable viewing
 - **Offline Support**: Continue tracking expenses even without internet connection
 
-### 🎯 **Achievement System**
+### Achievement System
 
 - **Financial Goals**: Set and track progress toward your financial objectives
 - **Achievement Badges**: Earn rewards for good financial habits
 - **Streak Tracking**: Build momentum with spending-free days and saving streaks
 - **Level System**: Progress through levels as you improve your financial health
 
-### 📈 **Professional Analytics**
+### Professional Analytics
 
 - **Interactive Charts**: Beautiful visualizations powered by professional chart libraries
 - **Spending Trends**: See your spending patterns over time
 - **Category Breakdown**: Understand which categories consume most of your budget
 - **Comparative Analysis**: Compare current performance with previous periods
 
-## 🚀 Getting Started
+## Getting Started
 
 ### For Users
 
@@ -97,6 +102,7 @@
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and push notifications
 
+<<<<<<< HEAD
 ## 🎨 What's New in v2.6.0
 
 ### 🤖 **KautilyaAI Co-Pilot Revolution**
@@ -124,8 +130,18 @@
 - **Firebase Functions v2**: Modern serverless architecture with CORS support
 - **React Markdown**: Rich text formatting in AI responses
 - **Performance**: Optimized loading and better error handling
+=======
+## What's New in v2.5.4
 
-## 📱 Screenshots
+- **Enhanced UI/UX**: Added descriptive text labels for all expense page action icons to improve user guidance
+- **Typography Standardization**: Unified all chart components to use consistent Titillium Web font family
+- **Theme Integration**: Comprehensive dark/light mode support across dashboard and analytics charts
+- **Improved Accessibility**: Better UI element descriptions and visual consistency
+- **Chart Enhancements**: Theme-aware color schemes for all ApexCharts components
+- **Technical Improvements**: Integrated ThemeContext across all visualization components
+>>>>>>> origin/main
+
+## Screenshots
 
 Will be updated soon
 
@@ -137,11 +153,11 @@ Will be updated soon
 - **Analytics**: Professional charts and insights about your spending
 - **Mobile Experience**: Optimized for touch devices with native app feel
 
-## 🤝 How to Contribute
+## How to Contribute
 
 We welcome contributions from the community! Here's how you can help make FinBuddy even better:
 
-### 🐛 Report Issues
+### Report Issues
 
 Found a bug or have a feature request? Please let us know:
 
@@ -150,7 +166,7 @@ Found a bug or have a feature request? Please let us know:
 3. **Add labels** to help us categorize your issue
 4. **Provide details** like steps to reproduce (for bugs) or use cases (for features)
 
-### ✨ Suggest Features
+### Suggest Features
 
 Have an idea for a new feature? We'd love to hear it:
 
@@ -158,7 +174,7 @@ Have an idea for a new feature? We'd love to hear it:
 - **User experience**: Describe how you envision it working
 - **Priority**: Let us know how important this feature is to you
 
-### 🔧 Development Contributions
+### Development Contributions
 
 Want to contribute code? Here's how to get started:
 
@@ -169,7 +185,7 @@ Want to contribute code? Here's how to get started:
 5. **Test** your changes thoroughly
 6. **Submit a pull request** with a clear description
 
-### 📖 Documentation
+### Documentation
 
 Help us improve our documentation:
 
@@ -178,30 +194,30 @@ Help us improve our documentation:
 - Translate documentation to other languages
 - Improve setup instructions
 
-## 📋 Changelog & Updates
+## Changelog & Updates
 
 Stay up to date with FinBuddy's latest improvements:
 
-- **[📝 Changelog](./CHANGELOG.md)** - Complete version history with detailed release notes
-- **[🔄 Version 2.3.0](./CHANGELOG.md#v230)** - Latest features and improvements
-- **[🗺️ Roadmap](https://github.com/theharithsa/budget-buddy/projects)** - Upcoming features and planned improvements
+- **[Changelog](./CHANGELOG.md)** - Complete version history with detailed release notes
+- **[Version 2.5.4](./CHANGELOG.md#254)** - Latest features and improvements
+- **[Roadmap](https://github.com/theharithsa/budget-buddy/projects)** - Upcoming features and planned improvements
 
-## 🆘 Support & Help
+## Support & Help
 
 Need help using FinBuddy? Here are your options:
 
-### 📚 Documentation
+### Documentation
 
 - **[Setup Guide](./docs/FIREBASE_SETUP.md)** - How to set up your own instance
 - **[User Guide](./docs/PRD.md)** - Complete feature documentation
 - **[FAQ](./docs/FAQ.md)** - Frequently asked questions
 
-### 💬 Community Support
+### Community Support
 
 - **[GitHub Discussions](https://github.com/theharithsa/budget-buddy/discussions)** - Ask questions and share tips
 - **[Issues](https://github.com/theharithsa/budget-buddy/issues)** - Report bugs and request features
 
-### 🔧 Technical Issues
+### Technical Issues
 
 For technical problems:
 
@@ -210,56 +226,56 @@ For technical problems:
 3. **Create a new issue** with detailed information about your problem
 4. **Include screenshots** or error messages when possible
 
-## 📱 System Requirements
+## System Requirements
 
 FinBuddy works on all modern devices:
 
-### 💻 Desktop Browsers
+### Desktop Browsers
 
 - **Chrome** 88+ (recommended)
 - **Firefox** 85+
 - **Safari** 14+
 - **Edge** 88+
 
-### 📱 Mobile Devices
+### Mobile Devices
 
 - **iOS** 13+ (Safari)
 - **Android** 8+ (Chrome)
 - **Progressive Web App** support for native app experience
 
-### 🌐 Internet Connection
+### Internet Connection
 
 - **Online**: Full features including AI insights and cloud sync
 - **Offline**: Basic expense tracking continues to work
 - **Sync**: Automatic data synchronization when connection is restored
 
-## 🔒 Privacy & Security
+## Privacy & Security
 
 Your financial data security is our top priority:
 
-- **🔐 Secure Authentication**: Google OAuth integration
-- **☁️ Encrypted Storage**: All data encrypted in Firebase
-- **🚫 No Data Selling**: We never sell or share your personal data
-- **🏠 Local Processing**: Many features work offline on your device
-- **🛡️ GDPR Compliant**: Full compliance with privacy regulations
+- **Secure Authentication**: Google OAuth integration
+- **Encrypted Storage**: All data encrypted in Firebase
+- **No Data Selling**: We never sell or share your personal data
+- **Local Processing**: Many features work offline on your device
+- **GDPR Compliant**: Full compliance with privacy regulations
 
 Read our complete [Privacy Policy](./docs/PRIVACY.md) and [Security Guidelines](./docs/SECURITY.md).
 
-## 🏆 Recognition
+## Recognition
 
 FinBuddy has been recognized for:
 
-- **💡 Innovation**: Modern approach to personal finance management
-- **🎨 Design**: Clean, intuitive user interface
-- **📱 Mobile Experience**: Outstanding mobile-first design
-- **🤖 AI Integration**: Smart financial insights and recommendations
-- **⚡ Performance**: Fast, responsive Progressive Web App
+- **Innovation**: Modern approach to personal finance management
+- **Design**: Clean, intuitive user interface
+- **Mobile Experience**: Outstanding mobile-first design
+- **AI Integration**: Smart financial insights and recommendations
+- **Performance**: Fast, responsive Progressive Web App
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [GitHub Spark](https://githubnext.com/projects/spark) template
 - Icons by [Lucide](https://lucide.dev/)
@@ -269,6 +285,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+<<<<<<< HEAD
 ⭐ **Star this repository** if FinBuddy helps you manage your finances better!
+=======
+**Star this repository** if FinBuddy helps you manage your finances better!
+>>>>>>> origin/main
 
-Made with ❤️ by the InspiLabs team & Vishruth Harithsa
+Made with care by the InspiLabs team & Vishruth Harithsa

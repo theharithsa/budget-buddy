@@ -128,6 +128,141 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced project structure for better maintainability
   - Improved component organization and reusability
 
+## [2.5.5] - 2025-08-23
+
+### Added
+
+- **Month Selector for Budget Page**: New dropdown to view budget utilization across different months
+- Historical budget performance analysis with month-by-month breakdown
+- Dynamic spending calculation based on selected month's expenses
+- Enhanced budget tracking with time-based filtering capabilities
+
+### Changed
+
+- Budget Manager now accepts expenses prop for historical analysis
+- Budget spending calculations updated to support month selection
+- Improved budget cards to display month-specific spending data
+
+### Enhanced
+
+- Budget utilization visualization with historical context
+- User ability to analyze spending patterns across months
+- Better financial tracking with temporal budget insights
+- Comprehensive budget performance review functionality
+
+### Technical
+
+- Updated BudgetManager component interface to include expenses
+- Added selectedMonth state management with current month default
+- Implemented dynamic spending calculation based on month selection
+- Enhanced calculateCategorySpending utility for month-specific data
+
+## [2.5.4] - 2024-12-28
+
+### Added
+
+- Descriptive text labels for all expense page action icons to improve user guidance
+- Theme-aware color schemes for all ApexCharts components
+- Comprehensive dark/light mode support for dashboard and analytics charts
+- ThemeContext integration across all chart components
+
+### Changed
+
+- Updated all chart components to use consistent Titillium Web font family
+- Replaced Inter font references with application's primary typography
+- Enhanced chart readability in both light and dark themes
+- Improved accessibility with better UI element descriptions
+
+### Improved
+
+- User experience with clearer icon descriptions on expense management page
+- Visual consistency across all data visualization components
+- Theme switching performance and visual transitions
+- Typography standardization across dashboard and analytics
+
+### Technical
+
+- Integrated useTheme hook in Dashboard.tsx, FlowbiteCharts.tsx, and AdvancedCharts.tsx
+- Added getChartThemeConfig() helper function for consistent theming
+- Updated all ApexCharts configurations with theme-aware colors and fonts
+- Maintained TypeScript compatibility and build optimization
+
+### Fixed
+
+- Font inconsistencies between chart components and main application
+- Theme color mismatches in data visualization elements
+- Missing user guidance for expense page control elements
+
+## [2.5.3] - 2025-08-23
+
+### Fixed
+
+- **Achievement Cards Design & Scoring**: Enhanced gamification system with improved visual design and accurate calculations
+  - **Card Design Improvements**:
+    - Replaced harsh green highlighting with subtle gradient background for completed achievements
+    - Added elegant ring effect and shadow to completed achievement icons
+    - Improved contrast and readability with better text colors for completed vs. incomplete achievements
+    - Enhanced progress bars with color coding and better visual feedback
+    - Redesigned completion badges with checkmark icons and refined styling
+  - **Scoring Algorithm Fixes**:
+    - **Budget Compliance**: Fixed calculation to properly show 100% when under budget, decreasing appropriately when over budget
+    - **Frugal Genius Achievement**: Completely rewritten logic to accurately track spending less than 80% of budget
+    - **Consistency Score**: Enhanced algorithm using coefficient of variation for more accurate spending pattern analysis
+    - **Savings Rate**: Improved calculation based on actual budget vs spending ratio rather than arbitrary day counting
+    - **Overall Score**: Rebalanced weighted calculation (40% budget compliance, 30% consistency, 20% savings, 10% streak)
+  - **Dynamic Updates**: All scores now correctly update in real-time as expenses are added
+  - **Visual Polish**: Achievement cards now properly differentiate between unlocked/locked states with appropriate styling
+
+### Technical Improvements
+
+- Enhanced `GamificationSystem.tsx` with robust calculation algorithms
+- Improved achievement card responsive design and accessibility
+- Added proper TypeScript typing for all scoring calculations
+- Optimized achievement progress tracking for better performance
+
+## [2.5.2] - 2025-08-23
+
+### Fixed
+
+- **Dashboard Chart Rendering Issue**: Fixed charts disappearing when switching between dashboard tabs
+  - **Problem**: Charts in the Overview tab would disappear when users switched to other tabs (Advanced, Behavior, etc.) and returned to Overview
+  - **Root Cause**: ApexCharts instances were losing connection to DOM containers when tab content was hidden/shown
+  - **Solution**: Implemented proper chart lifecycle management with controlled tab state
+  - **Technical Improvements**:
+    - Added tab state tracking with `useState` for active tab management
+    - Implemented chart instance references for proper cleanup
+    - Added chart re-rendering trigger when returning to Overview tab
+    - Enhanced useEffect dependencies to include tab state changes
+    - Added unique keys to chart containers to force re-rendering
+    - Improved chart cleanup on component unmount
+  - **Impact**: Dashboard charts now remain visible and functional when switching between tabs
+  - **Testing**: Verified on all dashboard tabs (Overview, Advanced, Behavior, Achievements, Budgets)
+
+### Technical Notes
+
+- Enhanced Dashboard.tsx with proper chart lifecycle management
+- Improved ApexCharts integration with React tab system
+- Added forced re-rendering mechanism for tab switching
+- Maintained chart performance while fixing visibility issues
+
+## [2.5.1] - 2025-08-23
+
+### Changed
+
+- **Authentication Improvements**: Enhanced authentication reliability and compatibility
+  - Simplified Firebase configuration for better stability
+  - Improved Google OAuth authentication flow
+  - Streamlined authentication codebase for enhanced performance
+  - Updated app to version 2.5.1 with better compatibility across all browsers
+
+### Fixed
+
+- **Firebase Authentication Issues**: Resolved authentication errors and improved connectivity
+  - Fixed Firebase internal errors during Google sign-in
+  - Improved authentication state management
+  - Enhanced error handling for authentication flows
+  - Better compatibility with different browser environments
+
 ## [2.3.0] - 2025-01-27
 
 ### Added
@@ -226,7 +361,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Application Version**: Updated to v2.2.2 across all UI components and documentation
 
-## [2.2.1] - 2025-08-22
+## [2.2.1] - 2025-08-21
 
 ### Fixed
 
@@ -256,7 +391,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSS Grid Implementation**: Enhanced grid layout with auto-responsive column distribution
 - **Theme System**: Strengthened CSS variable integration across all PWA and dashboard components
 
-## [2.2.0] - 2025-08-22
+## [2.2.0] - 2025-08-20
 
 ### Added
 
