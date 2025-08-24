@@ -1,11 +1,132 @@
 # Changelog
 
-All notable changes to Budget Buddy will be documented in this file.
+All notable changes to FinBuddy will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.6.0] - 2025-08-24
+
+### 🚀 Major Features Added
+
+- **🤖 KautilyaAI Co-Pilot**: Revolutionary conversational CRUD system powered by Google Gemini 2.0 Flash
+  - Complete natural language data management for all FinBuddy operations
+  - Real-time UI synchronization with comprehensive CRUD operations
+  - Context-aware conversation memory for intelligent interactions
+  - Smart category detection with fuzzy matching algorithms
+  - Enhanced backdrop blur design for premium AI experience
+
+- **💬 Complete Conversational Data Management**:
+  - **Expenses**: "Add ₹500 for education" → Creates category if needed + adds expense
+  - **Categories**: "Create new category Transportation" → Appears immediately in UI
+  - **Budgets**: "Set ₹5000 budget for groceries" → Creates budget with real-time updates
+  - **People**: "Add person John for shared expenses" → Full people management
+  - **Templates**: "Create template for monthly rent ₹15000" → Template CRUD operations
+  - Context-aware deletions: "Delete the last grocery expense" → Remembers conversation context
+
+- **🔥 Enhanced Firebase Functions v2**: Comprehensive CRUD backend architecture
+  - 20+ advanced regex patterns for natural language processing
+  - Smart category mapping with intelligent fuzzy matching
+  - Conversation memory system for context-aware operations
+  - Template update operations (title changes, amount modifications)
+  - Complete error handling with detailed user feedback
+
+- **⚡ Real-Time UI State Synchronization**:
+  - ExecutedActions pipeline calling frontend CRUD functions
+  - Immediate UI reflection of all chat-based operations
+  - Enhanced toast notifications for operation feedback
+  - Complete TypeScript interface integration
+
+### 🌍 Localization & Regional Support
+
+- **🇮🇳 Indian Currency Support**: Complete INR (₹) localization
+  - Proper comma formatting (₹1,23,456.78) following Indian numbering system
+  - Currency symbols and formatting throughout AI responses
+  - Optimized for Indian financial contexts and spending patterns
+
+### 🔐 Enhanced Authentication System
+
+- **📧 Email/Password Authentication**: Complete traditional auth system
+  - User registration with email and password
+  - Password reset functionality via email
+  - Profile management with display name updates
+
+- **🔗 Magic Link Authentication**: Passwordless sign-in system
+  - Send secure sign-in links to email
+  - One-click authentication without remembering passwords
+  - Enhanced security with email verification
+
+- **🌐 Google OAuth Integration**: Seamless social login
+  - One-click Google sign-in with popup and redirect options
+  - Profile synchronization with Google account details
+
+### 📱 Progressive Web App Enhancements
+
+- **🚀 Smart Install Banner**: Improved PWA installation experience
+  - Session-based dismissal tracking prevents repetitive prompts
+  - Platform-specific installation instructions
+  - Enhanced user onboarding for mobile app experience
+
+- **🔄 Service Worker Optimization**: Better offline functionality
+  - Improved caching strategies for faster load times
+  - Background sync for offline expense entry
+  - Automatic updates with user notifications
+
+### 🛠️ Technical Improvements
+
+- **⚡ Performance Optimization**:
+  - React-markdown integration for rich text rendering
+  - Optimized bundle sizes and code splitting
+  - Enhanced component lifecycle management
+
+- **🔧 Developer Experience**:
+  - Complete TypeScript coverage for AI chat features
+  - Enhanced error boundaries and fallback components
+  - Comprehensive logging and debugging tools
+
+- **🎨 UI/UX Enhancements**:
+  - Fixed chat container overflow handling
+  - Improved responsive design for conversation interface
+  - Enhanced accessibility with proper ARIA labels
+  - Cookie consent banner with user preference management
+
+### 📚 Documentation Overhaul
+
+- **📖 User Documentation**: Complete user-facing guides
+  - AI Chat usage guide with examples and tips
+  - Getting started tutorials for new users
+  - Feature explanations with screenshots and examples
+
+- **🔧 Developer Documentation**: Technical implementation guides
+  - Firebase setup and configuration instructions
+  - API reference for Firebase Functions
+  - Component architecture and integration patterns
+
+### 🐛 Bug Fixes
+
+- **🔧 Navigation Improvements**: Enhanced sidebar navigation
+  - Fixed collapsible sidebar state persistence
+  - Improved mobile navigation responsiveness
+  - Better tab management and active state handling
+
+- **💾 Data Persistence**: Enhanced data management
+  - Fixed conversation history storage in Firestore
+  - Improved expense data synchronization
+  - Better error handling for failed API calls
+
+### 🔄 Migration & Compatibility
+
+- **📦 Dependency Updates**: Latest package versions
+  - Updated Firebase SDK to latest stable version
+  - Enhanced React and TypeScript compatibility
+  - Improved build tools and development server
+
+- **🔀 Architecture Migration**: Modernized codebase structure
+  - Migrated to Firebase Functions v2 for better performance
+  - Enhanced project structure for better maintainability
+  - Improved component organization and reusability
 
 ## [2.5.5] - 2025-08-23
 

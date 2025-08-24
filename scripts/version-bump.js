@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Version Bump Script for Budget Buddy
+ * Version Bump Script for FinBuddy
  * 
  * This script helps automate version bumping and changelog management
  * Usage: npm run version:bump <type> [description]

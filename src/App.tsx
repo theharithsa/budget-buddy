@@ -15,6 +15,7 @@ import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
 import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
+import { AIChatPage } from '@/components/AIChatPage';
 import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
@@ -24,6 +25,8 @@ import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
 import { UpdateNotification } from '@/components/UpdateNotification';
 import { CookieBanner } from '@/components/CookieBanner';
+import { GeminiChat } from '@/components/GeminiChat';
+import { FloatingAIButton } from '@/components/FloatingAIButton';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
@@ -75,6 +78,7 @@ function FinanceApp() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [showAIChat, setShowAIChat] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [peopleFilter, setPeopleFilter] = useState('all');
@@ -91,19 +95,6 @@ function FinanceApp() {
   useEffect(() => {
     localStorage.setItem('finbuddy-view-mode', viewMode);
   }, [viewMode]);
-  
-  // Dynatrace user identification
-  useEffect(() => {
-    // Check if user is authenticated, has email, and dtrum is available
-    if (user && user.email && (window as any).dtrum) {
-      try {
-        (window as any).dtrum.identifyUser(user.email);
-        console.log('Dynatrace: User identified:', user.email);
-      } catch (error) {
-        console.error('Dynatrace: Failed to identify user:', error);
-      }
-    }
-  }, [user]); // Re-run when user changes
   
   // Initialize date range to current month
   const [dateRange, setDateRange] = useState<DateRange>(() => {
@@ -260,6 +251,7 @@ function FinanceApp() {
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
+              <TabsTrigger value="ai-chat">KautilyaAI Co-Pilot</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard">
@@ -279,140 +271,115 @@ function FinanceApp() {
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                   {/* Primary Filters Row */}
                   <div className="flex flex-col sm:flex-row gap-3 flex-1 min-w-0">
-                    <div className="flex flex-col gap-1">
-                      <div className="relative flex-1 max-w-sm">
-                        <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search expenses..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-10"
-                          title="Search by description, category, or amount"
-                        />
-                      </div>
-                      <span className="text-xs text-muted-foreground ml-1">Find Expenses</span>
+                    <div className="relative flex-1 max-w-sm">
+                      <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search expenses..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
                     
-                    <div className="flex flex-col gap-1">
-                      <TimeframePicker 
-                        dateRange={dateRange} 
-                        onDateRangeChange={setDateRange}
-                        className="w-60"
-                      />
-                      <span className="text-xs text-muted-foreground ml-1">Date Range</span>
-                    </div>
+                    <TimeframePicker 
+                      dateRange={dateRange} 
+                      onDateRangeChange={setDateRange}
+                      className="w-60"
+                    />
                   </div>
 
                   {/* View Controls */}
                   <div className="flex gap-2 items-center">
                     {/* View Mode Toggle */}
-                    <div className="flex flex-col items-center gap-1">
-                      <div className="flex bg-background rounded-lg p-1 border">
-                        <Button
-                          variant={viewMode === 'list' ? 'default' : 'ghost'}
-                          size="sm"
-                          onClick={() => setViewMode('list')}
-                          className="h-8 px-3"
-                          title="List View"
-                        >
-                          <List className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                          size="sm"
-                          onClick={() => setViewMode('grid')}
-                          className="h-8 px-3"
-                          title="Grid View"
-                        >
-                          <LayoutGrid className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <span className="text-xs text-muted-foreground">View Mode</span>
+                    <div className="flex bg-background rounded-lg p-1 border">
+                      <Button
+                        variant={viewMode === 'list' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('list')}
+                        className="h-8 px-3"
+                      >
+                        <List className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('grid')}
+                        className="h-8 px-3"
+                      >
+                        <LayoutGrid className="w-4 h-4" />
+                      </Button>
                     </div>
                     
-                    <div className="flex flex-col items-center gap-1">
-                      <Button 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Add Expense button clicked');
-                          setShowAddExpense(true);
-                        }}
-                        className="shrink-0"
-                        title="Add New Expense"
-                      >
-                        Add Expense
-                      </Button>
-                      <span className="text-xs text-muted-foreground">New Entry</span>
-                    </div>
+                    <Button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Add Expense button clicked');
+                        setShowAddExpense(true);
+                      }}
+                      className="shrink-0"
+                    >
+                      Add Expense
+                    </Button>
                   </div>
                 </div>
 
                 {/* Secondary Filters Row */}
                 <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border/50">
-                  <div className="flex flex-col gap-1">
-                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter by category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {getAllCategories(customCategories).map((category) => (
-                          <SelectItem key={category.name} value={category.name}>
-                            <div className="flex items-center gap-2">
-                              <span>{category.icon}</span>
-                              {category.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <span className="text-xs text-muted-foreground">Category Filter</span>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <Select value={peopleFilter} onValueChange={setPeopleFilter}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Filter by person" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All People</SelectItem>
-                        {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
-                          <SelectItem key={person.id} value={person.id!}>
-                            <div className="flex items-center gap-2">
-                              <span 
-                                className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
-                                style={{ backgroundColor: person.color }}
-                              >
-                                {person.icon}
-                              </span>
-                              {person.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <span className="text-xs text-muted-foreground">People Filter</span>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Sort by" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="date">
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filter by category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {getAllCategories(customCategories).map((category) => (
+                        <SelectItem key={category.name} value={category.name}>
                           <div className="flex items-center gap-2">
-                            <List className="w-4 h-4" />
-                            Date
+                            <span>{category.icon}</span>
+                            {category.name}
                           </div>
                         </SelectItem>
-                        <SelectItem value="amount">Amount</SelectItem>
-                        <SelectItem value="category">Category</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <span className="text-xs text-muted-foreground">Sort Order</span>
-                  </div>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={peopleFilter} onValueChange={setPeopleFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filter by person" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All People</SelectItem>
+                      {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
+                        <SelectItem key={person.id} value={person.id!}>
+                          <div className="flex items-center gap-2">
+                            <span 
+                              className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              style={{ backgroundColor: person.color }}
+                            >
+                              {person.icon}
+                            </span>
+                            {person.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="date">
+                        <div className="flex items-center gap-2">
+                          <List className="w-4 h-4" />
+                          Date
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="amount">Amount</SelectItem>
+                      <SelectItem value="category">Category</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -420,7 +387,7 @@ function FinanceApp() {
                 className={viewMode === 'grid' ? "gap-4" : "space-y-4"}
                 style={viewMode === 'grid' ? {
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                   gap: '1rem'
                 } : {}}
               >
@@ -516,12 +483,16 @@ function FinanceApp() {
                 ]}
               />
             </TabsContent>
+
+            <TabsContent value="ai-chat" className="h-full">
+              <AIChatPage />
+            </TabsContent>
           </Tabs>
         </div>
       </div>
       
       {/* PWA Components */}
-      <PWAInstallPrompt user={user} />
+      <PWAInstallPrompt />
       <PWAUpdatePrompt />
       <PWAConnectionStatus />
       <UpdateNotification />
@@ -557,6 +528,32 @@ function FinanceApp() {
           publicPeople={publicPeople}
         />
       )}
+
+      {/* Gemini AI Chat */}
+      {showAIChat && (
+        <GeminiChat
+          expenses={filteredAndSortedExpenses}
+          budgets={budgets}
+          onClose={() => setShowAIChat(false)}
+          onAddExpense={addExpense}
+          onUpdateExpense={updateExpense}
+          onDeleteExpense={deleteExpense}
+          onAddBudget={addBudget}
+          onUpdateBudget={updateBudget}
+          onDeleteBudget={deleteBudget}
+          onAddCategory={addCustomCategory}
+          onUpdateCategory={updateCustomCategory}
+          onDeleteCategory={deleteCustomCategory}
+          onAddPerson={addPerson}
+          onUpdatePerson={updatePerson}
+          onDeletePerson={deletePerson}
+          onAddTemplate={addTemplate}
+          onDeleteTemplate={deleteTemplate}
+        />
+      )}
+
+      {/* Floating AI Assistant Button */}
+      <FloatingAIButton onClick={() => setShowAIChat(true)} />
 
       {/* Footer */}
       <Footer />

@@ -43,7 +43,7 @@ describe('End-to-End Application Tests', () => {
   describe('User Journey: First Time User', () => {
     it('should complete first-time user onboarding flow', () => {
       // 1. User visits app for first time
-      const isFirstVisit = !mockLocalStorage.getItem('budget-buddy-visited')
+      const isFirstVisit = !mockLocalStorage.getItem('finbuddy-visited')
       expect(isFirstVisit).toBe(true)
 
       // 2. App shows welcome/onboarding
@@ -51,16 +51,16 @@ describe('End-to-End Application Tests', () => {
       expect(showOnboarding).toBe(true)
 
       // 3. User completes onboarding
-      mockLocalStorage.setItem('budget-buddy-visited', 'true')
-      mockLocalStorage.setItem('budget-buddy-onboarding-complete', 'true')
+      mockLocalStorage.setItem('finbuddy-visited', 'true')
+      mockLocalStorage.setItem('finbuddy-onboarding-complete', 'true')
 
       // 4. User preferences are set to defaults
-      mockLocalStorage.setItem('budget-buddy-view-mode', 'grid')
-      mockLocalStorage.setItem('budget-buddy-theme', 'system')
+      mockLocalStorage.setItem('finbuddy-view-mode', 'grid')
+      mockLocalStorage.setItem('finbuddy-theme', 'system')
 
       // 5. Verify onboarding completion
-      expect(mockLocalStorage.getItem('budget-buddy-visited')).toBe('true')
-      expect(mockLocalStorage.getItem('budget-buddy-onboarding-complete')).toBe('true')
+      expect(mockLocalStorage.getItem('finbuddy-visited')).toBe('true')
+      expect(mockLocalStorage.getItem('finbuddy-onboarding-complete')).toBe('true')
     })
 
     it('should handle user authentication flow', () => {

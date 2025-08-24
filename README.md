@@ -1,7 +1,7 @@
-# FinBuddy - Smart Personal Finance Manager
+# 💰 FinBuddy - Smart Personal Finance Manager
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.5.5-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.6.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
@@ -10,7 +10,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-Cloud-ffca28?style=flat-square&logo=firebase)](https://firebase.google.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0-06b6d4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
-[![AI Powered](https://img.shields.io/badge/AI-Powered-ff6b6b?style=flat-square&logo=openai)](https://openai.com/)
+[![AI Powered](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-ff6b6b?style=flat-square&logo=google)](https://deepmind.google/technologies/gemini/)
+[![Currency](https://img.shields.io/badge/Currency-Indian%20Rupee%20%E2%82%B9-green?style=flat-square&logo=rupee)](https://en.wikipedia.org/wiki/Indian_rupee)
 
 > **Take control of your finances with intelligent insights, beautiful design, and powerful features. FinBuddy transforms how you manage money with AI-powered analysis, seamless mobile experience, and comprehensive budget tracking.**
 
@@ -42,7 +43,28 @@
 - **Personalized Recommendations**: Receive AI-generated tips to improve your finances
 - **Trend Detection**: Identify spending trends and habits you might not notice
 
+<<<<<<< HEAD
+### 🤖 **KautilyaAI Co-Pilot** ⭐ *NEW in v2.6.0*
+
+- **💬 Complete Conversational CRUD**: Manage ALL data through natural language with Google Gemini 2.0 Flash
+- **🧾 Smart Data Operations**: "Add ₹500 for education" → Creates category if needed + adds expense instantly
+- **💰 Real-Time UI Updates**: Every chat operation immediately reflects in the interface
+- **📚 Context-Aware Memory**: "Delete the last grocery expense" → Remembers conversation context
+- **⚡ Comprehensive Coverage**: Expenses, budgets, categories, people, templates - all manageable via chat
+- **🎨 Enhanced Backdrop Blur**: Premium AI experience with beautiful design consistency
+
+### 🎯 **What You Can Do Through Chat**
+
+- **Expenses**: "Add ₹200 for coffee", "Update my last expense to ₹150", "Delete food expense"
+- **Categories**: "Create Transportation category", "Delete Entertainment category"  
+- **Budgets**: "Set ₹5000 budget for groceries", "Update food budget to ₹3000"
+- **People**: "Add person John for shared expenses", "Remove person from my list"
+- **Templates**: "Create template for monthly rent ₹15000", "Update rent template amount"
+
+### 📱 **Modern User Experience**
+=======
 ### Modern User Experience
+>>>>>>> origin/main
 
 - **Mobile-First Design**: Optimized for smartphones with intuitive touch controls
 - **Progressive Web App**: Install on your phone for native app experience
@@ -80,6 +102,35 @@
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and push notifications
 
+<<<<<<< HEAD
+## 🎨 What's New in v2.6.0
+
+### 🤖 **KautilyaAI Co-Pilot Revolution**
+
+- **Complete Conversational CRUD**: Revolutionary natural language data management system
+- **Smart Category Detection**: AI automatically creates categories when needed
+- **Context-Aware Operations**: Chat remembers conversation history for intelligent interactions
+- **Real-Time UI Synchronization**: All chat operations instantly update the interface
+- **Enhanced Firebase Functions**: 20+ advanced regex patterns for natural language processing
+
+### � **Enhanced Authentication**
+
+- **Multiple Options**: Google OAuth, Email/Password, and Magic Link sign-in
+- **Passwordless Login**: Secure magic links sent to your email
+- **Better Security**: Enhanced profile management and password recovery
+
+### 📱 **PWA Improvements**
+
+- **Smart Install**: Improved installation prompts with session tracking
+- **Better Offline**: Enhanced service worker and caching strategies
+- **User Choice**: Respect user preferences for install prompts
+
+### 🛠️ **Technical Upgrades**
+
+- **Firebase Functions v2**: Modern serverless architecture with CORS support
+- **React Markdown**: Rich text formatting in AI responses
+- **Performance**: Optimized loading and better error handling
+=======
 ## What's New in v2.5.4
 
 - **Enhanced UI/UX**: Added descriptive text labels for all expense page action icons to improve user guidance
@@ -88,6 +139,7 @@
 - **Improved Accessibility**: Better UI element descriptions and visual consistency
 - **Chart Enhancements**: Theme-aware color schemes for all ApexCharts components
 - **Technical Improvements**: Integrated ThemeContext across all visualization components
+>>>>>>> origin/main
 
 ## Screenshots
 
@@ -233,6 +285,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+<<<<<<< HEAD
+⭐ **Star this repository** if FinBuddy helps you manage your finances better!
+=======
 **Star this repository** if FinBuddy helps you manage your finances better!
+>>>>>>> origin/main
 
 Made with care by the InspiLabs team & Vishruth Harithsa

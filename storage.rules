@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Firebase Storage Security Rules for Budget Buddy
+// Firebase Storage Security Rules for FinBuddy
 service firebase.storage {
   match /b/{bucket}/o {
     

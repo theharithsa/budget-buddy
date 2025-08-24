@@ -1,23 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  signInWithRedirect, 
-  getRedirectResult, 
-  signOut, 
-  onAuthStateChanged, 
-  User,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  updateProfile,
-  sendSignInLinkToEmail,
-  signInWithEmailLink,
-  isSignInWithEmailLink
-} from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe, deleteField } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User, sendSignInLinkToEmail, signInWithEmailLink, isSignInWithEmailLink, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
 import { Person } from './types';
 // import { log } from './logger';
 
@@ -42,51 +27,14 @@ const firebaseConfig = {
 
 // Debug function to check Firebase configuration
 export const debugFirebaseConfig = () => {
-  const currentDomain = window.location.origin;
-  const currentHostname = window.location.hostname;
-  
-  console.log('🔧 Firebase Configuration Debug:', {
+  console.log('Firebase Config:', {
     apiKey: firebaseConfig.apiKey ? '✓ Present' : '✗ Missing',
     authDomain: firebaseConfig.authDomain,
     projectId: firebaseConfig.projectId,
-    currentDomain,
-    currentHostname,
-    isLocalhost: currentHostname === 'localhost' || currentHostname === '127.0.0.1',
-    port: window.location.port,
-    fullURL: window.location.href
+    currentDomain: window.location.origin,
+    isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   });
-  
-  console.log('📱 Phone Auth Configuration Check:');
-  console.log('  1. Firebase Console: https://console.firebase.google.com/project/' + firebaseConfig.projectId + '/authentication/settings');
-  console.log('  2. Expected authorized domains: localhost, ' + firebaseConfig.authDomain);
-  console.log('  3. reCAPTCHA configuration required in Phone number sign-in section');
-  
-  return {
-    projectId: firebaseConfig.projectId,
-    authDomain: firebaseConfig.authDomain,
-    currentDomain,
-    consoleURL: 'https://console.firebase.google.com/project/' + firebaseConfig.projectId + '/authentication/settings'
-  };
 };
-
-// Handle App Check for development BEFORE initializing Firebase
-// The "auth/firebase-app-check-token-is-invalid" error indicates App Check is enabled
-// but not properly configured for development
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-
-// Configure Google Auth Provider
-const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('email');
-googleProvider.addScope('profile');
-googleProvider.setCustomParameters({
-  prompt: 'select_account'
-  // Remove any hosted domain restrictions for better compatibility
-});
 
 // Check if Firebase is properly initialized and user is authenticated
 export const checkFirebaseReady = (user: any): boolean => {
@@ -114,157 +62,21 @@ export const checkFirebaseReady = (user: any): boolean => {
   return true;
 };
 
-// Test function for debugging auth issues - can be called from browser console
-export const testAuthMethods = async () => {
-  console.log('🧪 Testing Firebase Authentication Methods...');
-  
-  // Test 1: Basic Firebase setup
-  debugFirebaseConfig();
-  
-  // Test 2: Test redirect method availability
-  try {
-    console.log('🔄 Testing signInWithRedirect availability...');
-    console.log('✅ signInWithRedirect function available:', typeof signInWithRedirect);
-    console.log('✅ getRedirectResult function available:', typeof getRedirectResult);
-    console.log('✅ GoogleAuthProvider available:', typeof GoogleAuthProvider);
-    
-    // Test provider configuration
-    const testProvider = new GoogleAuthProvider();
-    console.log('✅ GoogleAuthProvider created successfully');
-    console.log('🔧 Provider ID:', testProvider.providerId);
-    
-  } catch (error) {
-    console.error('❌ Basic Firebase auth setup failed:', error);
-  }
-  
-  // Test 3: Check current auth state
-  try {
-    console.log('👤 Current auth state:', {
-      currentUser: auth.currentUser ? 'Signed in' : 'Not signed in',
-      userEmail: auth.currentUser?.email,
-      userUid: auth.currentUser?.uid
-    });
-  } catch (error) {
-    console.error('❌ Error checking auth state:', error);
-  }
-  
-  // Test 4: Check for any pending redirect results
-  try {
-    console.log('🔍 Checking for existing redirect results...');
-    const result = await getRedirectResult(auth);
-    if (result) {
-      console.log('✅ Found existing redirect result:', result.user?.email);
-    } else {
-      console.log('ℹ️ No existing redirect result found');
-    }
-  } catch (error) {
-    console.error('❌ Error checking redirect result:', error);
-  }
-  
-  // Test 5: Simulate redirect initiation (without actually redirecting)
-  try {
-    console.log('🔄 Testing redirect initiation (simulation)...');
-    console.log('🔧 Auth object ready:', !!auth);
-    console.log('🔧 GoogleProvider ready:', !!googleProvider);
-    console.log('🔧 Current domain authorized check...');
-    
-    // Check if we can create the redirect URL
-    console.log('✅ Redirect simulation test passed - no errors in setup');
-  } catch (error) {
-    console.error('❌ Redirect simulation failed:', error);
-  }
-  
-  console.log('🧪 Auth method testing complete. Check logs above for any issues.');
-  
-  // Return a summary
-  return {
-    authReady: !!auth,
-    providerReady: !!googleProvider,
-    redirectAvailable: typeof signInWithRedirect === 'function',
-    currentUser: auth.currentUser?.email || 'None'
-  };
-};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const functions = getFunctions(app);
 
-// Make it globally available for debugging
-if (typeof window !== 'undefined') {
-  (window as any).testAuthMethods = testAuthMethods;
-  (window as any).debugFirebaseConfig = debugFirebaseConfig;
-  (window as any).clearAuthCache = async () => {
-    console.log('🧹 Clearing auth cache...');
-    try {
-      await auth.signOut();
-      console.log('✅ Auth cache cleared');
-    } catch (error) {
-      console.error('❌ Error clearing auth cache:', error);
-    }
-  };
-  
-  // Clear all Firebase and App Check related cache
-  (window as any).clearFirebaseCache = async () => {
-    console.log('🧹 Clearing all Firebase cache...');
-    try {
-      // Clear auth
-      await auth.signOut();
-      
-      // Clear localStorage Firebase entries
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key && (key.includes('firebase') || key.includes('Firebase') || key.includes('appCheck'))) {
-          localStorage.removeItem(key);
-        }
-      }
-      
-      // Clear sessionStorage Firebase entries  
-      for (let i = sessionStorage.length - 1; i >= 0; i--) {
-        const key = sessionStorage.key(i);
-        if (key && (key.includes('firebase') || key.includes('Firebase') || key.includes('appCheck'))) {
-          sessionStorage.removeItem(key);
-        }
-      }
-      
-      // Force reset debug token is no longer needed
-      console.log('✅ Firebase cache cleared');
-      console.log('🔄 Please refresh the page for changes to take effect');
-    } catch (error) {
-      console.error('❌ Error clearing Firebase cache:', error);
-    }
-  };
-  
-  // Test redirect specifically
-  (window as any).testRedirectFlow = async () => {
-    console.log('🔄 Testing redirect flow step by step...');
-    
-    try {
-      console.log('1️⃣ Checking auth state before redirect...');
-      console.log('Current user:', auth.currentUser?.email || 'None');
-      
-      console.log('2️⃣ Creating GoogleAuthProvider...');
-      const testProvider = new GoogleAuthProvider();
-      testProvider.addScope('email');
-      testProvider.addScope('profile');
-      console.log('Provider created:', testProvider.providerId);
-      
-      console.log('3️⃣ Attempting signInWithRedirect...');
-      console.log('Auth object:', !!auth);
-      console.log('Provider object:', !!testProvider);
-      
-      // This should initiate the redirect
-      await signInWithRedirect(auth, testProvider);
-      console.log('4️⃣ signInWithRedirect completed - user should be redirected');
-      
-      // This line should never execute because redirect takes user away
-      console.warn('⚠️ Warning: Code after signInWithRedirect executed - redirect may have failed');
-      
-    } catch (error) {
-      console.error('❌ Redirect test failed:', error);
-      console.error('Error details:', {
-        code: error.code,
-        message: error.message,
-        stack: error.stack
-      });
-    }
-  };
-}
+// Configure Google Auth Provider
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+// Explicitly request profile scope to ensure we get profile photo
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
 
 /**
  * Upload a file to Firebase Storage
@@ -300,15 +112,14 @@ export const deleteFile = async (path: string): Promise<void> => {
 
 /**
  * Generate a unique file path for receipt storage
- * @param userId - The user ID for organizing files
+ * @param expenseId - The ID of the expense
  * @param fileName - The original file name
  * @returns A unique storage path
  */
-export const generateReceiptPath = (userId: string, fileName: string): string => {
+export const generateReceiptPath = (expenseId: string, fileName: string): string => {
   const timestamp = Date.now();
   const extension = fileName.split('.').pop();
-  const cleanFileName = fileName.replace(/[^a-zA-Z0-9.]/g, '_'); // Clean filename
-  return `receipts/${userId}/${timestamp}_${cleanFileName}`;
+  return `receipts/${expenseId}_${timestamp}.${extension}`;
 };
 
 /**
@@ -331,66 +142,36 @@ export const validateReceiptFile = (file: File): boolean => {
   return true;
 };
 
-export { storage, auth, db };
+export { storage, auth, db, functions };
 
 // Authentication functions
 export const signInWithGoogle = async (useRedirect: boolean = false): Promise<User> => {
   const startTime = performance.now();
   
-  console.log(`🚀 Starting Google sign-in with ${useRedirect ? 'REDIRECT' : 'POPUP'} method`);
-  console.log('🔧 Current URL:', window.location.href);
-  console.log('🔧 Current Origin:', window.location.origin);
-  
   // log.info('Firebase', 'Google sign-in initiated', { useRedirect });
   
   try {
     if (useRedirect) {
-      console.log('🔄 Initiating redirect authentication...');
-      console.log('🔧 GoogleProvider config:', {
-        providerId: googleProvider.providerId,
-        customParameters: (googleProvider as any)._config?.customParameters
-      });
-      
       // log.debug('Firebase', 'Using redirect authentication method');
       // Use redirect method as fallback
       await signInWithRedirect(auth, googleProvider);
-      console.log('✅ Redirect initiated successfully - user will be redirected');
-      
-      // This should never execute because redirect takes the user away
-      console.warn('⚠️ Code after signInWithRedirect executed - this is unexpected');
-      
       // log.info('Firebase', 'Redirect sign-in initiated successfully');
       // The result will be handled by checkRedirectResult
       throw new Error('REDIRECT_IN_PROGRESS');
     } else {
-      console.log('🪟 Attempting popup authentication...');
       // log.debug('Firebase', 'Using popup authentication method');
       
-      // For Safari/iOS, try popup without the test popup check
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isSafariOrIOS = userAgent.includes('safari') && !userAgent.includes('chrome') || /ipad|iphone|ipod/.test(userAgent);
-      
-      if (!isSafariOrIOS) {
-        // Check if popup is blocked (only for non-Safari browsers)
-        const testPopup = window.open('', '_blank', 'width=1,height=1');
-        if (!testPopup || testPopup.closed || typeof testPopup.closed === 'undefined') {
-          console.warn('⚠️ Popup blocked by browser');
-          // log.warn('Firebase', 'Popup blocked by browser');
-          throw new Error('POPUP_BLOCKED');
-        }
-        testPopup.close();
-      } else {
-        console.log('🍎 Safari/iOS detected - attempting popup without pre-check');
+      // Check if popup is blocked
+      const testPopup = window.open('', '_blank', 'width=1,height=1');
+      if (!testPopup || testPopup.closed || typeof testPopup.closed === 'undefined') {
+        // log.warn('Firebase', 'Popup blocked by browser');
+        throw new Error('POPUP_BLOCKED');
       }
+      testPopup.close();
       
       const result = await signInWithPopup(auth, googleProvider);
       
       const duration = performance.now() - startTime;
-      console.log('✅ Popup sign-in successful:', {
-        userId: result.user.uid,
-        email: result.user.email,
-        duration: `${duration.toFixed(2)}ms`
-      });
       // log.performance('GoogleSignInPopup', duration);
       // log.info('Firebase', 'Google sign-in successful', { 
       //   userId: result.user.uid,
@@ -403,11 +184,6 @@ export const signInWithGoogle = async (useRedirect: boolean = false): Promise<Us
   } catch (error: any) {
     const duration = performance.now() - startTime;
     
-    console.error(`❌ Google sign-in failed (${useRedirect ? 'REDIRECT' : 'POPUP'}):`, {
-      error: error.message,
-      code: error.code,
-      duration: `${duration.toFixed(2)}ms`
-    });
     // log.error('Firebase', 'Google sign-in failed', {
     //   error: error.message,
     //   code: error.code,
@@ -419,7 +195,7 @@ export const signInWithGoogle = async (useRedirect: boolean = false): Promise<Us
     
     // Handle specific Firebase auth errors
     if (error.message === 'POPUP_BLOCKED' || error.code === 'auth/popup-blocked') {
-      throw new Error('Popup was blocked by your browser. Please allow popups for this site and try again.');
+      throw new Error('Popup was blocked by your browser. Please allow popups for this site and try again, or use the redirect option.');
     } else if (error.code === 'auth/popup-closed-by-user') {
       throw new Error('Sign in was cancelled. Please try again.');
     } else if (error.code === 'auth/unauthorized-domain') {
@@ -441,48 +217,21 @@ export const signInWithGoogle = async (useRedirect: boolean = false): Promise<Us
 // Check for redirect result on app load
 export const checkRedirectResult = async (): Promise<User | null> => {
   // log.debug('Firebase', 'Checking redirect result');
-  console.log('🔍 Checking for redirect result...');
-  console.log('🔧 Current URL:', window.location.href);
-  console.log('🔧 URL params:', window.location.search);
-  console.log('🔧 URL hash:', window.location.hash);
   
   try {
     const result = await getRedirectResult(auth);
     
-    console.log('🔍 getRedirectResult returned:', {
-      hasResult: !!result,
-      hasUser: !!result?.user,
-      userEmail: result?.user?.email,
-      userUid: result?.user?.uid,
-      operationType: result?.operationType,
-      providerId: result?.providerId
-    });
-    
     if (result?.user) {
-      console.log('✅ Redirect sign-in completed successfully:', {
-        userId: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.displayName,
-        photoURL: result.user.photoURL,
-        provider: result.user.providerData[0]?.providerId
-      });
       // log.info('Firebase', 'Redirect sign-in completed successfully', {
       //   userId: result.user.uid,
       //   email: result.user.email
       // });
     } else {
-      console.log('ℹ️ No redirect result found');
       // log.debug('Firebase', 'No redirect result found');
     }
     
     return result?.user || null;
   } catch (error: any) {
-    console.error('❌ Error checking redirect result:', error);
-    console.error('❌ Error details:', {
-      code: error.code,
-      message: error.message,
-      stack: error.stack
-    });
     // log.error('Firebase', 'Error checking redirect result', {
     //   error: error.message,
     //   code: error.code
@@ -516,7 +265,7 @@ export const onAuthChange = (callback: (user: User | null) => void) => {
 
 // Email/Password Authentication
 export const signUpWithEmail = async (email: string, password: string, displayName: string): Promise<User> => {
-  console.log('📧 Creating account with email:', email);
+  console.log('📝 Creating account with email:', email);
   
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
@@ -535,7 +284,7 @@ export const signUpWithEmail = async (email: string, password: string, displayNa
 };
 
 export const signInWithEmail = async (email: string, password: string): Promise<User> => {
-  console.log('📧 Signing in with email:', email);
+  console.log('📝 Signing in with email:', email);
   
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
@@ -559,38 +308,9 @@ export const resetPassword = async (email: string): Promise<void> => {
   }
 };
 
-// Phone Authentication has been removed for improved compatibility
-
-export const checkPhoneAuthSupport = async (): Promise<{ supported: boolean; message: string }> => {
-  return { 
-    supported: false, 
-    message: 'Phone authentication has been disabled for improved compatibility. Please use Google Sign-In, Magic Link, or Email/Password authentication.' 
-  };
-};
-
-
-// Phone authentication diagnostic (simplified)
-export const diagnosePhoneAuthIssues = async (): Promise<void> => {
-  console.log('🔍 === PHONE AUTH DIAGNOSTIC ===');
-  console.log('❌ Phone authentication has been disabled for improved compatibility.');
-  console.log('✅ Available authentication methods:');
-  console.log('   • Google Sign-In');
-  console.log('   • Magic Link Email');
-  console.log('   • Email/Password');
-  console.log('🔍 === END DIAGNOSTIC ===');
-};
-
-export const sendPhoneVerification = async (phoneNumber: string): Promise<any> => {
-  throw new Error('Phone authentication has been disabled. Please use Google Sign-In, Magic Link, or Email/Password authentication.');
-};
-
-export const verifyPhoneCode = async (confirmationResult: any, code: string): Promise<User> => {
-  throw new Error('Phone authentication has been disabled. Please use Google Sign-In, Magic Link, or Email/Password authentication.');
-};
-
 // Passwordless Authentication (Magic Link)
 export const sendMagicLink = async (email: string): Promise<void> => {
-  console.log('✉️ Sending magic link to:', email);
+  console.log('🔗 Sending magic link to:', email);
   
   try {
     const actionCodeSettings = {
@@ -613,7 +333,7 @@ export const sendMagicLink = async (email: string): Promise<void> => {
 };
 
 export const signInWithMagicLink = async (email?: string): Promise<User> => {
-  console.log('🔗 Attempting to sign in with magic link');
+  console.log('🔓 Attempting to sign in with magic link');
   
   try {
     // Check if the current URL is a sign-in link
@@ -718,19 +438,7 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
 export const updateExpenseInFirestore = async (userId: string, expenseId: string, expense: any): Promise<void> => {
   try {
     const docRef = doc(db, 'users', userId, 'expenses', expenseId);
-    
-    // Create update object, converting undefined values to deleteField()
-    const updateData: Record<string, any> = {};
-    
-    for (const [key, value] of Object.entries(expense)) {
-      if (value === undefined) {
-        updateData[key] = deleteField();
-      } else {
-        updateData[key] = value;
-      }
-    }
-    
-    await updateDoc(docRef, updateData);
+    await updateDoc(docRef, expense);
   } catch (error) {
     console.error('Error updating expense:', error);
     throw new Error('Failed to update expense. Please try again.');

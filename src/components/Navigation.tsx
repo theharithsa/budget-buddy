@@ -14,7 +14,8 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
-  Home
+  Home,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getNavigationVersion } from '@/lib/version';
@@ -74,6 +75,12 @@ const navigationItems: NavigationItem[] = [
     label: 'AI Analyzer',
     icon: Lightbulb,
     description: 'AI-powered insights'
+  },
+  {
+    id: 'ai-chat',
+    label: 'KautilyaAI Co-Pilot',
+    icon: MessageSquare,
+    description: 'Chat with KautilyaAI assistant'
   }
 ];
 

@@ -16,6 +16,7 @@ jobs:
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+          OTEL_SERVICE_NAME: finbuddy-build
         with:
           secrets_to_redact: '["${{ github.token }}","${{ secrets.DEPLOY_OBSERVABILITY_TOKEN }}","${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}"]'
       - uses: plengauer/opentelemetry-github/actions/instrument/deploy@v5.24.2

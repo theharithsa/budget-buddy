@@ -1,6 +1,6 @@
 # Scripts
 
-This folder contains utility scripts for the Budget Buddy project.
+This folder contains utility scripts for the FinBuddy project.
 
 ## Available Scripts
 
