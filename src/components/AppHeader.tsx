@@ -161,7 +161,6 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
 
   const testFirebaseConnection = async () => {
     try {
-      console.log('Testing Firebase connection...');
       debugFirebaseConfig();
       
       if (!user) {
@@ -184,9 +183,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
         createdAt: new Date().toISOString(),
       };
 
-      console.log('Testing expense creation with:', testExpense);
       const result = await addExpenseToFirestore(user.uid, testExpense);
-      console.log('Test expense created successfully:', result);
       toast.success('Firebase connection test successful!');
       
     } catch (error: any) {
@@ -201,7 +198,6 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
         await auth.currentUser.reload();
         setAvatarError(false); // Reset avatar error state
         toast.success('User profile refreshed!');
-        console.log('Updated user photo URL:', auth.currentUser.photoURL);
       }
     } catch (error: any) {
       console.error('Failed to refresh user profile:', error);
@@ -340,11 +336,9 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                       src={user.photoURL} 
                       alt={user.displayName || 'User'}
                       onError={() => {
-                        console.log('Avatar image failed to load:', user.photoURL);
                         setAvatarError(true);
                       }}
                       onLoad={() => {
-                        console.log('Avatar image loaded successfully:', user.photoURL);
                         setAvatarError(false);
                       }}
                     />
@@ -410,6 +404,24 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Clear Cache & Refresh
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => {
+                  const debugInfo = {
+                    isAuthenticated: !!user,
+                    uid: user?.uid,
+                    email: user?.email,
+                    displayName: user?.displayName,
+                    currentUrl: window.location.href,
+                    timestamp: new Date().toISOString()
+                  };
+                  console.log('🔍 DEBUG USER INFO:', debugInfo);
+                  toast.success('User info logged to console');
+                }}
+                className="cursor-pointer"
+              >
+                <Bug className="mr-2 h-4 w-4" />
+                Debug User Info
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 

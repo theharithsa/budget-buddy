@@ -10,15 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Users, Plus, Edit2, Trash2, Share2, Download, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { 
-  addPersonToFirestore, 
-  updatePersonInFirestore, 
-  deletePersonFromFirestore, 
-  subscribeToCustomPeople,
-  subscribeToPublicPeople,
-  adoptPublicPerson
-} from '@/lib/firebase';
-import { Person, getAllPeople } from '@/lib/types';
+import { Person, getAllPeople, DEFAULT_PEOPLE } from '@/lib/types';
+import { adoptPublicPerson } from '@/lib/firebase';
+import { toast } from 'sonner';
 
 const PERSON_COLORS = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -37,11 +31,23 @@ const RELATIONSHIP_OPTIONS = [
 
 interface PeopleManagerProps {
   user: User;
+  customPeople?: Person[];
+  publicPeople?: Person[];
+  onAddPerson?: (personData: Omit<Person, 'id' | 'createdAt' | 'userId'>) => Promise<void>;
+  onUpdatePerson?: (personId: string, personData: Partial<Person>) => Promise<void>;
+  onDeletePerson?: (personId: string) => Promise<void>;
+  onAdoptPerson?: (publicPerson: Person) => Promise<void>;
 }
 
-export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
-  const [customPeople, setCustomPeople] = useState<Person[]>([]);
-  const [publicPeople, setPublicPeople] = useState<Person[]>([]);
+export const PeopleManager: React.FC<PeopleManagerProps> = ({ 
+  user, 
+  customPeople = [], 
+  publicPeople = [],
+  onAddPerson,
+  onUpdatePerson,
+  onDeletePerson,
+  onAdoptPerson
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<Person | null>(null);
   const [loading, setLoading] = useState(false);
@@ -58,24 +64,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
   });
 
   // Load all people (default + custom)
-  const allPeople = getAllPeople();
-
-  useEffect(() => {
-    if (!user) return;
-
-    const unsubscribeCustom = subscribeToCustomPeople(user.uid, (people) => {
-      setCustomPeople(people);
-    });
-
-    const unsubscribePublic = subscribeToPublicPeople((people) => {
-      setPublicPeople(people);
-    });
-
-    return () => {
-      unsubscribeCustom();
-      unsubscribePublic();
-    };
-  }, [user]);
+  const allPeople = getAllPeople([...customPeople, ...publicPeople]);
 
   const resetForm = () => {
     setFormData({
@@ -103,24 +92,32 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
         color: formData.color,
         icon: formData.icon,
         relationship: formData.relationship,
-        userId: user.uid,
         isPublic: formData.isPublic,
-        createdBy: user.displayName || user.email || 'Anonymous',
-        createdAt: new Date().toISOString()
+        createdBy: user.displayName || user.email || 'Anonymous'
       };
 
       if (editingPerson) {
-        await updatePersonInFirestore(user.uid, editingPerson.id, personData);
-        setSuccess('Person updated successfully!');
+        if (onUpdatePerson) {
+          await onUpdatePerson(editingPerson.id, personData);
+          toast.success('Person updated successfully!');
+        } else {
+          throw new Error('Update function not provided');
+        }
       } else {
-        await addPersonToFirestore(user.uid, personData);
-        setSuccess('Person added successfully!');
+        if (onAddPerson) {
+          await onAddPerson(personData);
+          toast.success('Person added successfully!');
+        } else {
+          throw new Error('Add function not provided');
+        }
       }
 
       resetForm();
       setIsDialogOpen(false);
     } catch (err: any) {
-      setError(err.message || 'Failed to save person');
+      const errorMsg = err.message || 'Failed to save person';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -135,20 +132,29 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
       relationship: person.relationship || 'Friend',
       isPublic: person.isPublic
     });
+    
     setIsDialogOpen(true);
   };
 
   const handleDelete = async (person: Person) => {
-    if (!user || !confirm(`Are you sure you want to delete "${person.name}"?`)) return;
+    if (!user || !confirm(`Are you sure you want to delete "${person.name}"?`)) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      await deletePersonFromFirestore(user.uid, person.id);
-      setSuccess('Person deleted successfully!');
+      if (onDeletePerson) {
+        await onDeletePerson(person.id);
+        toast.success('Person deleted successfully!');
+      } else {
+        throw new Error('Delete function not provided');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to delete person');
+      const errorMsg = err.message || 'Failed to delete person';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -161,10 +167,18 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
     setError(null);
 
     try {
-      await adoptPublicPerson(user.uid, person);
-      setSuccess(`"${person.name}" has been added to your people!`);
+      if (onAdoptPerson) {
+        await onAdoptPerson(person);
+        toast.success(`"${person.name}" has been added to your people!`);
+      } else {
+        // Fallback to direct adoption if hook not provided
+        await adoptPublicPerson(user.uid, person);
+        toast.success(`"${person.name}" has been added to your people!`);
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to adopt person');
+      const errorMsg = err.message || 'Failed to adopt person';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -333,9 +347,9 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({ user }) => {
 
         <TabsContent value="my-people" className="space-y-4">
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {/* Default People */}
-            {allPeople.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+            {/* Default People (only show actual default people, not custom ones) */}
+            {DEFAULT_PEOPLE.map((person, index) => (
+              <div key={`default-${index}`} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"

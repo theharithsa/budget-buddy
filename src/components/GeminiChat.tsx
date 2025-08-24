@@ -8,7 +8,8 @@ import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Loader2, Send, Bot, User, X, Camera, Mic, MicOff } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
-import { functions } from '../lib/firebase';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { functions, db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -18,6 +19,8 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   actionItems?: any[];
+  wisdomSuggestions?: string[];
+  dailyWisdom?: string;
   isError?: boolean;
 }
 
@@ -25,14 +28,14 @@ interface GeminiChatProps {
   expenses?: any[];
   budgets?: any[];
   onClose: () => void;
-  // CRUD operation callbacks - matching actual function signatures
+  // CRUD operation callbacks - fixed to match actual hook signatures
   onAddExpense?: (expense: any) => Promise<string>;
   onUpdateExpense?: (expenseId: string, expense: Partial<any>) => Promise<void>;
   onDeleteExpense?: (expenseId: string) => Promise<void>;
-  onAddBudget?: (budget: any) => Promise<string>;
+  onAddBudget?: (budget: any) => Promise<void>;  // Fixed: returns void not string
   onUpdateBudget?: (budgetId: string, budget: Partial<any>) => Promise<void>;
   onDeleteBudget?: (budgetId: string) => Promise<void>;
-  onAddCategory?: (category: any) => Promise<string>;
+  onAddCategory?: (category: any) => Promise<void>;  // Fixed: returns void not string
   onUpdateCategory?: (categoryId: string, category: Partial<any>) => Promise<void>;
   onDeleteCategory?: (categoryId: string) => Promise<void>;
   onAddPerson?: (person: any) => Promise<void>;
@@ -63,7 +66,18 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
   onUpdateTemplate,
   onDeleteTemplate,
 }) => {
+  console.log('🎬 GeminiChat component mounted/rendered');
+  console.log('📊 Props received:', { 
+    expenseCount: expenses.length, 
+    budgetCount: budgets.length,
+    hasOnAddExpense: !!onAddExpense 
+  });
+
   const { user } = useAuth();
+  console.log('👤 GeminiChat - User from auth:', { 
+    exists: !!user, 
+    uid: user?.uid?.substring(0, 8) + '...' 
+  });
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -75,8 +89,78 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [floatingChatSessionId, setFloatingChatSessionId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Get or create floating chat session
+  const getFloatingChatSession = async (): Promise<string> => {
+    if (!user) return '';
+    
+    if (floatingChatSessionId) {
+      return floatingChatSessionId;
+    }
+
+    try {
+      // Check if floating chat session already exists
+      const sessionsRef = collection(db, `users/${user.uid}/chatSessions`);
+      const q = query(sessionsRef, where('title', '==', 'Floating Chat'));
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        const existingSession = snapshot.docs[0];
+        setFloatingChatSessionId(existingSession.id);
+        return existingSession.id;
+      }
+
+      // Create new floating chat session
+      const newSession = await addDoc(sessionsRef, {
+        title: 'Floating Chat',
+        lastMessage: '',
+        messageCount: 0,
+        createdAt: serverTimestamp(),
+        lastActivity: serverTimestamp(),
+      });
+
+      setFloatingChatSessionId(newSession.id);
+      return newSession.id;
+    } catch (error) {
+      console.error('Error getting floating chat session:', error);
+      return 'floating-chat'; // fallback
+    }
+  };
+
+  const updateSessionActivity = async (sessionId: string, lastMessage: string) => {
+    if (!user || !sessionId) return;
+    try {
+      await updateDoc(doc(db, `users/${user.uid}/chatSessions`, sessionId), {
+        lastMessage: lastMessage.substring(0, 100),
+        lastActivity: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Error updating session activity:', error);
+    }
+  };
+
+  // Save message to Firestore (same collection as AIChatPage)
+  const saveMessageToHistory = async (message: ChatMessage) => {
+    if (!user) return;
+    try {
+      const sessionId = await getFloatingChatSession();
+      await addDoc(collection(db, `users/${user.uid}/conversations`), {
+        role: message.role,
+        content: message.content,
+        timestamp: serverTimestamp(),
+        sessionId: sessionId,
+        actionItems: message.actionItems || []
+      });
+
+      // Update session activity
+      await updateSessionActivity(sessionId, message.content);
+    } catch (error) {
+      console.error('Error saving message to history:', error);
+    }
+  };
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -89,7 +173,20 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
   }, []);
 
   const sendMessage = async (message: string) => {
-    if (!message.trim() || !user) return;
+    console.log('🚀 SEND MESSAGE CALLED with:', message);
+    console.log('🔑 User exists:', !!user);
+    console.log('📝 Message trimmed:', message.trim());
+    
+    if (!message.trim() || !user) {
+      console.log('❌ EARLY RETURN - Message empty or no user');
+      return;
+    }
+
+    console.log('🔐 CHAT DEBUG - Current user info:', {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName
+    });
 
     setIsLoading(true);
     
@@ -104,7 +201,15 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
     setMessages(prev => [...prev, userMessage]);
     setCurrentMessage('');
 
+    // Save user message to Firestore
+    await saveMessageToHistory(userMessage);
+
     try {
+      console.log('📤 Sending to Firebase Function:', {
+        userId: user.uid,
+        message: message.trim()
+      });
+
       // Call Firebase Function
       const chatFunction = httpsCallable(functions, 'chatWithGemini');
       const result = await chatFunction({
@@ -117,23 +222,45 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
       });
 
       const data = result.data as any;
+      console.log('📥 Firebase Function response:', data);
+      
+      console.log('Chat response received:', data);
       
       if (data.success) {
         // Handle executed actions (CRUD operations)
+        console.log('Executed actions:', data.executedActions);
         if (data.executedActions && data.executedActions.length > 0) {
           for (const action of data.executedActions) {
+            console.log('Processing action:', action);
             if (action.success) {
               
               // Execute frontend CRUD operations to update UI state
               if (action.type === 'add_expense' && action.data && onAddExpense) {
                 try {
-                  await onAddExpense(action.data);
+                  console.log('Raw action.data from Firebase:', action.data);
+                  
+                  // Format the data to match the addExpense function signature
+                  const expenseData = {
+                    amount: action.data.amount,
+                    category: action.data.category,
+                    description: action.data.description,
+                    date: action.data.date,
+                    // Optional fields that may or may not be present
+                    ...(action.data.receiptUrl && { receiptUrl: action.data.receiptUrl }),
+                    ...(action.data.receiptFileName && { receiptFileName: action.data.receiptFileName }),
+                    ...(action.data.peopleIds && { peopleIds: action.data.peopleIds })
+                  };
+                  
+                  console.log('Formatted expense data for addExpense hook:', expenseData);
+                  
+                  await onAddExpense(expenseData);
                   toast.success(`✅ Expense added: ₹${action.data.amount} for ${action.data.category}`, {
-                    description: `ID: ${action.data.id} - ${action.data.description}`,
+                    description: `${action.data.description}`,
                     duration: 5000
                   });
                 } catch (error) {
-                  toast.error(`❌ Failed to sync expense to UI`);
+                  console.error('Error adding expense via chat:', error);
+                  toast.error(`❌ Failed to add expense: ${error.message}`);
                 }
               } 
               
@@ -273,16 +400,21 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
           }
         }
 
-        // Add AI response
+        // Add AI response with wisdom
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
           content: data.response,
           timestamp: new Date(),
-          actionItems: data.actionItems || []
+          actionItems: data.actionItems || [],
+          wisdomSuggestions: data.wisdomSuggestions || [],
+          dailyWisdom: data.dailyWisdom
         };
         
         setMessages(prev => [...prev, aiMessage]);
+        
+        // Save AI response to Firestore
+        await saveMessageToHistory(aiMessage);
       } else {
         throw new Error(data.error || 'Failed to get response');
       }
@@ -299,6 +431,9 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
       };
       
       setMessages(prev => [...prev, errorMessage]);
+      
+      // Save error message to Firestore
+      await saveMessageToHistory(errorMessage);
       toast.error('Failed to send message');
     } finally {
       setIsLoading(false);
@@ -306,6 +441,8 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
   };
 
   const handleSend = () => {
+    console.log('🎯 HANDLE SEND CALLED with currentMessage:', currentMessage);
+    console.log('📤 About to call sendMessage...');
     sendMessage(currentMessage);
   };
 
@@ -435,6 +572,32 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                         ))}
                       </div>
                     )}
+                    
+                    {/* Wisdom Suggestions */}
+                    {message.wisdomSuggestions && message.wisdomSuggestions.length > 0 && (
+                      <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <div className="text-xs font-medium text-amber-800 dark:text-amber-200 mb-2">
+                          💡 Wisdom from Kautilya
+                        </div>
+                        {message.wisdomSuggestions.map((wisdom, idx) => (
+                          <p key={idx} className="text-xs text-amber-700 dark:text-amber-300 mb-1 last:mb-0">
+                            {wisdom}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Daily Wisdom */}
+                    {message.dailyWisdom && (
+                      <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
+                        <div className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">
+                          📜 Daily Wisdom
+                        </div>
+                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                          {message.dailyWisdom}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -516,7 +679,13 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
               </div>
               
               <Button
-                onClick={handleSend}
+                onClick={() => {
+                  console.log('🔴 SEND BUTTON CLICKED!');
+                  console.log('📝 Current message:', currentMessage);
+                  console.log('⏳ Is loading:', isLoading);
+                  console.log('✅ About to call handleSend...');
+                  handleSend();
+                }}
                 disabled={!currentMessage.trim() || isLoading}
                 size="sm"
               >

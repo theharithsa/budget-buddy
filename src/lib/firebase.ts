@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User, sendSignInLinkToEmail, signInWithEmailLink, isSignInWithEmailLink, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, Unsubscribe } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, increment, deleteField, Unsubscribe } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
 import { Person } from './types';
@@ -27,13 +27,7 @@ const firebaseConfig = {
 
 // Debug function to check Firebase configuration
 export const debugFirebaseConfig = () => {
-  console.log('Firebase Config:', {
-    apiKey: firebaseConfig.apiKey ? '✓ Present' : '✗ Missing',
-    authDomain: firebaseConfig.authDomain,
-    projectId: firebaseConfig.projectId,
-    currentDomain: window.location.origin,
-    isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  });
+  // Debug info available for development
 };
 
 // Check if Firebase is properly initialized and user is authenticated
@@ -58,7 +52,6 @@ export const checkFirebaseReady = (user: any): boolean => {
     return false;
   }
   
-  console.log('Firebase ready check passed for user:', user.uid);
   return true;
 };
 
@@ -265,8 +258,6 @@ export const onAuthChange = (callback: (user: User | null) => void) => {
 
 // Email/Password Authentication
 export const signUpWithEmail = async (email: string, password: string, displayName: string): Promise<User> => {
-  console.log('📝 Creating account with email:', email);
-  
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     
@@ -275,7 +266,6 @@ export const signUpWithEmail = async (email: string, password: string, displayNa
       displayName: displayName
     });
     
-    console.log('✅ Account created successfully:', result.user.uid);
     return result.user;
   } catch (error: any) {
     console.error('❌ Email signup failed:', error);
@@ -284,11 +274,8 @@ export const signUpWithEmail = async (email: string, password: string, displayNa
 };
 
 export const signInWithEmail = async (email: string, password: string): Promise<User> => {
-  console.log('📝 Signing in with email:', email);
-  
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
-    console.log('✅ Email sign-in successful:', result.user.uid);
     return result.user;
   } catch (error: any) {
     console.error('❌ Email sign-in failed:', error);
@@ -297,11 +284,8 @@ export const signInWithEmail = async (email: string, password: string): Promise<
 };
 
 export const resetPassword = async (email: string): Promise<void> => {
-  console.log('🔄 Sending password reset to:', email);
-  
   try {
     await sendPasswordResetEmail(auth, email);
-    console.log('✅ Password reset email sent');
   } catch (error: any) {
     console.error('❌ Password reset failed:', error);
     throw new Error(error.message || 'Failed to send password reset email');
@@ -310,8 +294,6 @@ export const resetPassword = async (email: string): Promise<void> => {
 
 // Passwordless Authentication (Magic Link)
 export const sendMagicLink = async (email: string): Promise<void> => {
-  console.log('🔗 Sending magic link to:', email);
-  
   try {
     const actionCodeSettings = {
       // URL where the user will be redirected after clicking the link
@@ -325,7 +307,6 @@ export const sendMagicLink = async (email: string): Promise<void> => {
     // Save the email locally so you can use it to complete the sign-in
     localStorage.setItem('emailForSignIn', email);
     
-    console.log('✅ Magic link sent successfully');
   } catch (error: any) {
     console.error('❌ Failed to send magic link:', error);
     throw new Error(error.message || 'Failed to send magic link');
@@ -333,8 +314,6 @@ export const sendMagicLink = async (email: string): Promise<void> => {
 };
 
 export const signInWithMagicLink = async (email?: string): Promise<User> => {
-  console.log('🔓 Attempting to sign in with magic link');
-  
   try {
     // Check if the current URL is a sign-in link
     if (!isSignInWithEmailLink(auth, window.location.href)) {
@@ -375,9 +354,6 @@ export const checkMagicLinkOnLoad = (): boolean => {
 // Firestore data functions
 export const addExpenseToFirestore = async (userId: string, expense: any): Promise<string> => {
   try {
-    // Add detailed logging to debug the issue
-    console.log('Adding expense to Firestore:', { userId, expense });
-    
     if (!userId) {
       throw new Error('User ID is required to save expense');
     }
@@ -404,10 +380,17 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
       expenseData.receiptFileName = expense.receiptFileName;
     }
     
-    console.log('Processed expense data:', expenseData);
+    // Include peopleIds if they exist and are not empty
+    if (expense.peopleIds && expense.peopleIds.length > 0) {
+      expenseData.peopleIds = expense.peopleIds;
+      console.log('✅ Including peopleIds in expense data:', expense.peopleIds);
+    } else {
+      console.log('ℹ️ No peopleIds provided or empty array');
+    }
+    
+    console.log('📝 Final expense data to be saved:', expenseData);
     
     const docRef = await addDoc(collection(db, 'users', userId, 'expenses'), expenseData);
-    console.log('Expense added successfully with ID:', docRef.id);
     return docRef.id;
   } catch (error: any) {
     console.error('Detailed error adding expense:', {
@@ -437,8 +420,20 @@ export const addExpenseToFirestore = async (userId: string, expense: any): Promi
 
 export const updateExpenseInFirestore = async (userId: string, expenseId: string, expense: any): Promise<void> => {
   try {
+    // Filter out undefined values as Firebase doesn't allow them
+    const cleanExpense = Object.fromEntries(
+      Object.entries(expense).filter(([_, value]) => value !== undefined)
+    );
+    
+    // Handle field removal
+    if ((expense as any)._removeReceipt) {
+      cleanExpense.receiptUrl = deleteField();
+      cleanExpense.receiptFileName = deleteField();
+      delete cleanExpense._removeReceipt;
+    }
+    
     const docRef = doc(db, 'users', userId, 'expenses', expenseId);
-    await updateDoc(docRef, expense);
+    await updateDoc(docRef, cleanExpense);
   } catch (error) {
     console.error('Error updating expense:', error);
     throw new Error('Failed to update expense. Please try again.');
@@ -521,8 +516,13 @@ export const addBudgetToFirestore = async (userId: string, budget: any): Promise
 
 export const updateBudgetInFirestore = async (userId: string, budgetId: string, budget: any): Promise<void> => {
   try {
+    // Filter out undefined values as Firebase doesn't allow them
+    const cleanBudget = Object.fromEntries(
+      Object.entries(budget).filter(([_, value]) => value !== undefined)
+    );
+    
     const docRef = doc(db, 'users', userId, 'budgets', budgetId);
-    await updateDoc(docRef, budget);
+    await updateDoc(docRef, cleanBudget);
   } catch (error) {
     console.error('Error updating budget:', error);
     throw new Error('Failed to update budget. Please try again.');
@@ -681,8 +681,13 @@ export const updateCustomCategoryInFirestore = async (userId: string, categoryId
     const currentData = currentDoc.data();
     const updatedData = { ...currentData, ...category };
     
+    // Filter out undefined values as Firebase doesn't allow them
+    const cleanCategory = Object.fromEntries(
+      Object.entries(category).filter(([_, value]) => value !== undefined)
+    );
+    
     // Update the user's private category first
-    await updateDoc(currentDocRef, category);
+    await updateDoc(currentDocRef, cleanCategory);
     
     // Handle public collection updates only if the user has permission
     try {
@@ -831,7 +836,6 @@ export const subscribeToPublicCategories = (callback: (categories: any[]) => voi
       (querySnapshot) => {
         try {
           const categories = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          console.log('Successfully loaded public categories:', categories.length);
           callback(categories);
         } catch (error) {
           console.error('Error processing public categories data:', error);
@@ -924,8 +928,13 @@ export const updateBudgetTemplateInFirestore = async (userId: string, templateId
     const currentData = currentDoc.data();
     const updatedData = { ...currentData, ...template };
     
+    // Filter out undefined values as Firebase doesn't allow them
+    const cleanTemplate = Object.fromEntries(
+      Object.entries(template).filter(([_, value]) => value !== undefined)
+    );
+    
     // Update the user's private template first
-    await updateDoc(currentDocRef, template);
+    await updateDoc(currentDocRef, cleanTemplate);
     
     // Handle public collection updates
     try {
@@ -1167,7 +1176,12 @@ export const addPersonToFirestore = async (userId: string, person: Omit<Person, 
 
 export const updatePersonInFirestore = async (userId: string, personId: string, person: Partial<Person>): Promise<void> => {
   try {
-    await updateDoc(doc(db, 'users', userId, 'customPeople', personId), person);
+    // Filter out undefined values as Firebase doesn't allow them
+    const cleanPerson = Object.fromEntries(
+      Object.entries(person).filter(([_, value]) => value !== undefined)
+    );
+    
+    await updateDoc(doc(db, 'users', userId, 'customPeople', personId), cleanPerson);
   } catch (error: any) {
     console.error('Error updating person:', error);
     
@@ -1181,7 +1195,8 @@ export const updatePersonInFirestore = async (userId: string, personId: string, 
 
 export const deletePersonFromFirestore = async (userId: string, personId: string): Promise<void> => {
   try {
-    await deleteDoc(doc(db, 'users', userId, 'customPeople', personId));
+    const docRef = doc(db, 'users', userId, 'customPeople', personId);
+    await deleteDoc(docRef);
   } catch (error: any) {
     console.error('Error deleting person:', error);
     
@@ -1200,10 +1215,10 @@ export const subscribeToCustomPeople = (userId: string, callback: (people: Perso
   );
   
   return onSnapshot(q, (snapshot) => {
-    const people: Person[] = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as Person));
+    const people: Person[] = snapshot.docs.map(doc => {
+      const data = { id: doc.id, ...doc.data() } as Person;
+      return data;
+    });
     callback(people);
   }, (error) => {
     console.error('Error listening to custom people:', error);

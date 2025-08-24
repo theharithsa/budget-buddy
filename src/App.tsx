@@ -107,15 +107,34 @@ function FinanceApp() {
     };
   });
 
+  // Wrapper functions to match GeminiChat interface expectations
+  const handleAddBudgetForChat = async (budget: any) => {
+    await addBudget(budget);
+  };
+
+  const handleAddCategoryForChat = async (category: any) => {
+    await addCustomCategory(category);
+  };
+
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
-      await addExpense(expenseData);
+      const result = await addExpense(expenseData);
+      
       setShowAddExpense(false);
       toast.success('Expense added successfully!');
+      
+      return result; // Return the document ID for GeminiChat compatibility
+      
     } catch (error) {
-      console.error('Error adding expense:', error);
+      console.error('❌ App.tsx - Error adding expense:', error);
       toast.error('Failed to add expense');
+      throw error; // Re-throw to maintain error handling in GeminiChat
     }
+  };
+
+  // Wrapper for components that expect void return
+  const handleAddExpenseVoid = async (expenseData: Omit<Expense, 'id' | 'createdAt'>): Promise<void> => {
+    await handleAddExpense(expenseData);
   };
 
   const handleUpdateExpense = async (expenseId: string, expenseData: Partial<Expense>) => {
@@ -141,7 +160,6 @@ function FinanceApp() {
 
   const handleUpdateBudgets = (budgets: Budget[]) => {
     // This is a placeholder for bulk budget updates
-    console.log('Bulk budget update:', budgets);
   };
 
   const handleQuickAdd = (templateData: any) => {
@@ -314,7 +332,6 @@ function FinanceApp() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Add Expense button clicked');
                         setShowAddExpense(true);
                       }}
                       className="shrink-0"
@@ -387,7 +404,7 @@ function FinanceApp() {
                 className={viewMode === 'grid' ? "gap-4" : "space-y-4"}
                 style={viewMode === 'grid' ? {
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                   gap: '1rem'
                 } : {}}
               >
@@ -444,7 +461,7 @@ function FinanceApp() {
 
             <TabsContent value="templates">
               <RecurringTemplates 
-                onAddExpense={handleAddExpense}
+                onAddExpense={handleAddExpenseVoid}
                 onAddTemplate={addTemplate}
                 onDeleteTemplate={deleteTemplate}
                 customCategories={customCategories}
@@ -465,6 +482,12 @@ function FinanceApp() {
             <TabsContent value="people">
               <PeopleManager 
                 user={user}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
+                onAddPerson={addPerson}
+                onUpdatePerson={updatePerson}
+                onDeletePerson={deletePerson}
+                onAdoptPerson={adoptPerson}
               />
             </TabsContent>
 
@@ -510,7 +533,7 @@ function FinanceApp() {
       <AddExpenseModal
         isOpen={showAddExpense}
         onClose={() => setShowAddExpense(false)}
-        onAddExpense={handleAddExpense}
+        onAddExpense={handleAddExpenseVoid}
         customCategories={customCategories}
         customPeople={customPeople}
         publicPeople={publicPeople}
@@ -538,10 +561,10 @@ function FinanceApp() {
           onAddExpense={addExpense}
           onUpdateExpense={updateExpense}
           onDeleteExpense={deleteExpense}
-          onAddBudget={addBudget}
+          onAddBudget={handleAddBudgetForChat}
           onUpdateBudget={updateBudget}
           onDeleteBudget={deleteBudget}
-          onAddCategory={addCustomCategory}
+          onAddCategory={handleAddCategoryForChat}
           onUpdateCategory={updateCustomCategory}
           onDeleteCategory={deleteCustomCategory}
           onAddPerson={addPerson}

@@ -1,37 +1,50 @@
-# Security Policy - Budget Buddy
+# Security Policy - Budget Buddy with KautilyaAI
 
-**Version**: 2.5.5  
-**Last Updated**: August 23, 2025  
+**Version**: 2.6.0  
+**Last Updated**: December 24, 2025  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 
-Budget Buddy takes security seriously. This document outlines our security practices, vulnerability reporting process, and data protection measures.
+Budget Buddy with KautilyaAI takes security seriously. This document outlines our comprehensive security practices, vulnerability reporting process, and data protection measures for both financial data and AI interactions.
 
 ## Security Overview
 
-Budget Buddy implements multiple layers of security to protect user financial data:
+Budget Buddy implements multiple layers of security to protect user financial data and ensure secure AI interactions:
 
 ### **Data Protection**
 - **End-to-End Encryption**: All data encrypted in transit (HTTPS) and at rest (Firebase)
 - **Local-First Architecture**: Data processed locally with cloud sync, not cloud-dependent
 - **User Isolation**: Complete data separation between users via Firebase security rules
 - **Zero-Knowledge**: We cannot access your personal financial data
+- **AI Data Protection**: KautilyaAI interactions are processed securely without storing personal conversations
+
+### **KautilyaAI Security (v2.6.0)**
+- **Secure AI Processing**: Google Gemini 2.0 Flash with enterprise-grade security
+- **Data Minimization**: Only necessary financial context shared with AI, no personal identification
+- **Wisdom-Only Mode**: Currently operates in READ-only mode for enhanced data safety
+- **Firebase Functions v2**: Modern serverless security with CORS protection
+- **API Key Protection**: Gemini API keys secured via Firebase secrets management
+- **Context Isolation**: User financial data processed in isolated function environments
 
 ### **Authentication Security**
 - **OAuth 2.0**: Secure Google authentication with industry standards
 - **Token Management**: Automatic token refresh with secure local storage
 - **Session Security**: Configurable timeout and automatic logout
 - **Multi-Factor Ready**: Framework supports 2FA implementation
+- **Firebase Auth**: Enterprise-grade authentication with security rules
 
 ### **Application Security**
 - **XSS Protection**: React's built-in XSS prevention + Content Security Policy
 - **CSRF Protection**: Firebase SDK handles CSRF token validation
 - **PWA Security**: Service Worker with integrity checks and secure caching
 - **HTTPS Only**: All connections require SSL/TLS encryption
+- **Input Sanitization**: All user inputs sanitized before AI processing
 
-### **UI/UX Security (v2.5.4)**
-- **Theme-Aware Security**: All chart components maintain security standards across dark/light modes
-- **Font Consistency**: Unified typography prevents content spoofing and maintains visual integrity
-- **Accessibility Security**: Enhanced UI descriptions improve security awareness for users
+### **AI Security Measures**
+- **Prompt Injection Protection**: Advanced validation prevents malicious AI prompts
+- **Response Filtering**: AI responses filtered for inappropriate content
+- **Rate Limiting**: Prevents abuse of AI endpoints
+- **Audit Logging**: All AI interactions logged for security monitoring
+- **Error Handling**: Secure error messages without exposing system details
 
 ## 🚨 Reporting Security Vulnerabilities
 

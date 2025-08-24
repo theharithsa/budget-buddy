@@ -7,46 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.6.0] - 2025-08-24
+## [2.6.0] - 2025-12-24
 
-### 🚀 Major Features Added
+### 🚀 Revolutionary Features Added
 
-- **🤖 KautilyaAI Co-Pilot**: Revolutionary conversational CRUD system powered by Google Gemini 2.0 Flash
-  - Complete natural language data management for all FinBuddy operations
-  - Real-time UI synchronization with comprehensive CRUD operations
-  - Context-aware conversation memory for intelligent interactions
-  - Smart category detection with fuzzy matching algorithms
-  - Enhanced backdrop blur design for premium AI experience
+- **🤖 KautilyaAI Co-Pilot**: World's first AI financial assistant combining ancient Arthashastra wisdom with Google Gemini 2.0 Flash
+  - **Ancient Wisdom Integration**: 2,300-year-old Chanakya principles applied to modern financial management
+  - **Comprehensive Financial Analysis**: Reads and analyzes ALL user financial data from 7 Firestore collections
+  - **Cultural Intelligence**: Deep understanding of Indian financial culture, festivals, and family obligations
+  - **Sanskrit Terminology**: Natural integration of financial concepts in Sanskrit with modern interpretations
 
-- **💬 Complete Conversational Data Management**:
-  - **Expenses**: "Add ₹500 for education" → Creates category if needed + adds expense
-  - **Categories**: "Create new category Transportation" → Appears immediately in UI
-  - **Budgets**: "Set ₹5000 budget for groceries" → Creates budget with real-time updates
-  - **People**: "Add person John for shared expenses" → Full people management
-  - **Templates**: "Create template for monthly rent ₹15000" → Template CRUD operations
-  - Context-aware deletions: "Delete the last grocery expense" → Remembers conversation context
+- **� Arthashastra Principles Implementation**:
+  - **Kosha Mula Danda** (कोष मूल दण्ड): Treasury foundation principles for emergency fund guidance
+  - **Mitavyaya** (मितव्यय): Moderate spending optimization for prosperity
+  - **Arthagama Vyaya** (अर्थागम व्यय): Income vs expense balance analysis
+  - **Sangraha Pariraksha** (संग्रह परिरक्षा): Wealth accumulation and protection strategies
+  - **Kala Yoga** (काल योग): Perfect timing principles for financial decisions
 
-- **🔥 Enhanced Firebase Functions v2**: Comprehensive CRUD backend architecture
-  - 20+ advanced regex patterns for natural language processing
-  - Smart category mapping with intelligent fuzzy matching
-  - Conversation memory system for context-aware operations
-  - Template update operations (title changes, amount modifications)
-  - Complete error handling with detailed user feedback
+- **🧠 Advanced Wisdom Engine**: 
+  - Context-aware wisdom selection based on user's financial situation
+  - Daily wisdom rotation system with 365+ unique insights
+  - Personalized recommendations combining ancient principles with modern data
+  - Cultural context understanding for Indian financial scenarios
 
-- **⚡ Real-Time UI State Synchronization**:
-  - ExecutedActions pipeline calling frontend CRUD functions
-  - Immediate UI reflection of all chat-based operations
-  - Enhanced toast notifications for operation feedback
-  - Complete TypeScript interface integration
+### 🔥 Technical Architecture Upgrades
 
-### 🌍 Localization & Regional Support
+- **Google Gemini 2.0 Flash Integration**: Latest AI model for superior natural language understanding
+- **Firebase Functions v2**: Modern serverless architecture with enhanced security and CORS support
+- **Comprehensive Data Analysis**: Advanced financial insights using parallel data collection from multiple sources
+- **Wisdom-Only Mode**: Currently operating in READ-only mode for enhanced AI training and safety
 
-- **🇮🇳 Indian Currency Support**: Complete INR (₹) localization
-  - Proper comma formatting (₹1,23,456.78) following Indian numbering system
-  - Currency symbols and formatting throughout AI responses
-  - Optimized for Indian financial contexts and spending patterns
+### 📚 Comprehensive Documentation
 
-### 🔐 Enhanced Authentication System
+- **User Documentation**: Complete KautilyaAI user guide with Arthashastra sections
+- **Developer Documentation**: Technical implementation guide for KautilyaAI integration
+- **API Reference**: Complete Firebase Functions API documentation
+- **Deployment Guide**: Step-by-step setup and deployment instructions
+
+### 🌍 Cultural & Regional Excellence
+
+- **🇮🇳 Indian Financial Culture**: Deep understanding of Indian spending patterns, festivals, and family obligations
+- **Sanskrit Integration**: Natural use of Sanskrit financial terminology with modern explanations
+- **Cultural Context**: AI responses tailored to Indian financial scenarios and cultural practices
+- **INR Currency Support**: Complete Indian Rupee (₹) localization with proper formatting
+
+### �️ Security & Performance
 
 - **📧 Email/Password Authentication**: Complete traditional auth system
   - User registration with email and password

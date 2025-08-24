@@ -35,11 +35,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let isMounted = true;
 
     // log.info('Auth', 'Initializing authentication context');
-    console.log('🔐 Auth: Initializing authentication context');
-    console.log('🔧 Current URL at auth init:', window.location.href);
 
     // Check for redirect result first
-    console.log('🔍 Auth: Checking for redirect result...');
     checkRedirectResult()
       .then((redirectUser) => {
         if (isMounted) {
@@ -59,7 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             // Set user context in logger
             // log.setUser(redirectUser.uid);
           } else {
-            console.log('ℹ️ Auth: No redirect result found, proceeding with auth state listener');
+            // No redirect result found, proceeding with auth state listener
           }
         }
       })
@@ -85,12 +82,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           //   emailVerified: user.emailVerified,
           //   provider: user.providerData[0]?.providerId
           // });
-          console.log('Auth: User signed in', user.uid);
           // Set user context in logger
           // log.setUser(user.uid);
         } else {
           // log.info('Auth', 'User authentication state changed - signed out');
-          console.log('Auth: User signed out');
         }
         
         setUser(user);
@@ -101,7 +96,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       isMounted = false;
       // log.debug('Auth', 'Cleaning up authentication context');
-      console.log('Auth: Cleaning up authentication context');
       unsubscribe();
     };
   }, []);

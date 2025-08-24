@@ -49,7 +49,21 @@ interface ChatSession {
 
 export const AIChatPage: React.FC = () => {
   const { user } = useAuth();
-  const { expenses, budgets, customPeople, publicPeople } = useFirestoreData();
+  const { 
+    expenses, 
+    budgets, 
+    customPeople, 
+    publicPeople,
+    addExpense,
+    updateExpense,
+    deleteExpense,
+    addBudget,
+    updateBudget,
+    deleteBudget,
+    addCustomCategory,
+    updateCustomCategory,
+    deleteCustomCategory
+  } = useFirestoreData();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -313,7 +327,14 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
     await saveMessageToHistory(userMessage);
 
     try {
+      // Debug user authentication
+      console.log('🔍 AIChatPage - Current user:', user?.uid);
+      console.log('🔍 AIChatPage - User email:', user?.email);
+      console.log('🔍 AIChatPage - Sending message:', message.trim());
+      
       const chatFunction = httpsCallable(functions, 'chatWithGemini');
+      console.log('🚀 AIChatPage - Calling chatWithGemini Firebase Function...');
+      
       const result = await chatFunction({
         userId: user.uid,
         message: message.trim(),
@@ -325,9 +346,95 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
         }
       });
 
+      console.log('📥 AIChatPage - Firebase Function result:', result);
+
       const data = result.data as any;
+      console.log('🏢 AIChatPage - Firebase Function response:', data);
       
       if (data.response) {
+        // Handle executed actions (CRUD operations) first
+        if (data.executedActions && data.executedActions.length > 0) {
+          console.log('🔧 AIChatPage - Processing executed actions:', data.executedActions);
+          for (const action of data.executedActions) {
+            console.log('⚡ Processing action:', action);
+            if (action.success) {
+              
+              // Execute frontend CRUD operations to update UI state
+              if (action.type === 'add_expense' && action.data && addExpense) {
+                try {
+                  console.log('📝 AIChatPage - Adding expense:', action.data);
+                  const expenseData = {
+                    amount: action.data.amount,
+                    category: action.data.category,
+                    description: action.data.description,
+                    date: action.data.date,
+                    // Optional fields that may or may not be present
+                    ...(action.data.receiptUrl && { receiptUrl: action.data.receiptUrl }),
+                    ...(action.data.receiptFileName && { receiptFileName: action.data.receiptFileName }),
+                    ...(action.data.peopleIds && { peopleIds: action.data.peopleIds })
+                  };
+                  
+                  await addExpense(expenseData);
+                  toast.success(`✅ Expense added: ${formatCurrency(action.data.amount)} for ${action.data.category}`, {
+                    description: `${action.data.description}`,
+                    duration: 5000
+                  });
+                } catch (error) {
+                  console.error('❌ AIChatPage - Error adding expense:', error);
+                  toast.error(`❌ Failed to add expense: ${error.message}`);
+                }
+              } 
+              
+              else if (action.type === 'add_budget' && action.data && addBudget) {
+                try {
+                  await addBudget(action.data);
+                  toast.success(`✅ Budget created: ${formatCurrency(action.data.limit)} for ${action.data.category}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync budget to UI`);
+                }
+              } 
+              
+              else if (action.type === 'update_budget' && action.data && updateBudget) {
+                try {
+                  await updateBudget(action.data.id, action.data);
+                  toast.success(`✅ Budget updated: ${formatCurrency(action.data.limit)} for ${action.data.category}`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync budget update to UI`);
+                }
+              } 
+              
+              else if (action.type === 'delete_expense' && action.data && deleteExpense) {
+                try {
+                  await deleteExpense(action.data.id);
+                  toast.success(`✅ Expense deleted successfully`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync expense deletion to UI`);
+                }
+              } 
+              
+              else if (action.type === 'delete_budget' && action.data && deleteBudget) {
+                try {
+                  await deleteBudget(action.data.id);
+                  toast.success(`✅ Budget deleted successfully`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync budget deletion to UI`);
+                }
+              }
+              
+              else if (action.type === 'update_expense' && action.data && updateExpense) {
+                try {
+                  await updateExpense(action.data.id, action.data);
+                  toast.success(`✅ Expense updated successfully`);
+                } catch (error) {
+                  toast.error(`❌ Failed to sync expense update to UI`);
+                }
+              }
+            } else {
+              console.warn('⚠️ Action failed:', action);
+            }
+          }
+        }
+
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',

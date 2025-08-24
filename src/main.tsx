@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from "react-error-boundary";
-import "@github/spark/spark"
 import 'flowbite';
 
 import App from './App.tsx'
@@ -64,7 +63,6 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Log before creating React app
 // log.info('Application', 'Creating React root and rendering application');
-console.log('Creating React root and rendering application');
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary FallbackComponent={ErrorFallback}>

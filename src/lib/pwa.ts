@@ -35,11 +35,8 @@ export class PWAManager {
           scope: '/'
         });
         
-        console.log('✅ Service Worker registered successfully:', registration);
-        
         // Check for updates
         registration.addEventListener('updatefound', () => {
-          console.log('🔄 Service Worker update found');
           this.handleServiceWorkerUpdate(registration);
         });
         
@@ -160,7 +157,6 @@ export class PWAManager {
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       this.deferredPrompt = e;
-      console.log('📱 Install prompt available');
       
       // Show custom install button/banner
       this.showInstallBanner();

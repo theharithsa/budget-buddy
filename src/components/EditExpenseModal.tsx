@@ -111,8 +111,9 @@ export function EditExpenseModal({
     setIsUploading(true);
 
     try {
-      let newReceiptUrl = currentReceiptUrl;
-      let newReceiptFileName = currentReceiptFileName;
+      let newReceiptUrl: string | undefined = currentReceiptUrl;
+      let newReceiptFileName: string | undefined = currentReceiptFileName;
+      let shouldRemoveReceipt = false;
 
       // Handle receipt upload if a new file is selected
       if (receiptFile) {
@@ -158,6 +159,7 @@ export function EditExpenseModal({
         }
         newReceiptUrl = undefined;
         newReceiptFileName = undefined;
+        shouldRemoveReceipt = true;
       }
 
       const updateData: Partial<Expense> = {
@@ -165,10 +167,16 @@ export function EditExpenseModal({
         category,
         description: description.trim(),
         date,
-        peopleIds: selectedPeople.length > 0 ? selectedPeople : undefined,
-        receiptUrl: newReceiptUrl,
-        receiptFileName: newReceiptFileName
+        // Only include fields that have actual values or need to be removed
+        ...(selectedPeople.length > 0 && { peopleIds: selectedPeople }),
+        ...(newReceiptUrl !== undefined && { receiptUrl: newReceiptUrl }),
+        ...(newReceiptFileName !== undefined && { receiptFileName: newReceiptFileName })
       };
+
+      // Add special marker for field removal
+      if (shouldRemoveReceipt) {
+        (updateData as any)._removeReceipt = true;
+      }
 
       await onUpdate(expense.id, updateData);
       toast.success('Expense updated successfully!');

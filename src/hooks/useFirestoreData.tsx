@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { doc, getDoc, getDocs, collection, query, orderBy } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
   subscribeToExpenses,
   subscribeToBudgets,
@@ -62,10 +64,9 @@ export function useFirestoreData() {
       return;
     }
 
-    console.log('Setting up Firebase subscriptions for user:', user.uid);
     setLoading(true);
 
-    let unsubscribeFunctions: (() => void)[] = [];
+    const unsubscribeFunctions: (() => void)[] = [];
     let timeoutId: NodeJS.Timeout;
     let isCleanedUp = false;
 
@@ -77,7 +78,6 @@ export function useFirestoreData() {
         // Subscribe to expenses
         const unsubscribeExpenses = subscribeToExpenses(user.uid, (expenseData) => {
           if (!isCleanedUp) {
-            console.log('Received expenses data:', expenseData.length, 'expenses');
             setExpenses(expenseData);
           }
         });
@@ -88,7 +88,6 @@ export function useFirestoreData() {
         // Subscribe to budgets
         const unsubscribeBudgets = subscribeToBudgets(user.uid, (budgetData) => {
           if (!isCleanedUp) {
-            console.log('Received budgets data:', budgetData.length, 'budgets');
             setBudgets(budgetData);
           }
         });
@@ -99,7 +98,6 @@ export function useFirestoreData() {
         // Subscribe to templates
         const unsubscribeTemplates = subscribeToTemplates(user.uid, (templateData) => {
           if (!isCleanedUp) {
-            console.log('Received templates data:', templateData.length, 'templates');
             setTemplates(templateData);
           }
         });
@@ -110,7 +108,6 @@ export function useFirestoreData() {
         // Subscribe to custom categories
         const unsubscribeCustomCategories = subscribeToCustomCategories(user.uid, (categoryData) => {
           if (!isCleanedUp) {
-            console.log('Received custom categories data:', categoryData.length, 'categories');
             setCustomCategories(categoryData);
           }
         });
@@ -121,7 +118,6 @@ export function useFirestoreData() {
         // Subscribe to public categories
         const unsubscribePublicCategories = subscribeToPublicCategories((categoryData) => {
           if (!isCleanedUp) {
-            console.log('Received public categories data:', categoryData.length, 'public categories');
             setPublicCategories(categoryData);
           }
         });
@@ -132,7 +128,6 @@ export function useFirestoreData() {
         // Subscribe to custom people
         const unsubscribeCustomPeople = subscribeToCustomPeople(user.uid, (peopleData) => {
           if (!isCleanedUp) {
-            console.log('Received custom people data:', peopleData.length, 'people');
             setCustomPeople(peopleData);
           }
         });
@@ -143,7 +138,6 @@ export function useFirestoreData() {
         // Subscribe to public people
         const unsubscribePublicPeople = subscribeToPublicPeople((peopleData) => {
           if (!isCleanedUp) {
-            console.log('Received public people data:', peopleData.length, 'public people');
             setPublicPeople(peopleData);
           }
         });
@@ -154,7 +148,6 @@ export function useFirestoreData() {
         // Subscribe to budget templates
         const unsubscribeBudgetTemplates = subscribeToBudgetTemplates(user.uid, (templateData) => {
           if (!isCleanedUp) {
-            console.log('Received budget templates data:', templateData.length, 'budget templates');
             setBudgetTemplates(templateData);
           }
         });
@@ -165,7 +158,6 @@ export function useFirestoreData() {
         // Subscribe to public budget templates
         const unsubscribePublicBudgetTemplates = subscribeToPublicBudgetTemplates((templateData) => {
           if (!isCleanedUp) {
-            console.log('Received public budget templates data:', templateData.length, 'public budget templates');
             setPublicBudgetTemplates(templateData);
           }
         });
@@ -207,11 +199,21 @@ export function useFirestoreData() {
   // Expense operations
   const addExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     if (!user) {
-      console.error('addExpense: User not authenticated');
+      console.error('❌ addExpense: User not authenticated');
       throw new Error('User not authenticated');
     }
     
-    console.log('addExpense called with:', { userId: user.uid, expenseData });
+    console.log('🔐 USER DEBUG - addExpense user info:', {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName
+    });
+    
+    console.log('💾 addExpense called with:', { 
+      userId: user.uid, 
+      expenseData,
+      targetPath: `users/${user.uid}/expenses`
+    });
     
     const expense = {
       ...expenseData,
@@ -220,10 +222,27 @@ export function useFirestoreData() {
     
     try {
       const result = await addExpenseToFirestore(user.uid, expense);
-      console.log('addExpense successful:', result);
+      console.log('✅ addExpense successful - Document ID:', result);
+      console.log('📍 Expense should be written to path:', `users/${user.uid}/expenses/${result}`);
+      
+      // VERIFICATION: Read back the expense to confirm it was written
+      setTimeout(async () => {
+        try {
+          const docRef = doc(db, `users/${user.uid}/expenses`, result);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            console.log('✅ VERIFICATION: Expense confirmed in Firestore:', docSnap.data());
+          } else {
+            console.error('❌ VERIFICATION: Expense NOT found in Firestore!');
+          }
+        } catch (verifyError) {
+          console.error('❌ VERIFICATION ERROR:', verifyError);
+        }
+      }, 1000);
+      
       return result;
     } catch (error) {
-      console.error('addExpense failed:', error);
+      console.error('❌ addExpense failed:', error);
       throw error;
     }
   };
@@ -315,13 +334,34 @@ export function useFirestoreData() {
   };
 
   const updatePerson = async (personId: string, personData: Partial<Person>) => {
-    if (!user) throw new Error('User not authenticated');
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    
     await updatePersonInFirestore(user.uid, personId, personData);
   };
 
   const deletePerson = async (personId: string) => {
-    if (!user) throw new Error('User not authenticated');
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    
     await deletePersonFromFirestore(user.uid, personId);
+    
+    // Force refresh the people list since real-time subscription might not trigger
+    try {
+      const peopleSnapshot = await getDocs(query(
+        collection(db, 'users', user.uid, 'customPeople'),
+        orderBy('name', 'asc')
+      ));
+      const updatedPeople = peopleSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Person));
+      setCustomPeople(updatedPeople);
+    } catch (refreshError) {
+      console.error('Failed to refresh people list:', refreshError);
+    }
   };
 
   const adoptPerson = async (publicPerson: Person) => {

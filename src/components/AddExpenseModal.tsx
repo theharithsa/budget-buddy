@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useKV } from '@github/spark/hooks';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +38,7 @@ export function AddExpenseModal({
   publicPeople = []
 }: AddExpenseModalProps) {
   const { user } = useAuth();
-  const [templates] = useKV<RecurringTemplate[]>('recurring-templates', DEFAULT_RECURRING_TEMPLATES);
+  const templates = DEFAULT_RECURRING_TEMPLATES;
   const [open, setOpen] = useState(isOpen);
 
   // Sync internal open state with external isOpen prop
@@ -68,11 +67,15 @@ export function AddExpenseModal({
   const allPeople = getAllPeople([...customPeople, ...publicPeople]);
   
   const handlePeopleToggle = (personId: string) => {
-    setSelectedPeople(prev => 
-      prev.includes(personId) 
+    console.log('People toggle clicked for ID:', personId);
+    setSelectedPeople(prev => {
+      const newSelection = prev.includes(personId) 
         ? prev.filter(id => id !== personId)
-        : [...prev, personId]
-    );
+        : [...prev, personId];
+      console.log('Previous selection:', prev);
+      console.log('New selection:', newSelection);
+      return newSelection;
+    });
   };
 
   const selectedPeopleData = allPeople.filter(person => selectedPeople.includes(person.id!));
@@ -134,7 +137,8 @@ export function AddExpenseModal({
     }
 
     console.log('Starting expense submission...');
-    console.log('Form data:', { amount: numAmount, category, description, date });
+    console.log('Selected people at submission:', selectedPeople);
+    console.log('Selected people length:', selectedPeople.length);
 
     setIsUploading(true);
 
@@ -148,11 +152,9 @@ export function AddExpenseModal({
           toast.error('User not authenticated');
           return;
         }
-        console.log('Uploading receipt file...');
         const receiptPath = generateReceiptPath(user.uid, receiptFile.name);
         receiptUrl = await uploadFile(receiptFile, receiptPath);
         receiptFileName = receiptFile.name;
-        console.log('Receipt uploaded successfully:', receiptUrl);
       }
 
       const expenseData: Omit<Expense, 'id' | 'createdAt'> = {
@@ -165,7 +167,8 @@ export function AddExpenseModal({
         peopleIds: selectedPeople.length > 0 ? selectedPeople : undefined,
       };
 
-      console.log('Calling onAddExpense with:', expenseData);
+      console.log('Complete expense data being submitted:', expenseData);
+
       await onAddExpense(expenseData);
 
       // Reset form
@@ -183,7 +186,6 @@ export function AddExpenseModal({
       
       toast.success('Expense added successfully');
     } catch (error: any) {
-      console.error('Error in handleSubmit:', error);
       toast.error(error?.message || 'Failed to add expense');
     } finally {
       setIsUploading(false);

@@ -9,13 +9,13 @@ interface ExpenseCardProps {
   expense: Expense;
   onDelete: (id: string) => void;
   onEdit?: () => void;
-  customPeople?: Person[];
+  customPeople?: Person[]; // This actually contains both custom + public people from App.tsx
   viewMode?: 'list' | 'grid';
 }
 
 export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], viewMode = 'grid' }: ExpenseCardProps) {
   const category = DEFAULT_CATEGORIES.find(cat => cat.name === expense.category);
-  const allPeople = getAllPeople(customPeople);
+  const allPeople = getAllPeople(customPeople); // customPeople already includes both custom + public
   
   // Get people associated with this expense
   const associatedPeople = expense.peopleIds 
