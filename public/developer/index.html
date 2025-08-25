@@ -212,6 +212,31 @@
                 padding: 1.5rem;
             }
         }
+
+        /* Coming Soon Styling */
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .coming-soon:hover {
+            background: #f8f8f8 !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #666;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -340,72 +365,6 @@
                 </ul>
             </a>
 
-            <a href="./types.html" class="nav-card">
-                <h3>📝 TypeScript Types & Utilities</h3>
-                <p>Type definitions, interfaces, and utility functions used throughout the application.</p>
-                <ul>
-                    <li>Core interfaces</li>
-                    <li>Type definitions</li>
-                    <li>Utility functions</li>
-                    <li>Type safety patterns</li>
-                </ul>
-            </a>
-
-            <a href="./charts.html" class="nav-card">
-                <h3>📊 Charts & Data Visualization</h3>
-                <p>ApexCharts integration, chart lifecycle management, and dashboard implementation.</p>
-                <ul>
-                    <li>ApexCharts setup</li>
-                    <li>Chart lifecycle patterns</li>
-                    <li>Dashboard architecture</li>
-                    <li>Data visualization best practices</li>
-                </ul>
-            </a>
-
-            <a href="./pwa.html" class="nav-card">
-                <h3>📱 PWA Implementation</h3>
-                <p>Progressive Web App features, service worker, and offline functionality documentation.</p>
-                <ul>
-                    <li>Service worker setup</li>
-                    <li>PWA manager</li>
-                    <li>Offline functionality</li>
-                    <li>Update mechanisms</li>
-                </ul>
-            </a>
-
-            <a href="./ai-integration.html" class="nav-card">
-                <h3>🤖 AI Integration</h3>
-                <p>AI-powered features, OpenAI integration, and fallback strategies implementation.</p>
-                <ul>
-                    <li>OpenAI integration</li>
-                    <li>Spark AI fallback</li>
-                    <li>Budget analysis</li>
-                    <li>AI prompt engineering</li>
-                </ul>
-            </a>
-
-            <a href="./ui-patterns.html" class="nav-card">
-                <h3>🎨 UI/UX Patterns</h3>
-                <p>Design system, Tailwind CSS usage, Radix UI components, and responsive design patterns.</p>
-                <ul>
-                    <li>Design system</li>
-                    <li>Component patterns</li>
-                    <li>Responsive design</li>
-                    <li>Accessibility guidelines</li>
-                </ul>
-            </a>
-
-            <a href="./api-reference.html" class="nav-card">
-                <h3>📚 API Reference</h3>
-                <p>Complete API documentation for all functions, methods, and Firebase operations.</p>
-                <ul>
-                    <li>Firebase operations</li>
-                    <li>Component APIs</li>
-                    <li>Utility functions</li>
-                    <li>Error handling</li>
-                </ul>
-            </a>
-
             <a href="./testing.html" class="nav-card">
                 <h3>🧪 Testing & Quality</h3>
                 <p>Testing strategies, error handling patterns, and code quality guidelines.</p>
@@ -416,6 +375,29 @@
                     <li>Performance optimization</li>
                 </ul>
             </a>
+
+            <a href="./api-reference.html" class="nav-card">
+                <h3>� API Reference</h3>
+                <p>Complete API documentation for all functions, methods, and Firebase operations.</p>
+                <ul>
+                    <li>Firebase operations</li>
+                    <li>Component APIs</li>
+                    <li>Utility functions</li>
+                    <li>Error handling</li>
+                </ul>
+            </a>
+
+            <div class="nav-card" style="opacity: 0.6; cursor: not-allowed;">
+                <h3>🎨 UI/UX Patterns</h3>
+                <p>Design system, Tailwind CSS usage, Radix UI components, and responsive design patterns.</p>
+                <ul>
+                    <li>Design system</li>
+                    <li>Component patterns</li>
+                    <li>Responsive design</li>
+                    <li>Accessibility guidelines</li>
+                </ul>
+                <small style="color: #666; font-style: italic;">Coming Soon</small>
+            </div>
 
             <a href="./deployment.html" class="nav-card">
                 <h3>🚀 Deployment Guide</h3>
@@ -439,7 +421,7 @@
                 </ul>
             </a>
 
-            <a href="./changelog.html" class="nav-card">
+            <div class="nav-card coming-soon">
                 <h3>📋 Developer Changelog</h3>
                 <p>Technical changes, API updates, and breaking changes across versions.</p>
                 <ul>
@@ -448,9 +430,10 @@
                     <li>API updates</li>
                     <li>Migration guides</li>
                 </ul>
-            </a>
+                <div class="coming-soon-badge">Coming Soon</div>
+            </div>
 
-            <a href="./best-practices.html" class="nav-card">
+            <div class="nav-card coming-soon">
                 <h3>✨ Best Practices</h3>
                 <p>Development guidelines, coding standards, and recommended patterns for FinBuddy.</p>
                 <ul>
@@ -459,9 +442,10 @@
                     <li>Performance guidelines</li>
                     <li>Security practices</li>
                 </ul>
-            </a>
+                <div class="coming-soon-badge">Coming Soon</div>
+            </div>
 
-            <a href="./contributing.html" class="nav-card">
+            <div class="nav-card coming-soon">
                 <h3>🤝 Contributing Guide</h3>
                 <p>Guidelines for contributing to FinBuddy, including setup, workflow, and submission process.</p>
                 <ul>
@@ -470,7 +454,8 @@
                     <li>Code review process</li>
                     <li>Contribution standards</li>
                 </ul>
-            </a>
+                <div class="coming-soon-badge">Coming Soon</div>
+            </div>
         </div>
 
         <footer>
