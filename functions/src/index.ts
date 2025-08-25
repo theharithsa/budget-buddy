@@ -11,9 +11,6 @@ import {GoogleGenerativeAI} from "@google/generative-ai";
 import * as logger from "firebase-functions/logger";
 import { createWisdomEnhancedPrompt, generateActionWisdom, getDailyWisdom } from "./lib/wisdom/simpleWisdom.js";
 
-// Import ML components
-export { chatWithGeminiML } from "./chatWithGeminiML.js";
-
 // Initialize Firebase Admin
 initializeApp();
 const db = getFirestore();
@@ -212,7 +209,7 @@ function extractActionableItems(response: string): any[] {
 }
 
 /**
- * Enhanced chat function with wisdom integration (CRUD disabled)
+ * Enhanced chat function with intelligent data handling
  */
 export const chatWithGemini = onCall({
   secrets: [geminiApiKey],
@@ -226,17 +223,105 @@ export const chatWithGemini = onCall({
       throw new Error("Authentication required");
     }
 
-    logger.info("Processing wisdom-enhanced chat request", {
+    logger.info("Processing intelligent chat request", {
       userId, 
       message,
       contextLength: conversationHistory.length
     });
 
-    // Initialize Gemini AI
-    const genAI = new GoogleGenerativeAI(geminiApiKey.value());
-
     // Get user's financial data for context
     const userData = await getUserFinancialData(userId);
+    
+    // INTELLIGENT INTENT DETECTION - Check if user wants raw data listing
+    const messageText = message.toLowerCase().trim();
+    const isDataListingRequest = (
+      messageText.includes('list all') || 
+      messageText.includes('show all') ||
+      messageText.includes('display all') ||
+      messageText.includes('list my') ||
+      messageText.includes('show my') ||
+      (messageText.includes('expenses') && (messageText.includes('list') || messageText.includes('show'))) ||
+      (messageText.includes('budgets') && (messageText.includes('list') || messageText.includes('show'))) ||
+      messageText.match(/^(all|my)\s+(expenses|budgets|transactions)/)
+    );
+
+    // HANDLE DATA LISTING REQUESTS
+    if (isDataListingRequest) {
+      logger.info("Detected data listing request", { message: messageText });
+      
+      let dataResponse = '';
+      let dataCount = 0;
+      
+      if (messageText.includes('expense') || messageText.includes('transaction')) {
+        const expenses = userData.expenses || [];
+        dataCount = expenses.length;
+        
+        if (expenses.length === 0) {
+          dataResponse = "🔍 **Your Expenses**\n\nNo expenses found. Start tracking your spending to build your financial foundation!";
+        } else {
+          const totalAmount = expenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
+          const averageAmount = expenses.length > 0 ? totalAmount / expenses.length : 0;
+          
+          dataResponse = `💰 **Your Expenses** (${expenses.length} entries)\n`;
+          dataResponse += `📊 **Total Amount:** ₹${totalAmount.toLocaleString()}\n`;
+          dataResponse += `📈 **Average:** ₹${averageAmount.toLocaleString()}\n\n`;
+          
+          // Show recent 20 expenses in structured format
+          const recentExpenses = expenses.slice(0, 20);
+          recentExpenses.forEach((expense: any, index: number) => {
+            const peopleInfo = expense.peopleIds && expense.peopleIds.length > 0 
+              ? ` | 👥 ${expense.peopleIds.length} people` 
+              : '';
+            dataResponse += `**${index + 1}.** ${expense.description || 'Expense'}\n`;
+            dataResponse += `   💰 **₹${expense.amount.toLocaleString()}** | 🏷️ ${expense.category} | 📅 ${expense.date}${peopleInfo}\n\n`;
+          });
+          
+          if (expenses.length > 20) {
+            dataResponse += `... and ${expenses.length - 20} more expenses\n\n`;
+          }
+        }
+      } else if (messageText.includes('budget')) {
+        const budgets = userData.budgets || [];
+        const expenses = userData.expenses || [];
+        dataCount = budgets.length;
+        
+        if (budgets.length === 0) {
+          dataResponse = "📋 **Your Budgets**\n\nNo budgets set up yet. Create budgets to manage your spending effectively!";
+        } else {
+          dataResponse = `📋 **Your Budgets** (${budgets.length} active)\n\n`;
+          
+          budgets.forEach((budget: any, index: number) => {
+            const spent = expenses
+              .filter((exp: any) => exp.category === budget.category)
+              .reduce((sum: number, exp: any) => sum + exp.amount, 0);
+            const remaining = budget.limit - spent;
+            const percentage = budget.limit > 0 ? (spent / budget.limit * 100).toFixed(1) : '0';
+            
+            dataResponse += `**${index + 1}.** ${budget.category} Budget\n`;
+            dataResponse += `   💰 **₹${spent.toLocaleString()} / ₹${budget.limit.toLocaleString()}** (${percentage}% used)\n`;
+            dataResponse += `   💳 **Remaining:** ₹${remaining.toLocaleString()} | 📅 Period: ${budget.period || 'Monthly'}\n\n`;
+          });
+        }
+      }
+      
+      return {
+        success: true,
+        response: dataResponse,
+        timestamp: new Date().toISOString(),
+        actionItems: [],
+        executedActions: [],
+        metadata: {
+          dataCount,
+          intentType: 'DATA_RETRIEVAL',
+          responseFormat: 'RAW_DATA'
+        },
+        mode: 'data-listing'
+      };
+    }
+
+    // HANDLE ANALYSIS AND WISDOM REQUESTS (existing functionality)
+    // Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(geminiApiKey.value());
     
     // Create wisdom-enhanced prompt
     const basePrompt = createFinancialPrompt(message, userData, context);
@@ -251,35 +336,33 @@ export const chatWithGemini = onCall({
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-exp",
       generationConfig: {
-        temperature: 0.2,  // Lower temperature for more focused responses
-        topP: 0.8,         // Reduced for more concise outputs
-        topK: 30,          // Reduced for sharper responses
-        maxOutputTokens: 1024, // Reduced from 4096 to limit response length
+        temperature: 0.2,
+        topP: 0.8,
+        topK: 30,
+        maxOutputTokens: 1024,
         candidateCount: 1,
       },
-      systemInstruction: "You are KautilyaAI, an intelligent financial assistant combining ancient wisdom with modern financial expertise. CRUD operations are disabled - focus on providing wisdom-based guidance and analysis only. Always be CONCISE and DIRECT in your responses."
+      systemInstruction: "You are KautilyaAI, an intelligent financial assistant combining ancient wisdom with modern financial expertise. Provide insightful analysis and wisdom-based guidance. Always be CONCISE and DIRECT in your responses."
     });
     
     // Enhanced prompt with instructions
     const enhancedPrompt = `${wisdomEnhancedPrompt}\n\nIMPORTANT:
 1. Respond ONLY in English
-2. CRUD operations are disabled - provide guidance and analysis only
-3. If users request data modifications, explain these features are being enhanced
-4. Focus on wisdom-based financial advice and insights
-5. Include relevant Arthashastra principles naturally in your response
-6. Keep responses CONCISE and SHARP - maximum 3-4 sentences per point
-7. Use bullet points for lists and clear, direct language
-8. Avoid lengthy explanations - focus on actionable insights`;
+2. Focus on financial analysis and wisdom-based insights
+3. Include relevant Arthashastra principles naturally in your response
+4. Keep responses CONCISE and SHARP - maximum 3-4 sentences per point
+5. Use bullet points for lists and clear, direct language
+6. Provide actionable insights and recommendations`;
     
     const result = await model.generateContent(enhancedPrompt);
     const response = result.response.text();
     
     logger.info("Generated wisdom-enhanced response", {userId, responseLength: response.length});
     
-    // Generate wisdom suggestions (no CRUD actions)
+    // Generate wisdom suggestions
     const wisdomSuggestions = [generateActionWisdom('chat_query')];
     
-    // Extract actionable items (informational only)
+    // Extract actionable items
     const actionItems = extractActionableItems(response);
     
     return {
@@ -287,14 +370,18 @@ export const chatWithGemini = onCall({
       response: response,
       timestamp: new Date().toISOString(),
       actionItems: actionItems,
-      executedActions: [], // Empty - no CRUD operations
+      executedActions: [], 
       wisdomSuggestions: wisdomSuggestions,
       dailyWisdom: getDailyWisdom(),
-      mode: 'wisdom-only' // Indicates CRUD is disabled
+      metadata: {
+        intentType: 'ANALYSIS',
+        responseFormat: 'AI_INSIGHTS'
+      },
+      mode: 'wisdom-analysis'
     };
     
   } catch (error) {
-    logger.error("Error in wisdom-enhanced chat", {error});
+    logger.error("Error in enhanced chat", {error});
     throw new Error(`KautilyaAI error: ${error}`);
   }
 });
