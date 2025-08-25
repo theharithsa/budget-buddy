@@ -25,7 +25,6 @@ import { Footer } from '@/components/Footer';
 import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/components/PWAComponents';
 import { UpdateNotification } from '@/components/UpdateNotification';
 import { CookieBanner } from '@/components/CookieBanner';
-import { GeminiChat } from '@/components/GeminiChat';
 import { FloatingAIButton } from '@/components/FloatingAIButton';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
@@ -78,7 +77,6 @@ function FinanceApp() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
-  const [showAIChat, setShowAIChat] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [peopleFilter, setPeopleFilter] = useState('all');
@@ -107,15 +105,6 @@ function FinanceApp() {
     };
   });
 
-  // Wrapper functions to match GeminiChat interface expectations
-  const handleAddBudgetForChat = async (budget: any) => {
-    await addBudget(budget);
-  };
-
-  const handleAddCategoryForChat = async (category: any) => {
-    await addCustomCategory(category);
-  };
-
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
       const result = await addExpense(expenseData);
@@ -123,12 +112,12 @@ function FinanceApp() {
       setShowAddExpense(false);
       toast.success('Expense added successfully!');
       
-      return result; // Return the document ID for GeminiChat compatibility
+      return result;
       
     } catch (error) {
       console.error('❌ App.tsx - Error adding expense:', error);
       toast.error('Failed to add expense');
-      throw error; // Re-throw to maintain error handling in GeminiChat
+      throw error;
     }
   };
 
@@ -520,11 +509,11 @@ function FinanceApp() {
       <PWAConnectionStatus />
       <UpdateNotification />
       
-      {/* Bottom Navigation for Mobile - Hidden on Dashboard/Overview */}
+      {/* Bottom Navigation for Mobile */}
       <BottomNavigation 
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        isVisible={activeTab !== 'dashboard'}
+        isVisible={true}
       />
       
       <Toaster position="top-right" />
@@ -552,31 +541,10 @@ function FinanceApp() {
         />
       )}
 
-      {/* Gemini AI Chat */}
-      {showAIChat && (
-        <GeminiChat
-          expenses={filteredAndSortedExpenses}
-          budgets={budgets}
-          onClose={() => setShowAIChat(false)}
-          onAddExpense={addExpense}
-          onUpdateExpense={updateExpense}
-          onDeleteExpense={deleteExpense}
-          onAddBudget={handleAddBudgetForChat}
-          onUpdateBudget={updateBudget}
-          onDeleteBudget={deleteBudget}
-          onAddCategory={handleAddCategoryForChat}
-          onUpdateCategory={updateCustomCategory}
-          onDeleteCategory={deleteCustomCategory}
-          onAddPerson={addPerson}
-          onUpdatePerson={updatePerson}
-          onDeletePerson={deletePerson}
-          onAddTemplate={addTemplate}
-          onDeleteTemplate={deleteTemplate}
-        />
-      )}
-
       {/* Floating AI Assistant Button */}
-      <FloatingAIButton onClick={() => setShowAIChat(true)} />
+      {activeTab !== 'ai-chat' && (
+        <FloatingAIButton onClick={() => setActiveTab('ai-chat')} />
+      )}
 
       {/* Footer */}
       <Footer />

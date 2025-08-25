@@ -7,14 +7,14 @@
 ### Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS + Radix UI components
-- **Backend**: Firebase (Auth, Firestore, Storage)
+- **Backend**: Firebase (Auth, Firestore, Storage, Functions v2)
 - **Charts**: ApexCharts for advanced data visualization
-- **AI Integration**: OpenAI GPT-4 + Spark AI fallbacks
+- **AI Integration**: KautilyaAI Co-Pilot with Google Gemini 2.0 Flash + Firebase Functions v2
 - **PWA**: Service Worker + Installation Prompts + Offline Support
 - **Navigation**: Collapsible sidebar with responsive design
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable)
-- **Version**: Currently v2.5.5 with advanced dashboard, analytics, gamification system, and historical budget analysis
+- **Version**: Currently v2.6.0 with KautilyaAI Co-Pilot revolution
 
 ### Critical Development Commands
 ```bash
@@ -42,6 +42,8 @@ src/
 │   ├── AddExpenseModal.tsx # Fixed people selection using getAllPeople()
 │   ├── EditExpenseModal.tsx # Consistent people data flow
 │   ├── BudgetAnalyzer.tsx # AI-powered budget analysis
+│   ├── AIChatPage.tsx    # KautilyaAI Co-Pilot interface (single chat implementation)
+│   ├── FloatingAIButton.tsx # AI assistant navigation button with BETA badge
 │   ├── BudgetManager.tsx
 │   ├── CategoryManager.tsx
 │   ├── LoginPage.tsx
@@ -53,7 +55,8 @@ src/
 │   ├── PWAComponents.tsx  # PWA install/update prompts and connection status
 │   └── ...
 ├── contexts/
-│   └── AuthContext.tsx    # Firebase authentication context
+│   ├── AuthContext.tsx    # Firebase authentication context
+│   └── ThemeContext.tsx   # Theme management with custom CSS variables support
 ├── hooks/
 │   ├── useFirestoreData.tsx # Firebase data management
 │   └── use-mobile.ts      # Mobile detection hook
@@ -64,7 +67,7 @@ src/
 │   ├── pwa.ts            # PWA management and service worker utilities
 │   └── logger.ts         # Observability & logging (disabled)
 └── styles/
-    └── theme.css         # Custom theme variables
+    └── theme.css         # Custom theme variables + CSS variable overrides
 ```
 
 ### Key Configuration Files
@@ -72,7 +75,7 @@ src/
 - `tailwind.config.js` - Styling configuration
 - `components.json` - Radix UI component configuration
 - `tsconfig.json` - TypeScript configuration
-- `package.json` - Dependencies & scripts (v2.5.5)
+- `package.json` - Dependencies & scripts (v2.6.0)
 - `manifest.json` - PWA manifest for installation
 - `sw.js` - Service worker for offline functionality
 
@@ -278,36 +281,132 @@ useEffect(() => {
 - **File Naming**: `receipts/{userId}/{timestamp}_{originalName}`
 - **Cleanup**: Deleted files removed from Storage when expense deleted
 
-## 🤖 AI Integration
+## 🤖 KautilyaAI Co-Pilot Integration
 
-### BudgetAnalyzer Component
-The AI system has multiple fallback modes:
+### Architecture Overview
+**KautilyaAI Co-Pilot** is the revolutionary AI system that provides conversational CRUD operations powered by Google Gemini 2.0 Flash and Firebase Functions v2.
+
+#### Core Components
+- **AIChatPage.tsx**: Single chat interface with session management
+- **FloatingAIButton.tsx**: Navigation button with BETA badge  
+- **Firebase Functions v2**: Backend processing with natural language understanding
+- **Context Memory**: Conversation history with smart references
+
+### Chat Interface Implementation
+```typescript
+// AIChatPage session management pattern
+const [messages, setMessages] = useState<ChatMessage[]>([]);
+const [currentSessionId, setCurrentSessionId] = useState<string>('');
+const [sessions, setSessions] = useState<ChatSession[]>([]);
+
+// Firebase Functions integration
+const chatWithGemini = httpsCallable(functions, 'chatWithGemini');
+const result = await chatWithGemini({
+  userId: user.uid,
+  message: message.trim(),
+  context: {
+    recentExpenses: expenses.slice(0, 20),
+    activeBudgets: budgets.filter(b => (b as any).isActive !== false),
+    customPeople: customPeople.slice(0, 50),
+    publicPeople: publicPeople.slice(0, 20)
+  }
+});
+```
+
+### Key Features
+- **Conversational CRUD**: Natural language expense/budget operations
+- **Context Awareness**: AI remembers conversation history and recent operations
+- **Real-time UI Sync**: Immediate frontend updates after backend operations
+- **Session Management**: Persistent chat history with organized sessions
+- **Error Recovery**: Graceful handling with user-friendly error messages
+
+### Integration Pattern
+```typescript
+// Chat message processing with UI synchronization
+if (data.executedActions && data.executedActions.length > 0) {
+  for (const action of data.executedActions) {
+    if (action.success) {
+      toast.success(`✅ ${action.summary}`);
+      // UI automatically updates via useFirestoreData hook
+    } else {
+      toast.error(`❌ Failed: ${action.error}`);
+    }
+  }
+}
+```
+
+### Navigation Integration
+```typescript
+// FloatingAIButton navigates to AI chat tab (simplified architecture)
+<FloatingAIButton onClick={() => setActiveTab('ai-chat')} />
+```
+
+## 🎨 Theme System & CSS Variables
+
+### ThemeContext Architecture
+```typescript
+// Theme management with localStorage persistence
+const [theme, setTheme] = useState<Theme>(
+  () => (localStorage.getItem('finbuddy-ui-theme') as Theme) || defaultTheme
+);
+
+// CSS class-based theme switching
+useEffect(() => {
+  const root = window.document.documentElement;
+  root.classList.remove('light', 'dark');
+  root.classList.add(theme);
+}, [theme]);
+```
+
+### Custom CSS Variables Pattern
+```css
+/* src/styles/theme.css - Theme-specific variables */
+:root {
+  --disclaimer-bg: #f1f5f9;
+  --disclaimer-border: #cbd5e1;
+  --disclaimer-title: #0f172a;
+}
+
+.dark {
+  --disclaimer-bg: #1e293b;
+  --disclaimer-border: #475569;
+  --disclaimer-title: #f1f5f9;
+}
+```
+
+```typescript
+// Component usage with CSS variables
+<div style={{
+  backgroundColor: 'var(--disclaimer-bg)',
+  borderColor: 'var(--disclaimer-border)',
+}}>
+  <p style={{ color: 'var(--disclaimer-title)' }}>Content</p>
+</div>
+```
+
+### Legacy AI Integration (BudgetAnalyzer)
+
+The BudgetAnalyzer component provides traditional AI analysis with multiple fallback modes:
 
 1. **OpenAI Direct**: GPT-4 API calls with environment variables
-2. **Spark AI**: GitHub Spark AI integration
+2. **Spark AI**: GitHub Spark AI integration  
 3. **Statistical**: Local calculation fallback
 4. **Demo Mode**: Static demo data
 
-### AI Implementation Pattern
 ```typescript
+// Legacy AI fallback pattern
 const analyzeSpending = async () => {
-  setLoading(true);
   try {
-    // Try OpenAI first
     const analysis = await callOpenAIDirectly(prompt);
     setAnalysis(JSON.parse(analysis));
   } catch (openAIError) {
     try {
-      // Fallback to Spark AI
       const analysis = await callSparkAI(prompt);
       setAnalysis(analysis);
     } catch (sparkError) {
-      // Fallback to statistical analysis
       const analysis = generateStatisticalAnalysis();
       setAnalysis(analysis);
     }
-  } finally {
-    setLoading(false);
   }
 };
 ```
@@ -629,9 +728,18 @@ VITE_DYNATRACE_TOKEN=your-dynatrace-token
 - **Environment Variables**: Configure in deployment platform
 - **Build Optimization**: Production builds are optimized for performance
 
-## 📋 Recent Developments (v2.5.1-2.5.5)
+## 📋 Recent Developments (v2.5.1-2.6.0)
 
 ### Major Feature Additions
+
+#### **KautilyaAI Co-Pilot Revolution (v2.6.0)**
+- **Conversational CRUD**: Complete natural language interface for all financial operations
+- **Google Gemini 2.0 Flash**: Advanced AI backend with Firebase Functions v2
+- **Session Management**: Persistent chat history with organized conversation sessions
+- **Real-time Synchronization**: Immediate UI updates after AI-driven operations
+- **Context Awareness**: AI remembers conversation history and recent operations
+- **Simplified Architecture**: Single AIChatPage component, FloatingAIButton navigation
+- **BETA Badge Implementation**: Clear labeling of experimental AI features
 
 #### **Advanced Dashboard System (v2.5.0-2.5.2)**
 - **ApexCharts Integration**: Professional data visualization with multiple chart types
@@ -801,8 +909,11 @@ const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 - Type definitions: `src/lib/types.ts` (includes getAllPeople)
 - Main app: `src/App.tsx` (includes viewMode and filter state)
 - Authentication: `src/contexts/AuthContext.tsx`
+- Theme management: `src/contexts/ThemeContext.tsx` (finbuddy-ui-theme)
 - Data management: `src/hooks/useFirestoreData.tsx`
 - AI analysis: `src/components/BudgetAnalyzer.tsx`
+- KautilyaAI Co-Pilot: `src/components/AIChatPage.tsx`
+- AI navigation: `src/components/FloatingAIButton.tsx`
 - PWA management: `src/lib/pwa.ts`
 - Navigation: `src/components/Navigation.tsx`
 - People management: `src/components/PeopleManager.tsx`
@@ -812,6 +923,7 @@ const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 - Analytics components: `src/components/analytics/`
 - Gamification system: `src/components/analytics/GamificationSystem.tsx`
 - Advanced charts: `src/components/analytics/AdvancedCharts.tsx`
+- Theme styling: `src/styles/theme.css` (custom CSS variables)
 
 ### Essential Commands
 ```bash
@@ -857,7 +969,7 @@ firebase.auth().currentUser
 5. **Build Failures**: Clear node_modules and reinstall if TypeScript errors persist
 6. **ApexCharts Errors**: Ensure DOM refs are current before chart initialization
 
-### Current Feature Status (v2.5.5)
+### Current Feature Status (v2.6.0)
 - ✅ Grid/List view toggle with persistence
 - ✅ Enhanced filtering system with people filter
 - ✅ Clear cache functionality
@@ -872,5 +984,9 @@ firebase.auth().currentUser
 - ✅ Chart lifecycle management for tab switching
 - ✅ Real-time score updates and visual polish
 - ✅ Historical budget analysis with month selector
+- ✅ KautilyaAI Co-Pilot with conversational CRUD operations
+- ✅ Firebase Functions v2 backend with Google Gemini 2.0 Flash
+- ✅ Custom CSS variables for theme-specific styling
+- ✅ Session-based AI chat with persistent history
 
 This guide should help AI coding agents understand the Budget Buddy codebase structure, implementation patterns, and development workflows to be immediately productive when working on the project.

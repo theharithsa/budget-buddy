@@ -561,25 +561,6 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
     }
   };
 
-  // Quick action suggestions
-  const quickActions = [
-    "Show my spending this month",
-    "How am I doing with my budget?",
-    "What's my biggest expense category?",
-    "Who do I spend the most money with?",
-    "Show me shared expenses with family",
-    "Help me manage my people in the app",
-    "Compare spending to last month",
-    `Add expense: ${formatCurrency(150)} lunch`,
-    "Create a budget plan for next month",
-    "How do I add people to my expenses?"
-  ];
-
-  const handleQuickAction = (action: string) => {
-    setCurrentMessage(action);
-    sendMessage(action);
-  };
-
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -769,56 +750,114 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
       </Card>
 
       {/* Chat Messages */}
-      <Card className="flex-1 flex flex-col min-h-0 shadow-xl border-0">
+      <Card className="flex-1 flex flex-col min-h-0 shadow-xl border-0 max-w-5xl mx-auto w-full">
         <CardContent className="flex-1 flex flex-col p-6 min-h-0">
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-6">
-              {messages.map((message) => (
-                <div key={message.id} className="flex items-start space-x-3">
-                  <Avatar className="h-8 w-8 shrink-0">
-                    <AvatarFallback className={message.role === 'user' ? 'bg-blue-500 text-white' : 'bg-primary text-primary-foreground'}>
-                      {message.role === 'user' ? (
-                        <User className="h-4 w-4" />
-                      ) : (
-                        <Bot className="h-4 w-4" />
-                      )}
+          {/* Header with Title and Disclaimer */}
+          <div className="mb-4 pb-4 border-b border-border/50">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                      <Bot className="h-5 w-5" />
                     </AvatarFallback>
                   </Avatar>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className={`inline-block max-w-full p-3 rounded-lg ${
-                      message.role === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : message.isError
-                        ? 'bg-red-50 border border-red-200 text-red-800'
-                        : 'bg-muted'
-                    }`}>
+                  <div>
+                    <h1 className="text-xl font-bold text-foreground">KautilyaAI Co-Pilot</h1>
+                    <p className="text-sm text-muted-foreground">Your Intelligent Financial Assistant</p>
+                  </div>
+                </div>
+                <Badge variant="secondary" className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 font-semibold">
+                  BETA
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Disclaimer */}
+            <div className="border rounded-lg p-3" style={{
+              backgroundColor: 'var(--disclaimer-bg)',
+              borderColor: 'var(--disclaimer-border)',
+            }}>
+              <div className="flex items-start space-x-2">
+                <Sparkles className="h-4 w-4 mt-0.5 flex-shrink-0" style={{
+                  color: 'var(--disclaimer-icon)'
+                }} />
+                <div className="text-sm">
+                  <p className="font-medium mb-1" style={{
+                    color: 'var(--disclaimer-title)'
+                  }}>
+                    AI Assistant Disclaimer
+                  </p>
+                  <p className="text-xs leading-relaxed" style={{
+                    color: 'var(--disclaimer-text)'
+                  }}>
+                    KautilyaAI is here to help you make informed financial decisions, but please remember that AI can make mistakes. 
+                    Always verify important financial information and consult with qualified professionals for major financial decisions. 
+                    Kautilya is designed to support and guide you, not to replace your judgment or cause emotional distress.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <div 
+                  key={message.id} 
+                  className={`flex w-full ${
+                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                  }`}
+                >
+                  <div className={`flex items-start gap-3 max-w-[85%] ${
+                    message.role === 'user' ? 'flex-row-reverse' : ''
+                  }`}>
+                    <Avatar className="h-8 w-8 flex-shrink-0">
+                      <AvatarFallback className={message.role === 'user' ? 'bg-blue-500 text-white' : 'bg-primary text-primary-foreground'}>
+                        {message.role === 'user' ? (
+                          <User className="h-4 w-4" />
+                        ) : (
+                          <Bot className="h-4 w-4" />
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className={`p-3 rounded-lg shadow-sm ${
+                        message.role === 'user'
+                          ? 'bg-blue-500 text-white'
+                          : message.isError
+                          ? 'bg-red-50 border border-red-200 text-red-800 dark:bg-red-950/20 dark:border-red-800 dark:text-red-200'
+                          : 'bg-muted text-foreground border'
+                      }`}>
                       {message.role === 'assistant' && !message.isError ? (
-                        <div className="text-sm prose prose-sm max-w-none overflow-hidden">
+                        <div className="prose prose-sm max-w-none dark:prose-invert">
                           <ReactMarkdown
                             components={{
-                              p: ({ children }) => <p className="mb-2 last:mb-0 break-words">{children}</p>,
-                              ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                              ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                              li: ({ children }) => <li className="break-words">{children}</li>,
-                              strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                              em: ({ children }) => <em className="italic">{children}</em>,
-                              code: ({ children }) => <code className="bg-slate-100 px-1 py-0.5 rounded text-xs break-all">{children}</code>,
-                              h2: ({ children }) => <h2 className="text-lg font-semibold mb-2 mt-3 first:mt-0">{children}</h2>,
-                              h3: ({ children }) => <h3 className="text-base font-semibold mb-2 mt-2">{children}</h3>,
+                              p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1 text-sm">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm">{children}</ol>,
+                              li: ({ children }) => <li className="leading-relaxed text-sm">{children}</li>,
+                              strong: ({ children }) => <strong className="font-semibold text-blue-600 dark:text-blue-400">{children}</strong>,
+                              em: ({ children }) => <em className="italic text-purple-600 dark:text-purple-400">{children}</em>,
+                              code: ({ children }) => <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-xs">{children}</code>,
+                              h2: ({ children }) => <h2 className="text-base font-semibold mb-2 mt-3 first:mt-0">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 mt-2 first:mt-0">{children}</h3>,
                             }}
                           >
                             {message.content}
                           </ReactMarkdown>
                         </div>
                       ) : (
-                        <p className="text-sm break-words">{message.content}</p>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                       )}
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {formatTime(message.timestamp)}
-                    </p>
+                      </div>
+                      
+                      <p className={`text-xs mt-1 ${
+                        message.role === 'user' ? 'text-right text-blue-200' : 'text-muted-foreground'
+                      }`}>
+                        {formatTime(message.timestamp)}
+                      </p>
                     
                     {/* Action Items */}
                     {message.actionItems && message.actionItems.length > 0 && (
@@ -830,6 +869,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                         ))}
                       </div>
                     )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -853,29 +893,6 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
-
-          {/* Quick Actions */}
-          {messages.length <= 1 && (
-            <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm font-medium mb-3 flex items-center">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Quick Actions
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {quickActions.map((action, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleQuickAction(action)}
-                    className="text-xs h-8"
-                  >
-                    {action}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Input Area */}
           <div className="mt-4 flex space-x-2">

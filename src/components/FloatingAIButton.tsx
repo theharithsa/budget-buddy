@@ -13,14 +13,14 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
   className = '' 
 }) => {
   return (
-    <div className={`fixed bottom-6 right-6 z-40 ${className}`}>
+    <div className={`fixed bottom-24 md:bottom-6 right-6 z-[60] ${className}`}>
       <div className="relative">
-        {/* New badge indicator */}
+        {/* Beta badge indicator */}
         <Badge 
           variant="secondary" 
-          className="absolute -top-2 -right-2 z-10 animate-pulse bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 text-xs px-2"
+          className="absolute -top-2 -right-2 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-xs px-2 font-semibold"
         >
-          NEW
+          BETA
         </Badge>
         
         {/* Main button */}
@@ -30,8 +30,8 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
           className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 group"
         >
           <div className="relative">
-            <Bot className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
-            <Sparkles className="h-3 w-3 text-yellow-300 absolute -top-1 -right-1 animate-pulse" />
+            <Bot className="h-6 w-6 text-white group-hover:scale-110 transition-transform duration-300" />
+            <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-yellow-300 animate-pulse" />
           </div>
         </Button>
         

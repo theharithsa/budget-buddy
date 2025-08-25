@@ -8,7 +8,7 @@ import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Loader2, Send, Bot, User, X, Camera, Mic, MicOff } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
-import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { functions, db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
@@ -171,64 +171,6 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-
-  // Load historical messages for floating chat session
-  useEffect(() => {
-    if (!user) return;
-
-    const loadFloatingChatHistory = async () => {
-      try {
-        const sessionId = await getFloatingChatSession();
-        if (!sessionId) return;
-
-        const conversationRef = collection(db, `users/${user.uid}/conversations`);
-        const q = query(
-          conversationRef, 
-          where('sessionId', '==', sessionId)
-        );
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          const loadedMessages: ChatMessage[] = [];
-          
-          snapshot.docs.forEach(doc => {
-            const data = doc.data();
-            loadedMessages.push({
-              id: doc.id,
-              role: data.role,
-              content: data.content,
-              timestamp: data.timestamp?.toDate() || new Date(),
-              actionItems: data.actionItems,
-              wisdomSuggestions: data.wisdomSuggestions,
-              dailyWisdom: data.dailyWisdom,
-              isError: data.isError
-            });
-          });
-
-          // Sort messages by timestamp
-          loadedMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-
-          if (loadedMessages.length === 0) {
-            // Keep the default welcome message if no history
-            setMessages([{
-              id: '1',
-              role: 'assistant',
-              content: 'Hi! I\'m KautilyaAI, your intelligent financial co-pilot. I can help you understand your spending, manage budgets, and answer questions about your finances. What would you like to know?',
-              timestamp: new Date(),
-            }]);
-          } else {
-            setMessages(loadedMessages);
-          }
-        });
-
-        // Cleanup subscription when component unmounts or user changes
-        return () => unsubscribe();
-      } catch (error) {
-        console.error('Error loading floating chat history:', error);
-      }
-    };
-
-    loadFloatingChatHistory();
-  }, [user]);
 
   const sendMessage = async (message: string) => {
     console.log('🚀 SEND MESSAGE CALLED with:', message);
@@ -511,13 +453,27 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
     }
   };
 
+  // Quick action suggestions
+  const quickActions = [
+    "Show my spending this month",
+    "How am I doing with my budget?",
+    "What's my biggest expense category?",
+    "Compare spending to last month",
+    "Add expense: ₹150 lunch",
+  ];
+
+  const handleQuickAction = (action: string) => {
+    setCurrentMessage(action);
+    sendMessage(action);
+  };
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-3xl h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+      <Card className="w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden shadow-2xl">
         <CardHeader className="flex-shrink-0 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -546,55 +502,52 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
 
         <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
           {/* Messages */}
-          <ScrollArea className="flex-1 p-4 overflow-y-auto">
-            <div className="space-y-4 min-h-0">
+          <ScrollArea className="flex-1 p-6 overflow-y-auto">
+            <div className="space-y-6 min-h-0 max-w-none">
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex w-full ${
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                  className={`flex items-start gap-4 w-full ${
+                    message.role === 'user' ? 'flex-row-reverse' : ''
                   }`}
                 >
-                  <div className={`flex items-start gap-3 max-w-[85%] ${
-                    message.role === 'user' ? 'flex-row-reverse' : ''
-                  }`}>
-                    <Avatar className="h-8 w-8 flex-shrink-0">
-                      <AvatarFallback className={
-                        message.role === 'user' 
-                          ? "bg-blue-500 text-white" 
-                          : message.isError 
-                          ? "bg-red-500 text-white"
-                          : "bg-primary text-primary-foreground"
-                      }>
-                        {message.role === 'user' ? (
-                          <User className="h-4 w-4" />
-                        ) : (
-                          <Bot className="h-4 w-4" />
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className={`p-3 rounded-lg shadow-sm ${
-                        message.role === 'user'
-                          ? 'bg-blue-500 text-white'
-                          : message.isError
-                          ? 'bg-red-50 border border-red-200 text-red-800 dark:bg-red-950/20 dark:border-red-800 dark:text-red-200'
-                          : 'bg-muted text-foreground border'
-                      }`} style={{ wordBreak: 'break-word' }}>
+                  <Avatar className="h-8 w-8 flex-shrink-0">
+                    <AvatarFallback className={
+                      message.role === 'user' 
+                        ? "bg-blue-500 text-white" 
+                        : message.isError 
+                        ? "bg-red-500 text-white"
+                        : "bg-primary text-primary-foreground"
+                    }>
+                      {message.role === 'user' ? (
+                        <User className="h-4 w-4" />
+                      ) : (
+                        <Bot className="h-4 w-4" />
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className={`flex-1 min-w-0 max-w-[80%] ${message.role === 'user' ? 'text-right' : ''}`}>
+                    <div className={`inline-block w-full p-4 rounded-lg ${
+                      message.role === 'user'
+                        ? 'bg-blue-500 text-white'
+                        : message.isError
+                        ? 'bg-red-50 border border-red-200 text-red-800'
+                        : 'bg-muted'
+                    }`}>
                       {message.role === 'assistant' && !message.isError ? (
-                        <div className="prose prose-sm max-w-none dark:prose-invert">
+                        <div className="prose prose-sm max-w-none">
                           <ReactMarkdown
                             components={{
-                              p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>,
-                              ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1 text-sm">{children}</ul>,
-                              ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm">{children}</ol>,
+                              p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed text-sm">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc pl-4 mb-3 space-y-1">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal pl-4 mb-3 space-y-1">{children}</ol>,
                               li: ({ children }) => <li className="leading-relaxed text-sm">{children}</li>,
                               strong: ({ children }) => <strong className="font-semibold text-blue-600 dark:text-blue-400">{children}</strong>,
                               em: ({ children }) => <em className="italic text-purple-600 dark:text-purple-400">{children}</em>,
-                              code: ({ children }) => <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-xs">{children}</code>,
-                              h2: ({ children }) => <h2 className="text-base font-semibold mb-2 mt-3 first:mt-0">{children}</h2>,
-                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 mt-2 first:mt-0">{children}</h3>,
+                              code: ({ children }) => <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs">{children}</code>,
+                              h2: ({ children }) => <h2 className="text-base font-semibold mb-2 mt-4 first:mt-0 text-gray-900 dark:text-gray-100">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-sm font-medium mb-2 mt-3 first:mt-0 text-gray-800 dark:text-gray-200">{children}</h3>,
                             }}
                           >
                             {message.content}
@@ -603,19 +556,17 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                       ) : (
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                       )}
-                      </div>
-                      
-                      <p className={`text-xs mt-1 ${
-                        message.role === 'user' ? 'text-right text-blue-200' : 'text-muted-foreground'
-                      }`}>
-                        {formatTime(message.timestamp)}
-                      </p>
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {formatTime(message.timestamp)}
+                    </p>
                     
                     {/* Action Items */}
                     {message.actionItems && message.actionItems.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
+                      <div className="flex flex-wrap gap-2 mt-3">
                         {message.actionItems.map((action, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
+                          <Badge key={idx} variant="secondary" className="text-xs px-2 py-1">
                             {action.suggestion}
                           </Badge>
                         ))}
@@ -624,30 +575,31 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                     
                     {/* Wisdom Suggestions */}
                     {message.wisdomSuggestions && message.wisdomSuggestions.length > 0 && (
-                      <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                        <div className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-2">
-                          💡 Wisdom from Kautilya
+                      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <div className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-3 flex items-center gap-2">
+                          💡 <span>Wisdom from Kautilya</span>
                         </div>
-                        {message.wisdomSuggestions.map((wisdom, idx) => (
-                          <p key={idx} className="text-xs text-amber-800 dark:text-amber-200 mb-1 last:mb-0">
-                            {wisdom}
-                          </p>
-                        ))}
+                        <div className="space-y-2">
+                          {message.wisdomSuggestions.map((wisdom, idx) => (
+                            <p key={idx} className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
+                              {wisdom}
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     )}
                     
                     {/* Daily Wisdom */}
                     {message.dailyWisdom && (
-                      <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
-                        <div className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
-                          📜 Daily Wisdom
+                      <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                          📜 <span>Daily Wisdom</span>
                         </div>
-                        <p className="text-xs text-blue-800 dark:text-blue-200">
+                        <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">
                           {message.dailyWisdom}
                         </p>
                       </div>
                     )}
-                    </div>
                   </div>
                 </div>
               ))}
@@ -671,9 +623,29 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
             <div ref={messagesEndRef} />
           </ScrollArea>
 
+          {/* Quick Actions */}
+          {messages.length === 1 && (
+            <div className="p-4 border-t border-b bg-muted/30">
+              <p className="text-sm font-medium mb-3 text-gray-700 dark:text-gray-300">💡 Try asking:</p>
+              <div className="flex flex-wrap gap-2">
+                {quickActions.map((action, idx) => (
+                  <Button
+                    key={idx}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickAction(action)}
+                    className="text-xs h-8 px-3 hover:bg-primary/10"
+                  >
+                    {action}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Input */}
-          <div className="p-4 border-t">
-            <div className="flex space-x-2">
+          <div className="p-4 border-t bg-background">
+            <div className="flex gap-3">
               <div className="flex-1 relative">
                 <Input
                   ref={inputRef}
@@ -682,14 +654,14 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about your expenses, budgets, or financial goals..."
                   disabled={isLoading}
-                  className="pr-20"
+                  className="pr-20 h-11 text-sm"
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex space-x-1">
                   <Button
                     type="button"
                     size="sm"
                     variant="ghost"
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 opacity-40"
                     disabled
                     title="Voice input (coming soon)"
                   >
@@ -699,7 +671,7 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                     type="button"
                     size="sm"
                     variant="ghost"
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 opacity-40"
                     disabled
                     title="Receipt scanner (coming soon)"
                   >
@@ -718,6 +690,7 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
                 }}
                 disabled={!currentMessage.trim() || isLoading}
                 size="sm"
+                className="h-11 px-4"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -727,8 +700,8 @@ export const GeminiChat: React.FC<GeminiChatProps> = ({
               </Button>
             </div>
             
-            <p className="text-xs text-muted-foreground mt-2">
-              Powered by Google Gemini AI • Press Enter to send
+            <p className="text-xs text-muted-foreground mt-3 text-center">
+              🤖 Powered by Google Gemini AI • Press Enter to send • Ancient Wisdom meets Modern AI
             </p>
           </div>
         </CardContent>

@@ -260,3 +260,20 @@
     --color-bg-overlay: var(--color-neutral-3);
   }
 }
+
+/* Custom disclaimer colors for light and dark mode */
+:root {
+  --disclaimer-bg: #f1f5f9;
+  --disclaimer-border: #cbd5e1;
+  --disclaimer-icon: #2563eb;
+  --disclaimer-title: #0f172a;
+  --disclaimer-text: #334155;
+}
+
+.dark {
+  --disclaimer-bg: #1e293b;
+  --disclaimer-border: #475569;
+  --disclaimer-icon: #60a5fa;
+  --disclaimer-title: #f1f5f9;
+  --disclaimer-text: #cbd5e1;
+}
