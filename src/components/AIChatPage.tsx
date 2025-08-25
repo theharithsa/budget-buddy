@@ -36,6 +36,15 @@ interface ChatMessage {
   sessionId: string;
   actionItems?: any[];
   isError?: boolean;
+  // ML Enhancement metadata
+  metadata?: {
+    dataCount?: number;
+    filters?: string[];
+    totalAmount?: number;
+    dateRange?: string;
+  };
+  intentType?: 'DATA_RETRIEVAL' | 'ANALYSIS' | 'CRUD_OPERATION' | 'GENERAL_CHAT';
+  responseFormat?: 'RAW_DATA' | 'ANALYSIS' | 'CONFIRMATION' | 'CONVERSATIONAL';
 }
 
 interface ChatSession {
@@ -333,7 +342,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
       console.log('🔍 AIChatPage - Sending message:', message.trim());
       
       const chatFunction = httpsCallable(functions, 'chatWithGemini');
-      console.log('🚀 AIChatPage - Calling chatWithGemini Firebase Function...');
+      console.log('🚀 AIChatPage - Calling chatWithGemini Firebase Function (ML coming soon)...');
       
       const result = await chatFunction({
         userId: user.uid,
@@ -441,7 +450,11 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
           content: data.response,
           timestamp: new Date(),
           sessionId: currentSessionId,
-          actionItems: data.context
+          actionItems: data.context,
+          // Enhanced ML metadata
+          ...(data.metadata && { metadata: data.metadata }),
+          ...(data.intentType && { intentType: data.intentType }),
+          ...(data.responseFormat && { responseFormat: data.responseFormat })
         };
 
         setMessages(prev => [...prev, aiMessage]);
@@ -858,6 +871,30 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                       }`}>
                         {formatTime(message.timestamp)}
                       </p>
+                    
+                    {/* ML Enhancement: Show intent and metadata for assistant messages */}
+                    {message.role === 'assistant' && !message.isError && (message.intentType || message.metadata) && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {message.intentType && (
+                          <Badge variant="outline" className="text-xs">
+                            {message.intentType === 'DATA_RETRIEVAL' && '📊 Data'}
+                            {message.intentType === 'ANALYSIS' && '📈 Analysis'}
+                            {message.intentType === 'CRUD_OPERATION' && '✏️ Action'}
+                            {message.intentType === 'GENERAL_CHAT' && '💬 Chat'}
+                          </Badge>
+                        )}
+                        {message.metadata?.dataCount && (
+                          <Badge variant="secondary" className="text-xs">
+                            {message.metadata.dataCount} items
+                          </Badge>
+                        )}
+                        {message.metadata?.totalAmount && (
+                          <Badge variant="secondary" className="text-xs">
+                            Total: {formatCurrency(message.metadata.totalAmount)}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                     
                     {/* Action Items */}
                     {message.actionItems && message.actionItems.length > 0 && (

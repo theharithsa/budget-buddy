@@ -1,6 +1,6 @@
 /**
- * Budget Buddy - Wisdom-Enhanced AI (CRUD Operations Disabled)
- * Firebase Functions for KautilyaAI wisdom testing
+ * Budget Buddy - Enhanced AI with ML Intent Classification
+ * Firebase Functions for KautilyaAI with intelligent data handling
  */
 
 import {onCall} from "firebase-functions/v2/https";
@@ -10,6 +10,9 @@ import {initializeApp} from "firebase-admin/app";
 import {GoogleGenerativeAI} from "@google/generative-ai";
 import * as logger from "firebase-functions/logger";
 import { createWisdomEnhancedPrompt, generateActionWisdom, getDailyWisdom } from "./lib/wisdom/simpleWisdom.js";
+
+// Import ML components
+export { chatWithGeminiML } from "./chatWithGeminiML.js";
 
 // Initialize Firebase Admin
 initializeApp();
