@@ -36,7 +36,7 @@
         "deploy:preview": "npm run deploy:build && firebase hosting:channel:deploy preview"
     },
     "dependencies": {
-        "@github/spark": "^0.39.130",
+        "@github/spark": "^0.39.132",
         "@heroicons/react": "^2.2.0",
         "@hookform/resolvers": "^5.2.1",
         "@octokit/core": "^6.1.4",
