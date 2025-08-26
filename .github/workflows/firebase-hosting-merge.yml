@@ -27,11 +27,11 @@ jobs:
           cache: 'npm'
       - name: "\U0001F4E6 Install Project Dependencies"
         run: npm ci
-      - name: "🔍 Code Quality - ESLint Analysis (CI-Friendly)"
+      - name: "\U0001F50D Code Quality - ESLint Analysis (CI-Friendly)"
         run: npm run lint:ci
-      - name: "🧪 Unit Tests - Component & Utility Testing (CI-Friendly)"
+      - name: "\U0001F9EA Unit Tests - Component & Utility Testing (CI-Friendly)"
         run: npm run test:ci:unit
-      - name: "🔗 Integration Tests - API & Firebase Testing"
+      - name: "\U0001F517 Integration Tests - API & Firebase Testing"
         run: npm run test:integration
       - name: "\U0001F4C8 Test Coverage Analysis"
         run: npm run test:coverage
