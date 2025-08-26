@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Dynatrace Monitoring -->
+    <script type="text/javascript" src="https://js-cdn.dynatrace.com/jstag/18b1df4492a/bf12470wrz/97ae64e6fe2c5972_complete.js" crossorigin="anonymous"></script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile & PWA Guide - FinBuddy Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Titillium Web', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">Mobile & PWA Guide</h1>
+                    <p class="text-green-100 mt-2">Get the full FinBuddy experience on any device</p>
+                </div>
+                <a href="index.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all">
+                    ← Back to Docs
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <!-- PWA Overview -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Progressive Web App (PWA) Overview</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-gray-600 mb-6">
+                            FinBuddy is a Progressive Web App (PWA) that delivers a native app experience 
+                            through your web browser. Enjoy app-like features including offline access, 
+                            push notifications, and home screen installation across all devices.
+                        </p>
+                        
+                        <h3 class="text-lg font-semibold mb-3">PWA Features:</h3>
+                        <ul class="text-gray-600 space-y-2">
+                            <li>• Install to home screen like a native app</li>
+                            <li>• Offline functionality for expense tracking</li>
+                            <li>• Automatic updates in the background</li>
+                            <li>• Mobile-optimized responsive design</li>
+                            <li>• Touch-friendly interface</li>
+                            <li>• Cross-platform compatibility</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-3 text-purple-800">📱 Native App Benefits</h4>
+                        <p class="text-purple-700 text-sm mb-4">
+                            PWA technology provides native app features without app store downloads:
+                        </p>
+                        <ul class="text-purple-700 text-sm space-y-1">
+                            <li>• No app store required</li>
+                            <li>• Instant installation</li>
+                            <li>• Automatic updates</li>
+                            <li>• Cross-device synchronization</li>
+                            <li>• Reduced storage footprint</li>
+                            <li>• Always up-to-date features</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation Guide -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Installing FinBuddy as an App</h2>
+                
+                <div class="space-y-8">
+                    <!-- Android Chrome -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-xl font-bold mb-4">📱 Android (Chrome)</h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold mb-3">Automatic Install Prompt:</h4>
+                                <ol class="space-y-2 text-sm text-gray-600">
+                                    <li>1. Open FinBuddy in Chrome browser</li>
+                                    <li>2. Look for "Install App" banner at bottom of screen</li>
+                                    <li>3. Tap "Install" to add to home screen</li>
+                                    <li>4. App icon appears on home screen</li>
+                                    <li>5. Launch from home screen for app experience</li>
+                                </ol>
+                                
+                                <div class="mt-4 p-3 bg-green-50 rounded">
+                                    <p class="text-xs text-green-700">
+                                        <strong>Tip:</strong> If you miss the prompt, use the manual installation method below.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <h4 class="font-bold mb-3">Manual Installation:</h4>
+                                <ol class="text-sm text-gray-600 space-y-2">
+                                    <li>1. Open Chrome menu (three dots)</li>
+                                    <li>2. Select "Add to Home screen"</li>
+                                    <li>3. Edit app name if desired</li>
+                                    <li>4. Tap "Add"</li>
+                                    <li>5. Confirm placement on home screen</li>
+                                </ol>
+                                
+                                <div class="mt-4 p-3 bg-blue-50 rounded">
+                                    <h5 class="font-semibold text-blue-800 mb-1">Features After Installation:</h5>
+                                    <ul class="text-blue-700 text-xs space-y-1">
+                                        <li>• Full-screen app experience</li>
+                                        <li>• App appears in recent apps</li>
+                                        <li>• No browser UI clutter</li>
+                                        <li>• Faster launch times</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- iOS Safari -->
+                    <div class="border-l-4 border-blue-500 pl-6">
+                        <h3 class="text-xl font-bold mb-4">🍎 iOS (Safari)</h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold mb-3">Installation Steps:</h4>
+                                <ol class="space-y-2 text-sm text-gray-600">
+                                    <li>1. Open FinBuddy in Safari</li>
+                                    <li>2. Tap the Share button (square with arrow)</li>
+                                    <li>3. Scroll down and tap "Add to Home Screen"</li>
+                                    <li>4. Edit the app name if desired</li>
+                                    <li>5. Tap "Add" in the top right</li>
+                                    <li>6. App icon appears on home screen</li>
+                                </ol>
+                                
+                                <div class="mt-4 p-3 bg-yellow-50 rounded">
+                                    <p class="text-xs text-yellow-700">
+                                        <strong>Note:</strong> iOS only supports PWA installation through Safari browser.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <h4 class="font-bold mb-3">iOS PWA Features:</h4>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li>• Native-like full screen experience</li>
+                                    <li>• Appears in App Library</li>
+                                    <li>• Works with iOS Shortcuts</li>
+                                    <li>• Background app refresh support</li>
+                                    <li>• Siri suggestions integration</li>
+                                </ul>
+                                
+                                <div class="mt-4 p-3 bg-purple-50 rounded">
+                                    <h5 class="font-semibold text-purple-800 mb-1">iOS Limitations:</h5>
+                                    <ul class="text-purple-700 text-xs space-y-1">
+                                        <li>• Must use Safari for installation</li>
+                                        <li>• Some advanced PWA features limited</li>
+                                        <li>• Notification support varies by iOS version</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop -->
+                    <div class="border-l-4 border-purple-500 pl-6">
+                        <h3 class="text-xl font-bold mb-4">💻 Desktop Installation</h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold mb-3">Chrome/Edge/Brave:</h4>
+                                <ol class="space-y-2 text-sm text-gray-600">
+                                    <li>1. Open FinBuddy in supported browser</li>
+                                    <li>2. Look for install icon in address bar</li>
+                                    <li>3. Click install icon or use browser menu</li>
+                                    <li>4. Confirm installation in dialog</li>
+                                    <li>5. App appears in applications menu</li>
+                                    <li>6. Pin to taskbar for quick access</li>
+                                </ol>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-semibold mb-3">Desktop Benefits:</h4>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li>• Dedicated app window</li>
+                                    <li>• Keyboard shortcuts support</li>
+                                    <li>• System integration</li>
+                                    <li>• Multi-window support</li>
+                                    <li>• Desktop notifications</li>
+                                    <li>• Offline functionality</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mobile Optimization -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Mobile Experience Optimization</h2>
+                
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Touch Interface Design</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">👆 Touch-Friendly Controls</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Large tap targets (minimum 44px)</li>
+                                        <li>• Gesture-based navigation</li>
+                                        <li>• Swipe actions for quick operations</li>
+                                        <li>• Pull-to-refresh functionality</li>
+                                        <li>• Touch feedback and haptics</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">📱 Responsive Layout</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Adaptive grid systems</li>
+                                        <li>• Collapsible navigation menu</li>
+                                        <li>• Stack layout for narrow screens</li>
+                                        <li>• Optimized chart rendering</li>
+                                        <li>• Modal dialogs sized for mobile</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">⌨️ Input Optimization</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Numeric keypad for amounts</li>
+                                        <li>• Auto-complete for categories</li>
+                                        <li>• Date picker for mobile devices</li>
+                                        <li>• Voice input support</li>
+                                        <li>• Auto-focus on relevant fields</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Performance Optimization</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-green-800 mb-2">⚡ Speed Optimizations</h4>
+                                    <ul class="text-green-700 text-sm space-y-1">
+                                        <li>• Lazy loading for images and charts</li>
+                                        <li>• Service worker caching</li>
+                                        <li>• Compressed asset delivery</li>
+                                        <li>• Efficient data synchronization</li>
+                                        <li>• Battery-conscious operations</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-blue-800 mb-2">📊 Data Usage</h4>
+                                    <ul class="text-blue-700 text-sm space-y-1">
+                                        <li>• Minimal data transfer</li>
+                                        <li>• Incremental sync updates</li>
+                                        <li>• Image compression for receipts</li>
+                                        <li>• Offline-first architecture</li>
+                                        <li>• Smart caching strategies</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-purple-800 mb-2">🔋 Battery Efficiency</h4>
+                                    <ul class="text-purple-700 text-sm space-y-1">
+                                        <li>• Efficient animation rendering</li>
+                                        <li>• Background sync optimization</li>
+                                        <li>• Reduced CPU-intensive operations</li>
+                                        <li>• Smart notification timing</li>
+                                        <li>• Sleep mode data conservation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Offline Functionality -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Offline Functionality</h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                        <h3 class="text-lg font-bold mb-4 text-indigo-800">🌐 Offline-First Design</h3>
+                        <p class="text-indigo-700 mb-4">
+                            FinBuddy works seamlessly offline, allowing you to track expenses and manage budgets 
+                            even without an internet connection. Data syncs automatically when connectivity returns.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Offline Capabilities</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">✅ Fully Available Offline</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Add and edit expenses</li>
+                                        <li>• View expense history</li>
+                                        <li>• Manage categories and budgets</li>
+                                        <li>• Access saved receipts</li>
+                                        <li>• View analytics and charts</li>
+                                        <li>• Track achievements progress</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">⚠️ Limited Offline</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• AI analysis and insights</li>
+                                        <li>• New receipt image uploads</li>
+                                        <li>• Real-time data synchronization</li>
+                                        <li>• Public people database access</li>
+                                        <li>• Online backup and export</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">🔄 Auto-Sync When Online</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Queued changes upload automatically</li>
+                                        <li>• Conflict resolution for simultaneous edits</li>
+                                        <li>• Background synchronization</li>
+                                        <li>• Sync status indicators</li>
+                                        <li>• Manual sync option available</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Connection Management</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-yellow-800 mb-2">📡 Connection Status</h4>
+                                    <p class="text-yellow-700 text-sm mb-2">FinBuddy shows your connection status:</p>
+                                    <ul class="text-yellow-700 text-xs space-y-1">
+                                        <li>• <strong>Online:</strong> Green indicator, full functionality</li>
+                                        <li>• <strong>Offline:</strong> Orange indicator, limited features</li>
+                                        <li>• <strong>Syncing:</strong> Blue indicator, data uploading</li>
+                                        <li>• <strong>Error:</strong> Red indicator, sync issues</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-green-800 mb-2">💾 Local Storage</h4>
+                                    <p class="text-green-700 text-sm mb-2">Data is cached locally for offline access:</p>
+                                    <ul class="text-green-700 text-xs space-y-1">
+                                        <li>• Recent expenses and budgets</li>
+                                        <li>• Categories and people data</li>
+                                        <li>• User preferences and settings</li>
+                                        <li>• Downloaded receipt images</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-blue-800 mb-2">🔄 Sync Strategies</h4>
+                                    <p class="text-blue-700 text-sm mb-2">Smart synchronization approaches:</p>
+                                    <ul class="text-blue-700 text-xs space-y-1">
+                                        <li>• Immediate sync for critical changes</li>
+                                        <li>• Batched sync for performance</li>
+                                        <li>• Retry logic for failed uploads</li>
+                                        <li>• Conflict resolution for data consistency</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mobile-Specific Features -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Mobile-Specific Features</h2>
+                
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Camera Integration</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">📷 Receipt Capture</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Direct camera access from expense form</li>
+                                        <li>• Take photo or choose from gallery</li>
+                                        <li>• Automatic image optimization</li>
+                                        <li>• Instant upload to secure storage</li>
+                                        <li>• Preview before saving</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">🖼️ Image Handling</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Automatic compression for faster uploads</li>
+                                        <li>• EXIF data removal for privacy</li>
+                                        <li>• Multiple format support (JPEG, PNG, WebP)</li>
+                                        <li>• Thumbnail generation for quick preview</li>
+                                        <li>• Secure Firebase Storage integration</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Navigation & Gestures</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">🎯 Collapsible Navigation</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Hamburger menu for space efficiency</li>
+                                        <li>• Swipe to open/close navigation</li>
+                                        <li>• Quick access to main features</li>
+                                        <li>• Context-aware menu items</li>
+                                        <li>• Smooth animations and transitions</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">🤚 Touch Gestures</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Swipe left/right for navigation</li>
+                                        <li>• Pull-to-refresh for data updates</li>
+                                        <li>• Pinch-to-zoom on charts</li>
+                                        <li>• Long press for context menus</li>
+                                        <li>• Tap and hold for quick actions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart Optimization -->
+                    <div class="bg-orange-50 border-l-4 border-orange-400 p-6">
+                        <h4 class="font-bold text-orange-800 mb-3">📊 Mobile Chart Optimization</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <h5 class="font-semibold text-orange-700 mb-2">Touch Interactions</h5>
+                                <ul class="text-orange-700 text-xs space-y-1">
+                                    <li>• Touch tooltips with larger hit areas</li>
+                                    <li>• Gesture-based zoom and pan</li>
+                                    <li>• Simplified chart controls</li>
+                                    <li>• Mobile-optimized legends</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-orange-700 mb-2">Responsive Design</h5>
+                                <ul class="text-orange-700 text-xs space-y-1">
+                                    <li>• Adaptive chart sizing</li>
+                                    <li>• Simplified data representations</li>
+                                    <li>• Portrait/landscape optimization</li>
+                                    <li>• Readable text at all sizes</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-orange-700 mb-2">Performance</h5>
+                                <ul class="text-orange-700 text-xs space-y-1">
+                                    <li>• Hardware acceleration</li>
+                                    <li>• Efficient rendering engines</li>
+                                    <li>• Smooth animations</li>
+                                    <li>• Battery-conscious updates</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Device Compatibility -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Device Compatibility</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Supported Platforms</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2">📱 Mobile Platforms</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• <strong>iOS:</strong> 14.0+ (Safari, Chrome, Edge)</li>
+                                    <li>• <strong>Android:</strong> 10+ (Chrome, Firefox, Edge)</li>
+                                    <li>• <strong>iPadOS:</strong> 14.0+ (Safari optimized)</li>
+                                    <li>• <strong>Android Tablets:</strong> Chrome recommended</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2">💻 Desktop Platforms</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• <strong>Windows:</strong> Chrome, Edge, Firefox</li>
+                                    <li>• <strong>macOS:</strong> Safari, Chrome, Firefox</li>
+                                    <li>• <strong>Linux:</strong> Chrome, Firefox</li>
+                                    <li>• <strong>ChromeOS:</strong> Native Chrome support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Browser Requirements</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2">✅ Minimum Requirements</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Modern browser with ES2020 support</li>
+                                    <li>• JavaScript enabled</li>
+                                    <li>• Local storage available</li>
+                                    <li>• Service worker support</li>
+                                    <li>• 2GB RAM minimum recommended</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2">🚀 Recommended Specs</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Latest browser versions</li>
+                                    <li>• 4GB+ RAM for best performance</li>
+                                    <li>• Hardware acceleration enabled</li>
+                                    <li>• Stable internet connection</li>
+                                    <li>• Adequate storage space (100MB+)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-8">
+                <h2 class="text-2xl font-bold mb-6">📱 Mobile Usage Best Practices</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Installation & Setup</h3>
+                        <ul class="space-y-3 text-blue-100">
+                            <li class="flex items-start">
+                                <span class="text-blue-300 mr-2">•</span>
+                                Install as PWA for the best native app experience
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-300 mr-2">•</span>
+                                Enable background app refresh for automatic sync
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-300 mr-2">•</span>
+                                Add to home screen for quick daily access
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-300 mr-2">•</span>
+                                Configure notifications for expense tracking reminders
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Daily Usage</h3>
+                        <ul class="space-y-3 text-purple-100">
+                            <li class="flex items-start">
+                                <span class="text-purple-300 mr-2">•</span>
+                                Use quick entry for fast expense tracking on-the-go
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-300 mr-2">•</span>
+                                Take receipt photos immediately after purchases
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-300 mr-2">•</span>
+                                Sync regularly when connected to Wi-Fi
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-300 mr-2">•</span>
+                                Use offline mode during travel or poor connectivity
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-8 p-6 bg-white bg-opacity-10 rounded-lg">
+                    <h3 class="text-lg font-bold mb-3">🎯 Optimizing Mobile Experience</h3>
+                    <p class="text-gray-100 mb-4">
+                        Get the most out of FinBuddy on mobile by following these optimization tips for better performance and usability.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <strong class="block mb-2">Performance</strong>
+                            <p class="text-gray-200">Keep app updated, clear cache occasionally, and ensure sufficient device storage.</p>
+                        </div>
+                        <div>
+                            <strong class="block mb-2">Battery Life</strong>
+                            <p class="text-gray-200">Use offline mode when possible, adjust sync frequency, and enable power saving modes.</p>
+                        </div>
+                        <div>
+                            <strong class="block mb-2">Data Usage</strong>
+                            <p class="text-gray-200">Sync on Wi-Fi when available, compress receipt images, and monitor data consumption.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <h3 class="text-xl font-bold mb-4">FinBuddy v2.5.5</h3>
+                <p class="text-gray-300 mb-6">Transform your financial future with intelligent insights and beautiful design.</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="security.html" class="text-gray-300 hover:text-white">Security</a>
+                    <a href="privacy-policy.html" class="text-gray-300 hover:text-white">Privacy</a>
+                    <a href="terms-and-conditions.html" class="text-gray-300 hover:text-white">Terms</a>
+                    <a href="troubleshooting.html" class="text-gray-300 hover:text-white">Support</a>
+                    <a href="release-notes.html" class="text-gray-300 hover:text-white">Release Notes</a>
+                    <a href="https://github.com/theharithsa/budget-buddy" target="_blank" class="text-gray-300 hover:text-white">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
