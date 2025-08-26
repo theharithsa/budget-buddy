@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics & Gamification - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid #000;
+            background: #f9f9f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #000;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #000;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .code-block {
+            background: #000;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .inline-code {
+            background: #f0f0f0;
+            color: #000;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f5f5f5;
+            border: 1px solid #000;
+        }
+
+        .flow-box {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .warning {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .chart-card {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Documentation</a>
+            <h1>Analytics & Gamification</h1>
+            <p class="subtitle">Advanced dashboard system, ApexCharts integration, and gamification features</p>
+        </header>
+
+        <!-- Dashboard System -->
+        <section class="section">
+            <h2>Advanced Dashboard System</h2>
+            <p>Budget Buddy features a comprehensive dashboard with ApexCharts integration for professional data visualization. Located in <span class="inline-code">src/components/Dashboard.tsx</span>.</p>
+
+            <h3>Dashboard Architecture</h3>
+            <div class="code-block">
+// Dashboard tab structure with ApexCharts lifecycle management
+const Dashboard: React.FC = () =&gt; {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [chartKey, setChartKey] = useState(0); // CRITICAL for chart re-rendering
+  
+  // Chart refs for proper cleanup
+  const areaChartRef = useRef&lt;HTMLDivElement&gt;(null);
+  const columnChartRef = useRef&lt;HTMLDivElement&gt;(null);
+  const areaChartInstance = useRef&lt;ApexCharts | null&gt;(null);
+  const columnChartInstance = useRef&lt;ApexCharts | null&gt;(null);
+
+  // CRITICAL: Tab change handler with chart re-rendering
+  const handleTabChange = (value: string) =&gt; {
+    setActiveTab(value);
+    // Force chart re-render when returning to overview
+    if (value === 'overview') {
+      setChartKey(prev =&gt; prev + 1);
+    }
+  };
+
+  // Chart lifecycle management
+  useEffect(() =&gt; {
+    // Clean up existing charts
+    if (areaChartInstance.current) {
+      areaChartInstance.current.destroy();
+      areaChartInstance.current = null;
+    }
+    
+    // Re-initialize charts when tab is overview
+    if (activeTab === 'overview' && areaChartRef.current) {
+      initializeCharts();
+    }
+    
+    return () =&gt; {
+      // Cleanup on unmount
+      if (areaChartInstance.current) {
+        areaChartInstance.current.destroy();
+      }
+    };
+  }, [activeTab, chartKey, expenses, budgets]);
+};
+            </div>
+
+            <h3>Tab-Based Navigation</h3>
+            <div class="flow-diagram">
+                <div class="flow-box">Overview</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Advanced</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Behavior</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Achievements</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Budgets</div>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Critical Chart Rendering Fix (v2.5.2)</h4>
+                <p>Charts disappear when switching tabs without proper lifecycle management. Always increment <span class="inline-code">chartKey</span> when returning to overview tab to force re-rendering.</p>
+            </div>
+        </section>
+
+        <!-- ApexCharts Integration -->
+        <section class="section">
+            <h2>ApexCharts Integration</h2>
+            <p>Professional chart library integration with React lifecycle management. Located in <span class="inline-code">src/components/analytics/AdvancedCharts.tsx</span>.</p>
+
+            <h3>Chart Types Implementation</h3>
+            <div class="chart-showcase">
+                <div class="chart-card">
+                    <h4>📈 Area Charts</h4>
+                    <p>Spending trends over time with smooth curves and gradient fills</p>
+                </div>
+
+                <div class="chart-card">
+                    <h4>📊 Column Charts</h4>
+                    <p>Category breakdown with comparative analysis and color coding</p>
+                </div>
+
+                <div class="chart-card">
+                    <h4>🥧 Pie Charts</h4>
+                    <p>Expense distribution with interactive legends and percentage display</p>
+                </div>
+
+                <div class="chart-card">
+                    <h4>📉 Line Charts</h4>
+                    <p>Budget vs actual spending with target lines and variance indicators</p>
+                </div>
+            </div>
+
+            <h3>Chart Configuration Pattern</h3>
+            <div class="code-block">
+// ApexCharts configuration with proper React integration
+const initializeAreaChart = () =&gt; {
+  if (!areaChartRef.current) return;
+
+  const options = {
+    chart: {
+      type: 'area',
+      height: 250,
+      toolbar: { show: false },
+      zoom: { enabled: false },
+      // CRITICAL: Disable animations for React integration
+      animations: { enabled: false }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 2
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.7,
+        opacityTo: 0.1
+      }
+    },
+    xaxis: {
+      categories: chartData.categories,
+      labels: {
+        style: { colors: '#666' }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: { colors: '#666' },
+        formatter: (value) =&gt; `$${value}`
+      }
+    },
+    colors: ['#3b82f6'],
+    dataLabels: { enabled: false },
+    grid: {
+      borderColor: '#e5e7eb',
+      strokeDashArray: 3
+    }
+  };
+
+  // CRITICAL: Proper chart instance management
+  try {
+    areaChartInstance.current = new ApexCharts(areaChartRef.current, options);
+    areaChartInstance.current.render();
+  } catch (error) {
+    console.error('Chart initialization failed:', error);
+  }
+};
+
+// Chart data preparation
+const prepareChartData = (expenses: Expense[]) =&gt; {
+  const groupedData = expenses.reduce((acc, expense) =&gt; {
+    const date = expense.date;
+    acc[date] = (acc[date] || 0) + expense.amount;
+    return acc;
+  }, {} as Record&lt;string, number&gt;);
+
+  return {
+    categories: Object.keys(groupedData).sort(),
+    series: [{
+      name: 'Spending',
+      data: Object.values(groupedData)
+    }]
+  };
+};
+            </div>
+
+            <h3>Chart Container Pattern</h3>
+            <div class="code-block">
+// CRITICAL: Chart containers with proper keys for re-rendering
+&lt;div className="chart-container"&gt;
+  &lt;h3&gt;Spending Trends&lt;/h3&gt;
+  &lt;div 
+    key={`area-chart-${chartKey}`}  // REQUIRED for proper re-rendering
+    ref={areaChartRef} 
+    className="w-full h-64"
+  /&gt;
+&lt;/div&gt;
+
+&lt;div className="chart-container"&gt;
+  &lt;h3&gt;Category Breakdown&lt;/h3&gt;
+  &lt;div 
+    key={`column-chart-${chartKey}`}
+    ref={columnChartRef} 
+    className="w-full h-64"
+  /&gt;
+&lt;/div&gt;
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Chart Lifecycle Best Practices</h4>
+                <p>Always destroy chart instances before creating new ones, use unique keys for containers, disable animations for React compatibility, and handle errors gracefully during initialization.</p>
+            </div>
+        </section>
+
+        <!-- Gamification System -->
+        <section class="section">
+            <h2>Gamification System</h2>
+            <p>Complete achievement tracking and financial scoring system. Located in <span class="inline-code">src/components/analytics/GamificationSystem.tsx</span>.</p>
+
+            <h3>Achievement Categories</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>💰 Budget Achievements</h4>
+                    <ul class="list">
+                        <li>Budget Master - Stay under budget for 3 months</li>
+                        <li>Penny Pincher - 90% budget compliance</li>
+                        <li>Financial Discipline - Zero budget overruns</li>
+                        <li>Smart Spender - Consistent budget adherence</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>💎 Savings Achievements</h4>
+                    <ul class="list">
+                        <li>Savings Starter - Save $100</li>
+                        <li>Nest Builder - Save $1,000</li>
+                        <li>Wealth Accumulator - Save $5,000</li>
+                        <li>Financial Freedom - Save $10,000</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📈 Consistency Achievements</h4>
+                    <ul class="list">
+                        <li>Daily Tracker - 7 day streak</li>
+                        <li>Weekly Warrior - 4 week streak</li>
+                        <li>Monthly Master - 3 month streak</li>
+                        <li>Annual Champion - 12 month streak</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🎯 Milestone Achievements</h4>
+                    <ul class="list">
+                        <li>First Steps - Record first expense</li>
+                        <li>Goal Setter - Create first budget</li>
+                        <li>Category King - Use all expense categories</li>
+                        <li>Social Spender - Share with 5 people</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Achievement Calculation Engine</h3>
+            <div class="code-block">
+// Achievement calculation patterns
+const calculateBudgetCompliance = (expenses: Expense[], budget: number): number =&gt; {
+  const totalExpenses = expenses.reduce((sum, exp) =&gt; sum + exp.amount, 0);
+  return budget &gt; 0 
+    ? Math.max(0, Math.min(100, (1 - totalExpenses / budget) * 100))
+    : 0;
+};
+
+const calculateConsistencyScore = (expenses: Expense[]): number =&gt; {
+  const daysWithExpenses = new Set(expenses.map(exp =&gt; exp.date)).size;
+  const totalDays = Math.ceil((Date.now() - new Date(expenses[0]?.date || Date.now()).getTime()) / (1000 * 60 * 60 * 24));
+  return totalDays &gt; 0 ? Math.min(100, (daysWithExpenses / totalDays) * 100) : 0;
+};
+
+const calculateSavingsRate = (income: number, expenses: Expense[]): number =&gt; {
+  const totalExpenses = expenses.reduce((sum, exp) =&gt; sum + exp.amount, 0);
+  const savings = income - totalExpenses;
+  return income &gt; 0 ? Math.max(0, (savings / income) * 100) : 0;
+};
+
+const calculateOverallScore = (
+  budgetCompliance: number,
+  consistencyScore: number, 
+  savingsRate: number,
+  currentStreak: number
+): number =&gt; {
+  return (
+    budgetCompliance * 0.4 +        // 40% weight - most important
+    consistencyScore * 0.3 +        // 30% weight - spending patterns  
+    savingsRate * 0.2 +             // 20% weight - financial health
+    (currentStreak / 30) * 100 * 0.1 // 10% weight - streak bonus
+  );
+};
+            </div>
+
+            <h3>Achievement UI Components</h3>
+            <div class="code-block">
+// Achievement card with progress visualization
+const AchievementCard: React.FC&lt;{ achievement: Achievement }&gt; = ({ achievement }) =&gt; {
+  const progressPercentage = Math.min(100, (achievement.currentValue / achievement.targetValue) * 100);
+  
+  return (
+    &lt;div className={`achievement-card ${achievement.isCompleted ? 'completed' : ''}`}&gt;
+      &lt;div className="achievement-header"&gt;
+        &lt;span className="achievement-icon"&gt;{achievement.icon}&lt;/span&gt;
+        &lt;h4&gt;{achievement.title}&lt;/h4&gt;
+        {achievement.isCompleted && (
+          &lt;span className="completion-badge"&gt;✓&lt;/span&gt;
+        )}
+      &lt;/div&gt;
+      
+      &lt;p className="achievement-description"&gt;{achievement.description}&lt;/p&gt;
+      
+      &lt;div className="progress-container"&gt;
+        &lt;div className="progress-bar"&gt;
+          &lt;div 
+            className="progress-fill"
+            style={{ width: `${progressPercentage}%` }}
+          /&gt;
+        &lt;/div&gt;
+        &lt;span className="progress-text"&gt;
+          {achievement.currentValue} / {achievement.targetValue}
+        &lt;/span&gt;
+      &lt;/div&gt;
+      
+      {achievement.isCompleted && achievement.completedAt && (
+        &lt;p className="completion-date"&gt;
+          Completed on {formatDate(achievement.completedAt)}
+        &lt;/p&gt;
+      )}
+    &lt;/div&gt;
+  );
+};
+            </div>
+
+            <h3>Visual Polish (v2.5.3 Update)</h3>
+            <div class="code-block">
+// Subtle gradient styling for completed achievements
+.achievement-card.completed {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #28a745;
+}
+
+.achievement-card.completed .achievement-header {
+  background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 4px 4px 0 0;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #007bff 0%, #28a745 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.completion-badge {
+  background: #fff;
+  color: #28a745;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+            </div>
+        </section>
+
+        <!-- Financial Scoring -->
+        <section class="section">
+            <h2>Financial Scoring System</h2>
+            <p>Comprehensive financial health assessment with weighted scoring algorithms.</p>
+
+            <h3>Scoring Components</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Budget Compliance (40%)</h4>
+                    <p>Measures adherence to budget limits</p>
+                    <div class="code-block">
+const budgetScore = (1 - totalSpent / budgetLimit) * 100;
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>Consistency Score (30%)</h4>
+                    <p>Tracks regular expense recording habits</p>
+                    <div class="code-block">
+const consistencyScore = (daysWithExpenses / totalDays) * 100;
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>Savings Rate (20%)</h4>
+                    <p>Measures financial health and saving ability</p>
+                    <div class="code-block">
+const savingsRate = ((income - expenses) / income) * 100;
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>Streak Bonus (10%)</h4>
+                    <p>Rewards consistent daily tracking</p>
+                    <div class="code-block">
+const streakBonus = (currentStreak / 30) * 100;
+                    </div>
+                </div>
+            </div>
+
+            <h3>Score Visualization</h3>
+            <div class="code-block">
+// Financial score display with ring progress
+const FinancialScoreRing: React.FC&lt;{ score: number }&gt; = ({ score }) =&gt; {
+  const circumference = 2 * Math.PI * 45; // radius = 45
+  const strokeDasharray = circumference;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+  
+  const getScoreColor = (score: number): string =&gt; {
+    if (score &gt;= 80) return '#22c55e'; // green
+    if (score &gt;= 60) return '#f59e0b'; // yellow
+    if (score &gt;= 40) return '#f97316'; // orange
+    return '#ef4444'; // red
+  };
+
+  return (
+    &lt;div className="relative w-32 h-32"&gt;
+      &lt;svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100"&gt;
+        &lt;circle
+          cx="50"
+          cy="50"
+          r="45"
+          stroke="#e5e7eb"
+          strokeWidth="8"
+          fill="none"
+        /&gt;
+        &lt;circle
+          cx="50"
+          cy="50"
+          r="45"
+          stroke={getScoreColor(score)}
+          strokeWidth="8"
+          fill="none"
+          strokeDasharray={strokeDasharray}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          className="transition-all duration-500 ease-out"
+        /&gt;
+      &lt;/svg&gt;
+      &lt;div className="absolute inset-0 flex items-center justify-center"&gt;
+        &lt;span className="text-2xl font-bold text-gray-900"&gt;
+          {Math.round(score)}
+        &lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+            </div>
+        </section>
+
+        <!-- Spending Behavior Analysis -->
+        <section class="section">
+            <h2>Spending Behavior Insights</h2>
+            <p>AI-powered analysis of spending patterns and behavior trends. Located in <span class="inline-code">src/components/analytics/SpendingBehaviorInsights.tsx</span>.</p>
+
+            <h3>Behavior Analysis Components</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>📊 Spending Trends</h4>
+                    <ul class="list">
+                        <li>Daily average calculations</li>
+                        <li>Trend direction analysis</li>
+                        <li>Seasonal pattern detection</li>
+                        <li>Anomaly identification</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🎯 Category Insights</h4>
+                    <ul class="list">
+                        <li>Top spending categories</li>
+                        <li>Category trend analysis</li>
+                        <li>Percentage breakdowns</li>
+                        <li>Budget vs actual comparison</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>⚡ Smart Alerts</h4>
+                    <ul class="list">
+                        <li>Budget overspend warnings</li>
+                        <li>Unusual spending alerts</li>
+                        <li>Savings opportunity notifications</li>
+                        <li>Goal achievement reminders</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📈 Predictive Insights</h4>
+                    <ul class="list">
+                        <li>Monthly spending projections</li>
+                        <li>Budget forecast analysis</li>
+                        <li>Savings goal tracking</li>
+                        <li>Financial health predictions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Behavioral Pattern Detection</h3>
+            <div class="code-block">
+// Spending pattern analysis algorithms
+const analyzeSpendingBehavior = (expenses: Expense[]): SpendingBehavior =&gt; {
+  const sortedExpenses = expenses.sort((a, b) =&gt; new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+  // Calculate daily averages
+  const dailyTotals = groupExpensesByDay(sortedExpenses);
+  const averageDaily = Object.values(dailyTotals).reduce((sum, total) =&gt; sum + total, 0) / Object.keys(dailyTotals).length;
+  
+  // Trend analysis
+  const recentExpenses = sortedExpenses.slice(-30); // Last 30 expenses
+  const olderExpenses = sortedExpenses.slice(0, -30);
+  const recentAverage = recentExpenses.reduce((sum, exp) =&gt; sum + exp.amount, 0) / recentExpenses.length;
+  const olderAverage = olderExpenses.reduce((sum, exp) =&gt; sum + exp.amount, 0) / olderExpenses.length;
+  
+  const spendingTrend = recentAverage &gt; olderAverage * 1.1 ? 'increasing' : 
+                       recentAverage &lt; olderAverage * 0.9 ? 'decreasing' : 'stable';
+  
+  // Category breakdown
+  const topCategories = calculateCategoryBreakdown(expenses).slice(0, 5);
+  
+  // Irregular spending detection
+  const irregularSpending = expenses.filter(expense =&gt; 
+    expense.amount &gt; averageDaily * 3 // More than 3x daily average
+  );
+  
+  return {
+    averageDaily,
+    spendingTrend,
+    topCategories,
+    irregularSpending,
+    seasonalPatterns: detectSeasonalPatterns(expenses)
+  };
+};
+
+const detectSeasonalPatterns = (expenses: Expense[]): SeasonalPattern[] =&gt; {
+  const monthlyData = expenses.reduce((acc, expense) =&gt; {
+    const month = new Date(expense.date).getMonth() + 1;
+    if (!acc[month]) acc[month] = [];
+    acc[month].push(expense.amount);
+    return acc;
+  }, {} as Record&lt;number, number[]&gt;);
+  
+  return Object.entries(monthlyData).map(([month, amounts]) =&gt; {
+    const averageSpending = amounts.reduce((sum, amount) =&gt; sum + amount, 0) / amounts.length;
+    const overallAverage = expenses.reduce((sum, exp) =&gt; sum + exp.amount, 0) / expenses.length;
+    
+    return {
+      month: parseInt(month),
+      averageSpending,
+      category: 'general',
+      pattern: averageSpending &gt; overallAverage * 1.2 ? 'high' : 
+               averageSpending &lt; overallAverage * 0.8 ? 'low' : 'normal'
+    };
+  });
+};
+            </div>
+        </section>
+
+        <!-- Performance Optimization -->
+        <section class="section">
+            <h2>Performance Optimization</h2>
+
+            <h3>Chart Rendering Optimization</h3>
+            <div class="code-block">
+// Optimized chart data processing
+const useChartData = (expenses: Expense[]) =&gt; {
+  return useMemo(() =&gt; {
+    // Expensive data processing only when expenses change
+    return processChartData(expenses);
+  }, [expenses]);
+};
+
+// Debounced chart updates
+const useDebouncedChartUpdate = (data: any[], delay: number = 300) =&gt; {
+  const [debouncedData, setDebouncedData] = useState(data);
+  
+  useEffect(() =&gt; {
+    const timer = setTimeout(() =&gt; {
+      setDebouncedData(data);
+    }, delay);
+    
+    return () =&gt; clearTimeout(timer);
+  }, [data, delay]);
+  
+  return debouncedData;
+};
+            </div>
+
+            <h3>Achievement Calculation Optimization</h3>
+            <div class="code-block">
+// Memoized achievement calculations
+const useAchievements = (expenses: Expense[], budgets: Budget[]) =&gt; {
+  return useMemo(() =&gt; {
+    return calculateAllAchievements(expenses, budgets);
+  }, [expenses, budgets]);
+};
+
+// Selective re-calculation
+const useSelectiveScoreUpdate = (expenses: Expense[]) =&gt; {
+  const [scores, setScores] = useState&lt;FinancialScore | null&gt;(null);
+  const [lastCalculated, setLastCalculated] = useState&lt;number&gt;(0);
+  
+  useEffect(() =&gt; {
+    const now = Date.now();
+    // Only recalculate if more than 5 minutes have passed
+    if (now - lastCalculated &gt; 5 * 60 * 1000) {
+      setScores(calculateFinancialScore(expenses));
+      setLastCalculated(now);
+    }
+  }, [expenses, lastCalculated]);
+  
+  return scores;
+};
+            </div>
+
+            <div class="warning">
+                <h4>💡 Performance Best Practices</h4>
+                <p>Use React.memo for expensive components, implement debounced updates for real-time charts, cache calculation results, and lazy load achievement components to maintain smooth user experience.</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

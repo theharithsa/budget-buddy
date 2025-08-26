@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Types - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid #000;
+            background: #f9f9f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #000;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #000;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .code-block {
+            background: #000;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .inline-code {
+            background: #f0f0f0;
+            color: #000;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: #fff;
+        }
+
+        .parameter-table th,
+        .parameter-table td {
+            border: 1px solid #000;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .parameter-table th {
+            background: #000;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .type-badge {
+            background: #000;
+            color: #fff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .optional {
+            background: #666;
+        }
+
+        .required {
+            background: #000;
+        }
+
+        .warning {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .utility-section {
+            background: #f5f5f5;
+            border-left: 4px solid #000;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Documentation</a>
+            <h1>TypeScript Types</h1>
+            <p class="subtitle">Complete interface definitions, types, and utility functions</p>
+        </header>
+
+        <!-- Core Data Types -->
+        <section class="section">
+            <h2>Core Data Interfaces</h2>
+            <p>These are the primary data structures used throughout Budget Buddy. All interfaces are defined in <span class="inline-code">src/lib/types.ts</span>.</p>
+
+            <h3>Expense Interface</h3>
+            <div class="code-block">
+export interface Expense {
+  id: string;                    // Unique identifier
+  amount: number;                // Expense amount in currency
+  category: string;              // Category name or ID
+  description: string;           // User description
+  date: string;                  // Date in YYYY-MM-DD format
+  createdAt: string;            // ISO timestamp of creation
+  receiptUrl?: string;          // Optional Firebase Storage URL
+  peopleIds?: string[];         // Array of person IDs (not people objects)
+}
+
+// Usage example
+const newExpense: Omit&lt;Expense, 'id'&gt; = {
+  amount: 50.00,
+  category: 'Food & Dining',
+  description: 'Lunch at restaurant',
+  date: '2024-01-15',
+  createdAt: new Date().toISOString(),
+  peopleIds: ['person-1', 'person-2']
+};
+            </div>
+
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="inline-code">id</span></td>
+                        <td><span class="type-badge">string</span></td>
+                        <td><span class="type-badge required">Required</span></td>
+                        <td>Firestore document ID</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">amount</span></td>
+                        <td><span class="type-badge">number</span></td>
+                        <td><span class="type-badge required">Required</span></td>
+                        <td>Expense amount (positive number)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">category</span></td>
+                        <td><span class="type-badge">string</span></td>
+                        <td><span class="type-badge required">Required</span></td>
+                        <td>Category name or category ID</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">description</span></td>
+                        <td><span class="type-badge">string</span></td>
+                        <td><span class="type-badge required">Required</span></td>
+                        <td>User-provided description</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">date</span></td>
+                        <td><span class="type-badge">string</span></td>
+                        <td><span class="type-badge required">Required</span></td>
+                        <td>Date in YYYY-MM-DD format</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">createdAt</span></td>
+                        <td><span class="type-badge">string</span></td>
+                        <td><span class="type-badge required">Required</span></td>
+                        <td>ISO timestamp string</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">receiptUrl</span></td>
+                        <td><span class="type-badge">string</span></td>
+                        <td><span class="type-badge optional">Optional</span></td>
+                        <td>Firebase Storage download URL</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">peopleIds</span></td>
+                        <td><span class="type-badge">string[]</span></td>
+                        <td><span class="type-badge optional">Optional</span></td>
+                        <td>Array of person IDs</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Budget Interface</h3>
+            <div class="code-block">
+export interface Budget {
+  id: string;                    // Unique identifier
+  name: string;                  // Budget name
+  amount: number;                // Budget limit amount
+  category?: string;             // Optional category filter
+  period: 'monthly' | 'weekly' | 'yearly'; // Budget period
+  startDate: string;             // Start date in YYYY-MM-DD format
+  endDate?: string;              // Optional end date
+  isActive?: boolean;            // Active status (default: true)
+  createdAt: string;            // ISO timestamp of creation
+}
+
+// Budget creation pattern
+const createBudget = (budgetData: Omit&lt;Budget, 'id' | 'createdAt'&gt;): Omit&lt;Budget, 'id'&gt; =&gt; ({
+  ...budgetData,
+  createdAt: new Date().toISOString(),
+  isActive: budgetData.isActive ?? true
+});
+            </div>
+
+            <h3>Person Interface</h3>
+            <div class="code-block">
+export interface Person {
+  id: string;                    // Unique identifier
+  name: string;                  // Person's name
+  icon: string;                  // Icon identifier (lucide icon name)
+  color: string;                 // Hex color code
+  relationship?: string;         // Relationship type
+  isPublic?: boolean;           // Public sharing flag
+  createdBy?: string;           // Creator user ID (for public people)
+  adoptedBy?: string[];         // Array of user IDs who adopted this person
+  createdAt: string;            // ISO timestamp of creation
+}
+
+// Person creation with validation
+const createPerson = (personData: Omit&lt;Person, 'id' | 'createdAt'&gt;): Omit&lt;Person, 'id'&gt; =&gt; ({
+  ...personData,
+  createdAt: new Date().toISOString(),
+  isPublic: personData.isPublic ?? false,
+  adoptedBy: personData.adoptedBy ?? []
+});
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Critical: People vs PeopleIds</h4>
+                <p>Expenses store <span class="inline-code">peopleIds: string[]</span>, not people objects. Always use the <span class="inline-code">getAllPeople()</span> utility function to resolve IDs to actual Person objects.</p>
+            </div>
+        </section>
+
+        <!-- Utility Types -->
+        <section class="section">
+            <h2>Utility Types & Functions</h2>
+
+            <h3>getAllPeople Utility</h3>
+            <p>Critical function for resolving person IDs to Person objects consistently across the application.</p>
+            <div class="code-block">
+// getAllPeople utility function (CRITICAL for data consistency)
+export const getAllPeople = (customPeople: Person[], publicPeople: Person[] = []): Person[] =&gt; {
+  // Combine custom and public people, removing duplicates
+  const allPeople = [...customPeople];
+  
+  publicPeople.forEach(publicPerson =&gt; {
+    if (!allPeople.find(p =&gt; p.id === publicPerson.id)) {
+      allPeople.push(publicPerson);
+    }
+  });
+  
+  return allPeople;
+};
+
+// Usage pattern (REQUIRED everywhere people data is used)
+const ExpenseComponent = () =&gt; {
+  const { customPeople, publicPeople } = useFirestoreData();
+  
+  // ALWAYS use getAllPeople for consistent data
+  const allPeople = getAllPeople(customPeople, publicPeople);
+  
+  // Resolve expense people IDs to Person objects
+  const expensePeople = expense.peopleIds?.map(id =&gt; 
+    allPeople.find(person =&gt; person.id === id)
+  ).filter(Boolean) || [];
+  
+  return (
+    &lt;div&gt;
+      {expensePeople.map(person =&gt; (
+        &lt;PersonBadge key={person.id} person={person} /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+};
+            </div>
+
+            <h3>Category Types</h3>
+            <div class="code-block">
+// Category interfaces
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;                  // Lucide icon name
+  color: string;                 // Hex color code
+  isCustom?: boolean;           // Custom vs default category
+  createdAt?: string;           // Creation timestamp
+}
+
+// Default categories constant
+export const DEFAULT_CATEGORIES: Category[] = [
+  { id: 'food', name: 'Food & Dining', icon: 'Utensils', color: '#10b981' },
+  { id: 'transport', name: 'Transportation', icon: 'Car', color: '#3b82f6' },
+  { id: 'shopping', name: 'Shopping', icon: 'ShoppingBag', color: '#8b5cf6' },
+  { id: 'entertainment', name: 'Entertainment', icon: 'Film', color: '#f59e0b' },
+  { id: 'health', name: 'Healthcare', icon: 'Heart', color: '#ef4444' },
+  { id: 'utilities', name: 'Bills & Utilities', icon: 'Zap', color: '#06b6d4' },
+  { id: 'education', name: 'Education', icon: 'GraduationCap', color: '#84cc16' },
+  { id: 'travel', name: 'Travel', icon: 'Plane', color: '#f97316' },
+  { id: 'other', name: 'Other', icon: 'MoreHorizontal', color: '#6b7280' }
+];
+
+// Category utility functions
+export const getCategoryById = (id: string, customCategories: Category[] = []): Category | undefined =&gt; {
+  return [...DEFAULT_CATEGORIES, ...customCategories].find(cat =&gt; cat.id === id);
+};
+
+export const getAllCategories = (customCategories: Category[] = []): Category[] =&gt; {
+  return [...DEFAULT_CATEGORIES, ...customCategories];
+};
+            </div>
+
+            <h3>Template Interface</h3>
+            <div class="code-block">
+export interface Template {
+  id: string;
+  name: string;                  // Template name
+  amount: number;                // Default amount
+  category: string;              // Category ID or name
+  description: string;           // Default description
+  peopleIds?: string[];         // Default people
+  isRecurring?: boolean;        // Recurring template flag
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly'; // Recurrence frequency
+  createdAt: string;            // Creation timestamp
+}
+
+// Template creation utility
+export const createTemplate = (
+  templateData: Omit&lt;Template, 'id' | 'createdAt'&gt;
+): Omit&lt;Template, 'id'&gt; =&gt; ({
+  ...templateData,
+  createdAt: new Date().toISOString(),
+  isRecurring: templateData.isRecurring ?? false
+});
+            </div>
+        </section>
+
+        <!-- AI Integration Types -->
+        <section class="section">
+            <h2>AI Integration Types</h2>
+
+            <h3>KautilyaAI Chat Types</h3>
+            <div class="code-block">
+// KautilyaAI Co-Pilot message types
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';    // Message sender
+  content: string;               // Message text content
+  timestamp: string;             // ISO timestamp
+  actions?: ExecutedAction[];    // AI-executed actions
+}
+
+export interface ExecutedAction {
+  type: 'add_expense' | 'update_expense' | 'delete_expense' | 
+        'add_budget' | 'update_budget' | 'delete_budget' |
+        'add_person' | 'update_person' | 'delete_person';
+  success: boolean;              // Operation success status
+  summary: string;               // Human-readable summary
+  data?: any;                   // Operation result data
+  error?: string;               // Error message if failed
+}
+
+// Chat session management
+export interface ChatSession {
+  id: string;
+  title: string;                 // Session title (auto-generated)
+  messages: ChatMessage[];       // Session messages
+  createdAt: string;            // Session creation time
+  updatedAt: string;            // Last message time
+}
+
+// AI context for Firebase Functions
+export interface AIContext {
+  recentExpenses: Expense[];     // Recent 20 expenses
+  activeBudgets: Budget[];       // Active budgets only
+  customPeople: Person[];        // User's custom people (limited to 50)
+  publicPeople: Person[];        // Public people (limited to 20)
+}
+            </div>
+
+            <h3>Legacy AI Analysis Types</h3>
+            <div class="code-block">
+// BudgetAnalyzer AI response types
+export interface BudgetAnalysis {
+  totalSpent: number;
+  categoryBreakdown: CategorySpending[];
+  insights: string[];
+  recommendations: string[];
+  budgetHealth: 'excellent' | 'good' | 'warning' | 'critical';
+  projectedSpending?: number;
+  savingsOpportunities?: SavingsOpportunity[];
+}
+
+export interface CategorySpending {
+  category: string;
+  amount: number;
+  percentage: number;
+  trend: 'increasing' | 'decreasing' | 'stable';
+}
+
+export interface SavingsOpportunity {
+  category: string;
+  potentialSavings: number;
+  suggestion: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+// AI API response handling
+export type AIProvider = 'openai' | 'spark' | 'statistical' | 'demo';
+
+export interface AIAnalysisRequest {
+  expenses: Expense[];
+  budgets: Budget[];
+  timeframe: { start: string; end: string };
+  provider?: AIProvider;
+}
+            </div>
+        </section>
+
+        <!-- Analytics & Gamification Types -->
+        <section class="section">
+            <h2>Analytics & Gamification Types</h2>
+
+            <h3>Achievement System</h3>
+            <div class="code-block">
+// Gamification achievement types
+export interface Achievement {
+  id: string;
+  title: string;                 // Achievement title
+  description: string;           // Achievement description
+  icon: string;                  // Lucide icon name
+  category: 'budget' | 'savings' | 'consistency' | 'milestone';
+  targetValue: number;           // Target value to achieve
+  currentValue: number;          // Current progress value
+  isCompleted: boolean;          // Completion status
+  completedAt?: string;          // Completion timestamp
+  progress: number;              // Progress percentage (0-100)
+}
+
+// Financial scoring types
+export interface FinancialScore {
+  overall: number;               // Overall score (0-100)
+  budgetCompliance: number;      // Budget adherence score
+  consistencyScore: number;      // Spending consistency score
+  savingsRate: number;          // Savings rate score
+  streakBonus: number;          // Current streak bonus
+  lastUpdated: string;          // Last calculation time
+}
+
+// Spending behavior analysis
+export interface SpendingBehavior {
+  averageDaily: number;
+  spendingTrend: 'increasing' | 'decreasing' | 'stable';
+  topCategories: CategorySpending[];
+  irregularSpending: Expense[];
+  seasonalPatterns?: SeasonalPattern[];
+}
+
+export interface SeasonalPattern {
+  month: number;                 // Month (1-12)
+  averageSpending: number;
+  category: string;
+  pattern: 'high' | 'low' | 'normal';
+}
+            </div>
+
+            <h3>Chart Data Types</h3>
+            <div class="code-block">
+// ApexCharts data structure types
+export interface ChartDataPoint {
+  x: string | number;            // X-axis value (date or category)
+  y: number;                     // Y-axis value (amount)
+  category?: string;             // Optional category grouping
+}
+
+export interface ChartSeries {
+  name: string;                  // Series name
+  data: ChartDataPoint[];        // Data points
+  color?: string;               // Series color
+}
+
+// Dashboard chart configuration
+export interface ChartConfig {
+  type: 'area' | 'column' | 'pie' | 'line' | 'donut';
+  series: ChartSeries[];
+  categories?: string[];         // X-axis categories
+  title?: string;               // Chart title
+  height?: number;              // Chart height in pixels
+}
+
+// Chart lifecycle management (CRITICAL for ApexCharts in React)
+export interface ChartInstance {
+  chart: ApexCharts | null;
+  element: HTMLElement | null;
+  isRendered: boolean;
+}
+            </div>
+        </section>
+
+        <!-- Form & Validation Types -->
+        <section class="section">
+            <h2>Form & Validation Types</h2>
+
+            <h3>Form Data Types</h3>
+            <div class="code-block">
+// Form data interfaces for React Hook Form
+export interface ExpenseFormData {
+  amount: string;                // String for form input
+  category: string;
+  description: string;
+  date: string;
+  people: string[];             // Array of person IDs
+  receipt?: FileList;           // File input for receipt
+}
+
+export interface BudgetFormData {
+  name: string;
+  amount: string;               // String for form input
+  category?: string;
+  period: 'monthly' | 'weekly' | 'yearly';
+  startDate: string;
+  endDate?: string;
+}
+
+export interface PersonFormData {
+  name: string;
+  icon: string;
+  color: string;
+  relationship?: string;
+  isPublic: boolean;
+}
+
+// Form validation schemas (using Zod)
+import { z } from 'zod';
+
+export const expenseSchema = z.object({
+  amount: z.string().min(1, 'Amount is required')
+    .refine(val =&gt; !isNaN(parseFloat(val)) && parseFloat(val) &gt; 0, 'Must be a positive number'),
+  category: z.string().min(1, 'Category is required'),
+  description: z.string().min(1, 'Description is required'),
+  date: z.string().min(1, 'Date is required'),
+  people: z.array(z.string()).optional(),
+});
+
+export const budgetSchema = z.object({
+  name: z.string().min(1, 'Budget name is required'),
+  amount: z.string().min(1, 'Amount is required')
+    .refine(val =&gt; !isNaN(parseFloat(val)) && parseFloat(val) &gt; 0, 'Must be a positive number'),
+  category: z.string().optional(),
+  period: z.enum(['monthly', 'weekly', 'yearly']),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().optional(),
+});
+            </div>
+
+            <h3>Filter & Sort Types</h3>
+            <div class="code-block">
+// Filter and sorting types
+export type SortOption = 'date' | 'amount' | 'category' | 'description';
+export type SortDirection = 'asc' | 'desc';
+export type ViewMode = 'list' | 'grid';
+
+export interface FilterState {
+  searchTerm: string;
+  categoryFilter: string;        // 'all' or category ID
+  peopleFilter: string;         // 'all' or person ID
+  dateRange?: {
+    start: string;
+    end: string;
+  };
+  sortBy: SortOption;
+  sortDirection: SortDirection;
+}
+
+// Timeframe selection types
+export interface TimeframeOption {
+  label: string;
+  value: string;
+  start: Date;
+  end: Date;
+  isCustom?: boolean;
+}
+
+export const TIMEFRAME_PRESETS: TimeframeOption[] = [
+  {
+    label: 'Current Month',
+    value: 'current-month',
+    start: startOfMonth(new Date()),
+    end: endOfMonth(new Date())
+  },
+  {
+    label: 'Last 30 Days',
+    value: 'last-30-days',
+    start: subDays(new Date(), 30),
+    end: new Date()
+  },
+  // ... more presets
+];
+            </div>
+        </section>
+
+        <!-- Utility Functions -->
+        <section class="section">
+            <h2>Utility Functions & Helpers</h2>
+
+            <h3>Date Utilities</h3>
+            <div class="code-block">
+// Date formatting and manipulation utilities
+export const formatDate = (date: string | Date): string =&gt; {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
+export const formatCurrency = (amount: number): string =&gt; {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount);
+};
+
+export const isDateInRange = (date: string, start: string, end: string): boolean =&gt; {
+  const checkDate = new Date(date);
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  return checkDate &gt;= startDate && checkDate &lt;= endDate;
+};
+
+// Month calculation for historical budget analysis
+export const getMonthKey = (date: string): string =&gt; {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+};
+
+export const getMonthDisplayName = (monthKey: string): string =&gt; {
+  const [year, month] = monthKey.split('-');
+  const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+};
+            </div>
+
+            <h3>Calculation Utilities</h3>
+            <div class="code-block">
+// Financial calculation utilities
+export const calculateBudgetUsage = (expenses: Expense[], budget: Budget): number =&gt; {
+  const budgetExpenses = expenses.filter(expense =&gt; {
+    const expenseDate = new Date(expense.date);
+    const budgetStart = new Date(budget.startDate);
+    const budgetEnd = budget.endDate ? new Date(budget.endDate) : new Date();
+    
+    const isInDateRange = expenseDate &gt;= budgetStart && expenseDate &lt;= budgetEnd;
+    const isCategoryMatch = !budget.category || expense.category === budget.category;
+    
+    return isInDateRange && isCategoryMatch;
+  });
+  
+  return budgetExpenses.reduce((sum, expense) =&gt; sum + expense.amount, 0);
+};
+
+export const calculateBudgetCompliance = (expenses: Expense[], budget: number): number =&gt; {
+  const totalExpenses = expenses.reduce((sum, exp) =&gt; sum + exp.amount, 0);
+  return budget &gt; 0 
+    ? Math.max(0, Math.min(100, (1 - totalExpenses / budget) * 100))
+    : 0;
+};
+
+export const calculateCategoryBreakdown = (expenses: Expense[]): CategorySpending[] =&gt; {
+  const total = expenses.reduce((sum, exp) =&gt; sum + exp.amount, 0);
+  const categoryTotals = expenses.reduce((acc, expense) =&gt; {
+    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+    return acc;
+  }, {} as Record&lt;string, number&gt;);
+  
+  return Object.entries(categoryTotals).map(([category, amount]) =&gt; ({
+    category,
+    amount,
+    percentage: total &gt; 0 ? (amount / total) * 100 : 0,
+    trend: 'stable' as const // Would need historical data for real trend analysis
+  }));
+};
+            </div>
+
+            <h3>Validation Utilities</h3>
+            <div class="code-block">
+// Data validation utilities
+export const isValidExpense = (expense: Partial&lt;Expense&gt;): expense is Expense =&gt; {
+  return !!(
+    expense.id &&
+    expense.amount &&
+    expense.amount &gt; 0 &&
+    expense.category &&
+    expense.description &&
+    expense.date &&
+    expense.createdAt
+  );
+};
+
+export const isValidBudget = (budget: Partial&lt;Budget&gt;): budget is Budget =&gt; {
+  return !!(
+    budget.id &&
+    budget.name &&
+    budget.amount &&
+    budget.amount &gt; 0 &&
+    budget.period &&
+    budget.startDate &&
+    budget.createdAt
+  );
+};
+
+export const sanitizeInput = (input: string): string =&gt; {
+  return input.trim().replace(/[&lt;&gt;"']/g, '');
+};
+
+// File validation for receipts
+export const validateReceiptFile = (file: File): { valid: boolean; error?: string } =&gt; {
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+  
+  if (file.size &gt; maxSize) {
+    return { valid: false, error: 'File size must be less than 5MB' };
+  }
+  
+  if (!allowedTypes.includes(file.type)) {
+    return { valid: false, error: 'File must be an image (JPEG, PNG, WebP) or PDF' };
+  }
+  
+  return { valid: true };
+};
+            </div>
+
+            <div class="utility-section">
+                <h4>💡 Type Safety Best Practices</h4>
+                <ul class="list">
+                    <li>Always use proper TypeScript interfaces for component props</li>
+                    <li>Use <span class="inline-code">Omit&lt;Type, 'property'&gt;</span> for form data that excludes generated fields</li>
+                    <li>Implement proper type guards for runtime validation</li>
+                    <li>Use union types for controlled string values (e.g., <span class="inline-code">'monthly' | 'weekly'</span>)</li>
+                    <li>Export all types from <span class="inline-code">src/lib/types.ts</span> for consistent imports</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Type Import Guide -->
+        <section class="section">
+            <h2>Type Import Reference</h2>
+            <p>Quick reference for importing types in your components and utilities.</p>
+
+            <div class="code-block">
+// Core data types
+import { 
+  Expense, 
+  Budget, 
+  Person, 
+  Category, 
+  Template 
+} from '../lib/types';
+
+// Utility functions
+import { 
+  getAllPeople, 
+  formatCurrency, 
+  formatDate, 
+  calculateBudgetUsage 
+} from '../lib/types';
+
+// AI integration types
+import { 
+  ChatMessage, 
+  ChatSession, 
+  ExecutedAction, 
+  BudgetAnalysis 
+} from '../lib/types';
+
+// Form and validation types
+import { 
+  ExpenseFormData, 
+  BudgetFormData, 
+  FilterState, 
+  ViewMode 
+} from '../lib/types';
+
+// Analytics types
+import { 
+  Achievement, 
+  FinancialScore, 
+  ChartDataPoint, 
+  ChartSeries 
+} from '../lib/types';
+
+// Constants
+import { 
+  DEFAULT_CATEGORIES, 
+  TIMEFRAME_PRESETS 
+} from '../lib/types';
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Import Best Practices</h4>
+                <p>Always import types from <span class="inline-code">../lib/types</span> using relative paths. Avoid importing from multiple type files to maintain consistency and easier refactoring.</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Guide - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid #000;
+            background: #f9f9f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #000;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #000;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .code-block {
+            background: #000;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .inline-code {
+            background: #f0f0f0;
+            color: #000;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .step-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .step-list li {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .step-list li:before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            background: #000;
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .step-container {
+            counter-reset: step-counter;
+        }
+
+        .warning {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .success {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .platform-card {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .platform-card h3 {
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #000;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin: 0.25rem;
+        }
+
+        .recommended {
+            border-color: #22c55e;
+        }
+
+        .recommended .badge {
+            background: #22c55e;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .step-list li {
+                padding-left: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Documentation</a>
+            <h1>Deployment Guide</h1>
+            <p class="subtitle">Complete deployment instructions for Firebase Hosting, Azure App Service, and development setup</p>
+        </header>
+
+        <!-- Development Setup -->
+        <section class="section">
+            <h2>Development Environment Setup</h2>
+            <p>Get Budget Buddy running locally for development with this comprehensive setup guide.</p>
+
+            <h3>Prerequisites</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Required Software</h4>
+                    <ul class="list">
+                        <li>Node.js 18+ (LTS recommended)</li>
+                        <li>npm 9+ or yarn 1.22+</li>
+                        <li>Git for version control</li>
+                        <li>Firebase CLI tools</li>
+                        <li>VS Code (recommended)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Firebase Project Setup</h4>
+                    <ul class="list">
+                        <li>Firebase project with Firestore</li>
+                        <li>Authentication (Google provider)</li>
+                        <li>Storage bucket configured</li>
+                        <li>Functions v2 enabled</li>
+                        <li>Hosting service enabled</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Step-by-Step Setup</h3>
+            <div class="step-container">
+                <ol class="step-list">
+                    <li>
+                        <h4>Clone Repository</h4>
+                        <div class="code-block">
+git clone https://github.com/theharithsa/budget-buddy.git
+cd budget-buddy
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Install Dependencies</h4>
+                        <div class="code-block">
+npm install
+# or
+yarn install
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Configure Firebase</h4>
+                        <p>Update <span class="inline-code">src/lib/firebase.ts</span> with your project configuration:</p>
+                        <div class="code-block">
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id"
+};
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Environment Variables</h4>
+                        <p>Create <span class="inline-code">.env</span> file in project root:</p>
+                        <div class="code-block">
+# Optional - for AI features
+VITE_OPENAI_API_KEY=your-openai-api-key
+
+# Optional - for observability
+VITE_ENVIRONMENT=development
+VITE_DYNATRACE_URL=your-dynatrace-url
+VITE_DYNATRACE_TOKEN=your-dynatrace-token
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Start Development Server</h4>
+                        <div class="code-block">
+npm run dev
+# Server will start on http://localhost:5000
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Deploy Functions (Optional)</h4>
+                        <div class="code-block">
+# Install Firebase CLI if not already installed
+npm install -g firebase-tools
+
+# Login to Firebase
+firebase login
+
+# Deploy functions for KautilyaAI Co-Pilot
+firebase deploy --only functions
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="success">
+                <h4>✅ Development Ready</h4>
+                <p>Your development environment is now ready! Visit <span class="inline-code">http://localhost:5000</span> to see Budget Buddy running locally.</p>
+            </div>
+        </section>
+
+        <!-- Build Configuration -->
+        <section class="section">
+            <h2>Build Configuration</h2>
+            <p>Budget Buddy uses Vite for fast builds and optimized production bundles.</p>
+
+            <h3>Build Commands</h3>
+            <div class="code-block">
+# Development build with hot reload
+npm run dev
+
+# Production build (outputs to dist/)
+npm run build
+
+# Preview production build locally
+npm run preview
+
+# Run linting
+npm run lint
+
+# Run tests
+npm run test:run
+
+# Version management
+npm run version:patch  # Increment patch version
+npm run version:minor  # Increment minor version  
+npm run version:major  # Increment major version
+            </div>
+
+            <h3>Vite Configuration</h3>
+            <div class="code-block">
+// vite.config.ts - Key configuration settings
+export default defineConfig({
+  plugins: [react()],
+  
+  // Path aliases for clean imports
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/lib': path.resolve(__dirname, './src/lib'),
+      '@/hooks': path.resolve(__dirname, './src/hooks'),
+    },
+  },
+  
+  // Development server configuration
+  server: {
+    port: 5000,
+    host: true, // Allow external connections
+  },
+  
+  // Build optimization
+  build: {
+    outDir: 'dist',
+    sourcemap: false, // Enable for debugging production issues
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunk for better caching
+          vendor: ['react', 'react-dom'],
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          charts: ['apexcharts', 'react-apexcharts'],
+        },
+      },
+    },
+  },
+  
+  // Preview server (for testing production builds)
+  preview: {
+    port: 5000,
+    host: true,
+  },
+});
+            </div>
+
+            <h3>Build Optimization</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Code Splitting</h4>
+                    <ul class="list">
+                        <li>Vendor chunks for better caching</li>
+                        <li>Route-based code splitting</li>
+                        <li>Component lazy loading</li>
+                        <li>Dynamic imports for large components</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Asset Optimization</h4>
+                    <ul class="list">
+                        <li>Image compression and WebP conversion</li>
+                        <li>CSS minification and purging</li>
+                        <li>JavaScript minification and tree shaking</li>
+                        <li>Font optimization and preloading</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deployment Platforms -->
+        <section class="section">
+            <h2>Deployment Platforms</h2>
+            <p>Budget Buddy supports multiple deployment platforms with optimized configurations for each.</p>
+
+            <div class="platform-grid">
+                <div class="platform-card recommended">
+                    <h3>🔥 Firebase Hosting</h3>
+                    <span class="badge">Recommended</span>
+                    <p>Seamlessly integrates with Firebase backend services. Perfect for the complete Budget Buddy experience.</p>
+                    <ul class="list">
+                        <li>Global CDN distribution</li>
+                        <li>Automatic SSL certificates</li>
+                        <li>Easy integration with Firebase services</li>
+                        <li>Preview channels for testing</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h3>☁️ Azure App Service</h3>
+                    <span class="badge">Enterprise Ready</span>
+                    <p>Enterprise-grade hosting with advanced monitoring and scaling capabilities.</p>
+                    <ul class="list">
+                        <li>Auto-scaling capabilities</li>
+                        <li>Built-in monitoring</li>
+                        <li>Custom domain support</li>
+                        <li>CI/CD integration</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h3>▲ Vercel</h3>
+                    <span class="badge">Fast Deployment</span>
+                    <p>Zero-configuration deployment with automatic optimizations for React applications.</p>
+                    <ul class="list">
+                        <li>Instant deployments</li>
+                        <li>Automatic optimizations</li>
+                        <li>Edge network distribution</li>
+                        <li>GitHub integration</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h3>📦 Netlify</h3>
+                    <span class="badge">JAMstack Optimized</span>
+                    <p>Optimized for static sites with powerful build and deployment features.</p>
+                    <ul class="list">
+                        <li>Continuous deployment</li>
+                        <li>Branch previews</li>
+                        <li>Form handling</li>
+                        <li>Serverless functions</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Firebase Hosting Deployment -->
+        <section class="section">
+            <h2>Firebase Hosting Deployment</h2>
+            <p>Deploy Budget Buddy to Firebase Hosting for seamless integration with Firebase backend services.</p>
+
+            <h3>Prerequisites</h3>
+            <div class="code-block">
+# Install Firebase CLI globally
+npm install -g firebase-tools
+
+# Login to Firebase
+firebase login
+
+# Initialize Firebase in your project (if not already done)
+firebase init
+            </div>
+
+            <h3>Firebase Configuration</h3>
+            <p>Ensure your <span class="inline-code">firebase.json</span> is configured correctly:</p>
+            <div class="code-block">
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "/manifest.json",
+        "headers": [
+          {
+            "key": "Cache-Control", 
+            "value": "max-age=86400"
+          }
+        ]
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18"
+  }
+}
+            </div>
+
+            <h3>Deployment Steps</h3>
+            <div class="step-container">
+                <ol class="step-list">
+                    <li>
+                        <h4>Build Production Bundle</h4>
+                        <div class="code-block">
+npm run build
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Deploy to Firebase</h4>
+                        <div class="code-block">
+# Deploy hosting only
+firebase deploy --only hosting
+
+# Deploy hosting and functions
+firebase deploy --only hosting,functions
+
+# Deploy everything
+firebase deploy
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Verify Deployment</h4>
+                        <p>Check your Firebase console for the deployed URL and verify all features work correctly.</p>
+                    </li>
+                </ol>
+            </div>
+
+            <h3>Preview Channels</h3>
+            <div class="code-block">
+# Create a preview channel for testing
+firebase hosting:channel:deploy preview-feature
+
+# Deploy to a specific preview channel
+firebase hosting:channel:deploy --expires 7d my-feature
+            </div>
+        </section>
+
+        <!-- Azure App Service Deployment -->
+        <section class="section">
+            <h2>Azure App Service Deployment</h2>
+            <p>Deploy Budget Buddy to Azure App Service for enterprise-grade hosting with advanced monitoring.</p>
+
+            <h3>Azure Prerequisites</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Azure Setup</h4>
+                    <ul class="list">
+                        <li>Azure subscription active</li>
+                        <li>Azure CLI installed</li>
+                        <li>Resource group created</li>
+                        <li>App Service plan configured</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Application Settings</h4>
+                    <ul class="list">
+                        <li>Node.js 18+ runtime</li>
+                        <li>Environment variables configured</li>
+                        <li>Custom domain (optional)</li>
+                        <li>SSL certificate</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Deployment Script</h3>
+            <p>Use the provided PowerShell script <span class="inline-code">scripts/deploy-to-azure.ps1</span>:</p>
+            <div class="code-block">
+# Azure deployment script
+param(
+    [Parameter(Mandatory=$true)]
+    [string]$ResourceGroup,
+    
+    [Parameter(Mandatory=$true)]
+    [string]$AppServiceName,
+    
+    [string]$Location = "East US"
+)
+
+Write-Host "Building application..." -ForegroundColor Green
+npm run build
+
+Write-Host "Creating deployment package..." -ForegroundColor Green
+Compress-Archive -Path "dist/*" -DestinationPath "budget-buddy-deploy.zip" -Force
+
+Write-Host "Deploying to Azure App Service..." -ForegroundColor Green
+az webapp deployment source config-zip --resource-group $ResourceGroup --name $AppServiceName --src "budget-buddy-deploy.zip"
+
+Write-Host "Deployment completed!" -ForegroundColor Green
+            </div>
+
+            <h3>Manual Deployment Steps</h3>
+            <div class="step-container">
+                <ol class="step-list">
+                    <li>
+                        <h4>Build for Production</h4>
+                        <div class="code-block">
+npm run build
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Create App Service</h4>
+                        <div class="code-block">
+az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name budget-buddy-app --runtime "NODE|18-lts"
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Configure App Settings</h4>
+                        <div class="code-block">
+az webapp config appsettings set --resource-group myResourceGroup --name budget-buddy-app --settings WEBSITE_NODE_DEFAULT_VERSION="~18"
+                        </div>
+                    </li>
+
+                    <li>
+                        <h4>Deploy Application</h4>
+                        <div class="code-block">
+az webapp deployment source config-zip --resource-group myResourceGroup --name budget-buddy-app --src dist.zip
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- CI/CD Pipeline -->
+        <section class="section">
+            <h2>CI/CD Pipeline Setup</h2>
+            <p>Automate deployments with continuous integration and deployment pipelines.</p>
+
+            <h3>GitHub Actions (Firebase)</h3>
+            <div class="code-block">
+# .github/workflows/firebase-deploy.yml
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm run test:run
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Deploy to Firebase
+      uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: ${{ secrets.GITHUB_TOKEN }}
+        firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        channelId: live
+        projectId: your-firebase-project-id
+            </div>
+
+            <h3>Azure DevOps Pipeline</h3>
+            <div class="code-block">
+# azure-pipelines.yml
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm ci
+    npm run build
+  displayName: 'npm install and build'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/budget-buddy-$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'Azure-Service-Connection'
+    appType: 'webApp'
+    appName: 'budget-buddy-app'
+    package: '$(Build.ArtifactStagingDirectory)/budget-buddy-$(Build.BuildId).zip'
+            </div>
+
+            <h3>Environment-Specific Deployments</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Development</h4>
+                    <ul class="list">
+                        <li>Auto-deploy from feature branches</li>
+                        <li>Preview channels for testing</li>
+                        <li>Debug builds with source maps</li>
+                        <li>Development environment variables</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Production</h4>
+                    <ul class="list">
+                        <li>Deploy from main branch only</li>
+                        <li>Optimized production builds</li>
+                        <li>Production environment variables</li>
+                        <li>Automated testing before deployment</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monitoring & Observability -->
+        <section class="section">
+            <h2>Monitoring & Observability</h2>
+            <p>Monitor your deployed Budget Buddy application with comprehensive observability tools.</p>
+
+            <h3>Firebase Analytics</h3>
+            <div class="code-block">
+// Firebase Analytics integration
+import { analytics } from './lib/firebase';
+import { logEvent } from 'firebase/analytics';
+
+// Track user actions
+logEvent(analytics, 'expense_added', {
+  category: expense.category,
+  amount: expense.amount
+});
+
+// Track page views
+logEvent(analytics, 'page_view', {
+  page_title: 'Dashboard',
+  page_location: window.location.href
+});
+            </div>
+
+            <h3>Error Monitoring</h3>
+            <div class="code-block">
+// Error boundary for production error tracking
+class ErrorBoundary extends React.Component {
+  componentDidCatch(error, errorInfo) {
+    // Log to Firebase Crashlytics or other service
+    console.error('Application error:', error, errorInfo);
+    
+    // Report to monitoring service
+    if (process.env.NODE_ENV === 'production') {
+      // Send to error tracking service
+    }
+  }
+}
+            </div>
+
+            <h3>Performance Monitoring</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Core Web Vitals</h4>
+                    <ul class="list">
+                        <li>Largest Contentful Paint (LCP)</li>
+                        <li>First Input Delay (FID)</li>
+                        <li>Cumulative Layout Shift (CLS)</li>
+                        <li>First Contentful Paint (FCP)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Application Metrics</h4>
+                    <ul class="list">
+                        <li>Bundle size and load times</li>
+                        <li>API response times</li>
+                        <li>User interaction tracking</li>
+                        <li>Error rates and crashes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Dynatrace Integration</h4>
+                <p>Budget Buddy includes Dynatrace integration support (currently disabled due to performance optimization). Enable in production by configuring environment variables and uncommenting observability code.</p>
+            </div>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section class="section">
+            <h2>Deployment Troubleshooting</h2>
+
+            <h3>Common Issues</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Build Failures</h4>
+                    <ul class="list">
+                        <li>Clear node_modules and reinstall</li>
+                        <li>Check TypeScript errors</li>
+                        <li>Verify environment variables</li>
+                        <li>Update dependencies to latest versions</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Firebase Deployment Issues</h4>
+                    <ul class="list">
+                        <li>Check Firebase CLI authentication</li>
+                        <li>Verify project ID in firebase.json</li>
+                        <li>Ensure sufficient Firebase quotas</li>
+                        <li>Check Firestore security rules</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Runtime Errors</h4>
+                    <ul class="list">
+                        <li>Check browser console for errors</li>
+                        <li>Verify Firebase configuration</li>
+                        <li>Test authentication flow</li>
+                        <li>Check network connectivity</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Performance Issues</h4>
+                    <ul class="list">
+                        <li>Analyze bundle size with tools</li>
+                        <li>Optimize images and assets</li>
+                        <li>Implement code splitting</li>
+                        <li>Use React DevTools Profiler</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Debug Commands</h3>
+            <div class="code-block">
+# Check build output
+npm run build -- --analyze
+
+# Test production build locally  
+npm run preview
+
+# Firebase local emulation
+firebase emulators:start
+
+# Check Firebase hosting status
+firebase hosting:channel:list
+
+# Azure deployment logs
+az webapp log tail --name budget-buddy-app --resource-group myResourceGroup
+            </div>
+
+            <div class="success">
+                <h4>✅ Deployment Checklist</h4>
+                <ul class="list">
+                    <li>Build completes successfully</li>
+                    <li>All tests pass</li>
+                    <li>Environment variables configured</li>
+                    <li>Firebase/Azure services connected</li>
+                    <li>SSL certificate active</li>
+                    <li>Domain configured correctly</li>
+                    <li>Monitoring and analytics enabled</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Buddy Developer Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: #000;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .nav-card {
+            text-decoration: none;
+            color: #000;
+            border: 2px solid #000;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .nav-card:hover {
+            background: #f8f8f8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .nav-card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .nav-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-card li {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-card li:before {
+            content: "→ ";
+            color: #000;
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-item {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .tech-item h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .tech-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .whats-new {
+            background: #f8f8f8;
+            border-left: 4px solid #000;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .whats-new h3 {
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .feature-list li:before {
+            content: "✨ ";
+            color: #000;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #ccc;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .nav-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Budget Buddy</h1>
+            <p class="subtitle">Developer Documentation</p>
+            <div class="version-badge">v2.6.0 - KautilyaAI Co-Pilot</div>
+        </header>
+
+        <div class="nav-grid">
+            <a href="./architecture.html" class="nav-card">
+                <h3>🏗️ Architecture</h3>
+                <p>System architecture, project structure, and design patterns used throughout the application.</p>
+                <ul>
+                    <li>Project file structure</li>
+                    <li>Component architecture</li>
+                    <li>State management patterns</li>
+                    <li>Data flow diagrams</li>
+                </ul>
+            </a>
+
+            <a href="./components.html" class="nav-card">
+                <h3>⚛️ React Components</h3>
+                <p>Detailed documentation of all React components with props, interfaces, and usage examples.</p>
+                <ul>
+                    <li>Component library</li>
+                    <li>Props and interfaces</li>
+                    <li>Usage examples</li>
+                    <li>Best practices</li>
+                </ul>
+            </a>
+
+            <a href="./firebase.html" class="nav-card">
+                <h3>🔥 Firebase Integration</h3>
+                <p>Complete Firebase setup, configuration, and usage patterns including security rules.</p>
+                <ul>
+                    <li>Authentication setup</li>
+                    <li>Firestore operations</li>
+                    <li>Storage management</li>
+                    <li>Security rules</li>
+                </ul>
+            </a>
+
+            <a href="./kautilyaai.html" class="nav-card">
+                <h3>🤖 KautilyaAI Co-Pilot</h3>
+                <p>Revolutionary AI system with conversational CRUD operations powered by Google Gemini 2.0 Flash.</p>
+                <ul>
+                    <li>AI architecture</li>
+                    <li>Firebase Functions v2</li>
+                    <li>Session management</li>
+                    <li>Conversation patterns</li>
+                </ul>
+            </a>
+
+            <a href="./hooks.html" class="nav-card">
+                <h3>🎣 Hooks & State</h3>
+                <p>Custom hooks, state management patterns, and data flow documentation.</p>
+                <ul>
+                    <li>useFirestoreData hook</li>
+                    <li>AuthContext provider</li>
+                    <li>Custom hooks</li>
+                    <li>State patterns</li>
+                </ul>
+            </a>
+
+            <a href="./types.html" class="nav-card">
+                <h3>📝 TypeScript Types</h3>
+                <p>Complete TypeScript interfaces, types, and utility functions used throughout the application.</p>
+                <ul>
+                    <li>Core interfaces</li>
+                    <li>Type definitions</li>
+                    <li>Utility functions</li>
+                    <li>Type patterns</li>
+                </ul>
+            </a>
+
+            <a href="./pwa.html" class="nav-card">
+                <h3>📱 PWA Implementation</h3>
+                <p>Progressive Web App features including service workers, offline functionality, and installation.</p>
+                <ul>
+                    <li>Service worker setup</li>
+                    <li>Offline capabilities</li>
+                    <li>Installation prompts</li>
+                    <li>Cache management</li>
+                </ul>
+            </a>
+
+            <a href="./analytics.html" class="nav-card">
+                <h3>📊 Analytics & Gamification</h3>
+                <p>Advanced dashboard system with ApexCharts, gamification, and financial insights.</p>
+                <ul>
+                    <li>Chart implementations</li>
+                    <li>Gamification system</li>
+                    <li>Achievement tracking</li>
+                    <li>Financial scoring</li>
+                </ul>
+            </a>
+
+            <a href="./deployment.html" class="nav-card">
+                <h3>🚀 Deployment Guide</h3>
+                <p>Complete deployment instructions for Firebase Hosting, Azure App Service, and development setup.</p>
+                <ul>
+                    <li>Environment setup</li>
+                    <li>Build configuration</li>
+                    <li>Deployment steps</li>
+                    <li>CI/CD pipelines</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="section">
+            <h2>Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h4>Frontend</h4>
+                    <p>React 18 + TypeScript + Vite for modern development experience</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Styling</h4>
+                    <p>Tailwind CSS + Radix UI components for consistent design</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Backend</h4>
+                    <p>Firebase (Auth, Firestore, Storage, Functions v2)</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Charts</h4>
+                    <p>ApexCharts for advanced data visualization</p>
+                </div>
+                <div class="tech-item">
+                    <h4>AI Integration</h4>
+                    <p>Google Gemini 2.0 Flash + Firebase Functions v2</p>
+                </div>
+                <div class="tech-item">
+                    <h4>PWA</h4>
+                    <p>Service Worker + Installation Prompts + Offline Support</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="whats-new">
+            <h3>What's New in v2.6.0</h3>
+            <ul class="feature-list">
+                <li><strong>KautilyaAI Co-Pilot Revolution:</strong> Conversational CRUD operations with Google Gemini 2.0 Flash</li>
+                <li><strong>Session Management:</strong> Persistent chat history with organized conversation sessions</li>
+                <li><strong>Real-time Synchronization:</strong> Immediate UI updates after AI-driven operations</li>
+                <li><strong>Advanced Dashboard:</strong> Professional data visualization with ApexCharts</li>
+                <li><strong>Gamification System:</strong> Achievement tracking and financial scoring</li>
+                <li><strong>Enhanced Analytics:</strong> Spending behavior insights and financial scoring</li>
+                <li><strong>PWA Ready:</strong> Complete Progressive Web App implementation</li>
+                <li><strong>Historical Analysis:</strong> Month-based budget performance tracking</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Quick Start</h2>
+            <p>Get started with Budget Buddy development:</p>
+            <ol style="margin-left: 2rem; margin-top: 1rem;">
+                <li style="margin-bottom: 0.5rem;">Clone the repository and install dependencies</li>
+                <li style="margin-bottom: 0.5rem;">Configure Firebase project settings</li>
+                <li style="margin-bottom: 0.5rem;">Set up environment variables</li>
+                <li style="margin-bottom: 0.5rem;">Run <code style="background: #f0f0f0; padding: 0.2rem 0.4rem; border-radius: 3px;">npm run dev</code> to start development server</li>
+                <li style="margin-bottom: 0.5rem;">Access documentation at <code style="background: #f0f0f0; padding: 0.2rem 0.4rem; border-radius: 3px;">http://localhost:5000</code></li>
+            </ol>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | Built with ❤️ using React + Firebase + KautilyaAI</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
+
+

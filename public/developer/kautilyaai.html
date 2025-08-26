@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KautilyaAI Co-Pilot - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .ai-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #000;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #000;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .section-card {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .ai-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            border: 2px solid #667eea;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .architecture-flow {
+            background: #000;
+            color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+
+        .flow-step {
+            color: #66D9EF;
+            font-weight: bold;
+        }
+
+        .flow-component {
+            color: #A6E22E;
+        }
+
+        .flow-data {
+            color: #F8F8F2;
+        }
+
+        .flow-ai {
+            color: #FD971F;
+            font-style: italic;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #fff;
+            border: 2px solid #667eea;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .conversation-example {
+            background: #f0f8ff;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0.3rem;
+        }
+
+        .user-message {
+            background: #e8f4fd;
+            border-radius: 1rem 1rem 0.3rem 1rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #0066cc;
+        }
+
+        .ai-message {
+            background: #f0f4ff;
+            border-radius: 1rem 1rem 1rem 0.3rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #fdcb6e;
+            padding: 1rem;
+            border-radius: 0.3rem;
+            margin: 1rem 0;
+        }
+
+        .warning strong {
+            color: #b8860b;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            border-radius: 0.3rem;
+            margin: 1rem 0;
+        }
+
+        .success strong {
+            color: #155724;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #ccc;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section-card, .ai-section {
+                padding: 1.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="./index.html" class="back-link">← Back to Documentation</a>
+            <h1>🤖 KautilyaAI Co-Pilot</h1>
+            <div class="ai-badge">Powered by Google Gemini 2.0 Flash</div>
+            <p>Revolutionary AI system with conversational CRUD operations and Firebase Functions v2</p>
+        </header>
+
+        <div class="ai-section">
+            <h2>🚀 Revolutionary AI Co-Pilot</h2>
+            <p><strong>KautilyaAI Co-Pilot</strong> represents a breakthrough in financial management AI. Unlike traditional chatbots, it provides <strong>conversational CRUD operations</strong> that directly manipulate your financial data through natural language commands, powered by Google Gemini 2.0 Flash and Firebase Functions v2.</p>
+            
+            <h4>What Makes It Revolutionary</h4>
+            <ul>
+                <li><strong>Direct Data Manipulation:</strong> "Add $50 coffee expense" actually creates the expense in your database</li>
+                <li><strong>Context Awareness:</strong> Remembers previous conversations and your financial patterns</li>
+                <li><strong>Real-time Synchronization:</strong> Changes appear instantly in your app interface</li>
+                <li><strong>Session Management:</strong> Organized conversation history with persistent sessions</li>
+                <li><strong>Natural Language Understanding:</strong> Understands complex financial requests and contexts</li>
+            </ul>
+        </div>
+
+        <h2>AI Architecture Overview</h2>
+        <div class="section-card">
+            <div class="architecture-flow">
+<span class="flow-step">1. User Input Processing</span>
+<span class="flow-component">AIChatPage.tsx</span> → <span class="flow-data">Natural language message</span>
+         ↓
+<span class="flow-step">2. Context Gathering</span>
+<span class="flow-component">useFirestoreData Hook</span> → <span class="flow-data">Recent expenses, budgets, people, categories</span>
+         ↓
+<span class="flow-step">3. AI Processing</span>
+<span class="flow-component">Firebase Functions v2</span> → <span class="flow-ai">Google Gemini 2.0 Flash</span>
+         ↓
+<span class="flow-step">4. Intent Recognition</span>
+<span class="flow-ai">Natural Language Processing</span> → <span class="flow-data">CRUD operations, queries, analysis</span>
+         ↓
+<span class="flow-step">5. Data Operations</span>
+<span class="flow-component">Firestore Operations</span> → <span class="flow-data">Create, Read, Update, Delete financial data</span>
+         ↓
+<span class="flow-step">6. Real-time Sync</span>
+<span class="flow-component">onSnapshot Subscriptions</span> → <span class="flow-data">Immediate UI updates</span>
+         ↓
+<span class="flow-step">7. Response Generation</span>
+<span class="flow-ai">Contextual AI Response</span> → <span class="flow-data">Confirmation, insights, next steps</span>
+            </div>
+        </div>
+
+        <h2>Core AI Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>🗣️ Conversational CRUD</h4>
+                <p>Natural language commands that directly create, read, update, and delete your financial data.</p>
+                <ul>
+                    <li>Add expenses with voice-like commands</li>
+                    <li>Update budgets conversationally</li>
+                    <li>Delete records with context</li>
+                    <li>Query data with natural questions</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>🧠 Context Memory</h4>
+                <p>Remembers your conversation history and financial patterns for personalized assistance.</p>
+                <ul>
+                    <li>Session-based memory management</li>
+                    <li>Financial pattern recognition</li>
+                    <li>Previous conversation references</li>
+                    <li>Contextual recommendations</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>⚡ Real-time Synchronization</h4>
+                <p>Changes made through AI commands appear instantly in your app interface.</p>
+                <ul>
+                    <li>Immediate UI updates</li>
+                    <li>Live data synchronization</li>
+                    <li>Multi-device consistency</li>
+                    <li>Offline capability support</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h4>📊 Financial Intelligence</h4>
+                <p>Provides insights, analysis, and recommendations based on your financial data.</p>
+                <ul>
+                    <li>Spending pattern analysis</li>
+                    <li>Budget optimization suggestions</li>
+                    <li>Financial goal tracking</li>
+                    <li>Predictive insights</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>Implementation Details</h2>
+        <div class="section-card">
+            <h3>AIChatPage Component</h3>
+            <p><strong>Location:</strong> <code>src/components/AIChatPage.tsx</code></p>
+            
+            <div class="code-block">
+<code>// AIChatPage.tsx - Main AI interface component
+function AIChatPage() {
+  // Chat state management
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string>('');
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Firebase and auth integration
+  const { user } = useAuth();
+  const firestoreData = useFirestoreData();
+  
+  // Firebase Functions integration
+  const chatWithGemini = httpsCallable(functions, 'chatWithGemini');
+  
+  const sendMessage = async (messageText: string) => {
+    if (!user || !messageText.trim()) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Add user message to chat
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: messageText.trim(),
+        timestamp: new Date(),
+        sessionId: currentSessionId
+      };
+      
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Call AI with comprehensive context
+      const result = await chatWithGemini({
+        userId: user.uid,
+        message: messageText.trim(),
+        sessionId: currentSessionId,
+        context: {
+          recentExpenses: firestoreData.expenses.slice(0, 20),
+          activeBudgets: firestoreData.budgets.filter(b => b.isActive !== false),
+          customPeople: firestoreData.customPeople.slice(0, 50),
+          publicPeople: firestoreData.publicPeople.slice(0, 20),
+          recentCategories: firestoreData.customCategories.slice(0, 30),
+          publicCategories: firestoreData.publicCategories.slice(0, 20)
+        }
+      });
+      
+      const data = result.data as any;
+      
+      // Handle executed actions from AI
+      if (data.executedActions && data.executedActions.length > 0) {
+        for (const action of data.executedActions) {
+          if (action.success) {
+            toast.success(`✅ ${action.summary}`);
+            // UI automatically updates via useFirestoreData hook
+          } else {
+            toast.error(`❌ Failed: ${action.error}`);
+          }
+        }
+      }
+      
+      // Add AI response to chat
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.reply,
+        timestamp: new Date(),
+        sessionId: currentSessionId,
+        actionItems: data.executedActions || [],
+        metadata: data.metadata
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+      
+      // Save message to Firestore for persistence
+      await saveMessageToFirestore(userMessage);
+      await saveMessageToFirestore(aiMessage);
+      
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error('Failed to send message. Please try again.');
+      
+      // Add error message to chat
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 2).toString(),
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error processing your request. Please try again.',
+        timestamp: new Date(),
+        sessionId: currentSessionId,
+        isError: true
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+      
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  return (
+    <div className="ai-chat-container">
+      <ChatHeader sessions={sessions} currentSessionId={currentSessionId} />
+      <MessageList messages={messages} isLoading={isLoading} />
+      <MessageInput onSendMessage={sendMessage} disabled={isLoading} />
+    </div>
+  );
+}</code>
+            </div>
+
+            <h3>Message Interface</h3>
+            <div class="code-block">
+<code>// ChatMessage interface - Structured AI conversation data
+interface ChatMessage {
+  id: string;                          // Unique message identifier
+  role: 'user' | 'assistant';          // Message sender type
+  content: string;                     // Message text content
+  timestamp: Date;                     // When message was sent
+  sessionId: string;                   // Session this message belongs to
+  actionItems?: any[];                 // AI-executed actions (CRUD operations)
+  isError?: boolean;                   // Flag for error messages
+  metadata?: {                         // AI enhancement metadata
+    dataCount?: number;                // Number of data points analyzed
+    filters?: string[];                // Applied filters or criteria
+    totalAmount?: number;              // Financial totals calculated
+    dateRange?: string;                // Date range analyzed
+  };
+  intentType?: 'DATA_RETRIEVAL' | 'ANALYSIS' | 'CRUD_OPERATION' | 'GENERAL_CHAT';
+  responseFormat?: 'RAW_DATA' | 'ANALYSIS' | 'CONFIRMATION' | 'CONVERSATIONAL';
+}
+
+// ChatSession interface - Organized conversation sessions
+interface ChatSession {
+  id: string;                          // Unique session identifier
+  title: string;                       // Session title (auto-generated from first message)
+  lastMessage: string;                 // Preview of last message
+  timestamp: Date;                     // Last activity timestamp
+  messageCount: number;                // Total messages in session
+  userId: string;                      // Session owner
+}</code>
+            </div>
+        </div>
+
+        <h2>Firebase Functions v2 Backend</h2>
+        <div class="section-card">
+            <h3>chatWithGemini Function</h3>
+            <p>The core Firebase Function that powers KautilyaAI Co-Pilot using Google Gemini 2.0 Flash.</p>
+            
+            <div class="code-block">
+<code>// Firebase Functions v2 - chatWithGemini function
+exports.chatWithGemini = onCall(async (data, context) => {
+  // Authenticate user
+  if (!context.auth) {
+    throw new HttpsError('unauthenticated', 'User must be authenticated');
+  }
+  
+  const { userId, message, sessionId, context: userContext } = data.data;
+  
+  try {
+    // Initialize Google Gemini 2.0 Flash
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    
+    // Build comprehensive context for AI
+    const contextPrompt = buildContextPrompt(userContext);
+    
+    // Create conversation prompt with financial context
+    const fullPrompt = `
+    You are KautilyaAI, an advanced financial co-pilot for Budget Buddy app.
+    You can perform CRUD operations on financial data through natural language.
+    
+    Current User Context:
+    ${contextPrompt}
+    
+    User Message: ${message}
+    
+    Instructions:
+    1. Understand the user's intent (create, read, update, delete financial data)
+    2. If CRUD operation requested, execute it using provided functions
+    3. Provide helpful, conversational responses
+    4. Include relevant insights and recommendations
+    5. Maintain context awareness from previous conversations
+    
+    Available Operations:
+    - Add expenses, budgets, categories, people
+    - Update existing financial records
+    - Delete financial data
+    - Query and analyze financial information
+    - Provide financial insights and recommendations
+    `;
+    
+    // Generate AI response
+    const result = await model.generateContent(fullPrompt);
+    const aiResponse = result.response.text();
+    
+    // Parse AI response for actions
+    const executedActions = await executeAIActions(aiResponse, userId, userContext);
+    
+    // Return structured response
+    return {
+      reply: aiResponse,
+      executedActions: executedActions,
+      metadata: {
+        timestamp: new Date().toISOString(),
+        sessionId: sessionId,
+        userId: userId
+      }
+    };
+    
+  } catch (error) {
+    console.error('Gemini API error:', error);
+    throw new HttpsError('internal', 'AI processing failed');
+  }
+});
+
+// Execute AI-determined actions on Firestore
+async function executeAIActions(aiResponse, userId, context) {
+  const actions = [];
+  
+  // Parse AI response for action indicators
+  // This is where the AI's natural language is converted to actual database operations
+  
+  // Example: If AI says "I've added a $50 coffee expense"
+  // Parse and execute: addExpenseToFirestore(userId, expenseData)
+  
+  return actions;
+}</code>
+            </div>
+
+            <h3>AI Capabilities</h3>
+            <ul>
+                <li><strong>Natural Language Understanding:</strong> Processes complex financial requests</li>
+                <li><strong>Intent Recognition:</strong> Identifies CRUD operations from conversation</li>
+                <li><strong>Context Integration:</strong> Uses current financial data for informed responses</li>
+                <li><strong>Action Execution:</strong> Directly modifies Firestore database</li>
+                <li><strong>Response Generation:</strong> Provides contextual, helpful replies</li>
+            </ul>
+        </div>
+
+        <h2>Conversation Examples</h2>
+        <div class="conversation-example">
+            <h3>Example 1: Adding an Expense</h3>
+            
+            <div class="user-message">
+                <strong>User:</strong> "I just bought coffee for $5.50 at Starbucks"
+            </div>
+            
+            <div class="ai-message">
+                <strong>KautilyaAI:</strong> "I've added your $5.50 coffee expense at Starbucks to your Food & Dining category for today. Your remaining budget for Food & Dining this month is $94.50. Would you like me to set up a recurring template for your regular coffee purchases?"
+            </div>
+            
+            <h4>Behind the Scenes:</h4>
+            <ul>
+                <li>AI recognizes expense creation intent</li>
+                <li>Extracts amount ($5.50) and category (Food & Dining)</li>
+                <li>Creates expense record in Firestore</li>
+                <li>Calculates remaining budget</li>
+                <li>Suggests follow-up action</li>
+            </ul>
+        </div>
+
+        <div class="conversation-example">
+            <h3>Example 2: Budget Analysis</h3>
+            
+            <div class="user-message">
+                <strong>User:</strong> "How am I doing with my monthly budget?"
+            </div>
+            
+            <div class="ai-message">
+                <strong>KautilyaAI:</strong> "Great question! Here's your budget overview for this month:
+                
+                📊 **Budget Performance:**
+                - Food & Dining: $105.50 / $200 (52.8% used) ✅
+                - Transportation: $85.00 / $150 (56.7% used) ✅  
+                - Entertainment: $120.00 / $100 (120% used) ⚠️
+                - Shopping: $45.00 / $300 (15% used) ✅
+                
+                You're over budget on Entertainment by $20. Consider reducing entertainment spending for the rest of the month. Your overall spending is 67% of total budget - you're on track!"
+            </div>
+            
+            <h4>Behind the Scenes:</h4>
+            <ul>
+                <li>AI queries all budget and expense data</li>
+                <li>Performs real-time calculations</li>
+                <li>Identifies over-budget categories</li>
+                <li>Provides actionable recommendations</li>
+                <li>Formats response with emojis and structure</li>
+            </ul>
+        </div>
+
+        <h2>Session Management</h2>
+        <div class="section-card">
+            <h3>Persistent Chat History</h3>
+            <p>KautilyaAI maintains organized conversation sessions with persistent history across app sessions.</p>
+            
+            <div class="code-block">
+<code>// Session management in AIChatPage
+const createNewSession = async () => {
+  const newSessionId = `session_${Date.now()}`;
+  const newSession: ChatSession = {
+    id: newSessionId,
+    title: 'New Conversation',
+    lastMessage: '',
+    timestamp: new Date(),
+    messageCount: 0,
+    userId: user.uid
+  };
+  
+  try {
+    // Save session to Firestore
+    await addDoc(
+      collection(db, 'chatSessions', user.uid, 'sessions'), 
+      newSession
+    );
+    
+    setCurrentSessionId(newSessionId);
+    setSessions(prev => [newSession, ...prev]);
+    setMessages([]); // Clear current messages
+    
+  } catch (error) {
+    console.error('Error creating session:', error);
+    toast.error('Failed to create new session');
+  }
+};
+
+// Load session history
+const loadSession = async (sessionId: string) => {
+  try {
+    setLoading(true);
+    
+    // Load messages for this session
+    const messagesQuery = query(
+      collection(db, 'chatMessages', sessionId, 'messages'),
+      orderBy('timestamp', 'asc')
+    );
+    
+    const messagesSnapshot = await getDocs(messagesQuery);
+    const sessionMessages = messagesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      timestamp: doc.data().timestamp.toDate()
+    })) as ChatMessage[];
+    
+    setMessages(sessionMessages);
+    setCurrentSessionId(sessionId);
+    
+  } catch (error) {
+    console.error('Error loading session:', error);
+    toast.error('Failed to load session');
+  } finally {
+    setLoading(false);
+  }
+};</code>
+            </div>
+
+            <h3>Session Features</h3>
+            <ul>
+                <li><strong>Auto-titling:</strong> Sessions automatically titled based on first message</li>
+                <li><strong>Message Persistence:</strong> All conversations saved to Firestore</li>
+                <li><strong>Session Switching:</strong> Easy navigation between conversation histories</li>
+                <li><strong>Context Continuity:</strong> AI remembers previous conversations in session</li>
+                <li><strong>Search Capability:</strong> Find specific conversations by content</li>
+            </ul>
+        </div>
+
+        <h2>Integration with Main App</h2>
+        <div class="section-card">
+            <h3>FloatingAIButton Component</h3>
+            <p><strong>Location:</strong> <code>src/components/FloatingAIButton.tsx</code></p>
+            
+            <div class="code-block">
+<code>// FloatingAIButton.tsx - AI navigation button
+function FloatingAIButton({ onClick }: FloatingAIButtonProps) {
+  const [isVisible, setIsVisible] = useState(true);
+  
+  return (
+    <Button
+      onClick={onClick}
+      className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg 
+                 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 
+                 hover:to-purple-700 text-white border-0"
+      size="sm"
+    >
+      <div className="flex flex-col items-center">
+        <Sparkles className="h-5 w-5" />
+        <span className="text-xs font-medium mt-0.5">AI</span>
+      </div>
+      
+      {/* BETA Badge */}
+      <div className="absolute -top-1 -right-1 bg-orange-500 text-white 
+                      text-xs px-1.5 py-0.5 rounded-full font-bold">
+        BETA
+      </div>
+    </Button>
+  );
+}</code>
+            </div>
+
+            <h3>Navigation Integration</h3>
+            <div class="code-block">
+<code>// App.tsx - AI tab integration
+function App() {
+  const [activeTab, setActiveTab] = useState('expenses');
+  
+  const handleAIButtonClick = () => {
+    setActiveTab('ai-chat'); // Switch to AI chat tab
+  };
+  
+  return (
+    <div className="app-container">
+      {/* Other app content */}
+      
+      {/* Floating AI button for quick access */}
+      <FloatingAIButton onClick={handleAIButtonClick} />
+      
+      {/* AI Chat tab content */}
+      {activeTab === 'ai-chat' && (
+        <AIChatPage />
+      )}
+    </div>
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="success">
+            <strong>KautilyaAI Co-Pilot Benefits:</strong>
+            <ul>
+                <li><strong>Natural Interaction:</strong> Talk to your finances like a human assistant</li>
+                <li><strong>Direct Action:</strong> Commands actually modify your financial data</li>
+                <li><strong>Context Awareness:</strong> Remembers your patterns and preferences</li>
+                <li><strong>Real-time Updates:</strong> Changes appear instantly in your app</li>
+                <li><strong>Intelligent Insights:</strong> Provides personalized financial guidance</li>
+                <li><strong>Session Continuity:</strong> Maintains conversation history and context</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>Development Notes:</strong>
+            <ul>
+                <li><strong>BETA Feature:</strong> KautilyaAI is experimental and continuously improving</li>
+                <li><strong>Error Handling:</strong> Implement robust error handling for AI operations</li>
+                <li><strong>Rate Limiting:</strong> Be mindful of Gemini API rate limits</li>
+                <li><strong>Data Validation:</strong> Validate AI-generated data before database operations</li>
+                <li><strong>Privacy:</strong> Ensure user data privacy in AI processing</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | KautilyaAI Co-Pilot Integration Guide</p>
+        </footer>
+    </div>
+</body>
+</html>

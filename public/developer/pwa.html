@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Features - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid #000;
+            background: #f9f9f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #000;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #000;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .code-block {
+            background: #000;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .inline-code {
+            background: #f0f0f0;
+            color: #000;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f5f5f5;
+            border: 1px solid #000;
+        }
+
+        .flow-box {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .warning {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .browser-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .browser-card {
+            background: #f5f5f5;
+            border: 1px solid #000;
+            padding: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .supported {
+            background: #000;
+            color: #fff;
+        }
+
+        .partial {
+            background: #666;
+            color: #fff;
+        }
+
+        .not-supported {
+            background: #ccc;
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Documentation</a>
+            <h1>PWA Features</h1>
+            <p class="subtitle">Progressive Web App capabilities, offline functionality, and installation</p>
+        </header>
+
+        <!-- PWA Overview -->
+        <section class="section">
+            <h2>PWA Architecture Overview</h2>
+            <p>Budget Buddy is built as a full Progressive Web App (PWA) with complete offline functionality, app-like installation, and native-like user experience.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h4>App Installation</h4>
+                    <p>Install Budget Buddy like a native app on any device with custom prompts and installation guides.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h4>Offline Functionality</h4>
+                    <p>Full offline support with service worker caching for essential app functionality.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h4>Background Sync</h4>
+                    <p>Automatic data synchronization when connectivity is restored.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Fast Loading</h4>
+                    <p>Optimized caching strategies for instant app loading and smooth performance.</p>
+                </div>
+            </div>
+
+            <h3>PWA Flow Architecture</h3>
+            <div class="flow-diagram">
+                <div class="flow-box">App Load</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Service Worker</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Cache Check</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Network/Cache</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">App Ready</div>
+            </div>
+        </section>
+
+        <!-- Service Worker -->
+        <section class="section">
+            <h2>Service Worker Implementation</h2>
+            <p>The service worker handles caching, offline functionality, and background sync. Located in <span class="inline-code">public/sw.js</span>.</p>
+
+            <h3>Service Worker Structure</h3>
+            <div class="code-block">
+// Service Worker registration and lifecycle
+const CACHE_NAME = 'budget-buddy-v1';
+const DYNAMIC_CACHE = 'budget-buddy-dynamic-v1';
+
+// Resources to cache immediately
+const urlsToCache = [
+  '/',
+  '/static/js/bundle.js',
+  '/static/css/main.css',
+  '/manifest.json',
+  // App shell resources
+];
+
+// Install event - cache essential resources
+self.addEventListener('install', (event) =&gt; {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) =&gt; {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+// Activate event - clean up old caches
+self.addEventListener('activate', (event) =&gt; {
+  event.waitUntil(
+    caches.keys().then((cacheNames) =&gt; {
+      return Promise.all(
+        cacheNames.map((cacheName) =&gt; {
+          if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', (event) =&gt; {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) =&gt; {
+        // Return cached version or fetch from network
+        return response || fetch(event.request);
+      }
+    )
+  );
+});
+            </div>
+
+            <h3>Caching Strategies</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Cache First Strategy</h4>
+                    <p>Used for static assets (CSS, JS, images)</p>
+                    <div class="code-block">
+// Cache first for static resources
+if (event.request.destination === 'script' || 
+    event.request.destination === 'style') {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response =&gt; response || fetch(event.request))
+  );
+}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>Network First Strategy</h4>
+                    <p>Used for API calls and dynamic content</p>
+                    <div class="code-block">
+// Network first for API calls
+if (event.request.url.includes('/api/')) {
+  event.respondWith(
+    fetch(event.request)
+      .then(response =&gt; {
+        // Cache successful responses
+        const responseClone = response.clone();
+        caches.open(DYNAMIC_CACHE)
+          .then(cache =&gt; cache.put(event.request, responseClone));
+        return response;
+      })
+      .catch(() =&gt; caches.match(event.request))
+  );
+}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PWA Manager -->
+        <section class="section">
+            <h2>PWA Management System</h2>
+            <p>The PWA manager handles installation prompts, updates, and PWA lifecycle events. Located in <span class="inline-code">src/lib/pwa.ts</span>.</p>
+
+            <h3>PWA Manager Architecture</h3>
+            <div class="code-block">
+// PWA Manager class structure
+class PWAManager {
+  private deferredPrompt: BeforeInstallPromptEvent | null = null;
+  private isInstalled = false;
+  private registration: ServiceWorkerRegistration | null = null;
+
+  constructor() {
+    this.init();
+  }
+
+  private async init() {
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      try {
+        this.registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker registered:', this.registration);
+        
+        // Check for updates
+        this.registration.addEventListener('updatefound', () =&gt; {
+          this.handleUpdate();
+        });
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+      }
+    }
+
+    // Setup installation prompt handling
+    this.setupInstallPrompt();
+    
+    // Check if already installed
+    this.checkInstallStatus();
+  }
+
+  private setupInstallPrompt() {
+    window.addEventListener('beforeinstallprompt', (e) =&gt; {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      
+      // Dispatch custom event for UI to show install prompt
+      window.dispatchEvent(new CustomEvent('pwa-install-available'));
+    });
+  }
+
+  async promptInstall(): Promise&lt;boolean&gt; {
+    if (!this.deferredPrompt) return false;
+
+    this.deferredPrompt.prompt();
+    
+    const { outcome } = await this.deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      window.dispatchEvent(new CustomEvent('pwa-install-completed'));
+      this.isInstalled = true;
+      return true;
+    }
+    
+    return false;
+  }
+
+  private handleUpdate() {
+    // Show update available notification
+    window.dispatchEvent(new CustomEvent('pwa-update-available'));
+  }
+
+  async updateApp() {
+    if (this.registration && this.registration.waiting) {
+      this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      window.location.reload();
+    }
+  }
+}
+
+// Export singleton instance
+export const pwaManager = new PWAManager();
+            </div>
+
+            <h3>PWA Event System</h3>
+            <div class="code-block">
+// Custom PWA events for UI integration
+interface PWAEvents {
+  'pwa-install-available': CustomEvent;
+  'pwa-install-completed': CustomEvent;
+  'pwa-update-available': CustomEvent;
+  'pwa-update-completed': CustomEvent;
+  'pwa-offline': CustomEvent;
+  'pwa-online': CustomEvent;
+}
+
+// Event listening pattern in components
+useEffect(() =&gt; {
+  const handleInstallAvailable = () =&gt; {
+    setCanInstall(true);
+    setShowPrompt(true);
+  };
+
+  const handleInstallCompleted = () =&gt; {
+    setCanInstall(false);
+    setIsInstalled(true);
+    setShowPrompt(false);
+    toast.success('App installed successfully!');
+  };
+
+  const handleUpdateAvailable = () =&gt; {
+    setUpdateAvailable(true);
+    toast.info('App update available!');
+  };
+
+  window.addEventListener('pwa-install-available', handleInstallAvailable);
+  window.addEventListener('pwa-install-completed', handleInstallCompleted);
+  window.addEventListener('pwa-update-available', handleUpdateAvailable);
+
+  return () =&gt; {
+    window.removeEventListener('pwa-install-available', handleInstallAvailable);
+    window.removeEventListener('pwa-install-completed', handleInstallCompleted);
+    window.removeEventListener('pwa-update-available', handleUpdateAvailable);
+  };
+}, []);
+            </div>
+        </section>
+
+        <!-- PWA Components -->
+        <section class="section">
+            <h2>PWA UI Components</h2>
+            <p>Budget Buddy includes comprehensive PWA UI components for installation prompts, update management, and connection status. Located in <span class="inline-code">src/components/PWAComponents.tsx</span>.</p>
+
+            <h3>PWA Components Architecture</h3>
+            <div class="code-block">
+// PWA Components structure
+export const PWAComponents: React.FC = () =&gt; {
+  return (
+    &lt;&gt;
+      &lt;InstallPrompt /&gt;
+      &lt;UpdatePrompt /&gt;
+      &lt;ConnectionStatus /&gt;
+    &lt;/&gt;
+  );
+};
+
+// Install Prompt Component
+const InstallPrompt: React.FC = () =&gt; {
+  const [canInstall, setCanInstall] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+
+  const handleInstall = async () =&gt; {
+    setIsInstalling(true);
+    try {
+      const success = await pwaManager.promptInstall();
+      if (!success) {
+        setShowManualGuide(true);
+      }
+    } finally {
+      setIsInstalling(false);
+    }
+  };
+
+  const handleDismiss = () =&gt; {
+    setShowPrompt(false);
+    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+  };
+
+  return (
+    &lt;AnimatePresence&gt;
+      {showPrompt && (
+        &lt;motion.div
+          className="fixed bottom-4 left-4 right-4 bg-white border-2 border-black p-4 rounded-lg shadow-lg z-50"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+        &gt;
+          &lt;div className="flex items-center justify-between"&gt;
+            &lt;div className="flex-1"&gt;
+              &lt;h4 className="font-semibold text-black"&gt;Install Budget Buddy&lt;/h4&gt;
+              &lt;p className="text-sm text-gray-600"&gt;
+                Get the full app experience with offline access
+              &lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div className="flex gap-2"&gt;
+              &lt;button
+                onClick={handleInstall}
+                disabled={isInstalling}
+                className="bg-black text-white px-4 py-2 rounded"
+              &gt;
+                {isInstalling ? 'Installing...' : 'Install'}
+              &lt;/button&gt;
+              &lt;button
+                onClick={handleDismiss}
+                className="text-gray-500 hover:text-black"
+              &gt;
+                ✕
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/motion.div&gt;
+      )}
+    &lt;/AnimatePresence&gt;
+  );
+};
+            </div>
+
+            <h3>Connection Status Component</h3>
+            <div class="code-block">
+// Connection Status for offline awareness
+const ConnectionStatus: React.FC = () =&gt; {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [showStatus, setShowStatus] = useState(false);
+
+  useEffect(() =&gt; {
+    const handleOnline = () =&gt; {
+      setIsOnline(true);
+      setShowStatus(true);
+      toast.success('Back online! Syncing data...');
+      
+      setTimeout(() =&gt; setShowStatus(false), 3000);
+    };
+
+    const handleOffline = () =&gt; {
+      setIsOnline(false);
+      setShowStatus(true);
+      toast.warning('You\'re offline. Changes will sync when reconnected.');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () =&gt; {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return (
+    &lt;AnimatePresence&gt;
+      {showStatus && (
+        &lt;motion.div
+          className={`fixed top-4 right-4 px-4 py-2 rounded-lg z-50 ${
+            isOnline 
+              ? 'bg-green-100 border border-green-400 text-green-800' 
+              : 'bg-yellow-100 border border-yellow-400 text-yellow-800'
+          }`}
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 100, opacity: 0 }}
+        &gt;
+          &lt;div className="flex items-center gap-2"&gt;
+            &lt;div className={`w-2 h-2 rounded-full ${
+              isOnline ? 'bg-green-500' : 'bg-yellow-500'
+            }`} /&gt;
+            &lt;span className="text-sm font-medium"&gt;
+              {isOnline ? 'Online' : 'Offline'}
+            &lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/motion.div&gt;
+      )}
+    &lt;/AnimatePresence&gt;
+  );
+};
+            </div>
+
+            <h3>Manual Installation Guide</h3>
+            <div class="code-block">
+// Browser-specific installation instructions
+const ManualInstallGuide: React.FC = () =&gt; {
+  const [userAgent, setUserAgent] = useState('');
+
+  useEffect(() =&gt; {
+    setUserAgent(navigator.userAgent);
+  }, []);
+
+  const getInstructions = (): { browser: string; steps: string[] } =&gt; {
+    if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
+      return {
+        browser: 'Chrome',
+        steps: [
+          'Click the three dots menu (⋮) in the top right',
+          'Select "Install Budget Buddy..."',
+          'Click "Install" in the popup'
+        ]
+      };
+    } else if (userAgent.includes('Safari')) {
+      return {
+        browser: 'Safari',
+        steps: [
+          'Tap the Share button (□↗) at the bottom',
+          'Scroll down and tap "Add to Home Screen"',
+          'Tap "Add" to install'
+        ]
+      };
+    } else if (userAgent.includes('Firefox')) {
+      return {
+        browser: 'Firefox',
+        steps: [
+          'Look for the install icon in the address bar',
+          'Click the install icon',
+          'Follow the installation prompt'
+        ]
+      };
+    }
+    
+    return {
+      browser: 'Your Browser',
+      steps: [
+        'Look for an install or "Add to Home Screen" option',
+        'This is usually in the browser menu or address bar',
+        'Follow your browser\'s installation process'
+      ]
+    };
+  };
+
+  const { browser, steps } = getInstructions();
+
+  return (
+    &lt;div className="bg-white border border-black p-4 rounded-lg"&gt;
+      &lt;h4 className="font-semibold mb-3"&gt;Install on {browser}&lt;/h4&gt;
+      &lt;ol className="space-y-2"&gt;
+        {steps.map((step, index) =&gt; (
+          &lt;li key={index} className="flex gap-3"&gt;
+            &lt;span className="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-sm"&gt;
+              {index + 1}
+            &lt;/span&gt;
+            &lt;span&gt;{step}&lt;/span&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ol&gt;
+    &lt;/div&gt;
+  );
+};
+            </div>
+        </section>
+
+        <!-- Manifest Configuration -->
+        <section class="section">
+            <h2>Web App Manifest</h2>
+            <p>The web app manifest defines how Budget Buddy appears when installed. Located in <span class="inline-code">public/manifest.json</span>.</p>
+
+            <h3>Manifest Configuration</h3>
+            <div class="code-block">
+{
+  "name": "Budget Buddy - Personal Finance Manager",
+  "short_name": "Budget Buddy",
+  "description": "Comprehensive personal finance management with AI-powered insights",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshots/dashboard-mobile.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  
+  "categories": ["finance", "productivity", "business"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  
+  "prefer_related_applications": false,
+  "related_applications": [],
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
+            </div>
+
+            <h3>Icon Requirements</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Standard Icons</h4>
+                    <ul class="list">
+                        <li>72x72, 96x96, 128x128, 144x144</li>
+                        <li>152x152, 192x192, 384x384, 512x512</li>
+                        <li>PNG format with transparency</li>
+                        <li>Maskable design for adaptive icons</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>Screenshots</h4>
+                    <ul class="list">
+                        <li>Desktop: 1280x720 (wide form factor)</li>
+                        <li>Mobile: 375x667 (narrow form factor)</li>
+                        <li>Showcase key app features</li>
+                        <li>Used in app store listings</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Browser Support -->
+        <section class="section">
+            <h2>Browser Support & Compatibility</h2>
+            <p>Budget Buddy PWA features are supported across modern browsers with varying levels of functionality.</p>
+
+            <div class="browser-grid">
+                <div class="browser-card">
+                    <h4>Chrome/Chromium <span class="status-badge supported">Full Support</span></h4>
+                    <ul class="list">
+                        <li>Installation prompts</li>
+                        <li>Service worker caching</li>
+                        <li>Background sync</li>
+                        <li>Push notifications</li>
+                        <li>App shortcuts</li>
+                    </ul>
+                </div>
+
+                <div class="browser-card">
+                    <h4>Safari <span class="status-badge partial">Partial Support</span></h4>
+                    <ul class="list">
+                        <li>Add to Home Screen</li>
+                        <li>Service worker (limited)</li>
+                        <li>Web app manifest</li>
+                        <li>No install prompts</li>
+                        <li>Limited background features</li>
+                    </ul>
+                </div>
+
+                <div class="browser-card">
+                    <h4>Firefox <span class="status-badge supported">Good Support</span></h4>
+                    <ul class="list">
+                        <li>Service worker support</li>
+                        <li>Web app manifest</li>
+                        <li>Installation available</li>
+                        <li>Cache management</li>
+                        <li>Offline functionality</li>
+                    </ul>
+                </div>
+
+                <div class="browser-card">
+                    <h4>Edge <span class="status-badge supported">Full Support</span></h4>
+                    <ul class="list">
+                        <li>Same as Chrome features</li>
+                        <li>Side panel support</li>
+                        <li>Enhanced installation</li>
+                        <li>Windows integration</li>
+                        <li>Store distribution</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ iOS Safari Limitations</h4>
+                <p>iOS Safari has limited PWA support. Users must manually add to Home Screen, and some features like push notifications and background sync are not available. The app still functions fully but with reduced PWA capabilities.</p>
+            </div>
+        </section>
+
+        <!-- Testing PWA Features -->
+        <section class="section">
+            <h2>Testing & Debugging PWA Features</h2>
+
+            <h3>Chrome DevTools Testing</h3>
+            <div class="code-block">
+// PWA testing checklist in Chrome DevTools
+
+// 1. Application Tab - Service Workers
+// - Check service worker registration
+// - Test offline functionality
+// - Clear cache and storage
+
+// 2. Application Tab - Manifest
+// - Validate manifest.json
+// - Check icon sizes and formats
+// - Test installation eligibility
+
+// 3. Lighthouse PWA Audit
+// - Run PWA audit for compliance score
+// - Check performance metrics
+// - Validate installability criteria
+
+// 4. Network Tab - Offline Testing
+// - Enable "Offline" checkbox
+// - Verify app functionality without network
+// - Test cache fallbacks
+            </div>
+
+            <h3>PWA Testing Commands</h3>
+            <div class="code-block">
+// Browser console commands for PWA testing
+
+// Check service worker registration
+navigator.serviceWorker.getRegistrations().then(console.log);
+
+// Test installation eligibility
+window.addEventListener('beforeinstallprompt', (e) =&gt; {
+  console.log('Install prompt available');
+});
+
+// Check if already installed
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  console.log('PWA is installed and running in standalone mode');
+}
+
+// Test network status
+console.log('Online status:', navigator.onLine);
+
+// Check cache storage
+caches.keys().then(console.log);
+
+// Clear all caches (for testing)
+caches.keys().then(names =&gt; {
+  names.forEach(name =&gt; caches.delete(name));
+});
+            </div>
+
+            <h3>PWA Debug Files</h3>
+            <p>Budget Buddy includes debug files for testing PWA functionality:</p>
+            <ul class="list">
+                <li><span class="inline-code">public/pwa-debug.html</span> - PWA feature testing interface</li>
+                <li><span class="inline-code">public/install-guide.html</span> - Installation instruction guide</li>
+                <li><span class="inline-code">pwa-test.html</span> - Development testing page</li>
+            </ul>
+
+            <div class="warning">
+                <h4>💡 Development Tips</h4>
+                <p>During development, use Chrome DevTools to simulate PWA installation and test offline functionality. Remember to test on actual mobile devices for the most accurate experience, especially on iOS Safari.</p>
+            </div>
+        </section>
+
+        <!-- Deployment Considerations -->
+        <section class="section">
+            <h2>PWA Deployment Considerations</h2>
+
+            <h3>HTTPS Requirement</h3>
+            <div class="code-block">
+// PWA requires HTTPS in production
+// Service workers only work over HTTPS (except localhost)
+
+// Vite configuration for PWA
+export default defineConfig({
+  plugins: [
+    react(),
+    // PWA plugin configuration
+  ],
+  build: {
+    rollupOptions: {
+      // Ensure service worker is included in build
+    }
+  },
+  server: {
+    // Development server configuration
+    https: false // HTTPS not required for localhost
+  }
+});
+            </div>
+
+            <h3>Cache Management Strategy</h3>
+            <div class="code-block">
+// Cache versioning strategy for updates
+const CACHE_VERSION = 'v1.0.0';
+const CACHE_NAME = `budget-buddy-${CACHE_VERSION}`;
+
+// Automatic cache cleanup on new deployments
+self.addEventListener('activate', event =&gt; {
+  event.waitUntil(
+    caches.keys().then(cacheNames =&gt; {
+      return Promise.all(
+        cacheNames
+          .filter(cacheName =&gt; cacheName.startsWith('budget-buddy-'))
+          .filter(cacheName =&gt; cacheName !== CACHE_NAME)
+          .map(cacheName =&gt; caches.delete(cacheName))
+      );
+    })
+  );
+});
+
+// Update notification system
+self.addEventListener('message', event =&gt; {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+            </div>
+
+            <h3>Performance Optimization</h3>
+            <ul class="list">
+                <li>Optimize icon sizes and formats (WebP where supported)</li>
+                <li>Implement selective caching for critical resources only</li>
+                <li>Use lazy loading for non-critical features</li>
+                <li>Minimize service worker script size</li>
+                <li>Test PWA performance with Lighthouse audits</li>
+            </ul>
+
+            <div class="warning">
+                <h4>⚠️ Production Checklist</h4>
+                <p>Before deploying PWA features to production: verify HTTPS configuration, test installation flow on multiple devices, validate manifest.json, test offline functionality, and run Lighthouse PWA audit.</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

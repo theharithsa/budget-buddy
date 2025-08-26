@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Components - Budget Buddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #000;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #000;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .component-card {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .component-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .component-type {
+            background: #000;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.3rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .props-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+        }
+
+        .props-table th,
+        .props-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+        }
+
+        .props-table th {
+            background: #000;
+            color: white;
+            font-weight: 600;
+        }
+
+        .props-table td code {
+            background: #f8f8f8;
+            color: #333;
+        }
+
+        .category-section {
+            background: #f0f8ff;
+            border-left: 4px solid #0066cc;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0.3rem;
+        }
+
+        .category-section h3 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .quick-ref {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .quick-ref h4 {
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .quick-ref ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quick-ref li {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .quick-ref li:before {
+            content: "→ ";
+            color: #000;
+            font-weight: bold;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #fdcb6e;
+            padding: 1rem;
+            border-radius: 0.3rem;
+            margin: 1rem 0;
+        }
+
+        .warning strong {
+            color: #b8860b;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #ccc;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .component-card {
+                padding: 1.5rem;
+            }
+            
+            .component-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .props-table {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="./index.html" class="back-link">← Back to Documentation</a>
+            <h1>⚛️ React Components</h1>
+            <p>Detailed documentation of all React components with props, interfaces, and usage examples</p>
+        </header>
+
+        <h2>Component Categories Overview</h2>
+        <div class="component-grid">
+            <div class="quick-ref">
+                <h4>🏗️ Layout Components</h4>
+                <ul>
+                    <li>App.tsx - Main application wrapper</li>
+                    <li>AppHeader.tsx - Application header</li>
+                    <li>Navigation.tsx - Sidebar navigation</li>
+                    <li>BottomNavigation.tsx - Mobile navigation</li>
+                    <li>Footer.tsx - Application footer</li>
+                </ul>
+            </div>
+
+            <div class="quick-ref">
+                <h4>💰 Financial Components</h4>
+                <ul>
+                    <li>ExpenseCard.tsx - Expense display</li>
+                    <li>AddExpenseModal.tsx - Add expense form</li>
+                    <li>EditExpenseModal.tsx - Edit expense form</li>
+                    <li>BudgetManager.tsx - Budget management</li>
+                    <li>BudgetAnalyzer.tsx - AI budget analysis</li>
+                </ul>
+            </div>
+
+            <div class="quick-ref">
+                <h4>📊 Analytics Components</h4>
+                <ul>
+                    <li>Dashboard.tsx - Main dashboard</li>
+                    <li>GamificationSystem.tsx - Achievements</li>
+                    <li>AdvancedCharts.tsx - Chart visualizations</li>
+                    <li>SpendingBehaviorInsights.tsx - AI insights</li>
+                </ul>
+            </div>
+
+            <div class="quick-ref">
+                <h4>🤖 AI Components</h4>
+                <ul>
+                    <li>AIChatPage.tsx - KautilyaAI interface</li>
+                    <li>FloatingAIButton.tsx - AI navigation</li>
+                </ul>
+            </div>
+
+            <div class="quick-ref">
+                <h4>🔧 Utility Components</h4>
+                <ul>
+                    <li>CategoryManager.tsx - Category management</li>
+                    <li>PeopleManager.tsx - People management</li>
+                    <li>TimeframePicker.tsx - Date selection</li>
+                    <li>PWAComponents.tsx - PWA features</li>
+                </ul>
+            </div>
+
+            <div class="quick-ref">
+                <h4>🎨 UI Components</h4>
+                <ul>
+                    <li>ui/button.tsx - Button component</li>
+                    <li>ui/card.tsx - Card component</li>
+                    <li>ui/dialog.tsx - Modal dialogs</li>
+                    <li>ui/input.tsx - Input fields</li>
+                    <li>ui/... - Radix UI library</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>Core Application Components</h2>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">App.tsx</div>
+                <div class="component-type">Main Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/App.tsx</code></p>
+            <p><strong>Purpose:</strong> Root application component that orchestrates global state, authentication, and navigation</p>
+            
+            <h4>Key Responsibilities</h4>
+            <ul>
+                <li>Authentication state management and routing</li>
+                <li>Global application state (filters, search, view modes)</li>
+                <li>Tab navigation between different features</li>
+                <li>Firebase data integration through useFirestoreData hook</li>
+                <li>PWA initialization and management</li>
+            </ul>
+
+            <h4>State Management</h4>
+            <div class="code-block">
+<code>// App.tsx - Global state management
+function App() {
+  const { user, loading: authLoading } = useAuth();
+  const {
+    expenses, budgets, templates,           // Core financial data
+    customCategories, publicCategories,    // Category data
+    customPeople, publicPeople,            // People data
+    addExpense, updateExpense, deleteExpense // CRUD operations
+  } = useFirestoreData();
+
+  // Global application state
+  const [activeTab, setActiveTab] = useState('expenses');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [peopleFilter, setPeopleFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+    const saved = localStorage.getItem('finbuddy-view-mode');
+    return (saved as 'list' | 'grid') || 'grid';
+  });
+
+  // Persist view mode changes
+  useEffect(() => {
+    localStorage.setItem('finbuddy-view-mode', viewMode);
+  }, [viewMode]);
+
+  // Authentication gate
+  if (authLoading) return <LoadingSpinner />;
+  if (!user) return <LoginPage />;
+
+  return (
+    <div className="app-container">
+      <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
+      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <MainContent />
+      &lt;FloatingAIButton onClick={() =&gt; setActiveTab('ai-chat')} /&gt;
+      <PWAComponents />
+    </div>
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">Dashboard.tsx</div>
+                <div class="component-type">Analytics Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/Dashboard.tsx</code></p>
+            <p><strong>Purpose:</strong> Advanced dashboard with tab-based navigation and ApexCharts integration</p>
+            
+            <h4>Props Interface</h4>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Prop</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>expenses</code></td>
+                        <td><code>Expense[]</code></td>
+                        <td>Yes</td>
+                        <td>Array of user expenses for chart visualization</td>
+                    </tr>
+                    <tr>
+                        <td><code>budgets</code></td>
+                        <td><code>Budget[]</code></td>
+                        <td>Yes</td>
+                        <td>Array of user budgets for analysis</td>
+                    </tr>
+                    <tr>
+                        <td><code>customPeople</code></td>
+                        <td><code>Person[]</code></td>
+                        <td>Yes</td>
+                        <td>User's custom people for expense attribution</td>
+                    </tr>
+                    <tr>
+                        <td><code>publicPeople</code></td>
+                        <td><code>Person[]</code></td>
+                        <td>Yes</td>
+                        <td>Public people data for comprehensive analysis</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Critical Implementation Pattern</h4>
+            <div class="code-block">
+<code>// Dashboard.tsx - Chart lifecycle management (CRITICAL for ApexCharts)
+function Dashboard({ expenses, budgets, customPeople, publicPeople }: DashboardProps) {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [chartKey, setChartKey] = useState(0);
+  
+  // Chart instance refs for proper cleanup
+  const areaChartInstance = useRef<ApexCharts | null>(null);
+  const columnChartInstance = useRef<ApexCharts | null>(null);
+
+  // CRITICAL: Tab switching pattern for charts
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // Force chart re-render when returning to overview - REQUIRED for ApexCharts
+    if (value === 'overview') {
+      setChartKey(prev => prev + 1);
+    }
+  };
+
+  // Chart lifecycle management
+  useEffect(() => {
+    // Clean up existing chart instances
+    if (areaChartInstance.current) {
+      areaChartInstance.current.destroy();
+      areaChartInstance.current = null;
+    }
+    
+    // Re-initialize charts when tab changes to overview
+    if (activeTab === 'overview' && areaChartRef.current) {
+      const chartOptions = {
+        chart: { type: 'area', height: 300 },
+        series: chartData,
+        // ... other chart configuration
+      };
+      
+      areaChartInstance.current = new ApexCharts(areaChartRef.current, chartOptions);
+      areaChartInstance.current.render();
+    }
+  }, [activeTab, chartKey, expenses, budgets]);
+
+  return (
+    <Tabs value={activeTab} onValueChange={handleTabChange}>
+      <TabsList>
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="advanced">Advanced</TabsTrigger>
+        <TabsTrigger value="behavior">Behavior</TabsTrigger>
+        <TabsTrigger value="achievements">Achievements</TabsTrigger>
+        <TabsTrigger value="budgets">Budgets</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="overview">
+        {/* Chart containers MUST have unique keys for re-rendering */}
+        <div key={`area-chart-${chartKey}`} ref={areaChartRef} className="w-full h-64" />
+        <div key={`column-chart-${chartKey}`} ref={columnChartRef} className="w-full h-64" />
+      </TabsContent>
+      
+      {/* Other tab contents */}
+    </Tabs>
+  );
+}</code>
+            </div>
+
+            <div class="warning">
+                <strong>Critical Note:</strong> Never skip the chartKey increment when switching tabs! Charts will disappear without proper lifecycle management. This is essential for ApexCharts in React environments.
+            </div>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">AIChatPage.tsx</div>
+                <div class="component-type">AI Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/AIChatPage.tsx</code></p>
+            <p><strong>Purpose:</strong> KautilyaAI Co-Pilot interface with conversational CRUD operations</p>
+            
+            <h4>Component Structure</h4>
+            <div class="code-block">
+<code>// AIChatPage.tsx - AI chat interface
+function AIChatPage() {
+  // Chat state management
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string>('');
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Firebase and auth integration
+  const { user } = useAuth();
+  const firestoreData = useFirestoreData();
+  
+  // Firebase Functions integration
+  const chatWithGemini = httpsCallable(functions, 'chatWithGemini');
+  
+  const sendMessage = async (messageText: string) => {
+    if (!user || !messageText.trim()) return;
+    
+    try {
+      // Call AI with comprehensive context
+      const result = await chatWithGemini({
+        userId: user.uid,
+        message: messageText.trim(),
+        sessionId: currentSessionId,
+        context: {
+          recentExpenses: firestoreData.expenses.slice(0, 20),
+          activeBudgets: firestoreData.budgets.filter(b => b.isActive !== false),
+          customPeople: firestoreData.customPeople.slice(0, 50),
+          publicPeople: firestoreData.publicPeople.slice(0, 20)
+        }
+      });
+      
+      // Handle AI response and executed actions
+      const data = result.data as any;
+      
+      if (data.executedActions && data.executedActions.length > 0) {
+        for (const action of data.executedActions) {
+          if (action.success) {
+            toast.success(`✅ ${action.summary}`);
+          } else {
+            toast.error(`❌ Failed: ${action.error}`);
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error('Failed to send message');
+    }
+  };
+
+  return (
+    <div className="ai-chat-container">
+      <ChatHeader sessions={sessions} currentSessionId={currentSessionId} />
+      <MessageList messages={messages} isLoading={isLoading} />
+      <MessageInput onSendMessage={sendMessage} disabled={isLoading} />
+    </div>
+  );
+}</code>
+            </div>
+
+            <h4>Key Features</h4>
+            <ul>
+                <li><strong>Session Management:</strong> Persistent chat history with organized sessions</li>
+                <li><strong>Real-time CRUD:</strong> AI commands directly modify Firebase data</li>
+                <li><strong>Context Awareness:</strong> AI has access to user's financial data</li>
+                <li><strong>Error Handling:</strong> Robust error handling with user feedback</li>
+                <li><strong>UI Synchronization:</strong> Immediate updates via useFirestoreData hook</li>
+            </ul>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">ExpenseCard.tsx</div>
+                <div class="component-type">Display Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/ExpenseCard.tsx</code></p>
+            <p><strong>Purpose:</strong> Individual expense display component with list/grid view support</p>
+            
+            <h4>Props Interface</h4>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Prop</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>expense</code></td>
+                        <td><code>Expense</code></td>
+                        <td>Yes</td>
+                        <td>Expense object with all financial data</td>
+                    </tr>
+                    <tr>
+                        <td><code>viewMode</code></td>
+                        <td><code>'list' | 'grid'</code></td>
+                        <td>Yes</td>
+                        <td>Display mode for responsive layout</td>
+                    </tr>
+                    <tr>
+                        <td><code>allPeople</code></td>
+                        <td><code>Person[]</code></td>
+                        <td>Yes</td>
+                        <td>Combined custom and public people data</td>
+                    </tr>
+                    <tr>
+                        <td><code>onEdit</code></td>
+                        <td><code>(expense: Expense) => void</code></td>
+                        <td>Yes</td>
+                        <td>Callback function for editing expense</td>
+                    </tr>
+                    <tr>
+                        <td><code>onDelete</code></td>
+                        <td><code>(expenseId: string) => void</code></td>
+                        <td>Yes</td>
+                        <td>Callback function for deleting expense</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Implementation Pattern</h4>
+            <div class="code-block">
+<code>// ExpenseCard.tsx - View mode support
+interface ExpenseCardProps {
+  expense: Expense;
+  viewMode: 'list' | 'grid';
+  allPeople: Person[];
+  onEdit: (expense: Expense) => void;
+  onDelete: (expenseId: string) => void;
+}
+
+function ExpenseCard({ expense, viewMode, allPeople, onEdit, onDelete }: ExpenseCardProps) {
+  // Get people data for this expense using getAllPeople pattern
+  const selectedPeopleData = expense.peopleIds?.map(id => 
+    allPeople.find(person => person.id === id)
+  ).filter(Boolean) || [];
+
+  // Conditional styling based on view mode
+  const cardClassName = viewMode === 'grid' 
+    ? "bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+    : "bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between";
+
+  return (
+    <Card className={cardClassName}>
+      <CardContent className={viewMode === 'list' ? "flex-1 p-0" : "p-0"}>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-gray-900">{expense.description}</h3>
+          <span className="text-lg font-bold text-green-600">
+            {formatCurrency(expense.amount)}
+          </span>
+        </div>
+        
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            {expense.category}
+          </span>
+          <span>{formatDate(expense.date)}</span>
+        </div>
+
+        {/* People attribution display */}
+        {selectedPeopleData.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {selectedPeopleData.map(person => (
+              <Badge 
+                key={person.id} 
+                variant="outline"
+                style={{ 
+                  backgroundColor: person.color,
+                  borderColor: person.color,
+                  color: '#fff'
+                }}
+              >
+                {person.icon} {person.name}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Receipt indicator */}
+        {expense.receiptUrl && (
+          <div className="flex items-center gap-1 text-xs text-gray-500">
+            <FileText className="h-3 w-3" />
+            <span>Receipt attached</span>
+          </div>
+        )}
+      </CardContent>
+
+      {/* Action buttons */}
+      <div className="flex gap-2 mt-2">
+        <Button variant="outline" size="sm" onClick={() => onEdit(expense)}>
+          <Edit2 className="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => onDelete(expense.id)}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </Card>
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">PeopleManager.tsx</div>
+                <div class="component-type">Management Component</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/PeopleManager.tsx</code></p>
+            <p><strong>Purpose:</strong> People management with public/private sharing capabilities</p>
+            
+            <h4>Key Features</h4>
+            <ul>
+                <li><strong>CRUD Operations:</strong> Create, read, update, delete people records</li>
+                <li><strong>Public/Private Sharing:</strong> People can be shared publicly or kept private</li>
+                <li><strong>Icon & Color Selection:</strong> Full customization with predefined options</li>
+                <li><strong>Relationship Types:</strong> Categorize people by relationship (Family, Friend, etc.)</li>
+                <li><strong>Adoption System:</strong> Users can adopt public people to their collection</li>
+            </ul>
+
+            <h4>Usage Pattern</h4>
+            <div class="code-block">
+<code>// PeopleManager.tsx - People data management
+function PeopleManager({ 
+  customPeople, 
+  publicPeople, 
+  onAddPerson, 
+  onUpdatePerson, 
+  onDeletePerson 
+}: PeopleManagerProps) {
+  const [selectedTab, setSelectedTab] = useState('my-people');
+  const [editingPerson, setEditingPerson] = useState<Person | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+
+  // Get all people using the standard pattern
+  const allPeople = getAllPeople([...customPeople, ...publicPeople]);
+
+  const handleAddPerson = async (personData: Omit<Person, 'id'>) => {
+    try {
+      await onAddPerson(personData);
+      setShowAddDialog(false);
+      toast.success('Person added successfully!');
+    } catch (error) {
+      console.error('Error adding person:', error);
+      toast.error('Failed to add person');
+    }
+  };
+
+  const handleAdoptPerson = async (person: Person) => {
+    try {
+      await adoptPublicPerson(person.id);
+      toast.success(`${person.name} added to your people!`);
+    } catch (error) {
+      console.error('Error adopting person:', error);
+      toast.error('Failed to adopt person');
+    }
+  };
+
+  return (
+    <div className="people-manager">
+      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+        <TabsList>
+          <TabsTrigger value="my-people">My People</TabsTrigger>
+          <TabsTrigger value="public-people">Public People</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="my-people">
+          <PersonList 
+            people={customPeople}
+            onEdit={setEditingPerson}
+            onDelete={onDeletePerson}
+            showActions={true}
+          />
+        </TabsContent>
+        
+        <TabsContent value="public-people">
+          <PersonList 
+            people={publicPeople}
+            onAdopt={handleAdoptPerson}
+            showActions={false}
+          />
+        </TabsContent>
+      </Tabs>
+      
+      {/* Add/Edit dialogs */}
+      <PersonDialog 
+        isOpen={showAddDialog || !!editingPerson}
+        person={editingPerson}
+        onSave={editingPerson ? onUpdatePerson : handleAddPerson}
+        onClose={() => {
+          setShowAddDialog(false);
+          setEditingPerson(null);
+        }}
+      />
+    </div>
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3>Critical Component Patterns</h3>
+            
+            <h4>1. People Data Consistency Pattern</h4>
+            <div class="code-block">
+<code>// ALWAYS use getAllPeople() for consistent people data across components
+const allPeople = getAllPeople([...customPeople, ...publicPeople]);
+const selectedPeopleData = selectedPeople.map(id => 
+  allPeople.find(person => person.id === id)
+).filter(Boolean);</code>
+            </div>
+
+            <h4>2. Firebase Authentication Check Pattern</h4>
+            <div class="code-block">
+<code>// EVERY Firebase operation must start with this check
+const handleFirebaseOperation = async () => {
+  if (!user) {
+    toast.error("Please sign in to continue");
+    return;
+  }
+  
+  try {
+    // Firebase operation here
+    await someFirebaseOperation();
+    toast.success("Operation completed");
+  } catch (error) {
+    console.error('Operation failed:', error);
+    toast.error("Operation failed");
+  }
+};</code>
+            </div>
+
+            <h4>3. View Mode Support Pattern</h4>
+            <div class="code-block">
+<code>// Component with view mode support
+interface ComponentProps {
+  viewMode: 'list' | 'grid';
+  // ... other props
+}
+
+// Conditional rendering based on view mode
+<div className={
+  viewMode === 'grid' 
+    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
+    : "space-y-4"
+}>
+  {items.map(item => (
+    <ItemComponent key={item.id} item={item} viewMode={viewMode} />
+  ))}
+</div></code>
+            </div>
+        </div>
+
+        <h2>UI Component Library</h2>
+        <div class="component-card">
+            <h3>Radix UI Integration</h3>
+            <p><strong>Location:</strong> <code>src/components/ui/</code></p>
+            <p>Budget Buddy uses Radix UI primitives with Tailwind CSS styling for consistent, accessible components.</p>
+            
+            <h4>Core UI Components</h4>
+            <ul>
+                <li><strong>Button:</strong> <code>ui/button.tsx</code> - Primary/secondary/outline button variants</li>
+                <li><strong>Card:</strong> <code>ui/card.tsx</code> - Container component with header/content/footer</li>
+                <li><strong>Dialog:</strong> <code>ui/dialog.tsx</code> - Modal dialogs with overlay</li>
+                <li><strong>Input:</strong> <code>ui/input.tsx</code> - Text input with validation states</li>
+                <li><strong>Select:</strong> <code>ui/select.tsx</code> - Dropdown selection component</li>
+                <li><strong>Tabs:</strong> <code>ui/tabs.tsx</code> - Tab navigation component</li>
+                <li><strong>Sheet:</strong> <code>ui/sheet.tsx</code> - Slide-out panel component</li>
+                <li><strong>Badge:</strong> <code>ui/badge.tsx</code> - Small label component</li>
+                <li><strong>Avatar:</strong> <code>ui/avatar.tsx</code> - User profile image component</li>
+                <li><strong>Scroll Area:</strong> <code>ui/scroll-area.tsx</code> - Custom scrollbar component</li>
+            </ul>
+
+            <h4>Usage Example</h4>
+            <div class="code-block">
+<code>// Using UI components in feature components
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
+function FeatureComponent() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Component Title</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Content goes here</p>
+        <Button variant="primary" onClick={handleClick}>
+          Action Button
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>Component Development Best Practices:</strong>
+            <ul>
+                <li><strong>TypeScript Interfaces:</strong> Always define proper prop interfaces for components</li>
+                <li><strong>Error Boundaries:</strong> Use React Error Boundary for component-level error handling</li>
+                <li><strong>View Mode Support:</strong> Components should accept viewMode prop for responsive rendering</li>
+                <li><strong>Authentication Checks:</strong> Verify user authentication before Firebase operations</li>
+                <li><strong>Loading States:</strong> Implement proper loading and error states for better UX</li>
+                <li><strong>Accessibility:</strong> Use semantic HTML and ARIA labels for screen readers</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Budget Buddy Developer Documentation | React Components Guide</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
+
+
