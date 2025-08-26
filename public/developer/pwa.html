@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA Features - Budget Buddy Developer Docs</title>
+    <title>PWA Features - FinBuddy Developer Docs</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -275,13 +275,13 @@
         <!-- PWA Overview -->
         <section class="section">
             <h2>PWA Architecture Overview</h2>
-            <p>Budget Buddy is built as a full Progressive Web App (PWA) with complete offline functionality, app-like installation, and native-like user experience.</p>
+            <p>FinBuddy is built as a full Progressive Web App (PWA) with complete offline functionality, app-like installation, and native-like user experience.</p>
 
             <div class="feature-grid">
                 <div class="feature-card">
                     <div class="feature-icon">📱</div>
                     <h4>App Installation</h4>
-                    <p>Install Budget Buddy like a native app on any device with custom prompts and installation guides.</p>
+                    <p>Install FinBuddy like a native app on any device with custom prompts and installation guides.</p>
                 </div>
 
                 <div class="feature-card">
@@ -546,7 +546,7 @@ useEffect(() =&gt; {
         <!-- PWA Components -->
         <section class="section">
             <h2>PWA UI Components</h2>
-            <p>Budget Buddy includes comprehensive PWA UI components for installation prompts, update management, and connection status. Located in <span class="inline-code">src/components/PWAComponents.tsx</span>.</p>
+            <p>FinBuddy includes comprehensive PWA UI components for installation prompts, update management, and connection status. Located in <span class="inline-code">src/components/PWAComponents.tsx</span>.</p>
 
             <h3>PWA Components Architecture</h3>
             <div class="code-block">
@@ -595,7 +595,7 @@ const InstallPrompt: React.FC = () =&gt; {
         &gt;
           &lt;div className="flex items-center justify-between"&gt;
             &lt;div className="flex-1"&gt;
-              &lt;h4 className="font-semibold text-black"&gt;Install Budget Buddy&lt;/h4&gt;
+              &lt;h4 className="font-semibold text-black"&gt;Install FinBuddy&lt;/h4&gt;
               &lt;p className="text-sm text-gray-600"&gt;
                 Get the full app experience with offline access
               &lt;/p&gt;
@@ -698,7 +698,7 @@ const ManualInstallGuide: React.FC = () =&gt; {
         browser: 'Chrome',
         steps: [
           'Click the three dots menu (⋮) in the top right',
-          'Select "Install Budget Buddy..."',
+          'Select "Install FinBuddy..."',
           'Click "Install" in the popup'
         ]
       };
@@ -756,13 +756,13 @@ const ManualInstallGuide: React.FC = () =&gt; {
         <!-- Manifest Configuration -->
         <section class="section">
             <h2>Web App Manifest</h2>
-            <p>The web app manifest defines how Budget Buddy appears when installed. Located in <span class="inline-code">public/manifest.json</span>.</p>
+            <p>The web app manifest defines how FinBuddy appears when installed. Located in <span class="inline-code">public/manifest.json</span>.</p>
 
             <h3>Manifest Configuration</h3>
             <div class="code-block">
 {
-  "name": "Budget Buddy - Personal Finance Manager",
-  "short_name": "Budget Buddy",
+  "name": "FinBuddy - Personal Finance Manager",
+  "short_name": "FinBuddy",
   "description": "Comprehensive personal finance management with AI-powered insights",
   "start_url": "/",
   "display": "standalone",
@@ -878,7 +878,7 @@ const ManualInstallGuide: React.FC = () =&gt; {
         <!-- Browser Support -->
         <section class="section">
             <h2>Browser Support & Compatibility</h2>
-            <p>Budget Buddy PWA features are supported across modern browsers with varying levels of functionality.</p>
+            <p>FinBuddy PWA features are supported across modern browsers with varying levels of functionality.</p>
 
             <div class="browser-grid">
                 <div class="browser-card">
@@ -991,7 +991,7 @@ caches.keys().then(names =&gt; {
             </div>
 
             <h3>PWA Debug Files</h3>
-            <p>Budget Buddy includes debug files for testing PWA functionality:</p>
+            <p>FinBuddy includes debug files for testing PWA functionality:</p>
             <ul class="list">
                 <li><span class="inline-code">public/pwa-debug.html</span> - PWA feature testing interface</li>
                 <li><span class="inline-code">public/install-guide.html</span> - Installation instruction guide</li>

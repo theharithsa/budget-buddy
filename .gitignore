@@ -15,9 +15,6 @@ dist-ssr
 *.local
 
 # Allow documentation files but ignore other public folder contents
-!public/docs/
-!public/developer/
-public/
 
 # Editor directories and files
 .vscode/*
