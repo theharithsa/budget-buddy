@@ -17,46 +17,37 @@ jobs:
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}"]'
-      
       - name: Checkout repository
         uses: actions/checkout@v4
-      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
       - name: Install dependencies
         run: npm ci
-      
       - name: Run linting
         run: npm run lint
-      
       - name: Run unit tests
         run: npm run test:unit
-      
       - name: Run integration tests
         run: npm run test:integration
-        
       - name: Generate test coverage
         run: npm run test:coverage
-      
       - name: Upload coverage to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
-      
       - name: Test build process
         run: npm run build
-      
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: dist/
-
+    permissions:
+      actions: read
   build_and_deploy:
     name: Build and Deploy to Production
     needs: test
@@ -69,31 +60,25 @@ jobs:
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
-      
       - name: Checkout repository
         uses: actions/checkout@v4
-      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
       - name: Install dependencies
         run: npm ci
-      
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: dist/
-      
       - name: Verify build artifacts
         run: |
           echo "Verifying build artifacts..."
           ls -la dist/
           echo "Build verification complete"
-      
       - name: Deploy to Firebase Hosting
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -102,7 +87,6 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           channelId: live
           projectId: finbuddy-2025
-      
       - name: Post-deployment verification
         run: |
           echo "Deployment completed successfully"
