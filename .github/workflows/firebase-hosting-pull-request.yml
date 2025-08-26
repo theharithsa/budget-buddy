@@ -33,11 +33,11 @@ jobs:
       - name: 📦 Install Dependencies
         run: npm ci
       
-      - name: 🔍 Code Quality - ESLint Validation
-        run: npm run lint
+      - name: 🔍 Code Quality - ESLint Validation (CI-Friendly)
+        run: npm run lint:ci
       
-      - name: 🧪 Unit Tests - Component Validation
-        run: npm run test:unit
+      - name: 🧪 Unit Tests - Component Validation (CI-Friendly)
+        run: npm run test:ci:unit
       
       - name: 🔗 Integration Tests - System Validation
         run: npm run test:integration

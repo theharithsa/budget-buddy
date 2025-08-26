@@ -31,11 +31,11 @@ jobs:
       - name: 📦 Install Project Dependencies
         run: npm ci
       
-      - name: 🔍 Code Quality - ESLint Analysis
-        run: npm run lint
+      - name: 🔍 Code Quality - ESLint Analysis (CI-Friendly)
+        run: npm run lint:ci
       
-      - name: 🧪 Unit Tests - Component & Utility Testing
-        run: npm run test:unit
+      - name: 🧪 Unit Tests - Component & Utility Testing (CI-Friendly)
+        run: npm run test:ci:unit
       
       - name: 🔗 Integration Tests - API & Firebase Testing
         run: npm run test:integration
