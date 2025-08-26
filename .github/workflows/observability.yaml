@@ -10,6 +10,7 @@ on:
 jobs:
   export:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.24.2
         env:
