@@ -1,20 +1,22 @@
 
-name: 📊 OpenTelemetry Observability
+name: "\U0001F4CA OpenTelemetry Observability"
 on:
   workflow_run:
     workflows:
+      - Deploy OpenTelemetry
       - Deploy to Firebase Hosting on merge
+      - Deploy to Firebase Hosting on PR
       - Deploy to Firebase Hosting on PR
     types:
       - completed
 jobs:
   telemetry-export:
-    name: 📈 Export Deployment Telemetry Data
+    name: "\U0001F4C8 Export Deployment Telemetry Data"
     runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.24.2
-        name: 📊 Export OpenTelemetry Workflow Data
+        name: "\U0001F4CA Export OpenTelemetry Workflow Data"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
