@@ -10,95 +10,78 @@ permissions:
   actions: read
 jobs:
   pull-request-validation:
-    name: 🔍 Pull Request Quality Validation
+    name: "\U0001F50D Pull Request Quality Validation"
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: 📊 Initialize PR Testing Monitoring
+        name: "\U0001F4CA Initialize PR Testing Monitoring"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}"]'
-      
-      - name: 📂 Checkout PR Source Code
+      - name: "\U0001F4C2 Checkout PR Source Code"
         uses: actions/checkout@v4
-      
       - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
-      - name: 📦 Install Dependencies
+      - name: "\U0001F4E6 Install Dependencies"
         run: npm ci
-      
-      - name: 🔍 Code Quality - ESLint Validation
+      - name: "\U0001F50D Code Quality - ESLint Validation"
         run: npm run lint
-      
-      - name: 🧪 Unit Tests - Component Validation
+      - name: "\U0001F9EA Unit Tests - Component Validation"
         run: npm run test:unit
-      
-      - name: 🔗 Integration Tests - System Validation
+      - name: "\U0001F517 Integration Tests - System Validation"
         run: npm run test:integration
-      
-      - name: 🏗️ Build Validation - Production Readiness
+      - name: "\U0001F3D7️ Build Validation - Production Readiness"
         run: npm run build
-      
-      - name: 📤 Cache PR Build for Preview
+      - name: "\U0001F4E4 Cache PR Build for Preview"
         uses: actions/upload-artifact@v4
         with:
           name: pr-preview-build-artifacts
           path: dist/
           retention-days: 1
-
+    permissions:
+      actions: read
   preview-deployment:
-    name: 🚀 Deploy Preview Environment
+    name: "\U0001F680 Deploy Preview Environment"
     needs: pull-request-validation
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: 📊 Initialize Preview Deployment Monitoring
+        name: "\U0001F4CA Initialize Preview Deployment Monitoring"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
-      
-      - name: 📂 Checkout PR Source Code
+      - name: "\U0001F4C2 Checkout PR Source Code"
         uses: actions/checkout@v4
-      
       - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
-      - name: 📦 Install Dependencies
+      - name: "\U0001F4E6 Install Dependencies"
         run: npm ci
-      
-      - name: 📥 Download Validated Build Artifacts
+      - name: "\U0001F4E5 Download Validated Build Artifacts"
         uses: actions/download-artifact@v4
         with:
           name: pr-preview-build-artifacts
           path: dist/
-      
-      - name: 🚀 Deploy to Firebase Preview Channel
+      - name: "\U0001F680 Deploy to Firebase Preview Channel"
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           projectId: finbuddy-2025
-      
-      - name: 💬 Comment PR with Preview Details
+      - name: "\U0001F4AC Comment PR with Preview Details"
         uses: actions/github-script@v7
         with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 **Preview Deployment Complete!**\n\n📱 **Preview URL:** ${{ steps.firebase_deploy.outputs.details_url }}\n\n✅ **All Quality Checks Passed:**\n- 🔍 Code Linting\n- 🧪 Unit Tests\n- 🔗 Integration Tests\n- 🏗️ Build Validation\n\n💡 Your changes are ready for review!'
-            })
+          script: "github.rest.issues.createComment({\n  issue_number: context.issue.number,\n  owner: context.repo.owner,\n  repo: context.repo.repo,\n  body: '\U0001F680 **Preview Deployment Complete!**\\n\\n\U0001F4F1 **Preview URL:** ${{ steps.firebase_deploy.outputs.details_url }}\\n\\n✅ **All Quality Checks Passed:**\\n- \U0001F50D Code Linting\\n- \U0001F9EA Unit Tests\\n- \U0001F517 Integration Tests\\n- \U0001F3D7️ Build Validation\\n\\n\U0001F4A1 Your changes are ready for review!'\n})\n"
+    permissions:
+      actions: read
