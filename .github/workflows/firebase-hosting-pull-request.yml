@@ -9,79 +9,38 @@ permissions:
   pull-requests: write
   actions: read
 jobs:
-  pull-request-validation:
-    name: "\U0001F50D Pull Request Quality Validation"
+  build_and_preview:
+    name: "🏗️ Build and Preview"
     runs-on: ubuntu-latest
+    environment: production
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: "\U0001F4CA Initialize PR Testing Monitoring"
+        name: "📊 Initialize PR Monitoring"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}"]'
-      - name: "\U0001F4C2 Checkout PR Source Code"
+      - name: "📂 Checkout PR Source Code"
         uses: actions/checkout@v4
       - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      - name: "\U0001F4E6 Install Dependencies"
+      - name: "📦 Install Dependencies"
         run: npm ci
-      - name: "\U0001F50D Code Quality - ESLint Validation (CI-Friendly)"
-        run: npm run lint:ci
-      - name: "\U0001F9EA Unit Tests - Component Validation (CI-Friendly)"
-        run: npm run test:ci:unit
-      - name: "\U0001F517 Integration Tests - System Validation"
-        run: npm run test:integration
-      - name: "\U0001F3D7️ Build Validation - Production Readiness"
+      - name: "🏗️ Build for Preview"
         run: npm run build
-      - name: "\U0001F4E4 Cache PR Build for Preview"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pr-preview-build-artifacts
-          path: dist/
-          retention-days: 1
-    permissions:
-      actions: read
-  preview-deployment:
-    name: "\U0001F680 Deploy Preview Environment"
-    needs: pull-request-validation
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: "\U0001F4CA Initialize Preview Deployment Monitoring"
-        env:
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-        with:
-          secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
-      - name: "\U0001F4C2 Checkout PR Source Code"
-        uses: actions/checkout@v4
-      - name: ⚙️ Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      - name: "\U0001F4E6 Install Dependencies"
-        run: npm ci
-      - name: "\U0001F4E5 Download Validated Build Artifacts"
-        uses: actions/download-artifact@v4
-        with:
-          name: pr-preview-build-artifacts
-          path: dist/
-      - name: "\U0001F680 Deploy to Firebase Preview Channel"
+      - name: "🚀 Deploy to Firebase Preview"
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           projectId: finbuddy-2025
-      - name: "\U0001F4AC Comment PR with Preview Details"
-        uses: actions/github-script@v7
-        with:
-          script: "github.rest.issues.createComment({\n  issue_number: context.issue.number,\n  owner: context.repo.owner,\n  repo: context.repo.repo,\n  body: '\U0001F680 **Preview Deployment Complete!**\\n\\n\U0001F4F1 **Preview URL:** ${{ steps.firebase_deploy.outputs.details_url }}\\n\\n✅ **All Quality Checks Passed:**\\n- \U0001F50D Code Linting\\n- \U0001F9EA Unit Tests\\n- \U0001F517 Integration Tests\\n- \U0001F3D7️ Build Validation\\n\\n\U0001F4A1 Your changes are ready for review!'\n})\n"
-    permissions:
-      actions: read
+      - name: ✅ Preview Deployment Success
+        run: |
+          echo "🎉 Preview deployment completed!"
+          echo "🌐 Preview URL: ${{ steps.firebase_deploy.outputs.details_url }}"

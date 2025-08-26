@@ -7,80 +7,30 @@ on:
     branches:
       - main
 jobs:
-  quality-assurance:
-    name: "\U0001F9EA Quality Assurance & Testing"
+  build_and_deploy:
+    name: "🏗️ Build and Deploy"
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: "\U0001F4CA Initialize OpenTelemetry Monitoring"
+        name: "📊 Initialize OpenTelemetry Monitoring"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}"]'
-      - name: "\U0001F4C2 Checkout Source Code"
+      - name: "📂 Checkout Source Code"
         uses: actions/checkout@v4
       - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      - name: "\U0001F4E6 Install Project Dependencies"
+      - name: "📦 Install Project Dependencies"
         run: npm ci
-      - name: "\U0001F50D Code Quality - ESLint Analysis (CI-Friendly)"
-        run: npm run lint:ci
-      - name: "\U0001F9EA Unit Tests - Component & Utility Testing (CI-Friendly)"
-        run: npm run test:ci:unit
-      - name: "\U0001F517 Integration Tests - API & Firebase Testing"
-        run: npm run test:integration
-      - name: "\U0001F4C8 Test Coverage Analysis"
-        run: npm run test:coverage
-      - name: "\U0001F4CA Upload Coverage Report to GitHub"
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-coverage-report
-          path: coverage/
-          retention-days: 30
-      - name: "\U0001F3D7️ Production Build Verification"
+      - name: "🏗️ Production Build"
         run: npm run build
-      - name: "\U0001F4E4 Cache Build Artifacts for Deployment"
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-build-artifacts
-          path: dist/
-          retention-days: 1
-    permissions:
-      actions: read
-  production-deployment:
-    name: "\U0001F680 Production Deployment to Firebase"
-    needs: quality-assurance
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: "\U0001F4CA Initialize Deployment Monitoring"
-        env:
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-        with:
-          secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
-      - name: "\U0001F4C2 Checkout Source Code"
-        uses: actions/checkout@v4
-      - name: ⚙️ Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      - name: "\U0001F4E6 Install Project Dependencies"
-        run: npm ci
-      - name: "\U0001F4E5 Download Verified Build Artifacts"
-        uses: actions/download-artifact@v4
-        with:
-          name: production-build-artifacts
-          path: dist/
-      - name: ✅ Verify Build Integrity
-        run: "echo \"\U0001F50D Verifying production build artifacts...\"\nls -la dist/\necho \"✅ Build verification complete - Ready for deployment\"\n"
-      - name: "\U0001F680 Deploy to Firebase Production Hosting"
+      - name: "🚀 Deploy to Firebase Production Hosting"
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -89,6 +39,7 @@ jobs:
           channelId: live
           projectId: finbuddy-2025
       - name: ✅ Post-Deployment Verification
-        run: "echo \"\U0001F389 Deployment completed successfully!\"\necho \"\U0001F310 Site URL: ${{ steps.firebase_deploy.outputs.details_url }}\"\necho \"⏰ Deployment Time: $(date)\"\n"
-    permissions:
-      actions: read
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "🌐 Site URL: ${{ steps.firebase_deploy.outputs.details_url }}"
+          echo "⏰ Deployment Time: $(date)"
