@@ -291,7 +291,7 @@ async function filterExpenses(expenses: any[], filters: any) {
 function applyAdvancedFilters(data: any[], filters: any, entity: string) {
   if (!filters) return data;
   
-  let filtered = [...data];
+  const filtered = [...data];
   
   // Sort by date (most recent first)
   if (entity === 'expenses') {

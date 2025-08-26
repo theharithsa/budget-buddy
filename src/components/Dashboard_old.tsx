@@ -117,7 +117,7 @@ export function Dashboard({ expenses, budgets, customCategories, customPeople, p
     expenses.forEach(expense => {
       const expenseDate = new Date(expense.date);
       const monthKey = `${expenseDate.getFullYear()}-${(expenseDate.getMonth() + 1).toString().padStart(2, '0')}`;
-      if (monthsData.hasOwnProperty(monthKey)) {
+      if (Object.prototype.hasOwnProperty.call(monthsData, monthKey)) {
         monthsData[monthKey] += expense.amount;
       }
     });

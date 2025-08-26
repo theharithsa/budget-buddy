@@ -1,5 +1,5 @@
 
-name: OpenTelemetry
+name: 📊 OpenTelemetry Observability
 on:
   workflow_run:
     workflows:
@@ -8,11 +8,13 @@ on:
     types:
       - completed
 jobs:
-  export:
+  telemetry-export:
+    name: 📈 Export Deployment Telemetry Data
     runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.24.2
+        name: 📊 Export OpenTelemetry Workflow Data
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}

@@ -71,7 +71,7 @@ export function useFirestoreData() {
     let isCleanedUp = false;
 
     // Add a delay to ensure Firebase auth is fully ready and permissions are set
-    timeoutId = setTimeout(() => {
+    const timeoutHandle = setTimeout(() => {
       if (isCleanedUp) return;
 
       try {
@@ -180,8 +180,8 @@ export function useFirestoreData() {
       console.log('Cleaning up Firebase subscriptions');
       isCleanedUp = true;
       
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
       }
       
       unsubscribeFunctions.forEach(unsubscribe => {

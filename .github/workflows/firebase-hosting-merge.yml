@@ -7,94 +7,98 @@ on:
     branches:
       - main
 jobs:
-  test:
-    name: Run Tests
+  quality-assurance:
+    name: 🧪 Quality Assurance & Testing
     runs-on: ubuntu-latest
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
+        name: 📊 Initialize OpenTelemetry Monitoring
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}"]'
       
-      - name: Checkout repository
+      - name: 📂 Checkout Source Code
         uses: actions/checkout@v4
       
-      - name: Setup Node.js
+      - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
       
-      - name: Install dependencies
+      - name: 📦 Install Project Dependencies
         run: npm ci
       
-      - name: Run linting
+      - name: 🔍 Code Quality - ESLint Analysis
         run: npm run lint
       
-      - name: Run unit tests
+      - name: 🧪 Unit Tests - Component & Utility Testing
         run: npm run test:unit
       
-      - name: Run integration tests
+      - name: 🔗 Integration Tests - API & Firebase Testing
         run: npm run test:integration
         
-      - name: Generate test coverage
+      - name: 📈 Test Coverage Analysis
         run: npm run test:coverage
       
-      - name: Upload coverage to GitHub
+      - name: 📊 Upload Coverage Report to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: test-coverage-report
           path: coverage/
+          retention-days: 30
       
-      - name: Test build process
+      - name: 🏗️ Production Build Verification
         run: npm run build
       
-      - name: Upload build artifacts
+      - name: 📤 Cache Build Artifacts for Deployment
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: production-build-artifacts
           path: dist/
+          retention-days: 1
 
-  build_and_deploy:
-    name: Build and Deploy to Production
-    needs: test
+  production-deployment:
+    name: 🚀 Production Deployment to Firebase
+    needs: quality-assurance
     runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
+        name: 📊 Initialize Deployment Monitoring
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
         with:
           secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
       
-      - name: Checkout repository
+      - name: 📂 Checkout Source Code
         uses: actions/checkout@v4
       
-      - name: Setup Node.js
+      - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
       
-      - name: Install dependencies
+      - name: 📦 Install Project Dependencies
         run: npm ci
       
-      - name: Download build artifacts
+      - name: 📥 Download Verified Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
+          name: production-build-artifacts
           path: dist/
       
-      - name: Verify build artifacts
+      - name: ✅ Verify Build Integrity
         run: |
-          echo "Verifying build artifacts..."
+          echo "🔍 Verifying production build artifacts..."
           ls -la dist/
-          echo "Build verification complete"
+          echo "✅ Build verification complete - Ready for deployment"
       
-      - name: Deploy to Firebase Hosting
+      - name: 🚀 Deploy to Firebase Production Hosting
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -103,10 +107,10 @@ jobs:
           channelId: live
           projectId: finbuddy-2025
       
-      - name: Post-deployment verification
+      - name: ✅ Post-Deployment Verification
         run: |
-          echo "Deployment completed successfully"
-          echo "Site URL: ${{ steps.firebase_deploy.outputs.details_url }}"
-          echo "Live URL: ${{ steps.firebase_deploy.outputs.expire_time }}"
+          echo "🎉 Deployment completed successfully!"
+          echo "🌐 Site URL: ${{ steps.firebase_deploy.outputs.details_url }}"
+          echo "⏰ Deployment Time: $(date)"
     permissions:
       actions: read

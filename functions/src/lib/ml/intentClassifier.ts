@@ -46,7 +46,7 @@ export class IntentClassifier {
     // Date-specific queries
     /(?:expenses|spending)\s+(?:this|last)\s+(week|month|year)/i,
     /(?:expenses|spending)\s+(?:in|during|for)\s+(january|february|march|april|may|june|july|august|september|october|november|december)/i,
-    /(?:expenses|spending)\s+(?:on|dated)\s+(\d{1,2}[-\/]\d{1,2}[-\/]\d{2,4})/i,
+    /(?:expenses|spending)\s+(?:on|dated)\s+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/i,
     
     // Raw data indicators
     /(?:export|download|table|csv|raw data|detailed list)/i,
