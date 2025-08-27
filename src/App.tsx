@@ -15,6 +15,7 @@ import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
 import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
+import { MetricsExplorer } from '@/components/MetricsExplorer';
 import { AIChatPage } from '@/components/AIChatPage';
 import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
@@ -26,6 +27,7 @@ import { PWAInstallPrompt, PWAUpdatePrompt, PWAConnectionStatus } from '@/compon
 import { UpdateNotification } from '@/components/UpdateNotification';
 import { CookieBanner } from '@/components/CookieBanner';
 import { FloatingAIButton } from '@/components/FloatingAIButton';
+import { DailySpendingChart } from '@/components/DailySpendingChart';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
 import { 
@@ -257,6 +259,7 @@ function FinanceApp() {
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
+              <TabsTrigger value="explorer">Metrics Explorer</TabsTrigger>
               <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
               <TabsTrigger value="ai-chat">KautilyaAI Co-Pilot</TabsTrigger>
             </TabsList>
@@ -273,6 +276,12 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="expenses" className="space-y-6">
+              {/* Daily Spending Trend Chart */}
+              <DailySpendingChart 
+                expenses={filteredAndSortedExpenses}
+                dateRange={dateRange}
+              />
+
               {/* Filters Section */}
               <div className="bg-muted/50 p-4 rounded-lg">
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
@@ -477,6 +486,16 @@ function FinanceApp() {
                 onUpdatePerson={updatePerson}
                 onDeletePerson={deletePerson}
                 onAdoptPerson={adoptPerson}
+              />
+            </TabsContent>
+
+            <TabsContent value="explorer">
+              <MetricsExplorer 
+                expenses={filteredAndSortedExpenses}
+                budgets={budgets}
+                customCategories={customCategories}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
               />
             </TabsContent>
 

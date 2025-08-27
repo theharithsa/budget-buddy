@@ -1,7 +1,7 @@
 # 💰 FinBuddy - Smart Personal Finance Manager with KautilyaAI
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.6.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.7.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
@@ -39,7 +39,20 @@
   - *Sangraha Pariraksha* (संग्रह परिरक्षा) - Wealth accumulation strategies
   - *Kala Yoga* (काल योग) - Right timing for financial decisions
 
-### 💰 Smart Expense Tracking
+### � Metrics Explorer (BETA) - *New in v2.7.0*
+
+**Professional-grade analytics platform bringing enterprise-level financial insights to personal finance management.**
+
+- **🎯 Simple Dashboard**: Quick financial insights with pre-built charts and visualizations
+- **🔧 Advanced Query Builder**: Dynatrace-style interface for creating custom financial metrics
+- **📈 Multiple Visualizations**: Bar, line, donut, and table charts for comprehensive analysis
+- **🎛️ Dynamic Filtering**: Real-time filtering by category, people, date ranges, and custom dimensions
+- **⚡ Real-time Analytics**: Instant data processing and visualization updates
+- **📱 Responsive Design**: Optimized layouts for desktop (multi-column) and mobile (single-column)
+- **🔍 Custom Metrics**: Build your own KPIs with multiple aggregation methods (sum, count, average, rate)
+- **💾 Export Capabilities**: Download your insights for external analysis and reporting
+
+### �💰 Smart Expense Tracking
 
 - **Quick Entry**: Add expenses in seconds with smart categorization
 - **Receipt Scanning**: Upload and attach receipts to your expenses

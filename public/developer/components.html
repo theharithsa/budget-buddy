@@ -299,6 +299,8 @@
             <div class="quick-ref">
                 <h4>📊 Analytics Components</h4>
                 <ul>
+                    <li>MetricsExplorer.tsx - Analytics platform (BETA)</li>
+                    <li>MetricsBuilder.tsx - Advanced query builder (BETA)</li>
                     <li>Dashboard.tsx - Main dashboard</li>
                     <li>GamificationSystem.tsx - Achievements</li>
                     <li>AdvancedCharts.tsx - Chart visualizations</li>
@@ -395,6 +397,160 @@ function App() {
       &lt;FloatingAIButton onClick={() =&gt; setActiveTab('ai-chat')} /&gt;
       <PWAComponents />
     </div>
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">MetricsExplorer.tsx</div>
+                <div class="component-type">Analytics Component (BETA)</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/MetricsExplorer.tsx</code></p>
+            <p><strong>Purpose:</strong> Professional analytics platform with Dynatrace-style interface for financial data analysis</p>
+            
+            <h4>Props Interface</h4>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Prop</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>expenses</td>
+                        <td>Expense[]</td>
+                        <td>✅</td>
+                        <td>Array of expense data for analysis</td>
+                    </tr>
+                    <tr>
+                        <td>budgets</td>
+                        <td>Budget[]</td>
+                        <td>✅</td>
+                        <td>Budget data for utilization analysis</td>
+                    </tr>
+                    <tr>
+                        <td>customCategories</td>
+                        <td>Category[]</td>
+                        <td>✅</td>
+                        <td>User-defined categories</td>
+                    </tr>
+                    <tr>
+                        <td>customPeople</td>
+                        <td>Person[]</td>
+                        <td>✅</td>
+                        <td>User-defined people</td>
+                    </tr>
+                    <tr>
+                        <td>publicPeople</td>
+                        <td>Person[]</td>
+                        <td>✅</td>
+                        <td>Shared people from public collection</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Key Features</h4>
+            <ul>
+                <li><strong>Dual Interface:</strong> Simple metrics + Advanced query builder</li>
+                <li><strong>BETA Badge:</strong> Professional blue badge indicating experimental status</li>
+                <li><strong>Responsive Design:</strong> Mobile-optimized layouts with useIsMobile hook</li>
+                <li><strong>Real-time Filtering:</strong> Dynamic data visualization updates</li>
+                <li><strong>ApexCharts Integration:</strong> Professional chart rendering</li>
+            </ul>
+
+            <h4>Implementation Example</h4>
+            <div class="code-block">
+<code>// MetricsExplorer with BETA badge
+function MetricsExplorer({ expenses, budgets, customCategories, customPeople, publicPeople }) {
+  const isMobile = useIsMobile();
+  
+  return (
+    &lt;div className="space-y-6"&gt;
+      &lt;div className="flex items-center gap-2"&gt;
+        &lt;h1 className="text-3xl font-bold"&gt;Metrics Explorer&lt;/h1&gt;
+        &lt;Badge variant="secondary" className="bg-blue-100 text-blue-800 font-medium"&gt;
+          BETA
+        &lt;/Badge&gt;
+      &lt;/div&gt;
+      
+      &lt;Tabs defaultValue="simple"&gt;
+        &lt;TabsList&gt;
+          &lt;TabsTrigger value="simple"&gt;Simple Metrics&lt;/TabsTrigger&gt;
+          &lt;TabsTrigger value="advanced"&gt;Advanced Builder&lt;/TabsTrigger&gt;
+        &lt;/TabsList&gt;
+        
+        &lt;TabsContent value="simple"&gt;
+          {/* Simple interface with pre-built visualizations */}
+        &lt;/TabsContent&gt;
+        
+        &lt;TabsContent value="advanced"&gt;
+          &lt;MetricsBuilder /&gt;
+        &lt;/TabsContent&gt;
+      &lt;/Tabs&gt;
+    &lt;/div&gt;
+  );
+}</code>
+            </div>
+        </div>
+
+        <div class="component-card">
+            <div class="component-header">
+                <div class="component-title">MetricsBuilder.tsx</div>
+                <div class="component-type">Analytics Component (BETA)</div>
+            </div>
+            <p><strong>Location:</strong> <code>src/components/MetricsBuilder.tsx</code></p>
+            <p><strong>Purpose:</strong> Advanced Dynatrace-style query builder for custom financial analytics</p>
+            
+            <h4>Key Features</h4>
+            <ul>
+                <li><strong>Query Management:</strong> Add, remove, and switch between multiple queries</li>
+                <li><strong>Dynamic Filters:</strong> Complex filtering with multiple operators</li>
+                <li><strong>Metric Selection:</strong> Choose from various financial metrics</li>
+                <li><strong>Split Dimensions:</strong> Analyze data by category, person, time, etc.</li>
+                <li><strong>Responsive Grid:</strong> 3-column desktop layout, single-column mobile</li>
+            </ul>
+
+            <h4>Query Structure</h4>
+            <div class="code-block">
+<code>interface MetricQuery {
+  id: string;
+  name: string;
+  metric: string;        // 'expense.amount', 'expense.count', etc.
+  splitBy: string;       // 'category', 'person', 'date'
+  filters: MetricFilter[];
+  limit: number;
+  chartType: 'line' | 'bar' | 'donut' | 'table';
+}
+
+interface MetricFilter {
+  dimension: string;
+  operator: 'equals' | 'contains' | 'greater_than' | 'less_than';
+  value: string;
+}</code>
+            </div>
+
+            <h4>Responsive Layout Implementation</h4>
+            <div class="code-block">
+<code>function MetricsBuilder() {
+  const isMobile = useIsMobile(); // 768px breakpoint
+  
+  return (
+    &lt;div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}&gt;
+      &lt;Card&gt;
+        {/* Query Builder Interface */}
+      &lt;/Card&gt;
+      
+      &lt;div className={isMobile ? 'col-span-1' : 'col-span-2'}&gt;
+        &lt;Card&gt;
+          {/* Chart Display */}
+        &lt;/Card&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
   );
 }</code>
             </div>

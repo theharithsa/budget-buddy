@@ -14,7 +14,7 @@
 - **Navigation**: Collapsible sidebar with responsive design
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable)
-- **Version**: Currently v2.6.0 with KautilyaAI Co-Pilot revolution
+- **Version**: Currently v2.7.0 with Metrics Explorer BETA release
 
 ### Critical Development Commands
 ```bash
@@ -42,6 +42,8 @@ src/
 │   ├── AddExpenseModal.tsx # Fixed people selection using getAllPeople()
 │   ├── EditExpenseModal.tsx # Consistent people data flow
 │   ├── BudgetAnalyzer.tsx # AI-powered budget analysis
+│   ├── MetricsExplorer.tsx # Advanced financial analytics platform (BETA)
+│   ├── MetricsBuilder.tsx # Dynatrace-style query builder for custom metrics
 │   ├── AIChatPage.tsx    # KautilyaAI Co-Pilot interface (single chat implementation)
 │   ├── FloatingAIButton.tsx # AI assistant navigation button with BETA badge
 │   ├── BudgetManager.tsx
@@ -728,9 +730,23 @@ VITE_DYNATRACE_TOKEN=your-dynatrace-token
 - **Environment Variables**: Configure in deployment platform
 - **Build Optimization**: Production builds are optimized for performance
 
-## 📋 Recent Developments (v2.5.1-2.6.0)
+## 📋 Recent Developments (v2.5.1-2.7.0)
 
 ### Major Feature Additions
+
+#### **Metrics Explorer BETA (v2.7.0)**
+- **Advanced Analytics Platform**: Dynatrace-style interface for financial data analysis
+- **Dual Interface Design**: Simple metrics for quick insights, Advanced query builder for custom analytics
+- **Professional Visualizations**: ApexCharts integration with bar, line, donut, and table charts
+- **Dynamic Filtering**: Real-time filtering by category, people, date ranges, and custom dimensions
+- **Responsive Architecture**: JavaScript-based mobile detection for optimal layouts across devices
+- **BETA Release**: Marked with professional blue badge for user awareness of experimental features
+
+#### **Responsive Layout Engine (v2.7.0)**
+- **Mobile Hook Integration**: useIsMobile hook for precise screen size detection at 768px breakpoint
+- **Conditional Grid Layouts**: JavaScript-based responsive design replacing Tailwind classes
+- **Desktop Optimization**: 3-column layout for MetricsBuilder, 4-column filter layout for MetricsExplorer
+- **Cross-Platform Compatibility**: Consistent horizontal layouts on desktop, vertical stacking on mobile
 
 #### **KautilyaAI Co-Pilot Revolution (v2.6.0)**
 - **Conversational CRUD**: Complete natural language interface for all financial operations
@@ -912,6 +928,8 @@ const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 - Theme management: `src/contexts/ThemeContext.tsx` (finbuddy-ui-theme)
 - Data management: `src/hooks/useFirestoreData.tsx`
 - AI analysis: `src/components/BudgetAnalyzer.tsx`
+- Metrics Explorer: `src/components/MetricsExplorer.tsx` (BETA)
+- Metrics Builder: `src/components/MetricsBuilder.tsx`
 - KautilyaAI Co-Pilot: `src/components/AIChatPage.tsx`
 - AI navigation: `src/components/FloatingAIButton.tsx`
 - PWA management: `src/lib/pwa.ts`
@@ -969,7 +987,7 @@ firebase.auth().currentUser
 5. **Build Failures**: Clear node_modules and reinstall if TypeScript errors persist
 6. **ApexCharts Errors**: Ensure DOM refs are current before chart initialization
 
-### Current Feature Status (v2.6.0)
+### Current Feature Status (v2.7.0)
 - ✅ Grid/List view toggle with persistence
 - ✅ Enhanced filtering system with people filter
 - ✅ Clear cache functionality
@@ -988,5 +1006,8 @@ firebase.auth().currentUser
 - ✅ Firebase Functions v2 backend with Google Gemini 2.0 Flash
 - ✅ Custom CSS variables for theme-specific styling
 - ✅ Session-based AI chat with persistent history
+- ✅ Metrics Explorer BETA with advanced analytics platform
+- ✅ Responsive layout engine with mobile detection hooks
+- ✅ JavaScript-based conditional grid layouts
 
 This guide should help AI coding agents understand the Budget Buddy codebase structure, implementation patterns, and development workflows to be immediately productive when working on the project.

@@ -240,6 +240,109 @@
             <p class="subtitle">Advanced dashboard system, ApexCharts integration, and gamification features</p>
         </header>
 
+        <!-- Metrics Explorer BETA (New in v2.7.0) -->
+        <section class="section">
+            <h2>🚀 Metrics Explorer BETA (v2.7.0)</h2>
+            <p>The flagship feature of v2.7.0 introduces a professional analytics platform inspired by Dynatrace's query interface. Located in <span class="inline-code">src/components/MetricsExplorer.tsx</span> and <span class="inline-code">src/components/MetricsBuilder.tsx</span>.</p>
+
+            <h3>Dual Interface Design</h3>
+            <div class="warning">
+                <h4>🏷️ BETA Feature</h4>
+                <p>Metrics Explorer is marked with a professional blue BETA badge. This is an experimental feature with ongoing development.</p>
+            </div>
+
+            <div class="code-block">
+// MetricsExplorer with BETA badge
+&lt;div className="flex items-center gap-2"&gt;
+  &lt;h1 className="text-3xl font-bold"&gt;Metrics Explorer&lt;/h1&gt;
+  &lt;Badge variant="secondary" className="bg-blue-100 text-blue-800 font-medium"&gt;
+    BETA
+  &lt;/Badge&gt;
+&lt;/div&gt;
+</div>
+
+            <h3>Simple Metrics Interface</h3>
+            <p>Quick insights with pre-built visualizations:</p>
+            <ul class="list">
+                <li><strong>Time Period Selection:</strong> Dynamic date range picker</li>
+                <li><strong>Metric Groups:</strong> Category, People, Time-based analysis</li>
+                <li><strong>Chart Types:</strong> Bar, Line, Donut, Table visualizations</li>
+                <li><strong>Real-time Filtering:</strong> Instant data updates</li>
+            </ul>
+
+            <h3>Advanced Query Builder</h3>
+            <p>Dynatrace-style interface for custom analytics:</p>
+            <div class="code-block">
+// MetricsBuilder with dynamic query structure
+interface MetricQuery {
+  id: string;
+  name: string;
+  metric: string;        // expense.amount, expense.count, etc.
+  splitBy: string;       // category, person, date
+  filters: MetricFilter[];
+  limit: number;
+  chartType: 'line' | 'bar' | 'donut' | 'table';
+}
+
+// Professional visualization integration
+const MetricsBuilder = () =&gt; {
+  const isMobile = useIsMobile(); // 768px breakpoint
+  
+  return (
+    &lt;div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}&gt;
+      &lt;Card&gt;{/* Query Builder */}&lt;/Card&gt;
+      &lt;div className={isMobile ? 'col-span-1' : 'col-span-2'}&gt;
+        &lt;Card&gt;{/* Chart Display */}&lt;/Card&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+</div>
+
+            <h3>Responsive Layout Engine</h3>
+            <ul class="list">
+                <li><strong>Mobile Detection Hook:</strong> JavaScript-based responsive design at 768px breakpoint</li>
+                <li><strong>Conditional Grid Layouts:</strong> Dynamic column layouts based on screen size</li>
+                <li><strong>Desktop Optimization:</strong> 3-column MetricsBuilder, 4-column filter layouts</li>
+                <li><strong>Cross-Platform Compatibility:</strong> Consistent behavior across devices</li>
+            </ul>
+
+            <div class="code-block">
+// Mobile detection pattern
+import { useIsMobile } from '../hooks/use-mobile';
+
+const isMobile = useIsMobile(); // Returns true for screens &lt; 768px
+
+// Conditional layout application
+&lt;div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-4'}`}&gt;
+  {/* Filter controls */}
+&lt;/div&gt;
+</div>
+
+            <h3>Key Features</h3>
+            <ul class="list">
+                <li><strong>Available Metrics:</strong> Total Amount, Transaction Count, Average Amount, Budget Utilization, Spending Velocity</li>
+                <li><strong>Split Dimensions:</strong> Category, Person, Date, Month, Day of Week, Amount Range</li>
+                <li><strong>Dynamic Filters:</strong> Equals, Contains, Greater Than, Less Than operators</li>
+                <li><strong>Result Limits:</strong> Configurable from 5 to 100 items</li>
+                <li><strong>Chart Types:</strong> Bar Charts, Line Charts, Donut Charts, Data Tables</li>
+                <li><strong>ApexCharts Integration:</strong> Professional visualizations with theme support</li>
+            </ul>
+
+            <h3>Component Architecture</h3>
+            <div class="code-block">
+src/components/
+├── MetricsExplorer.tsx      # Main analytics platform (BETA)
+│   ├── Simple Interface     # Pre-built metric visualizations
+│   └── Advanced Interface   # MetricsBuilder integration
+├── MetricsBuilder.tsx       # Dynatrace-style query builder
+│   ├── Query Management     # Add/remove/switch queries
+│   ├── Filter System       # Dynamic filter management
+│   └── Chart Rendering      # ApexCharts integration
+└── ui/badge.tsx            # BETA badge component
+</div>
+        </section>
+
         <!-- Dashboard System -->
         <section class="section">
             <h2>Advanced Dashboard System</h2>

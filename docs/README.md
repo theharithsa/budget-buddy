@@ -1,10 +1,17 @@
 # 📚 FinBuddy Documentation Center
 
-Welcome to the comprehensive documentation for FinBuddy v2.6.0 - a revolutionary AI-powered personal finance management platform featuring KautilyaAI Co-Pilot for complete conversational CRUD operations.
+Welcome to the comprehensive documentation for FinBuddy v2.7.0 - a revolutionary AI-powered personal finance management platform featuring KautilyaAI Co-Pilot and the new Metrics Explorer BETA analytics platform.
 
-## 🚀 What's New in v2.6.0
+## 🚀 What's New in v2.7.0
 
-### 🤖 **KautilyaAI Co-Pilot Revolution**
+### 📊 **Metrics Explorer BETA Release**
+- **Advanced Analytics Platform**: Dynatrace-style query interface for financial data
+- **Dual Interface Design**: Simple metrics + Advanced query builder
+- **Professional Visualizations**: ApexCharts integration with multiple chart types
+- **Real-time Filtering**: Dynamic filtering by category, people, date ranges
+- **Responsive Design**: Optimized layouts for desktop and mobile
+
+### 🤖 **Continued KautilyaAI Co-Pilot Excellence**
 - **Complete Conversational CRUD**: Manage ALL financial data through natural language
 - **Real-Time UI Synchronization**: Every chat operation instantly updates the interface  
 - **Context-Aware Intelligence**: AI remembers conversation history for smart interactions

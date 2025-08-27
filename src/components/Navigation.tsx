@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Home,
-  MessageSquare
+  MessageSquare,
+  BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getNavigationVersion } from '@/lib/version';
@@ -69,6 +70,12 @@ const navigationItems: NavigationItem[] = [
     label: 'People',
     icon: Users,
     description: 'Manage people and relationships'
+  },
+  {
+    id: 'explorer',
+    label: 'Metrics Explorer',
+    icon: BarChart3,
+    description: 'Analyze spending with interactive charts'
   },
   {
     id: 'analyzer',
