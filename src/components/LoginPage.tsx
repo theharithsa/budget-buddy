@@ -435,15 +435,15 @@ export function LoginPage() {
                       </Button>
                     </div>
                   ) : (
-                    <div className="text-center space-y-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="text-center space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex justify-center">
-                        <div className="p-2 bg-green-100 rounded-full">
-                          <Mail size={24} className="text-green-600" />
+                        <div className="p-2 bg-blue-100 rounded-full">
+                          <Mail size={24} className="text-blue-600" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-green-800">Magic link sent!</p>
-                        <p className="text-xs text-green-600 mt-1">
+                        <p className="text-sm font-medium text-blue-800">Magic link sent!</p>
+                        <p className="text-xs text-blue-600 mt-1">
                           Check your email and click the link to sign in securely.
                         </p>
                       </div>
@@ -606,7 +606,7 @@ export function LoginPage() {
                     <Button
                       onClick={handleEmailSignUp}
                       disabled={isLoading}
-                      className="w-full h-12 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white"
+                      className="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
                       size="lg"
                     >
                       {isLoading ? 'Creating account...' : 'Create Account'}

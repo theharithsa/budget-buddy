@@ -296,7 +296,7 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
+    if (score >= 80) return 'text-blue-600';
     if (score >= 60) return 'text-yellow-600';
     return 'text-red-600';
   };
@@ -366,7 +366,7 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
             key={achievement.id} 
             className={`enhanced-card hover-lift transition-all duration-200 ${
               achievement.isCompleted 
-                ? 'border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50/30 to-green-100/30 dark:from-green-950/20 dark:to-green-900/20 shadow-green-100/50 dark:shadow-green-900/20' 
+                ? 'border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50/30 to-blue-100/30 dark:from-blue-950/20 dark:to-blue-900/20 shadow-blue-100/50 dark:shadow-blue-900/20' 
                 : 'border-border/50'
             }`}
           >
@@ -405,21 +405,21 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
                       <span className={achievement.isCompleted ? 'text-foreground' : 'text-muted-foreground'}>
                         Progress
                       </span>
-                      <span className={`font-medium ${achievement.isCompleted ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                      <span className={`font-medium ${achievement.isCompleted ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
                         {Math.round(achievement.progress)} / {achievement.maxProgress}
                       </span>
                     </div>
                     <Progress 
                       value={(achievement.progress / achievement.maxProgress) * 100} 
-                      className={`h-2 ${achievement.isCompleted ? 'bg-green-100 dark:bg-green-950' : ''}`}
+                      className={`h-2 ${achievement.isCompleted ? 'bg-blue-100 dark:bg-blue-950' : ''}`}
                     />
                   </div>
                   <div className="flex items-center justify-between mt-3 text-xs">
-                    <span className={`font-medium ${achievement.isCompleted ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                    <span className={`font-medium ${achievement.isCompleted ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
                       +{achievement.points} points
                     </span>
                     {achievement.isCompleted && (
-                      <Badge variant="default" className="bg-green-600 dark:bg-green-700 text-white px-2 py-0.5">
+                      <Badge variant="default" className="bg-blue-600 dark:bg-blue-700 text-white px-2 py-0.5">
                         ✓ Unlocked
                       </Badge>
                     )}
@@ -447,8 +447,8 @@ export function GamificationSystem({ expenses, budgets }: GamificationSystemProp
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-muted/50 rounded-lg">
-              <TrendingDown className="h-8 w-8 mx-auto mb-2 text-green-600" />
-              <div className="text-2xl font-bold text-green-600">{streaks.currentSaving}</div>
+              <TrendingDown className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+              <div className="text-2xl font-bold text-blue-600">{streaks.currentSaving}</div>
               <p className="text-sm text-muted-foreground">Days without spending</p>
             </div>
             <div className="text-center p-4 bg-muted/50 rounded-lg">

@@ -261,7 +261,7 @@ export const PWAConnectionStatus: React.FC<PWAPromptProps> = ({ className }) => 
     <Card className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 shadow-lg bg-card border-border ${className}`}>
       <CardContent className="p-3">
         <div className={`flex items-center gap-2 text-sm font-medium ${
-          isOnline ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+          isOnline ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'
         }`}>
           {isOnline ? (
             <>

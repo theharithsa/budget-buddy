@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture - FinBuddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .back-btn {
+            background: #000;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #000;
+        }
+
+        .back-btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 4px 4px 0 #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .section {
+            margin: 3rem 0;
+            padding: 2rem;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #000;
+        }
+
+        .section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            color: #000;
+        }
+
+                .code-block {
+            background: #0d1117;
+            color: #e6edf3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+        .file-tree {
+            background: #f0f0f0;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .architecture-diagram {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 8px;
+        }
+
+        .layer {
+            background: #f8f9fa;
+            border: 2px solid #000;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .layer h4 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .component-card {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+
+        .component-card h4 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .tech-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .tech-list li {
+            padding: 0.3rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .tech-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .data-flow {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .step-number {
+            background: #000;
+            color: #fff;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Technical Architecture</h1>
+            <a href="index.html" class="back-btn">← Back to Docs</a>
+        </div>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2>🏗️ Architecture Overview</h2>
+            <p>FinBuddy is built as a modern React application with a component-based architecture, leveraging Firebase for backend services and AI integration through Google Gemini 2.0 Flash.</p>
+            
+            <div class="architecture-diagram">
+                <h3>System Architecture</h3>
+                <div class="layer">
+                    <h4>Frontend Layer</h4>
+                    <p>React 18 + TypeScript + Vite + Tailwind CSS + Radix UI</p>
+                </div>
+                <div class="layer">
+                    <h4>State Management</h4>
+                    <p>React Context + Custom Hooks + Local Storage</p>
+                </div>
+                <div class="layer">
+                    <h4>Backend Services</h4>
+                    <p>Firebase Functions v2 + Firestore + Authentication + Storage</p>
+                </div>
+                <div class="layer">
+                    <h4>AI Engine</h4>
+                    <p>Google Gemini 2.0 Flash + KautilyaAI Co-Pilot + Arthashastra Principles</p>
+                </div>
+                <div class="layer">
+                    <h4>Analytics Engine</h4>
+                    <p>Metrics Explorer + ApexCharts + Custom Query Builder</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Structure -->
+        <section class="section">
+            <h2>📁 Project Structure</h2>
+            <div class="file-tree">
+                <pre><code>src/
+├── App.tsx                 # Main application component
+├── main.tsx               # Application entry point
+├── components/            # React components
+│   ├── ui/               # Radix UI component library
+│   ├── analytics/        # Analytics & metrics components
+│   │   ├── GamificationSystem.tsx
+│   │   ├── AdvancedCharts.tsx
+│   │   └── SpendingBehaviorInsights.tsx
+│   ├── Dashboard.tsx     # Main dashboard
+│   ├── MetricsExplorer.tsx   # Advanced analytics
+│   ├── MetricsBuilder.tsx    # Query builder
+│   ├── AIChatPage.tsx    # KautilyaAI interface
+│   ├── BudgetManager.tsx
+│   ├── CategoryManager.tsx
+│   ├── PeopleManager.tsx
+│   ├── Navigation.tsx    # Sidebar navigation
+│   └── PWAComponents.tsx # PWA functionality
+├── contexts/
+│   ├── AuthContext.tsx   # Firebase authentication
+│   └── ThemeContext.tsx  # Theme management
+├── hooks/
+│   ├── useFirestoreData.tsx  # Firebase operations
+│   └── use-mobile.ts     # Mobile detection
+├── lib/
+│   ├── firebase.ts       # Firebase configuration
+│   ├── types.ts          # TypeScript definitions
+│   ├── utils.ts          # Utility functions
+│   └── pwa.ts           # PWA utilities
+└── styles/
+    └── theme.css         # Custom CSS variables
+
+public/
+├── docs/                 # User documentation
+├── developer/           # Developer documentation
+├── manifest.json        # PWA manifest
+└── sw.js               # Service worker
+
+functions/
+├── src/
+│   ├── index.ts         # Functions entry point
+│   ├── chatWithGeminiML.ts  # KautilyaAI endpoint
+│   └── lib/             # Shared utilities
+├── package.json         # Functions dependencies
+└── tsconfig.json        # Functions TypeScript config</code></pre>
+            </div>
+        </section>
+
+        <!-- Component Architecture -->
+        <section class="section">
+            <h2>🧩 Component Architecture</h2>
+            
+            <h3>Core Components</h3>
+            <div class="component-grid">
+                <div class="component-card">
+                    <h4>App.tsx</h4>
+                    <p>Main application orchestrator with tab navigation, state management, and component rendering.</p>
+                    <ul class="tech-list">
+                        <li>Tab-based navigation system</li>
+                        <li>Global state management</li>
+                        <li>Filter and search functionality</li>
+                        <li>View mode persistence</li>
+                    </ul>
+                </div>
+
+                <div class="component-card">
+                    <h4>Dashboard.tsx</h4>
+                    <p>Advanced dashboard with ApexCharts integration and comprehensive financial overview.</p>
+                    <ul class="tech-list">
+                        <li>Chart lifecycle management</li>
+                        <li>Tab switching optimization</li>
+                        <li>Responsive chart rendering</li>
+                        <li>Real-time data updates</li>
+                    </ul>
+                </div>
+
+                <div class="component-card">
+                    <h4>MetricsExplorer.tsx</h4>
+                    <p>BETA analytics platform with Dynatrace-style interface for advanced financial analysis.</p>
+                    <ul class="tech-list">
+                        <li>Simple and Advanced modes</li>
+                        <li>Custom metric definitions</li>
+                        <li>Multiple chart types</li>
+                        <li>Real-time filtering</li>
+                    </ul>
+                </div>
+
+                <div class="component-card">
+                    <h4>AIChatPage.tsx</h4>
+                    <p>KautilyaAI Co-Pilot interface with conversational CRUD operations.</p>
+                    <ul class="tech-list">
+                        <li>Session management</li>
+                        <li>Real-time UI synchronization</li>
+                        <li>Context-aware responses</li>
+                        <li>Firebase Functions integration</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Data Flow Pattern</h3>
+            <div class="data-flow">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>useFirestoreData Hook:</strong> Centralized data management with real-time Firebase listeners
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Context Providers:</strong> AuthContext and ThemeContext provide global state
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Component Props:</strong> Data flows down through props with consistent interfaces
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>Event Handlers:</strong> User actions trigger Firebase operations and UI updates
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Stack -->
+        <section class="section">
+            <h2>⚡ Technical Stack</h2>
+            
+            <h3>Frontend Technologies</h3>
+            <div class="code-block">
+                                    <pre><code>{
+  "framework": "React 18",
+  "language": "TypeScript",
+  "buildTool": "Vite",
+  "styling": "Tailwind CSS",
+  "components": "Radix UI",
+  "charts": "ApexCharts",
+  "icons": "Lucide React",
+  "notifications": "Sonner"
+}</code></pre>
+            </div>
+
+            <h3>Backend Services</h3>
+            <div class="code-block">
+                                    <pre><code>{
+  "database": "Firestore",
+  "authentication": "Firebase Auth",
+  "storage": "Firebase Storage",
+  "functions": "Firebase Functions v2",
+  "hosting": "Azure App Service",
+  "monitoring": "Dynatrace"
+}</code></pre>
+            </div>
+
+            <h3>AI Integration</h3>
+            <div class="code-block">
+                                    <pre><code>{
+  "aiModel": "Google Gemini 2.0 Flash",
+  "aiService": "KautilyaAI Co-Pilot",
+  "principles": "Arthashastra (Ancient Indian Economics)",
+  "features": [
+    "Conversational CRUD operations",
+    "Financial wisdom integration",
+    "Context-aware responses",
+    "Sanskrit terminology support"
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- State Management -->
+        <section class="section">
+            <h2>🔄 State Management</h2>
+            
+            <h3>Authentication State</h3>
+            <div class="code-block">
+                                    <pre><code>// AuthContext.tsx - Firebase Authentication
+const AuthContext = createContext&lt;AuthContextType | undefined&gt;(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  return (
+    &lt;AuthContext.Provider value={{ user, loading }}&gt;
+      {children}
+    &lt;/AuthContext.Provider&gt;
+  );
+}</code></pre>
+            </div>
+
+            <h3>Data Management</h3>
+            <div class="code-block">
+                                    <pre><code>// useFirestoreData.tsx - Centralized data operations
+export function useFirestoreData() {
+  const [expenses, setExpenses] = useState&lt;Expense[]&gt;([]);
+  const [budgets, setBudgets] = useState&lt;Budget[]&gt;([]);
+  const [customPeople, setCustomPeople] = useState&lt;Person[]&gt;([]);
+  
+  // Real-time Firestore listeners
+  useEffect(() => {
+    if (!user) return;
+    
+    const unsubscribe = onSnapshot(
+      collection(db, 'users', user.uid, 'expenses'),
+      (snapshot) => {
+        const expenseData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Expense[];
+        setExpenses(expenseData);
+      }
+    );
+    
+    return unsubscribe;
+  }, [user]);
+  
+  return { expenses, budgets, addExpense, updateExpense, deleteExpense };
+}</code></pre>
+            </div>
+
+            <h3>Theme Management</h3>
+            <div class="code-block">
+                                    <pre><code>// ThemeContext.tsx - Dark/Light theme toggle
+const ThemeContext = createContext&lt;ThemeContextType | undefined&gt;(undefined);
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState&lt;Theme&gt;(() => {
+    const saved = localStorage.getItem('finbuddy-ui-theme');
+    return (saved as Theme) || 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('finbuddy-ui-theme', theme);
+  }, [theme]);
+
+  return (
+    &lt;ThemeContext.Provider value={{ theme, setTheme }}&gt;
+      {children}
+    &lt;/ThemeContext.Provider&gt;
+  );
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Performance Patterns -->
+        <section class="section">
+            <h2>⚡ Performance Patterns</h2>
+            
+            <h3>Chart Lifecycle Management</h3>
+            <div class="code-block">
+                                    <pre><code>// Dashboard.tsx - Critical ApexCharts pattern
+const [chartKey, setChartKey] = useState(0);
+const chartInstance = useRef&lt;ApexCharts | null&gt;(null);
+
+const handleTabChange = (value: string) => {
+  setActiveTab(value);
+  // Force chart re-render when returning to overview
+  if (value === 'overview') {
+    setChartKey(prev => prev + 1);
+  }
+};
+
+useEffect(() => {
+  // Clean up existing chart instances
+  if (chartInstance.current) {
+    chartInstance.current.destroy();
+    chartInstance.current = null;
+  }
+  
+  // Re-initialize charts
+  if (activeTab === 'overview' && chartRef.current) {
+    // Chart initialization logic
+  }
+}, [activeTab, chartKey, expenses, budgets]);</code></pre>
+            </div>
+
+            <h3>Mobile Detection Hook</h3>
+            <div class="code-block">
+                                    <pre><code>// use-mobile.ts - Responsive layout optimization
+export function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth &lt; 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+}</code></pre>
+            </div>
+
+            <h3>Responsive Layout Pattern</h3>
+            <div class="code-block">
+                                    <pre><code>// MetricsExplorer.tsx - JavaScript-based responsive design
+const isMobile = useIsMobile();
+
+return (
+  &lt;div className={`grid gap-4 ${
+    isMobile ? 'grid-cols-1' : 'grid-cols-4'
+  }`}&gt;
+    {/* Responsive grid content */}
+  &lt;/div&gt;
+);</code></pre>
+            </div>
+        </section>
+
+        <!-- Error Handling -->
+        <section class="section">
+            <h2>🚨 Error Handling</h2>
+            
+            <h3>Firebase Error Pattern</h3>
+            <div class="code-block">
+                                    <pre><code>// Standard Firebase operation pattern
+const addExpense = async (expense: Omit&lt;Expense, 'id'&gt;) => {
+  if (!user) {
+    toast.error("Please sign in to continue");
+    return;
+  }
+  
+  try {
+    const docRef = await addDoc(
+      collection(db, 'users', user.uid, 'expenses'),
+      expense
+    );
+    toast.success("Expense added successfully");
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding expense:', error);
+    toast.error("Failed to add expense");
+  }
+};</code></pre>
+            </div>
+
+            <h3>Component Error Boundaries</h3>
+            <div class="code-block">
+                                    <pre><code>// ErrorFallback.tsx - Component error handling
+export function ErrorFallback({ error, resetErrorBoundary }: Props) {
+  return (
+    &lt;div className="error-fallback"&gt;
+      &lt;h2&gt;Something went wrong&lt;/h2&gt;
+      &lt;pre&gt;{error.message}&lt;/pre&gt;
+      &lt;button onClick={resetErrorBoundary}&gt;
+        Try again
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Build Configuration -->
+        <section class="section">
+            <h2>🔧 Build Configuration</h2>
+            
+            <h3>Vite Configuration</h3>
+            <div class="code-block">
+                                    <pre><code>// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  server: {
+    port: 5000,
+    host: true
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          firebase: ['firebase/app', 'firebase/firestore'],
+          charts: ['apexcharts']
+        }
+      }
+    }
+  }
+})</code></pre>
+            </div>
+
+            <h3>TypeScript Configuration</h3>
+            <div class="code-block">
+                                    <pre><code>// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <footer style="text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 2px solid #000; color: #666;">
+            <p><strong>FinBuddy v2.7.0</strong> - Technical Architecture</p>
+            <p>Built with React 18, TypeScript, Firebase, and AI-powered insights</p>
+        </footer>
+    </div>
+</body>
+</html>

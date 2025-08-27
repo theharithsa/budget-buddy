@@ -6,7 +6,7 @@
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-A+-brightgreen?style=for-the-badge&logo=codeclimate)](https://github.com/theharithsa/budget-buddy)
-[![Security](https://img.shields.io/badge/Security-Verified-green?style=for-the-badge&logo=shield)](./docs/SECURITY.md)
+[![Security](https://img.shields.io/badge/Security-Verified-green?style=for-the-badge&logo=shield)](./SECURITY.md)
 
 [![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
@@ -113,9 +113,38 @@
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and KautilyaAI guidance
 
-## 🎨 What's New in v2.6.0
+## 🎨 What's New in v2.7.0
 
-### 🤖 **KautilyaAI Co-Pilot Revolution**
+### 📊 **Metrics Explorer (BETA) - Professional Analytics Platform**
+
+- **Advanced Financial Analytics**: Dynatrace-style interface bringing enterprise-level insights to personal finance
+- **Dual Interface**: Simple dashboard for quick insights + Advanced Query Builder for custom analytics
+- **Multiple Chart Types**: Bar, line, donut, and table visualizations with real-time data processing
+- **Dynamic Filtering**: Filter by category, people, date ranges, and custom dimensions
+- **Responsive Design**: JavaScript-based layout engine with desktop multi-column and mobile single-column optimization
+- **Export Capabilities**: Download insights for external analysis and reporting
+
+### 🔧 **Technical Architecture Improvements**
+
+- **Mobile Detection Engine**: JavaScript-based responsive detection replacing Tailwind responsive classes
+- **Component Optimization**: Enhanced analytics components with improved performance
+- **Layout Fixes**: Resolved desktop vertical stacking issues with proper horizontal layouts
+- **Build System**: Enhanced development workflow with better debugging capabilities
+
+### 📚 **Documentation Infrastructure Overhaul**
+
+- **Complete Documentation System**: Comprehensive user and developer guides with consistent design
+- **Navigation Fixes**: Resolved all broken internal and external documentation links
+- **Design Standardization**: Uniform headers, footers, and CSS frameworks across all pages
+- **Monitoring Integration**: Added Dynatrace monitoring to all documentation pages
+
+### 🎨 **UI/UX Enhancements**
+
+- **Modal Consistency**: Fixed budget modal width to match application-wide standards
+- **Navigation Cleanup**: Removed legacy AI Analyzer components for streamlined user experience
+- **BETA Badge System**: Clear labeling for experimental features with professional styling
+
+### 🤖 **KautilyaAI Co-Pilot Continued Excellence**
 
 - **Ancient Wisdom Integration**: World's first AI combining Chanakya's Arthashastra with modern finance
 - **Comprehensive Analysis**: Advanced financial insights using 7 Firestore collections
@@ -131,18 +160,13 @@
 - **Wealth Building**: Long-term strategies via *Sangraha Pariraksha*
 - **Perfect Timing**: Purchase and investment timing using *Kala Yoga*
 
-### 🛠️ **Technical Upgrades**
-
-- **Google Gemini 2.0 Flash**: Latest AI model for superior natural language understanding
-- **Firebase Functions v2**: Modern serverless architecture with enhanced security
-- **Comprehensive Documentation**: User and developer guides for KautilyaAI integration
-- **Performance Optimization**: Enhanced data processing and response generation
-
 ## 📚 Documentation
 
-- **User Guide**: [KautilyaAI User Documentation](./public/docs/kautilyaai-guide.html)
-- **Developer Guide**: [KautilyaAI Developer Documentation](./public/developer/kautilyaai-copilot.html)
-- **Security**: [Security Guidelines](./docs/SECURITY.md)
+- **User Guide**: [Complete Documentation](./public/docs/index.html)
+- **KautilyaAI Guide**: [AI Co-Pilot Documentation](./public/docs/kautilyaai-guide.html)
+- **Metrics Explorer**: [Analytics Platform Guide](./public/docs/metrics-explorer-guide.html)
+- **Developer Guide**: [Technical Documentation](./public/developer/index.html)
+- **Security**: [Security Guidelines](./SECURITY.md)
 - **Contributing**: [Contribution Guidelines](./CONTRIBUTING.md)
 
 ## 🏆 What's New in v2.5.4

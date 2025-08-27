@@ -1,12 +1,12 @@
-# Budget Buddy - AI Coding Agent Instructions
+# FinBuddy - AI Coding Agent Instructions
 
 ## 🎯 Project Overview
 
-**Budget Buddy** (aka FinBuddy) is a comprehensive personal finance management application built with modern web technologies. It provides expense tracking, budget management, AI-powered financial insights, advanced dashboard analytics, gamification system, and secure cloud synchronization with full PWA support.
+**FinBuddy** (formerly Budget Buddy) is a comprehensive personal finance management application built with modern web technologies. It provides expense tracking, budget management, AI-powered financial insights, advanced dashboard analytics, gamification system, and secure cloud synchronization with full PWA support.
 
 ### Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS + Radix UI components
+- **Styling**: Tailwind CSS + Radix UI components + Tailwind CSS v4
 - **Backend**: Firebase (Auth, Firestore, Storage, Functions v2)
 - **Charts**: ApexCharts for advanced data visualization
 - **AI Integration**: KautilyaAI Co-Pilot with Google Gemini 2.0 Flash + Firebase Functions v2
@@ -385,6 +385,38 @@ useEffect(() => {
   <p style={{ color: 'var(--disclaimer-title)' }}>Content</p>
 </div>
 ```
+
+### Developer Documentation Styling (CRITICAL)
+Developer documentation uses modern GitHub Dark theme for code blocks:
+
+```css
+/* Modern code block styling - GitHub Dark theme */
+.code-block {
+  background: #0d1117;
+  color: #e6edf3;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  overflow-x: auto;
+  border: 1px solid #30363d;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.code-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+  border-radius: 8px 8px 0 0;
+}
+```
+
+**Pattern**: All developer documentation code blocks use GitHub Dark theme with gradient accent, Fira Code font, and enhanced shadows. Never use plain black/white "notepad" styling.
 
 ### Legacy AI Integration (BudgetAnalyzer)
 
@@ -942,6 +974,7 @@ const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
 - Gamification system: `src/components/analytics/GamificationSystem.tsx`
 - Advanced charts: `src/components/analytics/AdvancedCharts.tsx`
 - Theme styling: `src/styles/theme.css` (custom CSS variables)
+- Developer documentation: `public/developer/` (GitHub Dark theme styling)
 
 ### Essential Commands
 ```bash

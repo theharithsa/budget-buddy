@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deployment Guide - FinBuddy Developer Docs</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -92,16 +93,45 @@
             color: #333;
         }
 
-        .code-block {
-            background: #000;
-            color: #fff;
+                .code-block {
+            background: #0d1117;
+            color: #e6edf3;
             padding: 1.5rem;
-            border-radius: 4px;
-            overflow-x: auto;
+            border-radius: 8px;
             margin: 1rem 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
             font-size: 0.9rem;
-            line-height: 1.4;
+            line-height: 1.6;
+        }
+        
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+            font-size: inherit;
+            line-height: inherit;
         }
 
         .inline-code {
@@ -305,17 +335,17 @@
                     <li>
                         <h4>Clone Repository</h4>
                         <div class="code-block">
-git clone https://github.com/theharithsa/budget-buddy.git
-cd budget-buddy
+                                                <pre><code>git clone https://github.com/theharithsa/budget-buddy.git
+cd budget-buddy</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Install Dependencies</h4>
                         <div class="code-block">
-npm install
+                                                <pre><code>npm install
 # or
-yarn install
+yarn install</code></pre>
                         </div>
                     </li>
 
@@ -323,14 +353,14 @@ yarn install
                         <h4>Configure Firebase</h4>
                         <p>Update <span class="inline-code">src/lib/firebase.ts</span> with your project configuration:</p>
                         <div class="code-block">
-const firebaseConfig = {
+                                                <pre><code>const firebaseConfig = {
   apiKey: "your-api-key",
   authDomain: "your-project.firebaseapp.com",
   projectId: "your-project-id",
   storageBucket: "your-project.appspot.com",
   messagingSenderId: "123456789",
   appId: "your-app-id"
-};
+};</code></pre>
                         </div>
                     </li>
 
@@ -338,35 +368,35 @@ const firebaseConfig = {
                         <h4>Environment Variables</h4>
                         <p>Create <span class="inline-code">.env</span> file in project root:</p>
                         <div class="code-block">
-# Optional - for AI features
+                                                <pre><code># Optional - for AI features
 VITE_OPENAI_API_KEY=your-openai-api-key
 
 # Optional - for observability
 VITE_ENVIRONMENT=development
 VITE_DYNATRACE_URL=your-dynatrace-url
-VITE_DYNATRACE_TOKEN=your-dynatrace-token
+VITE_DYNATRACE_TOKEN=your-dynatrace-token</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Start Development Server</h4>
                         <div class="code-block">
-npm run dev
-# Server will start on http://localhost:5000
+                                                <pre><code>npm run dev
+# Server will start on http://localhost:5000</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Deploy Functions (Optional)</h4>
                         <div class="code-block">
-# Install Firebase CLI if not already installed
+                                                <pre><code># Install Firebase CLI if not already installed
 npm install -g firebase-tools
 
 # Login to Firebase
 firebase login
 
 # Deploy functions for KautilyaAI Co-Pilot
-firebase deploy --only functions
+firebase deploy --only functions</code></pre>
                         </div>
                     </li>
                 </ol>
@@ -385,7 +415,7 @@ firebase deploy --only functions
 
             <h3>Build Commands</h3>
             <div class="code-block">
-# Development build with hot reload
+                                    <pre><code># Development build with hot reload
 npm run dev
 
 # Production build (outputs to dist/)
@@ -403,12 +433,12 @@ npm run test:run
 # Version management
 npm run version:patch  # Increment patch version
 npm run version:minor  # Increment minor version  
-npm run version:major  # Increment major version
+npm run version:major  # Increment major version</code></pre>
             </div>
 
             <h3>Vite Configuration</h3>
             <div class="code-block">
-// vite.config.ts - Key configuration settings
+                                    <pre><code>// vite.config.ts - Key configuration settings
 export default defineConfig({
   plugins: [react()],
   
@@ -449,7 +479,7 @@ export default defineConfig({
     port: 5000,
     host: true,
   },
-});
+});</code></pre>
             </div>
 
             <h3>Build Optimization</h3>
@@ -539,20 +569,20 @@ export default defineConfig({
 
             <h3>Prerequisites</h3>
             <div class="code-block">
-# Install Firebase CLI globally
+                                    <pre><code># Install Firebase CLI globally
 npm install -g firebase-tools
 
 # Login to Firebase
 firebase login
 
 # Initialize Firebase in your project (if not already done)
-firebase init
+firebase init</code></pre>
             </div>
 
             <h3>Firebase Configuration</h3>
             <p>Ensure your <span class="inline-code">firebase.json</span> is configured correctly:</p>
             <div class="code-block">
-{
+                                    <pre><code>{
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -591,7 +621,7 @@ firebase init
     "source": "functions",
     "runtime": "nodejs18"
   }
-}
+}</code></pre>
             </div>
 
             <h3>Deployment Steps</h3>
@@ -600,21 +630,21 @@ firebase init
                     <li>
                         <h4>Build Production Bundle</h4>
                         <div class="code-block">
-npm run build
+                                                <pre><code>npm run build</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Deploy to Firebase</h4>
                         <div class="code-block">
-# Deploy hosting only
+                                                <pre><code># Deploy hosting only
 firebase deploy --only hosting
 
 # Deploy hosting and functions
 firebase deploy --only hosting,functions
 
 # Deploy everything
-firebase deploy
+firebase deploy</code></pre>
                         </div>
                     </li>
 
@@ -627,11 +657,11 @@ firebase deploy
 
             <h3>Preview Channels</h3>
             <div class="code-block">
-# Create a preview channel for testing
+                                    <pre><code># Create a preview channel for testing
 firebase hosting:channel:deploy preview-feature
 
 # Deploy to a specific preview channel
-firebase hosting:channel:deploy --expires 7d my-feature
+firebase hosting:channel:deploy --expires 7d my-feature</code></pre>
             </div>
         </section>
 
@@ -666,7 +696,7 @@ firebase hosting:channel:deploy --expires 7d my-feature
             <h3>Deployment Script</h3>
             <p>Use the provided PowerShell script <span class="inline-code">scripts/deploy-to-azure.ps1</span>:</p>
             <div class="code-block">
-# Azure deployment script
+                                    <pre><code># Azure deployment script
 param(
     [Parameter(Mandatory=$true)]
     [string]$ResourceGroup,
@@ -686,7 +716,7 @@ Compress-Archive -Path "dist/*" -DestinationPath "budget-buddy-deploy.zip" -Forc
 Write-Host "Deploying to Azure App Service..." -ForegroundColor Green
 az webapp deployment source config-zip --resource-group $ResourceGroup --name $AppServiceName --src "budget-buddy-deploy.zip"
 
-Write-Host "Deployment completed!" -ForegroundColor Green
+Write-Host "Deployment completed!" -ForegroundColor Green</code></pre>
             </div>
 
             <h3>Manual Deployment Steps</h3>
@@ -695,28 +725,28 @@ Write-Host "Deployment completed!" -ForegroundColor Green
                     <li>
                         <h4>Build for Production</h4>
                         <div class="code-block">
-npm run build
+                                                <pre><code>npm run build</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Create App Service</h4>
                         <div class="code-block">
-az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name budget-buddy-app --runtime "NODE|18-lts"
+                                                <pre><code>az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name budget-buddy-app --runtime "NODE|18-lts"</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Configure App Settings</h4>
                         <div class="code-block">
-az webapp config appsettings set --resource-group myResourceGroup --name budget-buddy-app --settings WEBSITE_NODE_DEFAULT_VERSION="~18"
+                                                <pre><code>az webapp config appsettings set --resource-group myResourceGroup --name budget-buddy-app --settings WEBSITE_NODE_DEFAULT_VERSION="~18"</code></pre>
                         </div>
                     </li>
 
                     <li>
                         <h4>Deploy Application</h4>
                         <div class="code-block">
-az webapp deployment source config-zip --resource-group myResourceGroup --name budget-buddy-app --src dist.zip
+                                                <pre><code>az webapp deployment source config-zip --resource-group myResourceGroup --name budget-buddy-app --src dist.zip</code></pre>
                         </div>
                     </li>
                 </ol>
@@ -730,7 +760,7 @@ az webapp deployment source config-zip --resource-group myResourceGroup --name b
 
             <h3>GitHub Actions (Firebase)</h3>
             <div class="code-block">
-# .github/workflows/firebase-deploy.yml
+                                    <pre><code># .github/workflows/firebase-deploy.yml
 name: Deploy to Firebase Hosting
 
 on:
@@ -767,12 +797,12 @@ jobs:
         repoToken: ${{ secrets.GITHUB_TOKEN }}
         firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         channelId: live
-        projectId: your-firebase-project-id
+        projectId: your-firebase-project-id</code></pre>
             </div>
 
             <h3>Azure DevOps Pipeline</h3>
             <div class="code-block">
-# azure-pipelines.yml
+                                    <pre><code># azure-pipelines.yml
 trigger:
 - main
 
@@ -806,7 +836,7 @@ steps:
     azureSubscription: 'Azure-Service-Connection'
     appType: 'webApp'
     appName: 'budget-buddy-app'
-    package: '$(Build.ArtifactStagingDirectory)/budget-buddy-$(Build.BuildId).zip'
+    package: '$(Build.ArtifactStagingDirectory)/budget-buddy-$(Build.BuildId).zip'</code></pre>
             </div>
 
             <h3>Environment-Specific Deployments</h3>
@@ -840,7 +870,7 @@ steps:
 
             <h3>Firebase Analytics</h3>
             <div class="code-block">
-// Firebase Analytics integration
+                                    <pre><code>// Firebase Analytics integration
 import { analytics } from './lib/firebase';
 import { logEvent } from 'firebase/analytics';
 
@@ -854,12 +884,12 @@ logEvent(analytics, 'expense_added', {
 logEvent(analytics, 'page_view', {
   page_title: 'Dashboard',
   page_location: window.location.href
-});
+});</code></pre>
             </div>
 
             <h3>Error Monitoring</h3>
             <div class="code-block">
-// Error boundary for production error tracking
+                                    <pre><code>// Error boundary for production error tracking
 class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     // Log to Firebase Crashlytics or other service
@@ -870,7 +900,7 @@ class ErrorBoundary extends React.Component {
       // Send to error tracking service
     }
   }
-}
+}</code></pre>
             </div>
 
             <h3>Performance Monitoring</h3>
@@ -951,7 +981,7 @@ class ErrorBoundary extends React.Component {
 
             <h3>Debug Commands</h3>
             <div class="code-block">
-# Check build output
+                                    <pre><code># Check build output
 npm run build -- --analyze
 
 # Test production build locally  
@@ -964,7 +994,7 @@ firebase emulators:start
 firebase hosting:channel:list
 
 # Azure deployment logs
-az webapp log tail --name budget-buddy-app --resource-group myResourceGroup
+az webapp log tail --name budget-buddy-app --resource-group myResourceGroup</code></pre>
             </div>
 
             <div class="success">

@@ -25,7 +25,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
       fontFamily: 'Titillium Web, sans-serif',
       colors: {
         primary: isDark ? '#60a5fa' : '#3b82f6',
-        secondary: isDark ? '#34d399' : '#10b981',
+        secondary: isDark ? '#93c5fd' : '#2563eb',
         tertiary: isDark ? '#f87171' : '#ef4444',
         background: isDark ? '#1f2937' : '#ffffff',
         text: isDark ? '#f9fafb' : '#111827',
@@ -336,7 +336,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
           fontFamily: themeConfig.fontFamily,
         },
         series: chartData.budgetPerformance.series,
-        colors: ['#1C64F2', '#16BDCA', '#FDBA8C', '#E74694', '#9061F9', '#10B981'],
+        colors: ['#1C64F2', '#16BDCA', '#FDBA8C', '#E74694', '#9061F9', '#3B82F6'],
         labels: chartData.budgetPerformance.labels,
         dataLabels: {
           enabled: false,
@@ -382,7 +382,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
               Total spending this month
             </p>
           </div>
-          <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
+          <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-blue-500 dark:text-blue-500 text-center">
             {chartData.weeklyGrowth}%
             <TrendingUp className="w-3 h-3 ms-1" />
           </div>
@@ -418,7 +418,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
             <dd className="leading-none text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(chartData.totalSpent / 4)}</dd>
           </dl>
           <div>
-            <span className="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-green-900 dark:text-green-300">
+            <span className="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-blue-900 dark:text-blue-300">
               <TrendingUp className="w-2.5 h-2.5 me-1.5" />
               Weekly growth 12.5%
             </span>
@@ -428,7 +428,7 @@ export function FlowbiteCharts({ expenses, budgets }: FlowbiteChartsProps) {
         <div className="grid grid-cols-2 py-3">
           <dl>
             <dt className="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">This Week</dt>
-            <dd className="leading-none text-xl font-bold text-green-500 dark:text-green-400">{formatCurrency(chartData.totalSpent * 0.3)}</dd>
+            <dd className="leading-none text-xl font-bold text-blue-500 dark:text-blue-400">{formatCurrency(chartData.totalSpent * 0.3)}</dd>
           </dl>
           <dl>
             <dt className="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">Last Week</dt>

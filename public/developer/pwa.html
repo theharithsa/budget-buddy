@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWA Features - FinBuddy Developer Docs</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -92,16 +93,45 @@
             color: #333;
         }
 
-        .code-block {
-            background: #000;
-            color: #fff;
+                .code-block {
+            background: #0d1117;
+            color: #e6edf3;
             padding: 1.5rem;
-            border-radius: 4px;
-            overflow-x: auto;
+            border-radius: 8px;
             margin: 1rem 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
             font-size: 0.9rem;
-            line-height: 1.4;
+            line-height: 1.6;
+        }
+        
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+            font-size: inherit;
+            line-height: inherit;
         }
 
         .inline-code {
@@ -324,7 +354,7 @@
 
             <h3>Service Worker Structure</h3>
             <div class="code-block">
-// Service Worker registration and lifecycle
+                                    <pre><code>// Service Worker registration and lifecycle
 const CACHE_NAME = 'budget-buddy-v1';
 const DYNAMIC_CACHE = 'budget-buddy-dynamic-v1';
 
@@ -373,7 +403,7 @@ self.addEventListener('fetch', (event) =&gt; {
       }
     )
   );
-});
+});</code></pre>
             </div>
 
             <h3>Caching Strategies</h3>
@@ -382,14 +412,14 @@ self.addEventListener('fetch', (event) =&gt; {
                     <h4>Cache First Strategy</h4>
                     <p>Used for static assets (CSS, JS, images)</p>
                     <div class="code-block">
-// Cache first for static resources
+                                            <pre><code>// Cache first for static resources
 if (event.request.destination === 'script' || 
     event.request.destination === 'style') {
   event.respondWith(
     caches.match(event.request)
       .then(response =&gt; response || fetch(event.request))
   );
-}
+}</code></pre>
                     </div>
                 </div>
 
@@ -397,7 +427,7 @@ if (event.request.destination === 'script' ||
                     <h4>Network First Strategy</h4>
                     <p>Used for API calls and dynamic content</p>
                     <div class="code-block">
-// Network first for API calls
+                                            <pre><code>// Network first for API calls
 if (event.request.url.includes('/api/')) {
   event.respondWith(
     fetch(event.request)
@@ -410,7 +440,7 @@ if (event.request.url.includes('/api/')) {
       })
       .catch(() =&gt; caches.match(event.request))
   );
-}
+}</code></pre>
                     </div>
                 </div>
             </div>
@@ -423,7 +453,7 @@ if (event.request.url.includes('/api/')) {
 
             <h3>PWA Manager Architecture</h3>
             <div class="code-block">
-// PWA Manager class structure
+                                    <pre><code>// PWA Manager class structure
 class PWAManager {
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
   private isInstalled = false;
@@ -496,12 +526,12 @@ class PWAManager {
 }
 
 // Export singleton instance
-export const pwaManager = new PWAManager();
+export const pwaManager = new PWAManager();</code></pre>
             </div>
 
             <h3>PWA Event System</h3>
             <div class="code-block">
-// Custom PWA events for UI integration
+                                    <pre><code>// Custom PWA events for UI integration
 interface PWAEvents {
   'pwa-install-available': CustomEvent;
   'pwa-install-completed': CustomEvent;
@@ -539,7 +569,7 @@ useEffect(() =&gt; {
     window.removeEventListener('pwa-install-completed', handleInstallCompleted);
     window.removeEventListener('pwa-update-available', handleUpdateAvailable);
   };
-}, []);
+}, []);</code></pre>
             </div>
         </section>
 
@@ -550,7 +580,7 @@ useEffect(() =&gt; {
 
             <h3>PWA Components Architecture</h3>
             <div class="code-block">
-// PWA Components structure
+                                    <pre><code>// PWA Components structure
 export const PWAComponents: React.FC = () =&gt; {
   return (
     &lt;&gt;
@@ -620,12 +650,12 @@ const InstallPrompt: React.FC = () =&gt; {
       )}
     &lt;/AnimatePresence&gt;
   );
-};
+};</code></pre>
             </div>
 
             <h3>Connection Status Component</h3>
             <div class="code-block">
-// Connection Status for offline awareness
+                                    <pre><code>// Connection Status for offline awareness
 const ConnectionStatus: React.FC = () =&gt; {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showStatus, setShowStatus] = useState(false);
@@ -679,12 +709,12 @@ const ConnectionStatus: React.FC = () =&gt; {
       )}
     &lt;/AnimatePresence&gt;
   );
-};
+};</code></pre>
             </div>
 
             <h3>Manual Installation Guide</h3>
             <div class="code-block">
-// Browser-specific installation instructions
+                                    <pre><code>// Browser-specific installation instructions
 const ManualInstallGuide: React.FC = () =&gt; {
   const [userAgent, setUserAgent] = useState('');
 
@@ -749,7 +779,7 @@ const ManualInstallGuide: React.FC = () =&gt; {
       &lt;/ol&gt;
     &lt;/div&gt;
   );
-};
+};</code></pre>
             </div>
         </section>
 
@@ -760,7 +790,7 @@ const ManualInstallGuide: React.FC = () =&gt; {
 
             <h3>Manifest Configuration</h3>
             <div class="code-block">
-{
+                                    <pre><code>{
   "name": "FinBuddy - Personal Finance Manager",
   "short_name": "FinBuddy",
   "description": "Comprehensive personal finance management with AI-powered insights",
@@ -848,7 +878,7 @@ const ManualInstallGuide: React.FC = () =&gt; {
   "edge_side_panel": {
     "preferred_width": 400
   }
-}
+}</code></pre>
             </div>
 
             <h3>Icon Requirements</h3>
@@ -938,7 +968,7 @@ const ManualInstallGuide: React.FC = () =&gt; {
 
             <h3>Chrome DevTools Testing</h3>
             <div class="code-block">
-// PWA testing checklist in Chrome DevTools
+                                    <pre><code>// PWA testing checklist in Chrome DevTools
 
 // 1. Application Tab - Service Workers
 // - Check service worker registration
@@ -958,12 +988,12 @@ const ManualInstallGuide: React.FC = () =&gt; {
 // 4. Network Tab - Offline Testing
 // - Enable "Offline" checkbox
 // - Verify app functionality without network
-// - Test cache fallbacks
+// - Test cache fallbacks</code></pre>
             </div>
 
             <h3>PWA Testing Commands</h3>
             <div class="code-block">
-// Browser console commands for PWA testing
+                                    <pre><code>// Browser console commands for PWA testing
 
 // Check service worker registration
 navigator.serviceWorker.getRegistrations().then(console.log);
@@ -987,7 +1017,7 @@ caches.keys().then(console.log);
 // Clear all caches (for testing)
 caches.keys().then(names =&gt; {
   names.forEach(name =&gt; caches.delete(name));
-});
+});</code></pre>
             </div>
 
             <h3>PWA Debug Files</h3>
@@ -1010,7 +1040,7 @@ caches.keys().then(names =&gt; {
 
             <h3>HTTPS Requirement</h3>
             <div class="code-block">
-// PWA requires HTTPS in production
+                                    <pre><code>// PWA requires HTTPS in production
 // Service workers only work over HTTPS (except localhost)
 
 // Vite configuration for PWA
@@ -1028,12 +1058,12 @@ export default defineConfig({
     // Development server configuration
     https: false // HTTPS not required for localhost
   }
-});
+});</code></pre>
             </div>
 
             <h3>Cache Management Strategy</h3>
             <div class="code-block">
-// Cache versioning strategy for updates
+                                    <pre><code>// Cache versioning strategy for updates
 const CACHE_VERSION = 'v1.0.0';
 const CACHE_NAME = `budget-buddy-${CACHE_VERSION}`;
 
@@ -1056,7 +1086,7 @@ self.addEventListener('message', event =&gt; {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-});
+});</code></pre>
             </div>
 
             <h3>Performance Optimization</h3>

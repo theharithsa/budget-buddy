@@ -27,7 +27,9 @@ import {
   DollarSign,
   Grid3x3,
   Settings,
-  Layers
+  Layers,
+  Zap,
+  Hexagon
 } from 'lucide-react';
 import { type Expense, type Budget, type CustomCategory, type Person, getAllCategories, getAllPeople, formatCurrency } from '@/lib/types';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -41,7 +43,7 @@ interface MetricsExplorerProps {
 }
 
 type MetricGroup = 'category' | 'budget' | 'people' | 'description' | 'time' | 'ratios';
-type ChartType = 'line' | 'bar' | 'donut' | 'table' | 'single' | 'heatmap';
+type ChartType = 'line' | 'bar' | 'donut' | 'table' | 'single' | 'heatmap' | 'hotspot' | 'honeycomb';
 
 interface MetricDefinition {
   id: string;
@@ -65,7 +67,7 @@ const METRIC_DEFINITIONS: MetricDefinition[] = [
     name: 'Total Spending by Category',
     description: 'Total amount spent across all categories',
     group: 'category',
-    chartTypes: ['bar', 'donut', 'table'],
+    chartTypes: ['bar', 'donut', 'table', 'hotspot', 'honeycomb'],
     defaultChart: 'bar'
   },
   {
@@ -73,7 +75,7 @@ const METRIC_DEFINITIONS: MetricDefinition[] = [
     name: 'Category Distribution',
     description: 'Percentage breakdown of spending by category',
     group: 'category',
-    chartTypes: ['donut', 'bar', 'table'],
+    chartTypes: ['donut', 'bar', 'table', 'honeycomb'],
     defaultChart: 'donut'
   },
   {
@@ -81,7 +83,7 @@ const METRIC_DEFINITIONS: MetricDefinition[] = [
     name: 'Category Trends Over Time',
     description: 'Monthly spending trends by category',
     group: 'category',
-    chartTypes: ['line', 'bar', 'table', 'heatmap'],
+    chartTypes: ['line', 'bar', 'table', 'heatmap', 'hotspot'],
     defaultChart: 'line'
   },
   // Budget Metrics
@@ -107,7 +109,7 @@ const METRIC_DEFINITIONS: MetricDefinition[] = [
     name: 'Total Spending by Person',
     description: 'Total amount spent per person',
     group: 'people',
-    chartTypes: ['bar', 'donut', 'table'],
+    chartTypes: ['bar', 'donut', 'table', 'honeycomb'],
     defaultChart: 'bar'
   },
   {
@@ -115,7 +117,7 @@ const METRIC_DEFINITIONS: MetricDefinition[] = [
     name: 'Person Distribution',
     description: 'Percentage breakdown of spending by person',
     group: 'people',
-    chartTypes: ['donut', 'bar', 'table'],
+    chartTypes: ['donut', 'bar', 'table', 'honeycomb'],
     defaultChart: 'donut'
   },
   // Description/Tags Metrics
@@ -133,7 +135,7 @@ const METRIC_DEFINITIONS: MetricDefinition[] = [
     name: 'Monthly Spending Trend',
     description: 'Spending trends over time',
     group: 'time',
-    chartTypes: ['line', 'bar', 'table'],
+    chartTypes: ['line', 'bar', 'table', 'hotspot'],
     defaultChart: 'line'
   },
   {
@@ -215,7 +217,7 @@ export function MetricsExplorer({
       fontFamily: 'Inter, sans-serif',
       colors: {
         primary: '#3b82f6',
-        secondary: '#10b981',
+        secondary: '#2563eb',
         tertiary: '#f59e0b',
         quaternary: '#ef4444',
         text: isDark ? '#f1f5f9' : '#0f172a',
@@ -544,7 +546,7 @@ export function MetricsExplorer({
         },
         series: metricData.values,
         labels: metricData.labels,
-        colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'],
+        colors: ['#3b82f6', '#2563eb', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'],
         dataLabels: {
           enabled: true,
           formatter: (val: number) => `${val.toFixed(1)}%`
@@ -624,6 +626,9 @@ export function MetricsExplorer({
             colors: ['#ffffff']
           },
           formatter: (val: number) => {
+            if (metricData.metadata?.isPercentage) {
+              return `${val.toFixed(1)}%`;
+            }
             return formatCurrency(val);
           }
         },
@@ -651,7 +656,12 @@ export function MetricsExplorer({
             fontSize: '14px'
           },
           y: {
-            formatter: (value: number) => formatCurrency(value)
+            formatter: (value: number) => {
+              if (metricData.metadata?.isPercentage) {
+                return `${value.toFixed(1)}%`;
+              }
+              return formatCurrency(value);
+            }
           }
         },
         legend: {
@@ -661,6 +671,184 @@ export function MetricsExplorer({
             colors: themeConfig.colors.text
           },
           fontFamily: themeConfig.fontFamily
+        }
+      };
+      
+      chartInstance.current = new ApexCharts(chartRef.current, config);
+      chartInstance.current.render();
+    } else if (chartType === 'hotspot') {
+      // Hotspot chart - Bubble chart with size and intensity variations
+      const maxValue = Math.max(...metricData.values);
+      const minValue = Math.min(...metricData.values);
+      
+      const config = {
+        chart: {
+          height: 400,
+          type: 'bubble',
+          fontFamily: themeConfig.fontFamily,
+          background: 'transparent',
+          toolbar: { show: false },
+          zoom: { enabled: true }
+        },
+        series: [{
+          name: 'Spending Hotspots',
+          data: metricData.labels.map((label, index) => {
+            const value = metricData.values[index];
+            const intensity = ((value - minValue) / (maxValue - minValue)) * 100;
+            return {
+              x: index,
+              y: value,
+              z: Math.max(10, intensity), // Bubble size based on intensity
+              label: label
+            };
+          })
+        }],
+        dataLabels: {
+          enabled: true,
+          formatter: function(val, opts) {
+            const data = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+            return data.label;
+          },
+          style: {
+            fontFamily: themeConfig.fontFamily,
+            fontSize: '10px',
+            fontWeight: 'bold',
+            colors: ['#ffffff']
+          }
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'radial',
+            shadeIntensity: 0.4,
+            gradientToColors: ['#FF6B6B', '#4ECDC4', '#45B7D1'],
+            inverseColors: false,
+            opacityFrom: 0.8,
+            opacityTo: 0.2,
+            stops: [0, 50, 100]
+          }
+        },
+        xaxis: {
+          type: 'category',
+          categories: metricData.labels,
+          labels: {
+            style: {
+              fontFamily: themeConfig.fontFamily,
+              fontSize: '11px',
+              colors: themeConfig.colors.textMuted
+            },
+            rotate: -45
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              fontFamily: themeConfig.fontFamily,
+              colors: themeConfig.colors.textMuted
+            },
+            formatter: (value: number) => {
+              if (metricData.metadata?.isPercentage) {
+                return `${value.toFixed(1)}%`;
+              }
+              return formatCurrency(value);
+            }
+          }
+        },
+        tooltip: {
+          style: {
+            fontFamily: themeConfig.fontFamily
+          },
+          y: {
+            formatter: (value: number) => {
+              if (metricData.metadata?.isPercentage) {
+                return `${value.toFixed(1)}%`;
+              }
+              return formatCurrency(value);
+            }
+          }
+        },
+        colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
+        plotOptions: {
+          bubble: {
+            minBubbleRadius: 8,
+            maxBubbleRadius: 25
+          }
+        }
+      };
+      
+      chartInstance.current = new ApexCharts(chartRef.current, config);
+      chartInstance.current.render();
+    } else if (chartType === 'honeycomb') {
+      // Honeycomb chart - Hexagonal treemap style visualization
+      const maxValue = Math.max(...metricData.values);
+      
+      const config = {
+        chart: {
+          height: 400,
+          type: 'treemap',
+          fontFamily: themeConfig.fontFamily,
+          background: 'transparent',
+          toolbar: { show: false }
+        },
+        series: [{
+          name: 'Spending Distribution',
+          data: metricData.labels.map((label, index) => ({
+            x: label,
+            y: metricData.values[index]
+          }))
+        }],
+        plotOptions: {
+          treemap: {
+            enableShades: true,
+            shadeIntensity: 0.5,
+            reverseNegativeShade: true,
+            distributed: true,
+            useFillColorAsStroke: true,
+            colorScale: {
+              ranges: [
+                { from: 0, to: maxValue * 0.2, color: '#FFE5E5', name: 'Low' },
+                { from: maxValue * 0.2, to: maxValue * 0.4, color: '#FFB3BA', name: 'Below Average' },
+                { from: maxValue * 0.4, to: maxValue * 0.6, color: '#FFAAA5', name: 'Average' },
+                { from: maxValue * 0.6, to: maxValue * 0.8, color: '#FF8A80', name: 'Above Average' },
+                { from: maxValue * 0.8, to: maxValue, color: '#FF5722', name: 'High' }
+              ]
+            }
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          style: {
+            fontFamily: themeConfig.fontFamily,
+            fontSize: '12px',
+            fontWeight: '600',
+            colors: ['#000000']
+          },
+          formatter: function(text, op) {
+            const formattedValue = metricData.metadata?.isPercentage 
+              ? `${op.value.toFixed(1)}%`
+              : formatCurrency(op.value);
+            return [text, formattedValue];
+          },
+          offsetY: -4
+        },
+        tooltip: {
+          style: {
+            fontFamily: themeConfig.fontFamily
+          },
+          y: {
+            formatter: (value: number) => {
+              if (metricData.metadata?.isPercentage) {
+                return `${value.toFixed(1)}%`;
+              }
+              return formatCurrency(value);
+            }
+          }
+        },
+        colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'],
+        stroke: {
+          width: 2,
+          colors: ['#ffffff']
         }
       };
       
@@ -811,7 +999,9 @@ export function MetricsExplorer({
                           donut: PieChart,
                           table: Table,
                           single: Gauge,
-                          heatmap: Grid3x3
+                          heatmap: Grid3x3,
+                          hotspot: Zap,
+                          honeycomb: Hexagon
                         };
                         const Icon = icons[type];
                         return (
@@ -924,7 +1114,7 @@ export function MetricsExplorer({
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-green-500" />
+                <TrendingUp className="h-4 w-4 text-blue-500" />
                 <span className="text-sm font-medium">Total</span>
               </div>
               <div className="text-2xl font-bold mt-1">

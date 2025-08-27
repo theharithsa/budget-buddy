@@ -12,7 +12,6 @@ import { SpendingTrends } from '@/components/SpendingTrends';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
-import { BudgetAnalyzer } from '@/components/BudgetAnalyzer';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
 import { Navigation } from '@/components/Navigation';
@@ -254,7 +253,6 @@ function FinanceApp() {
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
-              <TabsTrigger value="analyzer">AI Analyzer</TabsTrigger>
               <TabsTrigger value="trends">Trends</TabsTrigger>
             </TabsList>
           </div>
@@ -383,10 +381,6 @@ function FinanceApp() {
 
           <TabsContent value="people">
             <PeopleManager user={user} />
-          </TabsContent>
-
-          <TabsContent value="analyzer">
-            <BudgetAnalyzer expenses={expenses} budgets={budgets} />
           </TabsContent>
 
           <TabsContent value="trends">

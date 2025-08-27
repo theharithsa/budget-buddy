@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 :root {
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-success: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   /* Light Mode - Enhanced Contrast */
   --background: #ffffff;
   --foreground: #0f1419;
@@ -16,7 +19,7 @@
   --secondary-foreground: #334155;
   --muted: #f8fafc;
   --muted-foreground: #64748b;
-  --accent: #10b981;
+  --accent: #3b82f6;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
@@ -30,7 +33,7 @@
   
   /* Chart Colors - Light Mode */
   --chart-1: #2563eb;
-  --chart-2: #10b981;
+  --chart-2: #1d4ed8;
   --chart-3: #f59e0b;
   --chart-4: #ef4444;
   --chart-5: #8b5cf6;
@@ -42,7 +45,7 @@
   
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-success: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
@@ -61,7 +64,7 @@
   --secondary-foreground: #e5e7eb;
   --muted: #1f2937;
   --muted-foreground: #9ca3af;
-  --accent: #34d399;
+  --accent: #60a5fa;
   --accent-foreground: #ffffff;
   --destructive: #f87171;
   --destructive-foreground: #ffffff;
@@ -71,7 +74,7 @@
   
   /* Chart Colors - Dark Mode */
   --chart-1: #60a5fa;
-  --chart-2: #34d399;
+  --chart-2: #3b82f6;
   --chart-3: #fbbf24;
   --chart-4: #f87171;
   --chart-5: #a78bfa;
@@ -83,7 +86,7 @@
   
   /* Dark Mode Gradients */
   --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  --gradient-success: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --gradient-success: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
   --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   --gradient-danger: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
 }

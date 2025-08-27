@@ -1,14 +1,14 @@
-# Security Policy - Budget Buddy with KautilyaAI
+# Security Policy - FinBuddy with KautilyaAI
 
 **Version**: 2.6.0  
 **Last Updated**: December 24, 2025  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 
-Budget Buddy with KautilyaAI takes security seriously. This document outlines our comprehensive security practices, vulnerability reporting process, and data protection measures for both financial data and AI interactions.
+FinBuddy with KautilyaAI takes security seriously. This document outlines our comprehensive security practices, vulnerability reporting process, and data protection measures for both financial data and AI interactions.
 
 ## Security Overview
 
-Budget Buddy implements multiple layers of security to protect user financial data and ensure secure AI interactions:
+FinBuddy implements multiple layers of security to protect user financial data and ensure secure AI interactions:
 
 ### **Data Protection**
 - **End-to-End Encryption**: All data encrypted in transit (HTTPS) and at rest (Firebase)
@@ -409,7 +409,7 @@ npm run security:check    # Complete security check
 
 ## 🔒 Security Statement
 
-**Budget Buddy is committed to protecting user financial data through:**
+**FinBuddy is committed to protecting user financial data through:**
 
 - ✅ **Privacy by Design**: Data minimization and user control
 - ✅ **Security by Default**: Secure configurations out of the box

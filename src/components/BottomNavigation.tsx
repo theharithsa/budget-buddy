@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   BarChart3,
@@ -8,7 +9,6 @@ import {
   FileText,
   Tags,
   Users,
-  Brain,
   Home,
   MessageSquare
 } from 'lucide-react';
@@ -23,8 +23,7 @@ const navigationItems = [
   { id: 'dashboard', label: 'Home', icon: Home },
   { id: 'expenses', label: 'Expenses', icon: Receipt },
   { id: 'budgets', label: 'Budgets', icon: Target },
-  { id: 'analyzer', label: 'AI', icon: Brain },
-  { id: 'ai-chat', label: 'KautilyaAI', icon: MessageSquare },
+  { id: 'ai-chat', label: 'KautilyaAI', icon: MessageSquare, hasBeta: true },
 ];
 
 export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: BottomNavigationProps) {
@@ -48,7 +47,7 @@ export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: B
               variant="ghost"
               size="sm"
               onClick={() => onTabChange(item.id)}
-              className={`flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-0 flex-1 transition-all duration-200 ${
+              className={`relative flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-0 flex-1 transition-all duration-200 ${
                 isActive 
                   ? 'text-primary bg-primary/15 scale-105' 
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
@@ -60,6 +59,9 @@ export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: B
               }`}>
                 {item.label}
               </span>
+              {item.hasBeta && (
+                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+              )}
             </Button>
           );
         })}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -9,7 +10,6 @@ import {
   TrendingUp as TrendUp, 
   RefreshCw as ArrowsClockwise, 
   Palette as Swatches, 
-  Lightbulb,
   Users,
   Menu,
   ChevronLeft,
@@ -32,6 +32,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   description?: string;
+  hasBeta?: boolean;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -75,19 +76,15 @@ const navigationItems: NavigationItem[] = [
     id: 'explorer',
     label: 'Metrics Explorer',
     icon: BarChart3,
-    description: 'Analyze spending with interactive charts'
-  },
-  {
-    id: 'analyzer',
-    label: 'AI Analyzer',
-    icon: Lightbulb,
-    description: 'AI-powered insights'
+    description: 'Analyze spending with interactive charts',
+    hasBeta: true
   },
   {
     id: 'ai-chat',
     label: 'KautilyaAI Co-Pilot',
     icon: MessageSquare,
-    description: 'Chat with KautilyaAI assistant'
+    description: 'Chat with KautilyaAI assistant',
+    hasBeta: true
   }
 ];
 
@@ -104,7 +101,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse,
     <div 
       className={cn(
         "fixed left-0 top-0 h-screen flex flex-col border-r transition-all duration-300 z-40 shadow-lg",
-        isCollapsed ? "w-16" : "w-64"
+        isCollapsed ? "w-16" : "w-72"
       )}
       style={{
         backgroundColor: 'var(--background)',
@@ -154,7 +151,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse,
                 key={item.id}
                 variant={isActive ? "secondary" : "ghost"}
                 className={cn(
-                  "w-full justify-start gap-3 h-12 transition-all",
+                  "w-full justify-start gap-3 h-12 transition-all overflow-hidden relative",
                   isCollapsed ? "px-3" : "px-4"
                 )}
                 style={{
@@ -165,14 +162,30 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse,
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 {!isCollapsed && (
-                  <div className="flex-1 text-left">
-                    <div className="font-medium">{item.label}</div>
-                    {item.description && (
-                      <div className="text-xs line-clamp-1" style={{ color: 'var(--muted-foreground)' }}>
-                        {item.description}
+                  <div className="flex-1 text-left min-w-0 flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium truncate">{item.label}</span>
+                        {item.hasBeta && (
+                          <Badge 
+                            variant="secondary" 
+                            className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-1.5 py-0.5 font-semibold"
+                          >
+                            BETA
+                          </Badge>
+                        )}
                       </div>
-                    )}
+                      {item.description && (
+                        <div className="text-xs truncate" style={{ color: 'var(--muted-foreground)' }}>
+                          {item.description}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                )}
+                {/* Collapsed mode beta indicator */}
+                {isCollapsed && item.hasBeta && (
+                  <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
                 )}
               </Button>
             );
