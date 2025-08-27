@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -87,6 +87,99 @@ const navigationItems: NavigationItem[] = [
     hasBeta: true
   }
 ];
+
+// Mobile Navigation Component
+function MobileNavigation({ activeTab, onTabChange, title, version }: {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  title: string;
+  version: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 border-b" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}>
+      {/* Top bar */}
+      <div className="flex items-center justify-between h-14 px-3">
+        <div className="min-w-0">
+          <h2 className="text-base font-semibold truncate" style={{ color: 'var(--foreground)' }}>{title}</h2>
+          <p className="text-[10px] leading-none" style={{ color: 'var(--muted-foreground)' }}>{version}</p>
+        </div>
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Open navigation">
+              <Menu className="w-5 h-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-[85vw] sm:w-80 flex flex-col max-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+            <SheetHeader className="p-4 border-b flex-shrink-0" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--muted)' }}>
+              <SheetTitle className="text-base font-semibold text-left" style={{ color: 'var(--foreground)' }}>
+                {title}
+              </SheetTitle>
+              <p className="text-xs text-left" style={{ color: 'var(--muted-foreground)' }}>
+                {version} • {navigationItems.length} pages
+              </p>
+            </SheetHeader>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+              <div className="space-y-2 p-3 pb-20">
+                {navigationItems.map((item, index) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <Button
+                      key={item.id}
+                      variant={isActive ? 'secondary' : 'ghost'}
+                      className="w-full justify-start gap-3 py-2 px-3 h-auto rounded-lg border border-transparent hover:border-border/50 transition-all"
+                      style={{
+                        color: isActive ? 'var(--primary)' : 'var(--foreground)',
+                        backgroundColor: isActive ? 'var(--secondary)' : 'transparent',
+                        minHeight: '48px'
+                      }}
+                      onClick={() => {
+                        onTabChange(item.id);
+                        setOpen(false);
+                      }}
+                    >
+                      <Icon className="w-4 h-4 flex-shrink-0" />
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-sm">{item.label}</span>
+                          {item.hasBeta && (
+                            <Badge 
+                              variant="secondary" 
+                              className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[9px] px-1 py-0.5 font-semibold"
+                            >
+                              BETA
+                            </Badge>
+                          )}
+                        </div>
+                        {item.description && (
+                          <div className="text-xs leading-tight" style={{ color: 'var(--muted-foreground)' }}>
+                            {item.description}
+                          </div>
+                        )}
+                      </div>
+                    </Button>
+                  );
+                })}
+                {/* Scroll indicator - shows all items are loaded */}
+                <div className="p-2 text-xs text-center rounded border" style={{ 
+                  color: 'var(--muted-foreground)', 
+                  backgroundColor: 'var(--muted)',
+                  borderColor: 'var(--border)'
+                }}>
+                  📱 Scroll to see all {navigationItems.length} pages
+                </div>
+                {/* Extra space for better scrolling */}
+                <div className="h-16"></div>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    </div>
+  );
+}
 
 // Desktop Sidebar Component
 function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse, title, version }: {
@@ -205,7 +298,7 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
   // Check if screen is mobile size
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsMobile(window.innerWidth < 768); // Match useIsMobile hook breakpoint
     };
 
     checkScreenSize(); // Check on mount
@@ -216,7 +309,7 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
   // Auto-collapse sidebar on smaller desktop screens
   useEffect(() => {
     const handleResize = () => {
-      const newCollapsedState = window.innerWidth < 1280 && window.innerWidth >= 1024;
+      const newCollapsedState = window.innerWidth < 1280 && window.innerWidth >= 768;
       setIsCollapsed(newCollapsedState);
       onSidebarToggle?.(newCollapsedState);
     };
@@ -232,9 +325,16 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
     onSidebarToggle?.(newState);
   };
 
-  // Only render sidebar on desktop screens
+  // Render mobile top bar + drawer on small screens
   if (isMobile) {
-    return null;
+    return (
+      <MobileNavigation 
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        title={title}
+        version={version}
+      />
+    );
   }
 
   return (

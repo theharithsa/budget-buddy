@@ -245,9 +245,7 @@ function FinanceApp() {
         <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
         
         {/* Content with proper spacing and bottom padding for mobile nav */}
-        <div className={`flex-1 max-w-7xl mx-auto px-4 py-6 w-full ${
-          activeTab !== 'dashboard' ? 'pb-20 md:pb-6' : 'pb-6'
-        }`}>
+        <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full pb-20 md:pb-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             {/* Hidden TabsList for functionality only */}
             <TabsList className="hidden">

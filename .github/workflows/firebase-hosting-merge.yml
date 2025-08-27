@@ -17,6 +17,9 @@ jobs:
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+          OTEL_SERVICE_NAME: finbuddy-build
+          OTEL_SERVICE_VERSION: ${{ github.sha }}
+          OTEL_RESOURCE_ATTRIBUTES: "service.name=finbuddy-build,service.version=${{ github.sha }},deployment.environment=production"
         with:
           secrets_to_redact: '["${{ github.token }}"]'
       - name: "📂 Checkout Source Code"

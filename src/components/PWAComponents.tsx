@@ -88,7 +88,7 @@ export const PWAInstallPrompt: React.FC<PWAPromptProps> = ({ className }) => {
   }
 
   return (
-    <Card className={`fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 shadow-lg ${className}`}>
+    <Card className={`fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-[60] shadow-lg ${className}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -182,7 +182,7 @@ export const PWAUpdatePrompt: React.FC<PWAPromptProps> = ({ className }) => {
   }
 
   return (
-    <Card className={`fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 shadow-lg bg-card border-border ${className}`}>
+    <Card className={`fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-[60] shadow-lg bg-card border-border ${className}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
@@ -258,7 +258,7 @@ export const PWAConnectionStatus: React.FC<PWAPromptProps> = ({ className }) => 
   }
 
   return (
-    <Card className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 shadow-lg bg-card border-border ${className}`}>
+    <Card className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[60] shadow-lg bg-card border-border ${className}`}>
       <CardContent className="p-3">
         <div className={`flex items-center gap-2 text-sm font-medium ${
           isOnline ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'
