@@ -45,7 +45,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onAccept, onDecline 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-gray-200 shadow-2xl">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-start justify-between gap-4">
           {/* Cookie Icon and Main Content */}

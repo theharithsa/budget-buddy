@@ -119,7 +119,7 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({ classNam
   // Regular update notification (can be dismissed)
   if (showUpdate) {
     return (
-      <Card className={`fixed bottom-4 right-4 w-80 z-50 shadow-lg border-blue-200 ${className}`}>
+      <Card className={`fixed bottom-4 right-4 w-80 z-[60] shadow-lg border-blue-200 ${className}`}>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

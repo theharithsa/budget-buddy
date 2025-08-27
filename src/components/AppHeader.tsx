@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -8,9 +9,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users, ArrowLeft, BookOpen, FileText } from 'lucide-react';
+import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users, ArrowLeft, BookOpen, FileText, BarChart3, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady, auth } from '@/lib/firebase';
 import { getVersionSubtitle, getNavigationVersion, APP_DISPLAY_NAME } from '@/lib/version';
@@ -29,6 +30,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   description?: string;
+  hasBeta?: boolean;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -67,6 +69,20 @@ const navigationItems: NavigationItem[] = [
     label: 'People',
     icon: Users,
     description: 'Manage people and relationships'
+  },
+  {
+    id: 'explorer',
+    label: 'Metrics Explorer',
+    icon: BarChart3,
+    description: 'Analyze spending with interactive charts',
+    hasBeta: true
+  },
+  {
+    id: 'ai-chat',
+    label: 'KautilyaAI Co-Pilot',
+    icon: MessageSquare,
+    description: 'Chat with KautilyaAI assistant',
+    hasBeta: true
   }
 ];
 
@@ -260,10 +276,12 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                 <SheetContent side="left" className="w-80 p-0">
                   <div className="flex flex-col h-full">
                     {/* Header */}
-                    <div className="p-6 border-b border-border">
-                      <h2 className="text-lg font-semibold text-foreground">{APP_DISPLAY_NAME}</h2>
-                      <p className="text-sm text-muted-foreground mt-1">{getNavigationVersion().subtitle}</p>
-                    </div>
+                    <SheetHeader className="p-6 border-b border-border">
+                      <SheetTitle className="text-lg font-semibold text-foreground text-left">
+                        {APP_DISPLAY_NAME}
+                      </SheetTitle>
+                      <p className="text-sm text-muted-foreground mt-1 text-left">{getNavigationVersion().subtitle}</p>
+                    </SheetHeader>
 
                     {/* Navigation Items */}
                     <ScrollArea className="flex-1 p-4">
@@ -284,7 +302,17 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                             >
                               <Icon className="w-6 h-6 flex-shrink-0" />
                               <div className="flex-1">
-                                <div className="font-medium">{item.label}</div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">{item.label}</span>
+                                  {item.hasBeta && (
+                                    <Badge 
+                                      variant="secondary" 
+                                      className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-1.5 py-0.5 font-semibold"
+                                    >
+                                      BETA
+                                    </Badge>
+                                  )}
+                                </div>
                                 {item.description && (
                                   <div className="text-xs text-muted-foreground">
                                     {item.description}
