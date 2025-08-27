@@ -1,5 +1,5 @@
 
-name: "\U0001F4CA OpenTelemetry Observability"
+name: "📊 OpenTelemetry Observability"
 on:
   workflow_run:
     workflows:
@@ -11,14 +11,17 @@ on:
       - completed
 jobs:
   telemetry-export:
-    name: "\U0001F4C8 Export Deployment Telemetry Data"
+    name: "📈 Export Deployment Telemetry Data"
     runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/workflow@v5.24.2
-        name: "\U0001F4CA Export OpenTelemetry Workflow Data"
+        name: "📊 Export OpenTelemetry Workflow Data"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+          OTEL_SERVICE_NAME: finbuddy-observability
+          OTEL_SERVICE_VERSION: ${{ github.sha }}
+          OTEL_RESOURCE_ATTRIBUTES: "service.name=finbuddy-observability,service.version=${{ github.sha }},deployment.environment=production"
     permissions:
       actions: read

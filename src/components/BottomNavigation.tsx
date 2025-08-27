@@ -3,12 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
-  BarChart3,
   Receipt,
   Target,
-  FileText,
-  Tags,
-  Users,
   Home,
   MessageSquare
 } from 'lucide-react';
@@ -19,11 +15,12 @@ interface BottomNavigationProps {
   isVisible?: boolean;
 }
 
+// Primary navigation items for bottom bar - only the most important ones
 const navigationItems = [
   { id: 'dashboard', label: 'Home', icon: Home },
   { id: 'expenses', label: 'Expenses', icon: Receipt },
   { id: 'budgets', label: 'Budgets', icon: Target },
-  { id: 'ai-chat', label: 'KautilyaAI', icon: MessageSquare, hasBeta: true },
+  { id: 'ai-chat', label: 'AI Chat', icon: MessageSquare, hasBeta: true },
 ];
 
 export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: BottomNavigationProps) {
@@ -36,7 +33,7 @@ export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: B
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border shadow-lg">
-      <div className="flex items-center justify-around px-2 py-3 max-w-md mx-auto">
+      <div className="flex items-center justify-around px-2 py-3">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
