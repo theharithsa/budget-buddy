@@ -248,7 +248,7 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
         },
         labels: chartData.categoryBreakdown.map(item => item.category),
         series: chartData.categoryBreakdown.map(item => item.amount),
-        colors: ['#1C64F2', '#16BDCA', '#9061F9', '#FDBA8C', '#E74694', '#F59E0B', '#10B981', '#EF4444'],
+        colors: ['#1C64F2', '#16BDCA', '#9061F9', '#FDBA8C', '#E74694', '#F59E0B', '#3B82F6', '#EF4444'],
         legend: { show: false },
         tooltip: {
           enabled: true,
@@ -473,8 +473,8 @@ export function AdvancedCharts({ expenses, budgets }: AdvancedChartsProps) {
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center">
-            <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center me-3">
-              <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center me-3">
+              <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
               <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">

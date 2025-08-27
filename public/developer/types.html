@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeScript Types - FinBuddy Developer Docs</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -92,16 +93,45 @@
             color: #333;
         }
 
-        .code-block {
-            background: #000;
-            color: #fff;
+                .code-block {
+            background: #0d1117;
+            color: #e6edf3;
             padding: 1.5rem;
-            border-radius: 4px;
-            overflow-x: auto;
+            border-radius: 8px;
             margin: 1rem 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
             font-size: 0.9rem;
-            line-height: 1.4;
+            line-height: 1.6;
+        }
+        
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+            font-size: inherit;
+            line-height: inherit;
         }
 
         .inline-code {
@@ -239,7 +269,7 @@
 
             <h3>Expense Interface</h3>
             <div class="code-block">
-export interface Expense {
+                                    <pre><code>export interface Expense {
   id: string;                    // Unique identifier
   amount: number;                // Expense amount in currency
   category: string;              // Category name or ID
@@ -258,7 +288,7 @@ const newExpense: Omit&lt;Expense, 'id'&gt; = {
   date: '2024-01-15',
   createdAt: new Date().toISOString(),
   peopleIds: ['person-1', 'person-2']
-};
+};</code></pre>
             </div>
 
             <table class="parameter-table">
@@ -324,7 +354,7 @@ const newExpense: Omit&lt;Expense, 'id'&gt; = {
 
             <h3>Budget Interface</h3>
             <div class="code-block">
-export interface Budget {
+                                    <pre><code>export interface Budget {
   id: string;                    // Unique identifier
   name: string;                  // Budget name
   amount: number;                // Budget limit amount
@@ -341,12 +371,12 @@ const createBudget = (budgetData: Omit&lt;Budget, 'id' | 'createdAt'&gt;): Omit&
   ...budgetData,
   createdAt: new Date().toISOString(),
   isActive: budgetData.isActive ?? true
-});
+});</code></pre>
             </div>
 
             <h3>Person Interface</h3>
             <div class="code-block">
-export interface Person {
+                                    <pre><code>export interface Person {
   id: string;                    // Unique identifier
   name: string;                  // Person's name
   icon: string;                  // Icon identifier (lucide icon name)
@@ -364,7 +394,7 @@ const createPerson = (personData: Omit&lt;Person, 'id' | 'createdAt'&gt;): Omit&
   createdAt: new Date().toISOString(),
   isPublic: personData.isPublic ?? false,
   adoptedBy: personData.adoptedBy ?? []
-});
+});</code></pre>
             </div>
 
             <div class="warning">
@@ -380,7 +410,7 @@ const createPerson = (personData: Omit&lt;Person, 'id' | 'createdAt'&gt;): Omit&
             <h3>getAllPeople Utility</h3>
             <p>Critical function for resolving person IDs to Person objects consistently across the application.</p>
             <div class="code-block">
-// getAllPeople utility function (CRITICAL for data consistency)
+                                    <pre><code>// getAllPeople utility function (CRITICAL for data consistency)
 export const getAllPeople = (customPeople: Person[], publicPeople: Person[] = []): Person[] =&gt; {
   // Combine custom and public people, removing duplicates
   const allPeople = [...customPeople];
@@ -413,12 +443,12 @@ const ExpenseComponent = () =&gt; {
       ))}
     &lt;/div&gt;
   );
-};
+};</code></pre>
             </div>
 
             <h3>Category Types</h3>
             <div class="code-block">
-// Category interfaces
+                                    <pre><code>// Category interfaces
 export interface Category {
   id: string;
   name: string;
@@ -448,12 +478,12 @@ export const getCategoryById = (id: string, customCategories: Category[] = []): 
 
 export const getAllCategories = (customCategories: Category[] = []): Category[] =&gt; {
   return [...DEFAULT_CATEGORIES, ...customCategories];
-};
+};</code></pre>
             </div>
 
             <h3>Template Interface</h3>
             <div class="code-block">
-export interface Template {
+                                    <pre><code>export interface Template {
   id: string;
   name: string;                  // Template name
   amount: number;                // Default amount
@@ -472,7 +502,7 @@ export const createTemplate = (
   ...templateData,
   createdAt: new Date().toISOString(),
   isRecurring: templateData.isRecurring ?? false
-});
+});</code></pre>
             </div>
         </section>
 
@@ -482,7 +512,7 @@ export const createTemplate = (
 
             <h3>KautilyaAI Chat Types</h3>
             <div class="code-block">
-// KautilyaAI Co-Pilot message types
+                                    <pre><code>// KautilyaAI Co-Pilot message types
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';    // Message sender
@@ -516,38 +546,10 @@ export interface AIContext {
   activeBudgets: Budget[];       // Active budgets only
   customPeople: Person[];        // User's custom people (limited to 50)
   publicPeople: Person[];        // Public people (limited to 20)
-}
+}</code></pre>
             </div>
 
-            <h3>Legacy AI Analysis Types</h3>
-            <div class="code-block">
-// BudgetAnalyzer AI response types
-export interface BudgetAnalysis {
-  totalSpent: number;
-  categoryBreakdown: CategorySpending[];
-  insights: string[];
-  recommendations: string[];
-  budgetHealth: 'excellent' | 'good' | 'warning' | 'critical';
-  projectedSpending?: number;
-  savingsOpportunities?: SavingsOpportunity[];
-}
-
-export interface CategorySpending {
-  category: string;
-  amount: number;
-  percentage: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
-}
-
-export interface SavingsOpportunity {
-  category: string;
-  potentialSavings: number;
-  suggestion: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-}
-
-// AI API response handling
-export type AIProvider = 'openai' | 'spark' | 'statistical' | 'demo';
+            <h3>Export Types</h3>
 
 export interface AIAnalysisRequest {
   expenses: Expense[];
@@ -564,7 +566,7 @@ export interface AIAnalysisRequest {
 
             <h3>Achievement System</h3>
             <div class="code-block">
-// Gamification achievement types
+                                    <pre><code>// Gamification achievement types
 export interface Achievement {
   id: string;
   title: string;                 // Achievement title
@@ -602,12 +604,12 @@ export interface SeasonalPattern {
   averageSpending: number;
   category: string;
   pattern: 'high' | 'low' | 'normal';
-}
+}</code></pre>
             </div>
 
             <h3>Chart Data Types</h3>
             <div class="code-block">
-// ApexCharts data structure types
+                                    <pre><code>// ApexCharts data structure types
 export interface ChartDataPoint {
   x: string | number;            // X-axis value (date or category)
   y: number;                     // Y-axis value (amount)
@@ -634,7 +636,7 @@ export interface ChartInstance {
   chart: ApexCharts | null;
   element: HTMLElement | null;
   isRendered: boolean;
-}
+}</code></pre>
             </div>
         </section>
 
@@ -644,7 +646,7 @@ export interface ChartInstance {
 
             <h3>Form Data Types</h3>
             <div class="code-block">
-// Form data interfaces for React Hook Form
+                                    <pre><code>// Form data interfaces for React Hook Form
 export interface ExpenseFormData {
   amount: string;                // String for form input
   category: string;
@@ -691,12 +693,12 @@ export const budgetSchema = z.object({
   period: z.enum(['monthly', 'weekly', 'yearly']),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().optional(),
-});
+});</code></pre>
             </div>
 
             <h3>Filter & Sort Types</h3>
             <div class="code-block">
-// Filter and sorting types
+                                    <pre><code>// Filter and sorting types
 export type SortOption = 'date' | 'amount' | 'category' | 'description';
 export type SortDirection = 'asc' | 'desc';
 export type ViewMode = 'list' | 'grid';
@@ -736,7 +738,7 @@ export const TIMEFRAME_PRESETS: TimeframeOption[] = [
     end: new Date()
   },
   // ... more presets
-];
+];</code></pre>
             </div>
         </section>
 
@@ -746,7 +748,7 @@ export const TIMEFRAME_PRESETS: TimeframeOption[] = [
 
             <h3>Date Utilities</h3>
             <div class="code-block">
-// Date formatting and manipulation utilities
+                                    <pre><code>// Date formatting and manipulation utilities
 export const formatDate = (date: string | Date): string =&gt; {
   const d = typeof date === 'string' ? new Date(date) : date;
   return d.toLocaleDateString('en-US', {
@@ -780,12 +782,12 @@ export const getMonthDisplayName = (monthKey: string): string =&gt; {
   const [year, month] = monthKey.split('-');
   const date = new Date(parseInt(year), parseInt(month) - 1, 1);
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-};
+};</code></pre>
             </div>
 
             <h3>Calculation Utilities</h3>
             <div class="code-block">
-// Financial calculation utilities
+                                    <pre><code>// Financial calculation utilities
 export const calculateBudgetUsage = (expenses: Expense[], budget: Budget): number =&gt; {
   const budgetExpenses = expenses.filter(expense =&gt; {
     const expenseDate = new Date(expense.date);
@@ -821,12 +823,12 @@ export const calculateCategoryBreakdown = (expenses: Expense[]): CategorySpendin
     percentage: total &gt; 0 ? (amount / total) * 100 : 0,
     trend: 'stable' as const // Would need historical data for real trend analysis
   }));
-};
+};</code></pre>
             </div>
 
             <h3>Validation Utilities</h3>
             <div class="code-block">
-// Data validation utilities
+                                    <pre><code>// Data validation utilities
 export const isValidExpense = (expense: Partial&lt;Expense&gt;): expense is Expense =&gt; {
   return !!(
     expense.id &&
@@ -869,7 +871,7 @@ export const validateReceiptFile = (file: File): { valid: boolean; error?: strin
   }
   
   return { valid: true };
-};
+};</code></pre>
             </div>
 
             <div class="utility-section">
@@ -890,7 +892,7 @@ export const validateReceiptFile = (file: File): { valid: boolean; error?: strin
             <p>Quick reference for importing types in your components and utilities.</p>
 
             <div class="code-block">
-// Core data types
+                                    <pre><code>// Core data types
 import { 
   Expense, 
   Budget, 
@@ -935,7 +937,7 @@ import {
 import { 
   DEFAULT_CATEGORIES, 
   TIMEFRAME_PRESETS 
-} from '../lib/types';
+} from '../lib/types';</code></pre>
             </div>
 
             <div class="warning">

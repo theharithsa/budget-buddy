@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Integration - FinBuddy Developer Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .back-btn {
+            background: #000;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #000;
+        }
+
+        .back-btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 4px 4px 0 #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .section {
+            margin: 3rem 0;
+            padding: 2rem;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #000;
+        }
+
+        .section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            color: #000;
+        }
+
+                .code-block {
+            background: #0d1117;
+            color: #e6edf3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .config-card {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+
+        .config-card h4 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            margin: 1rem 0;
+            padding-left: 3rem;
+            position: relative;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #000;
+            color: #fff;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .service-card {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .database-schema {
+            background: #f0f0f0;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .config-grid, .service-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Firebase Integration</h1>
+            <a href="index.html" class="back-btn">← Back to Docs</a>
+        </div>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2>🔥 Firebase Services Overview</h2>
+            <p>FinBuddy leverages multiple Firebase services for a complete backend solution with real-time data synchronization, authentication, file storage, and serverless functions.</p>
+            
+            <div class="service-grid">
+                <div class="service-card">
+                    <span class="service-icon">🔐</span>
+                    <h4>Authentication</h4>
+                    <p>Google OAuth provider with secure user management and session handling.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">📊</span>
+                    <h4>Firestore</h4>
+                    <p>NoSQL database with real-time listeners for expenses, budgets, and user data.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">📁</span>
+                    <h4>Storage</h4>
+                    <p>File storage for receipt images with automatic cleanup and CORS configuration.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">⚡</span>
+                    <h4>Functions v2</h4>
+                    <p>Serverless backend for KautilyaAI Co-Pilot with Google Gemini 2.0 Flash integration.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuration -->
+        <section class="section">
+            <h2>⚙️ Firebase Configuration</h2>
+            
+            <h3>Project Setup</h3>
+            <div class="code-block">
+                                    <pre><code>// src/lib/firebase.ts - Firebase configuration
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
+
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize services
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+export const functions = getFunctions(app);
+
+// Configure Google Auth Provider
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});</code></pre>
+            </div>
+
+            <div class="info-box">
+                <strong>Configuration Note:</strong> Replace the firebaseConfig object with your actual project credentials from the Firebase Console.
+            </div>
+
+            <h3>Environment Variables</h3>
+            <div class="code-block">
+                                    <pre><code># .env.local (optional)
+VITE_FIREBASE_API_KEY=your-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=your-app-id
+
+# For AI features
+VITE_OPENAI_API_KEY=your-openai-key</code></pre>
+            </div>
+        </section>
+
+        <!-- Authentication -->
+        <section class="section">
+            <h2>🔐 Authentication Implementation</h2>
+            
+            <h3>AuthContext Pattern</h3>
+            <div class="code-block">
+                                    <pre><code>// src/contexts/AuthContext.tsx
+import { createContext, useContext, useEffect, useState } from 'react';
+import { User, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { auth, googleProvider } from '../lib/firebase';
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  signInWithGoogle: () => Promise&lt;void&gt;;
+  logout: () => Promise&lt;void&gt;;
+}
+
+const AuthContext = createContext&lt;AuthContextType | undefined&gt;(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+  const [loading, setLoading] = useState(true);
+
+  // Monitor authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Authentication error:', error);
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
+  };
+
+  const value = {
+    user,
+    loading,
+    signInWithGoogle,
+    logout
+  };
+
+  return (
+    &lt;AuthContext.Provider value={value}&gt;
+      {children}
+    &lt;/AuthContext.Provider&gt;
+  );
+}
+
+// Custom hook for using auth context
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}</code></pre>
+            </div>
+
+            <h3>Authentication Guard Pattern</h3>
+            <div class="code-block">
+                                    <pre><code>// Standard pattern for protected operations
+const addExpense = async (expense: Omit&lt;Expense, 'id'&gt;) => {
+  // CRITICAL: Always check authentication first
+  if (!user) {
+    toast.error("Please sign in to continue");
+    return;
+  }
+
+  try {
+    const docRef = await addDoc(
+      collection(db, 'users', user.uid, 'expenses'),
+      {
+        ...expense,
+        createdAt: new Date().toISOString(),
+        userId: user.uid
+      }
+    );
+    
+    toast.success("Expense added successfully");
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding expense:', error);
+    toast.error("Failed to add expense");
+  }
+};</code></pre>
+            </div>
+        </section>
+
+        <!-- Firestore Database -->
+        <section class="section">
+            <h2>📊 Firestore Database Schema</h2>
+            
+            <h3>Database Structure</h3>
+            <div class="database-schema">
+/users/{userId}/
+├── expenses/           # User expenses collection
+│   └── {expenseId}     # Individual expense document
+│       ├── amount: number
+│       ├── category: string
+│       ├── description: string
+│       ├── date: string
+│       ├── createdAt: string
+│       ├── receiptUrl?: string
+│       └── peopleIds?: string[]
+├── budgets/            # User budgets collection
+│   └── {budgetId}      # Individual budget document
+│       ├── category: string
+│       ├── amount: number
+│       ├── period: string
+│       ├── startDate: string
+│       └── isActive: boolean
+├── customPeople/       # User's custom people
+│   └── {personId}      # Individual person document
+│       ├── name: string
+│       ├── icon: string
+│       ├── color: string
+│       ├── relationship: string
+│       └── isPublic: boolean
+└── templates/          # Recurring expense templates
+    └── {templateId}    # Individual template document
+        ├── name: string
+        ├── category: string
+        ├── amount: number
+        └── frequency: string
+
+/publicPeople/          # Shared people collection
+└── {personId}          # Public person documents
+    ├── name: string
+    ├── icon: string
+    ├── color: string
+    ├── relationship: string
+    ├── createdBy: string
+    └── adoptedCount: number
+
+/publicCategories/      # Shared categories
+└── {categoryId}        # Public category documents
+
+/budgetTemplates/       # Shared budget templates
+└── {templateId}        # Public template documents
+            </div>
+
+            <h3>Real-time Data Hooks</h3>
+            <div class="code-block">
+                                    <pre><code>// src/hooks/useFirestoreData.tsx - Real-time listeners
+export function useFirestoreData() {
+  const { user } = useAuth();
+  const [expenses, setExpenses] = useState&lt;Expense[]&gt;([]);
+  const [budgets, setBudgets] = useState&lt;Budget[]&gt;([]);
+  const [customPeople, setCustomPeople] = useState&lt;Person[]&gt;([]);
+  const [publicPeople, setPublicPeople] = useState&lt;Person[]&gt;([]);
+
+  // Real-time expenses listener
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = onSnapshot(
+      query(
+        collection(db, 'users', user.uid, 'expenses'),
+        orderBy('date', 'desc')
+      ),
+      (snapshot) => {
+        const expenseData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Expense[];
+        setExpenses(expenseData);
+      },
+      (error) => {
+        console.error('Error fetching expenses:', error);
+        toast.error('Failed to load expenses');
+      }
+    );
+
+    return unsubscribe;
+  }, [user]);
+
+  // Real-time budgets listener
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = onSnapshot(
+      collection(db, 'users', user.uid, 'budgets'),
+      (snapshot) => {
+        const budgetData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Budget[];
+        setBudgets(budgetData);
+      }
+    );
+
+    return unsubscribe;
+  }, [user]);
+
+  return {
+    expenses,
+    budgets,
+    customPeople,
+    publicPeople,
+    addExpense,
+    updateExpense,
+    deleteExpense,
+    addBudget,
+    updateBudget,
+    deleteBudget
+  };
+}</code></pre>
+            </div>
+
+            <h3>CRUD Operations</h3>
+            <div class="code-block">
+                                    <pre><code>// Add new expense
+const addExpense = async (expense: Omit&lt;Expense, 'id'&gt;) => {
+  if (!user) throw new Error('User not authenticated');
+  
+  const docRef = await addDoc(
+    collection(db, 'users', user.uid, 'expenses'),
+    {
+      ...expense,
+      createdAt: new Date().toISOString(),
+      userId: user.uid
+    }
+  );
+  return docRef.id;
+};
+
+// Update existing expense
+const updateExpense = async (id: string, updates: Partial&lt;Expense&gt;) => {
+  if (!user) throw new Error('User not authenticated');
+  
+  await updateDoc(
+    doc(db, 'users', user.uid, 'expenses', id),
+    updates
+  );
+};
+
+// Delete expense
+const deleteExpense = async (id: string) => {
+  if (!user) throw new Error('User not authenticated');
+  
+  await deleteDoc(doc(db, 'users', user.uid, 'expenses', id));
+};
+
+// Batch operations for better performance
+const addMultipleExpenses = async (expenses: Omit&lt;Expense, 'id'&gt;[]) => {
+  if (!user) throw new Error('User not authenticated');
+  
+  const batch = writeBatch(db);
+  
+  expenses.forEach((expense) => {
+    const docRef = doc(collection(db, 'users', user.uid, 'expenses'));
+    batch.set(docRef, {
+      ...expense,
+      createdAt: new Date().toISOString(),
+      userId: user.uid
+    });
+  });
+  
+  await batch.commit();
+};</code></pre>
+            </div>
+        </section>
+
+        <!-- Storage -->
+        <section class="section">
+            <h2>📁 Firebase Storage</h2>
+            
+            <h3>Receipt Upload Implementation</h3>
+            <div class="code-block">
+                                    <pre><code>// Receipt upload with automatic cleanup
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+
+const uploadReceipt = async (file: File, expenseId: string) => {
+  if (!user) throw new Error('User not authenticated');
+  
+  // Create storage reference
+  const fileName = `${Date.now()}_${file.name}`;
+  const storageRef = ref(storage, `receipts/${user.uid}/${fileName}`);
+  
+  try {
+    // Upload file
+    const snapshot = await uploadBytes(storageRef, file);
+    
+    // Get download URL
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    
+    // Update expense with receipt URL
+    await updateDoc(
+      doc(db, 'users', user.uid, 'expenses', expenseId),
+      { receiptUrl: downloadURL }
+    );
+    
+    return downloadURL;
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw error;
+  }
+};
+
+// Delete receipt when expense is deleted
+const deleteReceipt = async (receiptUrl: string) => {
+  if (!receiptUrl) return;
+  
+  try {
+    const storageRef = ref(storage, receiptUrl);
+    await deleteObject(storageRef);
+  } catch (error) {
+    console.error('Error deleting receipt:', error);
+    // Don't throw - expense deletion should succeed even if receipt deletion fails
+  }
+};</code></pre>
+            </div>
+
+            <h3>Storage Rules</h3>
+            <div class="code-block">
+                                    <pre><code>// storage.rules
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow authenticated users to upload receipts
+    match /receipts/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && resource.size < 5 * 1024 * 1024; // 5MB limit
+    }
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Functions -->
+        <section class="section">
+            <h2>⚡ Firebase Functions v2</h2>
+            
+            <h3>KautilyaAI Co-Pilot Function</h3>
+            <div class="code-block">
+                                    <pre><code>// functions/src/chatWithGeminiML.ts
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+export const chatWithGemini = onCall(
+  {
+    cors: true,
+    region: 'us-central1',
+    memory: '1GiB',
+    timeoutSeconds: 540
+  },
+  async (request) => {
+    // Verify authentication
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'User must be authenticated');
+    }
+
+    const { message, context } = request.data;
+    const userId = request.auth.uid;
+
+    try {
+      // Initialize Gemini AI
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+
+      // Create comprehensive prompt with Arthashastra principles
+      const prompt = createKautilyaPrompt(message, context, userId);
+
+      // Generate AI response
+      const result = await model.generateContent(prompt);
+      const response = result.response.text();
+
+      // Parse and execute actions
+      const parsedResponse = JSON.parse(response);
+      const executedActions = await executeActions(parsedResponse.actions, userId);
+
+      return {
+        message: parsedResponse.message,
+        executedActions,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('KautilyaAI error:', error);
+      throw new HttpsError('internal', 'AI processing failed');
+    }
+  }
+);
+
+// Create context-aware prompt with Arthashastra wisdom
+function createKautilyaPrompt(message: string, context: any, userId: string): string {
+  return `
+You are KautilyaAI, an AI financial advisor inspired by Chanakya's Arthashastra.
+Respond to: "${message}"
+
+Context:
+- Recent Expenses: ${JSON.stringify(context.recentExpenses)}
+- Active Budgets: ${JSON.stringify(context.activeBudgets)}
+- Custom People: ${JSON.stringify(context.customPeople)}
+
+Guidelines:
+1. Use Sanskrit financial terms when appropriate
+2. Apply Arthashastra principles of wealth management
+3. Provide actionable financial advice
+4. Execute CRUD operations when requested
+5. Format response as JSON with message and actions array
+
+Response format:
+{
+  "message": "Your wisdom-filled response",
+  "actions": [
+    {
+      "type": "create_expense",
+      "data": { expense details }
+    }
+  ]
+}
+  `;
+}</code></pre>
+            </div>
+
+            <h3>Function Deployment</h3>
+            <div class="code-block">
+                                    <pre><code># Deploy functions
+npm run deploy
+
+# Deploy specific function
+firebase deploy --only functions:chatWithGemini
+
+# View function logs
+firebase functions:log
+
+# Local testing
+npm run serve</code></pre>
+            </div>
+        </section>
+
+        <!-- Security Rules -->
+        <section class="section">
+            <h2>🔒 Firestore Security Rules</h2>
+            
+            <h3>Database Rules</h3>
+            <div class="code-block">
+                                    <pre><code>// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User data rules
+    match /users/{userId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId;
+      
+      // User subcollections
+      match /{collection}/{document=**} {
+        allow read, write: if request.auth != null 
+          && request.auth.uid == userId;
+      }
+    }
+    
+    // Public collections
+    match /publicPeople/{document} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null 
+        && request.auth.uid == resource.data.createdBy;
+      allow update: if request.auth != null 
+        && (request.auth.uid == resource.data.createdBy 
+        || request.data.keys().hasOnly(['adoptedCount']));
+    }
+    
+    match /publicCategories/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    match /budgetTemplates/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+  }
+}</code></pre>
+            </div>
+
+            <h3>Testing Security Rules</h3>
+            <div class="code-block">
+                                    <pre><code># Install Firebase emulator
+npm install -g firebase-tools
+
+# Start emulator suite
+firebase emulators:start
+
+# Run security rules tests
+npm test
+
+# Validate rules syntax
+firebase firestore:rules:validate</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="section">
+            <h2>✨ Firebase Best Practices</h2>
+            
+            <div class="config-grid">
+                <div class="config-card">
+                    <h4>Performance Optimization</h4>
+                    <ul>
+                        <li>Use compound queries with proper indexing</li>
+                        <li>Implement pagination for large datasets</li>
+                        <li>Cache frequently accessed data</li>
+                        <li>Use batch operations for multiple writes</li>
+                        <li>Optimize listener subscription lifecycle</li>
+                    </ul>
+                </div>
+
+                <div class="config-card">
+                    <h4>Security Best Practices</h4>
+                    <ul>
+                        <li>Always validate user authentication</li>
+                        <li>Implement proper security rules</li>
+                        <li>Sanitize user input on client and server</li>
+                        <li>Use environment variables for sensitive data</li>
+                        <li>Regular security rule audits</li>
+                    </ul>
+                </div>
+
+                <div class="config-card">
+                    <h4>Error Handling</h4>
+                    <ul>
+                        <li>Implement comprehensive try-catch blocks</li>
+                        <li>Provide user-friendly error messages</li>
+                        <li>Log errors for debugging</li>
+                        <li>Handle network connectivity issues</li>
+                        <li>Implement retry logic for failed operations</li>
+                    </ul>
+                </div>
+
+                <div class="config-card">
+                    <h4>Data Modeling</h4>
+                    <ul>
+                        <li>Design for scalability and query patterns</li>
+                        <li>Minimize document reads with proper structure</li>
+                        <li>Use subcollections for hierarchical data</li>
+                        <li>Implement proper data validation</li>
+                        <li>Plan for data migration strategies</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section class="section">
+            <h2>🔧 Common Issues & Solutions</h2>
+            
+            <h3>Authentication Issues</h3>
+            <div class="warning-box">
+                <strong>Problem:</strong> "Firebase: Error (auth/invalid-credential)"<br>
+                <strong>Solution:</strong> Check Firebase project configuration and ensure correct API keys in firebaseConfig.
+            </div>
+
+            <h3>Firestore Permission Errors</h3>
+            <div class="warning-box">
+                <strong>Problem:</strong> "FirebaseError: Missing or insufficient permissions"<br>
+                <strong>Solution:</strong> Verify security rules and ensure user is authenticated before database operations.
+            </div>
+
+            <h3>Storage Upload Failures</h3>
+            <div class="warning-box">
+                <strong>Problem:</strong> CORS errors during file upload<br>
+                <strong>Solution:</strong> Configure CORS for Firebase Storage bucket with proper allowed origins.
+            </div>
+
+            <h3>Functions Timeout</h3>
+            <div class="warning-box">
+                <strong>Problem:</strong> Function execution timeout<br>
+                <strong>Solution:</strong> Increase timeout configuration and optimize function performance.
+            </div>
+        </section>
+
+        <footer style="text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 2px solid #000; color: #666;">
+            <p><strong>FinBuddy v2.7.0</strong> - Firebase Integration Guide</p>
+            <p>Comprehensive backend services with real-time synchronization</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Developer Documentation - Fin Buddy</title>
+        <title>FinBuddy Developer Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -29,25 +30,607 @@
             text-align: center;
             margin-bottom: 3rem;
             padding-bottom: 2rem;
-            border-bottom: 2px solid #000;
+            border-bottom: 3px solid #000;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: #000;
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
         }
 
         .version-badge {
             display: inline-block;
             background: #000;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0.5rem;
+        }
+
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tech-badge {
+            background: #f8f9fa;
+            border: 2px solid #000;
+            color: #000;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 2rem;
+            background: #fff;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            box-shadow: 8px 8px 0 #000;
+            transform: translate(-4px, -4px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            margin: 0;
+        }
+
+        .card-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list li {
+            padding: 0.3rem 0;
+            color: #333;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .feature-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #000;
+        }
+
+        .btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 4px 4px 0 #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .architecture-overview {
+            margin: 3rem 0;
+            padding: 2rem;
+            border: 3px solid #000;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .architecture-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .arch-component {
+            background: #fff;
+            padding: 1.5rem;
+            border: 2px solid #000;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .arch-component h4 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .arch-component p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .quick-start {
+            background: #000;
+            color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 3rem 0;
+        }
+
+        .quick-start h2 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .quick-start code {
+            background: #333;
+            color: #fff;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+        }
+
+        .code-block {
+            background: #0d1117;
+            color: #e6edf3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .code-block .comment {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .code-block .command {
+            color: #79c0ff;
+            font-weight: 500;
+        }
+
+        .code-block .string {
+            color: #a5d6ff;
+        }
+
+        .code-block .url {
+            color: #f85149;
+            text-decoration: underline;
+        }
+
+        .command-block {
+            background: #0d1117;
+            color: #e6edf3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .command-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .command-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .command-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid #000;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .tech-badges {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FinBuddy Developer Documentation</h1>
+            <p class="subtitle">Developer Documentation & Technical Reference</p>
+            <div class="version-badge">v2.7.0 - Metrics Explorer Release</div>
+            <div class="tech-badges">
+                <span class="tech-badge">React 18 + TypeScript</span>
+                <span class="tech-badge">Firebase v10</span>
+                <span class="tech-badge">KautilyaAI Co-Pilot</span>
+                <span class="tech-badge">Metrics Explorer BETA</span>
+                <span class="tech-badge">PWA Ready</span>
+            </div>
+        </header>
+
+        <!-- Architecture Overview -->
+        <section class="architecture-overview">
+            <h2 class="architecture-title">Technical Architecture</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                Modern React application with AI-powered financial insights, advanced analytics, and enterprise-grade security
+            </p>
+            
+            <div class="architecture-grid">
+                <div class="arch-component">
+                    <h4>Frontend</h4>
+                    <p>React 18 + TypeScript<br>Vite Build System<br>Tailwind CSS + Radix UI</p>
+                </div>
+                <div class="arch-component">
+                    <h4>Backend</h4>
+                    <p>Firebase Functions v2<br>Firestore Database<br>Firebase Auth & Storage</p>
+                </div>
+                <div class="arch-component">
+                    <h4>AI Engine</h4>
+                    <p>Google Gemini 2.0 Flash<br>KautilyaAI Co-Pilot<br>Arthashastra Principles</p>
+                </div>
+                <div class="arch-component">
+                    <h4>Analytics</h4>
+                    <p>Metrics Explorer BETA<br>ApexCharts Integration<br>Advanced Query Builder</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section class="quick-start">
+            <h2>🚀 Quick Start</h2>
+            <p>Get FinBuddy running locally in under 5 minutes:</p>
+            
+            <div class="command-block">
+                <pre><code><span class="comment"># Clone repository</span>
+<span class="command">git clone</span> <span class="url">https://github.com/theharithsa/budget-buddy.git</span>
+<span class="command">cd</span> budget-buddy
+
+<span class="comment"># Install dependencies</span>
+<span class="command">npm install</span>
+
+<span class="comment"># Start development server</span>
+<span class="command">npm run dev</span>
+
+<span class="comment"># Open http://localhost:5000</span></code></pre>
+            </div>
+            
+            <p>📖 <strong>Next Steps:</strong> Configure Firebase, set up KautilyaAI, and explore the Metrics Explorer!</p>
+        </section>
+
+        <!-- Documentation Grid -->
+        <div class="grid">
+            <!-- Core Architecture -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏗️</div>
+                    <h3 class="card-title">Architecture</h3>
+                </div>
+                <p class="card-description">
+                    Deep dive into FinBuddy's technical architecture, component structure, and design patterns.
+                </p>
+                <ul class="feature-list">
+                    <li>React 18 + TypeScript architecture</li>
+                    <li>Component hierarchy and data flow</li>
+                    <li>State management patterns</li>
+                    <li>Build system configuration</li>
+                </ul>
+                <a href="architecture.html" class="btn">Explore Architecture</a>
+            </div>
+
+            <!-- Firebase Integration -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔥</div>
+                    <h3 class="card-title">Firebase Setup</h3>
+                </div>
+                <p class="card-description">
+                    Complete Firebase configuration including Firestore, Authentication, Functions v2, and Storage.
+                </p>
+                <ul class="feature-list">
+                    <li>Firestore database structure</li>
+                    <li>Authentication methods</li>
+                    <li>Cloud Functions v2 setup</li>
+                    <li>Security rules configuration</li>
+                </ul>
+                <a href="firebase.html" class="btn">Setup Firebase</a>
+            </div>
+
+            <!-- KautilyaAI Co-Pilot -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <h3 class="card-title">KautilyaAI Co-Pilot</h3>
+                </div>
+                <p class="card-description">
+                    AI-powered financial assistant combining ancient Arthashastra wisdom with Google Gemini 2.0 Flash.
+                </p>
+                <ul class="feature-list">
+                    <li>Google Gemini 2.0 Flash integration</li>
+                    <li>Arthashastra principles implementation</li>
+                    <li>Conversational CRUD operations</li>
+                    <li>Context-aware financial insights</li>
+                </ul>
+                <a href="kautilyaai.html" class="btn">AI Integration</a>
+            </div>
+
+            <!-- Metrics Explorer -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Metrics Explorer</h3>
+                </div>
+                <p class="card-description">
+                    Advanced analytics platform with Dynatrace-style interface for comprehensive financial analysis.
+                </p>
+                <ul class="feature-list">
+                    <li>Simple metrics and advanced query builder</li>
+                    <li>ApexCharts integration</li>
+                    <li>Responsive layout engine</li>
+                    <li>Custom metric definitions</li>
+                </ul>
+                <a href="analytics.html" class="btn">Analytics Guide</a>
+            </div>
+
+            <!-- Component Library -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🧩</div>
+                    <h3 class="card-title">Components</h3>
+                </div>
+                <p class="card-description">
+                    Comprehensive component library built with Radix UI primitives and TypeScript interfaces.
+                </p>
+                <ul class="feature-list">
+                    <li>UI component documentation</li>
+                    <li>TypeScript interfaces</li>
+                    <li>Props and usage examples</li>
+                    <li>Theme and styling guide</li>
+                </ul>
+                <a href="components.html" class="btn">View Components</a>
+            </div>
+
+            <!-- API Reference -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📡</div>
+                    <h3 class="card-title">API Reference</h3>
+                </div>
+                <p class="card-description">
+                    Complete API documentation for Firebase Functions, Firestore operations, and KautilyaAI endpoints.
+                </p>
+                <ul class="feature-list">
+                    <li>Firebase Functions API</li>
+                    <li>Firestore operations</li>
+                    <li>Authentication methods</li>
+                    <li>KautilyaAI chat endpoints</li>
+                </ul>
+                <a href="api-reference.html" class="btn">API Docs</a>
+            </div>
+
+            <!-- Hooks & Utilities -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🪝</div>
+                    <h3 class="card-title">Hooks & Utils</h3>
+                </div>
+                <p class="card-description">
+                    Custom React hooks, utility functions, and helper libraries for efficient development.
+                </p>
+                <ul class="feature-list">
+                    <li>useFirestoreData hook</li>
+                    <li>useIsMobile hook</li>
+                    <li>Utility functions</li>
+                    <li>Type definitions</li>
+                </ul>
+                <a href="hooks.html" class="btn">Hooks Guide</a>
+            </div>
+
+            <!-- PWA Configuration -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📱</div>
+                    <h3 class="card-title">PWA Setup</h3>
+                </div>
+                <p class="card-description">
+                    Progressive Web App configuration with service workers, offline support, and installation prompts.
+                </p>
+                <ul class="feature-list">
+                    <li>Service worker configuration</li>
+                    <li>PWA manifest setup</li>
+                    <li>Installation prompts</li>
+                    <li>Offline functionality</li>
+                </ul>
+                <a href="pwa.html" class="btn">PWA Guide</a>
+            </div>
+
+            <!-- Testing -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🧪</div>
+                    <h3 class="card-title">Testing</h3>
+                </div>
+                <p class="card-description">
+                    Testing strategies, setup guides, and best practices for unit, integration, and e2e testing.
+                </p>
+                <ul class="feature-list">
+                    <li>Vitest configuration</li>
+                    <li>Component testing</li>
+                    <li>Firebase testing</li>
+                    <li>E2E test strategies</li>
+                </ul>
+                <a href="testing.html" class="btn">Testing Guide</a>
+            </div>
+
+            <!-- Deployment -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🚀</div>
+                    <h3 class="card-title">Deployment</h3>
+                </div>
+                <p class="card-description">
+                    Production deployment guides for Azure App Service, Firebase Hosting, and CI/CD pipelines.
+                </p>
+                <ul class="feature-list">
+                    <li>Azure App Service deployment</li>
+                    <li>Firebase Hosting setup</li>
+                    <li>Environment configuration</li>
+                    <li>CI/CD pipeline setup</li>
+                </ul>
+                <a href="deployment.html" class="btn">Deploy Guide</a>
+            </div>
+
+            <!-- Type Definitions -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📝</div>
+                    <h3 class="card-title">Types</h3>
+                </div>
+                <p class="card-description">
+                    Complete TypeScript type definitions, interfaces, and utility types used throughout the application.
+                </p>
+                <ul class="feature-list">
+                    <li>Core data types</li>
+                    <li>Component prop types</li>
+                    <li>API response types</li>
+                    <li>Utility type helpers</li>
+                </ul>
+                <a href="types.html" class="btn">Type Reference</a>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔧</div>
+                    <h3 class="card-title">Troubleshooting</h3>
+                </div>
+                <p class="card-description">
+                    Common issues, debugging techniques, and solutions for development and production environments.
+                </p>
+                <ul class="feature-list">
+                    <li>Common build issues</li>
+                    <li>Firebase debugging</li>
+                    <li>Performance optimization</li>
+                    <li>Error handling patterns</li>
+                </ul>
+                <a href="troubleshooting.html" class="btn">Debug Issues</a>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>FinBuddy v2.7.0</strong> - Developer Documentation</p>
+            <p>Built with React 18, TypeScript, Firebase, and KautilyaAI Co-Pilot</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #999;">
+                "अर्थ एव परमं तत्त्वम्" - Wealth is the ultimate reality - <em>Chanakya, Arthashastra</em>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
@@ -204,7 +787,7 @@
         <header>
                         <h1>Fin Buddy Developer Documentation</h1>
             <p class="subtitle">Developer Documentation</p>
-            <div class="version-badge">v2.6.0 - KautilyaAI Co-Pilot</div>
+            <div class="version-badge">v2.7.0 - Metrics Explorer BETA</div>
         </header>
 
         <div class="nav-grid">
@@ -287,8 +870,10 @@
 
             <a href="./analytics.html" class="nav-card">
                 <h3>📊 Analytics & Gamification</h3>
-                <p>Advanced dashboard system with ApexCharts, gamification, and financial insights.</p>
+                <p>Metrics Explorer BETA, advanced dashboard system with ApexCharts, gamification, and financial insights.</p>
                 <ul>
+                    <li>Metrics Explorer BETA platform</li>
+                    <li>Dynatrace-style query builder</li>
                     <li>Chart implementations</li>
                     <li>Gamification system</li>
                     <li>Achievement tracking</li>

@@ -190,7 +190,7 @@ export function SpendingBehaviorInsights({ expenses }: SpendingBehaviorInsightsP
       <Card className="enhanced-card hover-lift">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
               <Award className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -205,7 +205,7 @@ export function SpendingBehaviorInsights({ expenses }: SpendingBehaviorInsightsP
               <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div className="flex items-center gap-3">
                   {streak.type === 'saving' ? (
-                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    <TrendingUp className="h-5 w-5 text-blue-600" />
                   ) : (
                     <TrendingDown className="h-5 w-5 text-red-600" />
                   )}
@@ -254,7 +254,7 @@ export function SpendingBehaviorInsights({ expenses }: SpendingBehaviorInsightsP
             <>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-green-600">Needs</span>
+                  <span className="text-sm font-medium text-blue-600">Needs</span>
                   <span className="text-sm font-bold">{formatCurrency(needsVsWants.needs)}</span>
                 </div>
                 <Progress 

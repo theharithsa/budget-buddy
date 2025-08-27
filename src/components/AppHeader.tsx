@@ -67,12 +67,6 @@ const navigationItems: NavigationItem[] = [
     label: 'People',
     icon: Users,
     description: 'Manage people and relationships'
-  },
-  {
-    id: 'analyzer',
-    label: 'AI Analyzer',
-    icon: Lightbulb,
-    description: 'AI-powered insights'
   }
 ];
 

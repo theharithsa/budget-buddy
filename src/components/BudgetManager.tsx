@@ -242,7 +242,7 @@ export function BudgetManager({
                     Add Budget
                   </Button>
                 </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Set Category Budget</DialogTitle>
                 </DialogHeader>

@@ -600,9 +600,14 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  KautilyaAI Co-Pilot
-                </CardTitle>
+                <div className="flex items-center gap-3">
+                  <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    KautilyaAI Co-Pilot
+                  </CardTitle>
+                  <Badge variant="secondary" className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-xs px-2 py-0.5 font-semibold">
+                    BETA
+                  </Badge>
+                </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   Your intelligent financial advisor - bringing ancient wisdom to modern wealth
                 </p>

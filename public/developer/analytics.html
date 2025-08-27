@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics & Gamification - FinBuddy Developer Docs</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -92,16 +93,45 @@
             color: #333;
         }
 
-        .code-block {
-            background: #000;
-            color: #fff;
+                .code-block {
+            background: #0d1117;
+            color: #e6edf3;
             padding: 1.5rem;
-            border-radius: 4px;
-            overflow-x: auto;
+            border-radius: 8px;
             margin: 1rem 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #7c3aed 50%, #f85149 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
             font-size: 0.9rem;
-            line-height: 1.4;
+            line-height: 1.6;
+        }
+        
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: 400;
+            font-size: inherit;
+            line-height: inherit;
         }
 
         .inline-code {
@@ -240,6 +270,109 @@
             <p class="subtitle">Advanced dashboard system, ApexCharts integration, and gamification features</p>
         </header>
 
+        <!-- Metrics Explorer BETA (New in v2.7.0) -->
+        <section class="section">
+            <h2>🚀 Metrics Explorer BETA (v2.7.0)</h2>
+            <p>The flagship feature of v2.7.0 introduces a professional analytics platform inspired by Dynatrace's query interface. Located in <span class="inline-code">src/components/MetricsExplorer.tsx</span> and <span class="inline-code">src/components/MetricsBuilder.tsx</span>.</p>
+
+            <h3>Dual Interface Design</h3>
+            <div class="warning">
+                <h4>🏷️ BETA Feature</h4>
+                <p>Metrics Explorer is marked with a professional blue BETA badge. This is an experimental feature with ongoing development.</p>
+            </div>
+
+            <div class="code-block">
+                                    <pre><code>// MetricsExplorer with BETA badge
+&lt;div className="flex items-center gap-2"&gt;
+  &lt;h1 className="text-3xl font-bold"&gt;Metrics Explorer&lt;/h1&gt;
+  &lt;Badge variant="secondary" className="bg-blue-100 text-blue-800 font-medium"&gt;
+    BETA
+  &lt;/Badge&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+            <h3>Simple Metrics Interface</h3>
+            <p>Quick insights with pre-built visualizations:</p>
+            <ul class="list">
+                <li><strong>Time Period Selection:</strong> Dynamic date range picker</li>
+                <li><strong>Metric Groups:</strong> Category, People, Time-based analysis</li>
+                <li><strong>Chart Types:</strong> Bar, Line, Donut, Table visualizations</li>
+                <li><strong>Real-time Filtering:</strong> Instant data updates</li>
+            </ul>
+
+            <h3>Advanced Query Builder</h3>
+            <p>Dynatrace-style interface for custom analytics:</p>
+            <div class="code-block">
+                                    <pre><code>// MetricsBuilder with dynamic query structure
+interface MetricQuery {
+  id: string;
+  name: string;
+  metric: string;        // expense.amount, expense.count, etc.
+  splitBy: string;       // category, person, date
+  filters: MetricFilter[];
+  limit: number;
+  chartType: 'line' | 'bar' | 'donut' | 'table';
+}
+
+// Professional visualization integration
+const MetricsBuilder = () =&gt; {
+  const isMobile = useIsMobile(); // 768px breakpoint
+  
+  return (
+    &lt;div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}&gt;
+      &lt;Card&gt;{/* Query Builder */}&lt;/Card&gt;
+      &lt;div className={isMobile ? 'col-span-1' : 'col-span-2'}&gt;
+        &lt;Card&gt;{/* Chart Display */}&lt;/Card&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+</div>
+
+            <h3>Responsive Layout Engine</h3>
+            <ul class="list">
+                <li><strong>Mobile Detection Hook:</strong> JavaScript-based responsive design at 768px breakpoint</li>
+                <li><strong>Conditional Grid Layouts:</strong> Dynamic column layouts based on screen size</li>
+                <li><strong>Desktop Optimization:</strong> 3-column MetricsBuilder, 4-column filter layouts</li>
+                <li><strong>Cross-Platform Compatibility:</strong> Consistent behavior across devices</li>
+            </ul>
+
+            <div class="code-block">
+                                    <pre><code>// Mobile detection pattern
+import { useIsMobile } from '../hooks/use-mobile';
+
+const isMobile = useIsMobile(); // Returns true for screens &lt; 768px
+
+// Conditional layout application
+&lt;div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-4'}`}&gt;
+  {/* Filter controls */}
+&lt;/div&gt;</code></pre>
+</div>
+
+            <h3>Key Features</h3>
+            <ul class="list">
+                <li><strong>Available Metrics:</strong> Total Amount, Transaction Count, Average Amount, Budget Utilization, Spending Velocity</li>
+                <li><strong>Split Dimensions:</strong> Category, Person, Date, Month, Day of Week, Amount Range</li>
+                <li><strong>Dynamic Filters:</strong> Equals, Contains, Greater Than, Less Than operators</li>
+                <li><strong>Result Limits:</strong> Configurable from 5 to 100 items</li>
+                <li><strong>Chart Types:</strong> Bar Charts, Line Charts, Donut Charts, Data Tables</li>
+                <li><strong>ApexCharts Integration:</strong> Professional visualizations with theme support</li>
+            </ul>
+
+            <h3>Component Architecture</h3>
+            <div class="code-block">
+                                    <pre><code>src/components/
+├── MetricsExplorer.tsx      # Main analytics platform (BETA)
+│   ├── Simple Interface     # Pre-built metric visualizations
+│   └── Advanced Interface   # MetricsBuilder integration
+├── MetricsBuilder.tsx       # Dynatrace-style query builder
+│   ├── Query Management     # Add/remove/switch queries
+│   ├── Filter System       # Dynamic filter management
+│   └── Chart Rendering      # ApexCharts integration
+└── ui/badge.tsx            # BETA badge component</code></pre>
+</div>
+        </section>
+
         <!-- Dashboard System -->
         <section class="section">
             <h2>Advanced Dashboard System</h2>
@@ -247,7 +380,7 @@
 
             <h3>Dashboard Architecture</h3>
             <div class="code-block">
-// Dashboard tab structure with ApexCharts lifecycle management
+                                    <pre><code>// Dashboard tab structure with ApexCharts lifecycle management
 const Dashboard: React.FC = () =&gt; {
   const [activeTab, setActiveTab] = useState('overview');
   const [chartKey, setChartKey] = useState(0); // CRITICAL for chart re-rendering
@@ -287,7 +420,7 @@ const Dashboard: React.FC = () =&gt; {
       }
     };
   }, [activeTab, chartKey, expenses, budgets]);
-};
+};</code></pre>
             </div>
 
             <h3>Tab-Based Navigation</h3>
@@ -339,7 +472,7 @@ const Dashboard: React.FC = () =&gt; {
 
             <h3>Chart Configuration Pattern</h3>
             <div class="code-block">
-// ApexCharts configuration with proper React integration
+                                    <pre><code>// ApexCharts configuration with proper React integration
 const initializeAreaChart = () =&gt; {
   if (!areaChartRef.current) return;
 
@@ -408,12 +541,12 @@ const prepareChartData = (expenses: Expense[]) =&gt; {
       data: Object.values(groupedData)
     }]
   };
-};
+};</code></pre>
             </div>
 
             <h3>Chart Container Pattern</h3>
             <div class="code-block">
-// CRITICAL: Chart containers with proper keys for re-rendering
+                                    <pre><code>// CRITICAL: Chart containers with proper keys for re-rendering
 &lt;div className="chart-container"&gt;
   &lt;h3&gt;Spending Trends&lt;/h3&gt;
   &lt;div 
@@ -430,7 +563,7 @@ const prepareChartData = (expenses: Expense[]) =&gt; {
     ref={columnChartRef} 
     className="w-full h-64"
   /&gt;
-&lt;/div&gt;
+&lt;/div&gt;</code></pre>
             </div>
 
             <div class="warning">
@@ -489,7 +622,7 @@ const prepareChartData = (expenses: Expense[]) =&gt; {
 
             <h3>Achievement Calculation Engine</h3>
             <div class="code-block">
-// Achievement calculation patterns
+                                    <pre><code>// Achievement calculation patterns
 const calculateBudgetCompliance = (expenses: Expense[], budget: number): number =&gt; {
   const totalExpenses = expenses.reduce((sum, exp) =&gt; sum + exp.amount, 0);
   return budget &gt; 0 
@@ -521,12 +654,12 @@ const calculateOverallScore = (
     savingsRate * 0.2 +             // 20% weight - financial health
     (currentStreak / 30) * 100 * 0.1 // 10% weight - streak bonus
   );
-};
+};</code></pre>
             </div>
 
             <h3>Achievement UI Components</h3>
             <div class="code-block">
-// Achievement card with progress visualization
+                                    <pre><code>// Achievement card with progress visualization
 const AchievementCard: React.FC&lt;{ achievement: Achievement }&gt; = ({ achievement }) =&gt; {
   const progressPercentage = Math.min(100, (achievement.currentValue / achievement.targetValue) * 100);
   
@@ -561,12 +694,12 @@ const AchievementCard: React.FC&lt;{ achievement: Achievement }&gt; = ({ achieve
       )}
     &lt;/div&gt;
   );
-};
+};</code></pre>
             </div>
 
             <h3>Visual Polish (v2.5.3 Update)</h3>
             <div class="code-block">
-// Subtle gradient styling for completed achievements
+                                    <pre><code>// Subtle gradient styling for completed achievements
 .achievement-card.completed {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border: 1px solid #28a745;
@@ -595,7 +728,7 @@ const AchievementCard: React.FC&lt;{ achievement: Achievement }&gt; = ({ achieve
   align-items: center;
   justify-content: center;
   font-weight: bold;
-}
+}</code></pre>
             </div>
         </section>
 
@@ -610,7 +743,7 @@ const AchievementCard: React.FC&lt;{ achievement: Achievement }&gt; = ({ achieve
                     <h4>Budget Compliance (40%)</h4>
                     <p>Measures adherence to budget limits</p>
                     <div class="code-block">
-const budgetScore = (1 - totalSpent / budgetLimit) * 100;
+                                            <pre><code>const budgetScore = (1 - totalSpent / budgetLimit) * 100;</code></pre>
                     </div>
                 </div>
 
@@ -618,7 +751,7 @@ const budgetScore = (1 - totalSpent / budgetLimit) * 100;
                     <h4>Consistency Score (30%)</h4>
                     <p>Tracks regular expense recording habits</p>
                     <div class="code-block">
-const consistencyScore = (daysWithExpenses / totalDays) * 100;
+                                            <pre><code>const consistencyScore = (daysWithExpenses / totalDays) * 100;</code></pre>
                     </div>
                 </div>
 
@@ -626,7 +759,7 @@ const consistencyScore = (daysWithExpenses / totalDays) * 100;
                     <h4>Savings Rate (20%)</h4>
                     <p>Measures financial health and saving ability</p>
                     <div class="code-block">
-const savingsRate = ((income - expenses) / income) * 100;
+                                            <pre><code>const savingsRate = ((income - expenses) / income) * 100;</code></pre>
                     </div>
                 </div>
 
@@ -634,14 +767,14 @@ const savingsRate = ((income - expenses) / income) * 100;
                     <h4>Streak Bonus (10%)</h4>
                     <p>Rewards consistent daily tracking</p>
                     <div class="code-block">
-const streakBonus = (currentStreak / 30) * 100;
+                                            <pre><code>const streakBonus = (currentStreak / 30) * 100;</code></pre>
                     </div>
                 </div>
             </div>
 
             <h3>Score Visualization</h3>
             <div class="code-block">
-// Financial score display with ring progress
+                                    <pre><code>// Financial score display with ring progress
 const FinancialScoreRing: React.FC&lt;{ score: number }&gt; = ({ score }) =&gt; {
   const circumference = 2 * Math.PI * 45; // radius = 45
   const strokeDasharray = circumference;
@@ -685,7 +818,7 @@ const FinancialScoreRing: React.FC&lt;{ score: number }&gt; = ({ score }) =&gt; 
       &lt;/div&gt;
     &lt;/div&gt;
   );
-};
+};</code></pre>
             </div>
         </section>
 
@@ -739,7 +872,7 @@ const FinancialScoreRing: React.FC&lt;{ score: number }&gt; = ({ score }) =&gt; 
 
             <h3>Behavioral Pattern Detection</h3>
             <div class="code-block">
-// Spending pattern analysis algorithms
+                                    <pre><code>// Spending pattern analysis algorithms
 const analyzeSpendingBehavior = (expenses: Expense[]): SpendingBehavior =&gt; {
   const sortedExpenses = expenses.sort((a, b) =&gt; new Date(a.date).getTime() - new Date(b.date).getTime());
   
@@ -793,7 +926,7 @@ const detectSeasonalPatterns = (expenses: Expense[]): SeasonalPattern[] =&gt; {
                averageSpending &lt; overallAverage * 0.8 ? 'low' : 'normal'
     };
   });
-};
+};</code></pre>
             </div>
         </section>
 
@@ -803,7 +936,7 @@ const detectSeasonalPatterns = (expenses: Expense[]): SeasonalPattern[] =&gt; {
 
             <h3>Chart Rendering Optimization</h3>
             <div class="code-block">
-// Optimized chart data processing
+                                    <pre><code>// Optimized chart data processing
 const useChartData = (expenses: Expense[]) =&gt; {
   return useMemo(() =&gt; {
     // Expensive data processing only when expenses change
@@ -824,12 +957,12 @@ const useDebouncedChartUpdate = (data: any[], delay: number = 300) =&gt; {
   }, [data, delay]);
   
   return debouncedData;
-};
+};</code></pre>
             </div>
 
             <h3>Achievement Calculation Optimization</h3>
             <div class="code-block">
-// Memoized achievement calculations
+                                    <pre><code>// Memoized achievement calculations
 const useAchievements = (expenses: Expense[], budgets: Budget[]) =&gt; {
   return useMemo(() =&gt; {
     return calculateAllAchievements(expenses, budgets);
@@ -851,7 +984,7 @@ const useSelectiveScoreUpdate = (expenses: Expense[]) =&gt; {
   }, [expenses, lastCalculated]);
   
   return scores;
-};
+};</code></pre>
             </div>
 
             <div class="warning">

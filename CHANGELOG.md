@@ -7,6 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2025-08-28
+
+### 🚀 Major Features Added
+
+- **📊 Metrics Explorer (BETA)**: Advanced financial analytics platform with Dynatrace-style interface
+  - **Simple Metrics**: Quick financial insights with pre-built charts and statistics
+  - **Advanced Query Builder**: Custom metric creation with filters, dimensions, and visualizations
+  - **Multiple Chart Types**: Bar, line, donut, and table visualizations
+  - **Real-time Analytics**: Dynamic filtering by category, people, date ranges, and custom metrics
+  - **Professional Dashboard**: ApexCharts integration for enterprise-grade data visualization
+
+### 🔧 Technical Improvements
+
+- **Responsive Layout Engine**: JavaScript-based responsive detection using mobile hooks
+  - Replaced Tailwind responsive classes with conditional JavaScript layouts
+  - Fixed desktop layout issues with horizontal multi-column arrangements
+  - Improved mobile detection at 768px breakpoint for consistent behavior
+
+- **Component Architecture**: Enhanced component structure for analytics features
+  - Mobile-first responsive design with desktop optimization
+  - Conditional grid layouts based on screen size detection
+  - Improved user experience across all device types
+
+- **Documentation Infrastructure**: Complete documentation system overhaul
+  - Fixed broken navigation links and cross-references
+  - Standardized footer design across all documentation pages
+  - Added consistent Dynatrace monitoring to all documentation
+  - Removed duplicate and unused documentation files
+
+### 🎨 UI/UX Enhancements
+
+- **BETA Badge System**: Clear labeling for experimental features
+  - Metrics Explorer marked as BETA release for user awareness
+  - Consistent badge styling across theme variants
+  - Professional blue color scheme for BETA indicators
+
+- **Navigation Improvements**: Enhanced user navigation experience
+  - Fixed budget modal width consistency with other modals
+  - Removed AI Analyzer components (legacy feature cleanup)
+  - Improved navigation flow and user experience
+
+### 📚 Documentation Updates
+
+- **Comprehensive Documentation**: Complete documentation system with consistent design
+  - **Metrics Explorer Guide**: Detailed guide for new analytics features
+  - **Navigation Consistency**: Standardized "Back to Docs" links across all pages
+  - **Design Standardization**: Uniform header styles, footer content, and CSS frameworks
+  - **Link Verification**: Fixed all broken internal and external documentation links
+
+### 📱 Cross-Platform Compatibility
+
+- **Desktop Layout Fixes**: Resolved vertical stacking issues on larger screens
+  - 3-column layout for MetricsBuilder on desktop (≥768px)
+  - 4-column filter layout for MetricsExplorer on desktop
+  - Single column responsive design for mobile devices
+
+### 🛠️ Developer Experience
+
+- **Build System**: Enhanced development workflow
+  - Improved component debugging capabilities
+  - Streamlined responsive design testing
+  - Better development tools for layout troubleshooting
+
+---
+
 ## [2.6.0] - 2025-12-24
 
 ### 🚀 Revolutionary Features Added
