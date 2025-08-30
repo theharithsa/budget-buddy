@@ -8,12 +8,12 @@ on:
       - main
 jobs:
   build_and_deploy:
-    name: "🏗️ Build and Deploy"
+    name: "\U0001F3D7️ Build and Deploy"
     runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: "📊 Initialize OpenTelemetry Monitoring"
+        name: "\U0001F4CA Initialize OpenTelemetry Monitoring"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
@@ -21,19 +21,19 @@ jobs:
           OTEL_SERVICE_VERSION: ${{ github.sha }}
           OTEL_RESOURCE_ATTRIBUTES: "service.name=finbuddy-build,service.version=${{ github.sha }},deployment.environment=production"
         with:
-          secrets_to_redact: '["${{ github.token }}"]'
-      - name: "📂 Checkout Source Code"
+          secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
+      - name: "\U0001F4C2 Checkout Source Code"
         uses: actions/checkout@v4
       - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      - name: "📦 Install Project Dependencies"
+      - name: "\U0001F4E6 Install Project Dependencies"
         run: npm ci
-      - name: "🏗️ Production Build"
+      - name: "\U0001F3D7️ Production Build"
         run: npm run build
-      - name: "🚀 Deploy to Firebase Production Hosting"
+      - name: "\U0001F680 Deploy to Firebase Production Hosting"
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -42,7 +42,6 @@ jobs:
           channelId: live
           projectId: finbuddy-2025
       - name: ✅ Post-Deployment Verification
-        run: |
-          echo "🎉 Deployment completed successfully!"
-          echo "🌐 Site URL: ${{ steps.firebase_deploy.outputs.details_url }}"
-          echo "⏰ Deployment Time: $(date)"
+        run: "echo \"\U0001F389 Deployment completed successfully!\"\necho \"\U0001F310 Site URL: ${{ steps.firebase_deploy.outputs.details_url }}\"\necho \"⏰ Deployment Time: $(date)\"\n"
+    permissions:
+      actions: read
