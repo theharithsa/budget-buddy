@@ -10,13 +10,13 @@ permissions:
   actions: read
 jobs:
   build_and_preview:
-    name: "🏗️ Build and Preview"
+    name: "\U0001F3D7️ Build and Preview"
     runs-on: ubuntu-latest
     environment: production
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - uses: plengauer/opentelemetry-github/actions/instrument/job@v5.24.2
-        name: "📊 Initialize PR Monitoring"
+        name: "\U0001F4CA Initialize PR Monitoring"
         env:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
@@ -24,19 +24,19 @@ jobs:
           OTEL_SERVICE_VERSION: ${{ github.sha }}
           OTEL_RESOURCE_ATTRIBUTES: "service.name=finbuddy-build,service.version=${{ github.sha }},deployment.environment=preview"
         with:
-          secrets_to_redact: '["${{ github.token }}"]'
-      - name: "📂 Checkout PR Source Code"
+          secrets_to_redact: '["${{ github.token }}","${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}","${{ secrets.GITHUB_TOKEN }}"]'
+      - name: "\U0001F4C2 Checkout PR Source Code"
         uses: actions/checkout@v4
       - name: ⚙️ Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      - name: "📦 Install Dependencies"
+      - name: "\U0001F4E6 Install Dependencies"
         run: npm ci
-      - name: "🏗️ Build for Preview"
+      - name: "\U0001F3D7️ Build for Preview"
         run: npm run build
-      - name: "🚀 Deploy to Firebase Preview"
+      - name: "\U0001F680 Deploy to Firebase Preview"
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -44,6 +44,6 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FINBUDDY_2025 }}
           projectId: finbuddy-2025
       - name: ✅ Preview Deployment Success
-        run: |
-          echo "🎉 Preview deployment completed!"
-          echo "🌐 Preview URL: ${{ steps.firebase_deploy.outputs.details_url }}"
+        run: "echo \"\U0001F389 Preview deployment completed!\"\necho \"\U0001F310 Preview URL: ${{ steps.firebase_deploy.outputs.details_url }}\"\n"
+    permissions:
+      actions: read
