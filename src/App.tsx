@@ -16,6 +16,7 @@ import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
 import { MetricsExplorer } from '@/components/MetricsExplorer';
 import { AIChatPage } from '@/components/AIChatPage';
+import { DynatraceMonitoringDemo } from '@/components/DynatraceMonitoringDemo';
 import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
@@ -28,6 +29,13 @@ import { CookieBanner } from '@/components/CookieBanner';
 import { DailySpendingChart } from '@/components/DailySpendingChart';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
+import { 
+  useMonitoredUserContext,
+  usePageTracking,
+  useTabTracking,
+  useMonitoredBusiness,
+  useComponentTracking
+} from '@/hooks/useDynatraceMonitoring';
 import { 
   Search as MagnifyingGlass,
   Receipt,
@@ -74,6 +82,15 @@ function FinanceApp() {
     adoptBudgetTemplate,
   } = useFirestoreData();
 
+  // Dynatrace monitoring hooks
+  const { setUserContext, setBudgetContext, setExpenseContext } = useMonitoredUserContext();
+  const trackTab = useTabTracking();
+  const { trackUserJourney, trackFinancialEvent } = useMonitoredBusiness();
+  const { trackComponentEvent } = useComponentTracking('FinanceApp');
+
+  // Page tracking
+  usePageTracking('FinBuddy App', 'main-application');
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
@@ -92,8 +109,10 @@ function FinanceApp() {
   // Save view mode to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('finbuddy-view-mode', viewMode);
-  }, [viewMode]);
+    trackComponentEvent('View Mode Changed', { viewMode });
+  }, [viewMode, trackComponentEvent]);
   
+  // Initialize date range to current month
   // Initialize date range to current month
   const [dateRange, setDateRange] = useState<DateRange>(() => {
     const now = new Date();
@@ -105,6 +124,132 @@ function FinanceApp() {
     };
   });
 
+  // Set user context when user is available
+  useEffect(() => {
+    if (user) {
+      // Immediate user identification for Dynatrace (even if no expenses loaded yet)
+      setUserContext(user.uid, {
+        email: user.email,
+        displayName: user.displayName,
+        isAnonymous: user.isAnonymous,
+        provider: user.providerData[0]?.providerId,
+        emailVerified: user.emailVerified,
+        creationTime: user.metadata.creationTime,
+        lastSignInTime: user.metadata.lastSignInTime
+      });
+      
+      if (expenses.length > 0) {
+        const monthlyExpenses = getMonthlyExpenses(expenses, getCurrentMonth());
+        const totalSpent = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+        
+        // Update context with financial data
+        setExpenseContext(expenses.length, totalSpent);
+        setBudgetContext(budgets.length, budgets.filter(b => (b as any).isActive !== false).length);
+        
+        trackUserJourney('User Session Started', {
+          totalExpenses: expenses.length,
+          totalBudgets: budgets.length,
+          monthlySpend: totalSpent
+        });
+      } else {
+        // Track initial session even without expenses
+        trackUserJourney('User Session Started', {
+          hasData: false,
+          newUser: expenses.length === 0 && budgets.length === 0
+        });
+      }
+    }
+  }, [user, expenses, budgets, setUserContext, setExpenseContext, setBudgetContext, trackUserJourney]);
+
+  // Enhanced tab change handler with monitoring
+  const handleTabChange = (newTab: string) => {
+    trackTab(activeTab, newTab);
+    trackComponentEvent('Tab Changed', {
+      fromTab: activeTab,
+      toTab: newTab,
+      timestamp: new Date().toISOString()
+    });
+    setActiveTab(newTab);
+  };
+
+  // Enhanced handlers with monitoring
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    if (value.length > 2) {
+      trackComponentEvent('Search Performed', {
+        query: value.substring(0, 50), // Limit stored query length
+        queryLength: value.length
+      });
+    } else if (value === '') {
+      trackComponentEvent('Search Cleared');
+    }
+  };
+
+  const handleCategoryFilterChange = (value: string) => {
+    setCategoryFilter(value);
+    trackComponentEvent('Category Filter Changed', {
+      previousFilter: categoryFilter,
+      newFilter: value
+    });
+  };
+
+  const handlePeopleFilterChange = (value: string) => {
+    setPeopleFilter(value);
+    trackComponentEvent('People Filter Changed', {
+      previousFilter: peopleFilter,
+      newFilter: value
+    });
+  };
+
+  const handleSortChange = (value: 'date' | 'amount' | 'category') => {
+    setSortBy(value);
+    trackComponentEvent('Sort Changed', {
+      previousSort: sortBy,
+      newSort: value
+    });
+  };
+
+  const handleDateRangeChange = (newDateRange: DateRange) => {
+    setDateRange(newDateRange);
+    trackComponentEvent('Date Range Changed', {
+      from: newDateRange.from,
+      to: newDateRange.to,
+      daysDifference: Math.ceil((new Date(newDateRange.to).getTime() - new Date(newDateRange.from).getTime()) / (1000 * 60 * 60 * 24))
+    });
+  };
+
+  const handleViewModeChange = (newViewMode: 'list' | 'grid') => {
+    setViewMode(newViewMode);
+    trackComponentEvent('View Mode Changed', {
+      previousMode: viewMode,
+      newMode: newViewMode
+    });
+  };
+
+  const handleAddExpenseClick = () => {
+    setShowAddExpense(true);
+    trackComponentEvent('Add Expense Modal Opened');
+  };
+
+  const handleAddExpenseModalClose = () => {
+    setShowAddExpense(false);
+    trackComponentEvent('Add Expense Modal Closed');
+  };
+
+  const handleEditExpenseModalClose = () => {
+    setEditingExpense(null);
+    trackComponentEvent('Edit Expense Modal Closed');
+  };
+
+  const handleEditExpenseClick = (expense: Expense) => {
+    setEditingExpense(expense);
+    trackComponentEvent('Edit Expense Modal Opened', {
+      expenseId: expense.id,
+      category: expense.category,
+      amount: expense.amount
+    });
+  };
+
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
       const result = await addExpense(expenseData);
@@ -112,11 +257,30 @@ function FinanceApp() {
       setShowAddExpense(false);
       toast.success('Expense added successfully!');
       
+      // Track successful expense addition
+      trackFinancialEvent('Expense Added', expenseData.amount, expenseData.category);
+
+      trackComponentEvent('Expense Added Successfully', {
+        category: expenseData.category,
+        amount: expenseData.amount,
+        hasReceipt: Boolean(expenseData.receiptUrl),
+        hasPeople: Boolean(expenseData.peopleIds?.length),
+        peopleCount: expenseData.peopleIds?.length || 0
+      });
+      
       return result;
       
     } catch (error) {
       console.error('❌ App.tsx - Error adding expense:', error);
       toast.error('Failed to add expense');
+      
+      // Track error
+      trackComponentEvent('Expense Add Failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        category: expenseData.category,
+        amount: expenseData.amount
+      });
+      
       throw error;
     }
   };
@@ -131,9 +295,25 @@ function FinanceApp() {
       await updateExpense(expenseId, expenseData);
       setEditingExpense(null);
       toast.success('Expense updated successfully!');
+      
+      // Track successful expense update
+      trackFinancialEvent('Expense Updated', expenseData.amount, expenseData.category);
+
+      trackComponentEvent('Expense Updated Successfully', {
+        expenseId,
+        fieldsUpdated: Object.keys(expenseData).length,
+        updatedFields: Object.keys(expenseData)
+      });
+      
     } catch (error) {
       console.error('Error updating expense:', error);
       toast.error('Failed to update expense');
+      
+      // Track error
+      trackComponentEvent('Expense Update Failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        expenseId
+      });
     }
   };
 
@@ -141,9 +321,23 @@ function FinanceApp() {
     try {
       await deleteExpense(expenseId);
       toast.success('Expense deleted successfully!');
+      
+      // Track successful expense deletion
+      trackFinancialEvent('Expense Deleted');
+
+      trackComponentEvent('Expense Deleted Successfully', {
+        expenseId
+      });
+      
     } catch (error) {
       console.error('Error deleting expense:', error);
       toast.error('Failed to delete expense');
+      
+      // Track error
+      trackComponentEvent('Expense Delete Failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        expenseId
+      });
     }
   };
 
@@ -233,7 +427,7 @@ function FinanceApp() {
       {/* Sidebar Navigation */}
       <Navigation 
         activeTab={activeTab} 
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         onSidebarToggle={setSidebarCollapsed}
       />
       
@@ -242,11 +436,11 @@ function FinanceApp() {
         sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-72'
       }`}>
         {/* Header */}
-        <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        <AppHeader activeTab={activeTab} onTabChange={handleTabChange} />
         
         {/* Content with proper spacing and bottom padding for mobile nav */}
         <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full pb-20 md:pb-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
             {/* Hidden TabsList for functionality only */}
             <TabsList className="hidden">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -266,7 +460,7 @@ function FinanceApp() {
                 customCategories={customCategories}
                 customPeople={customPeople}
                 publicPeople={publicPeople}
-                onNavigate={setActiveTab}
+                onNavigate={handleTabChange}
               />
             </TabsContent>
 
@@ -287,14 +481,14 @@ function FinanceApp() {
                       <Input
                         placeholder="Search expenses..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         className="pl-10"
                       />
                     </div>
                     
                     <TimeframePicker 
                       dateRange={dateRange} 
-                      onDateRangeChange={setDateRange}
+                      onDateRangeChange={handleDateRangeChange}
                       className="w-60"
                     />
                   </div>
@@ -306,7 +500,7 @@ function FinanceApp() {
                       <Button
                         variant={viewMode === 'list' ? 'default' : 'ghost'}
                         size="sm"
-                        onClick={() => setViewMode('list')}
+                        onClick={() => handleViewModeChange('list')}
                         className="h-8 px-3"
                       >
                         <List className="w-4 h-4" />
@@ -314,7 +508,7 @@ function FinanceApp() {
                       <Button
                         variant={viewMode === 'grid' ? 'default' : 'ghost'}
                         size="sm"
-                        onClick={() => setViewMode('grid')}
+                        onClick={() => handleViewModeChange('grid')}
                         className="h-8 px-3"
                       >
                         <LayoutGrid className="w-4 h-4" />
@@ -325,7 +519,7 @@ function FinanceApp() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setShowAddExpense(true);
+                        handleAddExpenseClick();
                       }}
                       className="shrink-0"
                     >
@@ -336,7 +530,7 @@ function FinanceApp() {
 
                 {/* Secondary Filters Row */}
                 <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border/50">
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="Filter by category" />
                     </SelectTrigger>
@@ -353,7 +547,7 @@ function FinanceApp() {
                     </SelectContent>
                   </Select>
 
-                  <Select value={peopleFilter} onValueChange={setPeopleFilter}>
+                  <Select value={peopleFilter} onValueChange={handlePeopleFilterChange}>
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="Filter by person" />
                     </SelectTrigger>
@@ -375,7 +569,7 @@ function FinanceApp() {
                     </SelectContent>
                   </Select>
 
-                  <Select value={sortBy} onValueChange={(value: 'date' | 'amount' | 'category') => setSortBy(value)}>
+                  <Select value={sortBy} onValueChange={handleSortChange}>
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
@@ -407,7 +601,7 @@ function FinanceApp() {
                       key={expense.id}
                       expense={expense}
                       onDelete={() => handleDeleteExpense(expense.id)}
-                      onEdit={() => setEditingExpense(expense)}
+                      onEdit={() => handleEditExpenseClick(expense)}
                       customPeople={[...customPeople, ...publicPeople]}
                       viewMode={viewMode}
                     />
@@ -424,7 +618,7 @@ function FinanceApp() {
                         }
                       </p>
                       {(!searchTerm && categoryFilter === 'all') && (
-                        <Button onClick={() => setShowAddExpense(true)}>
+                        <Button onClick={handleAddExpenseClick}>
                           Add Your First Expense
                         </Button>
                       )}
@@ -497,6 +691,10 @@ function FinanceApp() {
             <TabsContent value="ai-chat" className="h-full">
               <AIChatPage />
             </TabsContent>
+
+            <TabsContent value="monitoring-demo" className="space-y-6">
+              <DynatraceMonitoringDemo />
+            </TabsContent>
           </Tabs>
         </div>
       </div>
@@ -510,7 +708,7 @@ function FinanceApp() {
       {/* Bottom Navigation for Mobile */}
       <BottomNavigation 
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         isVisible={true}
       />
       
@@ -519,7 +717,7 @@ function FinanceApp() {
       {/* Add Expense Modal */}
       <AddExpenseModal
         isOpen={showAddExpense}
-        onClose={() => setShowAddExpense(false)}
+        onClose={handleAddExpenseModalClose}
         onAddExpense={handleAddExpenseVoid}
         customCategories={customCategories}
         customPeople={customPeople}
@@ -531,7 +729,7 @@ function FinanceApp() {
         <EditExpenseModal
           expense={editingExpense}
           isOpen={!!editingExpense}
-          onClose={() => setEditingExpense(null)}
+          onClose={handleEditExpenseModalClose}
           onUpdate={handleUpdateExpense}
           customCategories={customCategories}
           customPeople={customPeople}

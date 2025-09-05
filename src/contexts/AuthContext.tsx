@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from 'firebase/auth';
 import { onAuthChange, checkRedirectResult } from '@/lib/firebase';
+import { dynatraceMonitor } from '@/lib/dynatrace-monitor';
 // import { log } from '@/lib/logger';
 
 interface AuthContextType {
@@ -51,6 +52,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               email: redirectUser.email,
               displayName: redirectUser.displayName
             });
+            
+            // Set Dynatrace user context
+            if (redirectUser.email) {
+              dynatraceMonitor.setUserContext(redirectUser.uid, {
+                email: redirectUser.email,
+                displayName: redirectUser.displayName,
+                provider: redirectUser.providerData[0]?.providerId,
+                emailVerified: redirectUser.emailVerified,
+                authMethod: 'redirect'
+              });
+              console.log('🔍 Dynatrace: User identified via redirect:', redirectUser.email);
+            }
+            
             setUser(redirectUser);
             setLoading(false);
             // Set user context in logger
@@ -82,10 +96,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           //   emailVerified: user.emailVerified,
           //   provider: user.providerData[0]?.providerId
           // });
+          
+          // Set Dynatrace user context when user signs in
+          if (user.email) {
+            dynatraceMonitor.setUserContext(user.uid, {
+              email: user.email,
+              displayName: user.displayName,
+              provider: user.providerData[0]?.providerId,
+              emailVerified: user.emailVerified,
+              authMethod: 'state_change'
+            });
+            console.log('🔍 Dynatrace: User identified via auth state change:', user.email);
+          }
+          
           // Set user context in logger
           // log.setUser(user.uid);
         } else {
           // log.info('Auth', 'User authentication state changed - signed out');
+          console.log('🔍 Dynatrace: User signed out - clearing user context');
         }
         
         setUser(user);

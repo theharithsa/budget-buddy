@@ -25,6 +25,7 @@ import { SpendingBehaviorInsights } from '@/components/analytics/SpendingBehavio
 import { AdvancedCharts } from '@/components/analytics/AdvancedCharts';
 import { GamificationSystem } from '@/components/analytics/GamificationSystem';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useComponentTracking, useTabTracking } from '@/hooks/useDynatraceMonitoring';
 
 interface DashboardProps {
   expenses: Expense[];
@@ -46,8 +47,22 @@ export function Dashboard({
   // Theme context for theme-aware charts
   const { theme } = useTheme();
   
+  // Dynatrace monitoring
+  const { trackComponentEvent } = useComponentTracking('Dashboard');
+  const trackTab = useTabTracking();
+  
   // State to track active tab and force chart re-rendering
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Enhanced navigation handler with monitoring
+  const handleNavigate = (tab: string) => {
+    trackComponentEvent('Dashboard Navigation Card Clicked', {
+      targetTab: tab,
+      currentTab: activeTab,
+      timestamp: new Date().toISOString()
+    });
+    onNavigate(tab);
+  };
   const [chartKey, setChartKey] = useState(0);
 
   // Helper function for theme-aware chart configuration
@@ -192,6 +207,15 @@ export function Dashboard({
       // Force chart re-rendering by incrementing the key
       setChartKey(prev => prev + 1);
     }
+    
+    // Add monitoring
+    trackTab(activeTab, value);
+    trackComponentEvent('Dashboard Tab Changed', {
+      fromTab: activeTab,
+      toTab: value,
+      timestamp: new Date().toISOString()
+    });
+    
     setActiveTab(value);
   };
 
@@ -951,7 +975,7 @@ export function Dashboard({
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-          <Card className="border-border rounded-lg shadow-sm hover:shadow-lg transition-all cursor-pointer" onClick={() => onNavigate('expenses')}>
+          <Card className="border-border rounded-lg shadow-sm hover:shadow-lg transition-all cursor-pointer" onClick={() => handleNavigate('expenses')}>
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
@@ -965,7 +989,7 @@ export function Dashboard({
             </CardContent>
           </Card>
 
-          <Card className="border-border rounded-lg shadow-sm hover:shadow-lg transition-all cursor-pointer" onClick={() => onNavigate('budgets')}>
+          <Card className="border-border rounded-lg shadow-sm hover:shadow-lg transition-all cursor-pointer" onClick={() => handleNavigate('budgets')}>
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
@@ -979,7 +1003,7 @@ export function Dashboard({
             </CardContent>
           </Card>
 
-          <Card className="border-border rounded-lg shadow-sm hover:shadow-lg transition-all cursor-pointer" onClick={() => onNavigate('insights')}>
+          <Card className="border-border rounded-lg shadow-sm hover:shadow-lg transition-all cursor-pointer" onClick={() => handleNavigate('insights')}>
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">

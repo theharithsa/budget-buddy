@@ -18,6 +18,7 @@ import {
 import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, getAllPeople, type Expense, type RecurringTemplate, type CustomCategory, type Person, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
+import { useComponentTracking, useMonitoredFirebase } from '@/hooks/useDynatraceMonitoring';
 import { toast } from 'sonner';
 
 interface AddExpenseModalProps {
@@ -38,6 +39,9 @@ export function AddExpenseModal({
   publicPeople = []
 }: AddExpenseModalProps) {
   const { user } = useAuth();
+  const { trackComponentEvent } = useComponentTracking('AddExpenseModal');
+  const { trackOperation } = useMonitoredFirebase();
+  
   const templates = DEFAULT_RECURRING_TEMPLATES;
   const [open, setOpen] = useState(isOpen);
 
@@ -128,11 +132,13 @@ export function AddExpenseModal({
     const numAmount = parseFloat(amount);
     if (!numAmount || numAmount <= 0) {
       toast.error('Please enter a valid amount');
+      trackComponentEvent('Form Validation Failed', { field: 'amount', value: amount });
       return;
     }
     
     if (!category) {
       toast.error('Please select a category');
+      trackComponentEvent('Form Validation Failed', { field: 'category' });
       return;
     }
 
@@ -142,6 +148,16 @@ export function AddExpenseModal({
 
     setIsUploading(true);
 
+    trackComponentEvent('Expense Form Submission Started', {
+      amount: numAmount,
+      category,
+      hasDescription: Boolean(description),
+      hasReceipt: Boolean(receiptFile),
+      peopleCount: selectedPeople.length,
+      receiptFileSize: receiptFile?.size || 0,
+      receiptFileType: receiptFile?.type || 'none'
+    });
+
     try {
       let receiptUrl: string | undefined;
       let receiptFileName: string | undefined;
@@ -150,11 +166,20 @@ export function AddExpenseModal({
       if (receiptFile) {
         if (!user) {
           toast.error('User not authenticated');
+          trackComponentEvent('Receipt Upload Failed', { reason: 'User not authenticated' });
           return;
         }
+        
+        trackOperation('upload', 'storage', true, { fileName: receiptFile.name, fileSize: receiptFile.size });
         const receiptPath = generateReceiptPath(user.uid, receiptFile.name);
         receiptUrl = await uploadFile(receiptFile, receiptPath);
         receiptFileName = receiptFile.name;
+        
+        trackComponentEvent('Receipt Upload Completed', {
+          fileName: receiptFileName,
+          fileSize: receiptFile.size,
+          fileType: receiptFile.type
+        });
       }
 
       const expenseData: Omit<Expense, 'id' | 'createdAt'> = {
@@ -170,6 +195,13 @@ export function AddExpenseModal({
       console.log('Complete expense data being submitted:', expenseData);
 
       await onAddExpense(expenseData);
+
+      trackComponentEvent('Expense Form Submission Successful', {
+        amount: numAmount,
+        category,
+        hasReceipt: Boolean(receiptUrl),
+        peopleCount: selectedPeople.length
+      });
 
       // Reset form
       setAmount('');

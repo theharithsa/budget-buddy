@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getNavigationVersion } from '@/lib/version';
+import { useComponentTracking } from '@/hooks/useDynatraceMonitoring';
 
 interface NavigationProps {
   activeTab: string;
@@ -84,6 +85,13 @@ const navigationItems: NavigationItem[] = [
     label: 'KautilyaAI Co-Pilot',
     icon: MessageSquare,
     description: 'Chat with KautilyaAI assistant',
+    hasBeta: true
+  },
+  {
+    id: 'monitoring-demo',
+    label: 'Monitoring Demo',
+    icon: BarChart3,
+    description: 'Dynatrace tracking demonstration',
     hasBeta: true
   }
 ];
@@ -293,6 +301,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse,
 export function Navigation({ activeTab, onTabChange, onSidebarToggle }: NavigationProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { trackComponentEvent } = useComponentTracking('Navigation');
   const { title, version } = getNavigationVersion();
 
   // Check if screen is mobile size
@@ -323,6 +332,25 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     onSidebarToggle?.(newState);
+    
+    trackComponentEvent('Sidebar Toggled', {
+      previousState: isCollapsed ? 'collapsed' : 'expanded',
+      newState: newState ? 'collapsed' : 'expanded',
+      source: 'manual'
+    });
+  };
+
+  // Enhanced tab change handler with monitoring
+  const monitoredTabChange = (newTab: string) => {
+    const navigationItem = navigationItems.find(item => item.id === newTab);
+    trackComponentEvent('Navigation Item Clicked', {
+      fromTab: activeTab,
+      toTab: newTab,
+      itemLabel: navigationItem?.label || 'Unknown',
+      hasBeta: navigationItem?.hasBeta || false,
+      source: isMobile ? 'mobile-navigation' : (isCollapsed ? 'collapsed-sidebar' : 'sidebar')
+    });
+    onTabChange(newTab);
   };
 
   // Render mobile top bar + drawer on small screens
@@ -330,7 +358,7 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
     return (
       <MobileNavigation 
         activeTab={activeTab}
-        onTabChange={onTabChange}
+        onTabChange={monitoredTabChange}
         title={title}
         version={version}
       />
@@ -340,7 +368,7 @@ export function Navigation({ activeTab, onTabChange, onSidebarToggle }: Navigati
   return (
     <DesktopSidebar 
       activeTab={activeTab}
-      onTabChange={onTabChange}
+      onTabChange={monitoredTabChange}
       isCollapsed={isCollapsed}
       onToggleCollapse={handleToggleCollapse}
       title={title}
