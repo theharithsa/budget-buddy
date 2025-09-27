@@ -15,7 +15,7 @@ import {
   X, 
   FileImage as File 
 } from 'lucide-react';
-import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, getAllPeople, type Expense, type RecurringTemplate, type CustomCategory, type Person, formatCurrency } from '@/lib/types';
+import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, getAllPeople, getAllApps, getAppsByCategory, type Expense, type RecurringTemplate, type CustomCategory, type Person, type AppOption, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useComponentTracking, useMonitoredFirebase } from '@/hooks/useDynatraceMonitoring';
@@ -61,6 +61,7 @@ export function AddExpenseModal({
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [app, setApp] = useState('Cash'); // Default to Cash
   const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   const [showTemplates, setShowTemplates] = useState(false);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -187,6 +188,7 @@ export function AddExpenseModal({
         category,
         description: description || 'No description',
         date,
+        app: app || 'Cash', // Default to Cash if no app selected
         receiptUrl: receiptUrl || undefined,
         receiptFileName: receiptFileName || undefined,
         peopleIds: selectedPeople.length > 0 ? selectedPeople : undefined,
@@ -208,6 +210,7 @@ export function AddExpenseModal({
       setCategory('');
       setDescription('');
       setDate(new Date().toISOString().split('T')[0]);
+      setApp('Cash'); // Reset to default Cash
       setSelectedPeople([]);
       setReceiptFile(null);
       if (fileInputRef.current) {
@@ -331,6 +334,36 @@ export function AddExpenseModal({
                     <div className="flex items-center gap-2">
                       <span>{cat.icon}</span>
                       {cat.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* App/Platform Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="app">Platform/App</Label>
+            <Select value={app} onValueChange={setApp}>
+              <SelectTrigger id="app">
+                <SelectValue placeholder="Select platform or app" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {/* Show all apps if no category selected, or filter by category */}
+                {(category ? getAppsByCategory(category) : getAllApps()).map((appOption) => (
+                  <SelectItem 
+                    key={appOption.name} 
+                    value={appOption.name}
+                    className="flex items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{appOption.icon}</span>
+                      <span>{appOption.name}</span>
+                      {appOption.category !== 'General' && (
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          {appOption.category}
+                        </span>
+                      )}
                     </div>
                   </SelectItem>
                 ))}

@@ -1,7 +1,7 @@
 # 💰 FinBuddy - Smart Personal Finance Manager with KautilyaAI
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.7.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.8.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
@@ -66,6 +66,25 @@
 - **Multiple Timeframes**: Set daily, weekly, monthly, or custom budget periods
 - **Category Budgets**: Create separate budgets for different spending categories
 - **Historical Analysis**: Month selector to view budget performance across different time periods
+
+### 📱 Application-Based Expense Tracking - *New in v2.8.0*
+
+**Revolutionary platform categorization that understands the Indian digital ecosystem.**
+
+- **🇮🇳 Indian App Library**: Comprehensive collection of popular Indian apps across all categories
+  - **Food Delivery**: Swiggy, Zomato, UberEats, Dunzo
+  - **E-commerce**: Amazon, Flipkart, Myntra, Nykaa, BigBasket, Blinkit/Grofers, JioMart, Meesho
+  - **Transportation**: Ola, Uber, Rapido, Metro, IRCTC, RedBus
+  - **Entertainment**: Netflix, Amazon Prime, Disney+ Hotstar, Zee5, SonyLIV, YouTube Premium, Spotify, BookMyShow
+  - **Financial Services**: Paytm, PhonePe, Google Pay, CRED, MobiKwik
+  - **Healthcare**: Practo, 1mg, PharmEasy
+  - **Education**: BYJU'S, Unacademy, Vedantu
+  - **Travel**: MakeMyTrip, Cleartrip, Goibibo, OYO, Airbnb
+
+- **💰 Smart Defaults**: Automatic "Cash" option for offline transactions, "Other" for unlisted platforms
+- **🎯 Category Intelligence**: Apps are automatically categorized, but you can override as needed
+- **📊 Platform Analytics**: Track spending patterns across different apps and platforms
+- **🔍 Quick Discovery**: Easy search and selection with app icons and category groupings
 
 ### 🧠 AI-Powered Insights
 
