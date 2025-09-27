@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0] - 2025-01-XX
+
+### 🚀 Major Features Added
+
+- **📱 Application-Based Expense Tracking**: Revolutionary platform categorization system designed for the Indian digital ecosystem
+  - **Comprehensive Indian App Library**: 50+ popular Indian apps across all spending categories
+    - Food delivery apps (Swiggy, Zomato, UberEats, Dunzo)
+    - E-commerce platforms (Amazon, Flipkart, Myntra, Nykaa, BigBasket, Blinkit, JioMart, Meesho)
+    - Transportation services (Ola, Uber, Rapido, Metro, IRCTC, RedBus)
+    - Entertainment platforms (Netflix, Prime, Hotstar, Zee5, SonyLIV, YouTube Premium, Spotify, BookMyShow)
+    - Financial services (Paytm, PhonePe, Google Pay, CRED, MobiKwik)
+    - Healthcare platforms (Practo, 1mg, PharmEasy)
+    - Education services (BYJU'S, Unacademy, Vedantu)
+    - Travel platforms (MakeMyTrip, Cleartrip, Goibibo, OYO, Airbnb)
+  - **Smart Default Options**: Automatic "Cash" selection for offline transactions, "Other" for unlisted platforms
+  - **Category Intelligence**: Apps automatically suggest appropriate categories while allowing manual override
+  - **Enhanced User Experience**: App icons, category groupings, and intelligent filtering in selection interface
+
+### 🔧 Database & Backend Improvements
+
+- **Extended Expense Model**: Added optional `app` field to expense interface for platform tracking
+- **Backward Compatibility**: Existing expenses automatically default to "Cash" for seamless migration
+- **Enhanced Data Models**: Updated TypeScript interfaces across AddExpenseModal, EditExpenseModal, and ExpenseCard components
+
+### 🎨 UI/UX Enhancements
+
+- **App Selection Interface**: Beautiful dropdown with app icons, names, and category labels
+- **Smart Filtering**: Category-based app filtering to show relevant platforms first
+- **Visual Indicators**: App information displayed prominently in expense cards for both list and grid views
+- **Consistent Experience**: App selection available in both add and edit expense workflows
+
+### 📈 Analytics & Insights
+
+- **Platform Analytics**: Track spending patterns across different apps and digital platforms
+- **Digital vs Cash Tracking**: Understand the balance between online and offline spending
+- **App-Category Intelligence**: Analyze which platforms you use most for different spending categories
+
 ## [2.7.0] - 2025-08-28
 
 ### 🚀 Major Features Added

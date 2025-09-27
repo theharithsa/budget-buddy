@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { X, Upload, FileText, Camera, Eye, Trash2 } from 'lucide-react';
-import { type Expense, type CustomCategory, type Person, DEFAULT_CATEGORIES, getAllCategories, getAllPeople } from '@/lib/types';
+import { type Expense, type CustomCategory, type Person, DEFAULT_CATEGORIES, getAllCategories, getAllPeople, getAllApps, getAppsByCategory, type AppOption } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile, deleteFile } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -37,6 +37,7 @@ export function EditExpenseModal({
   const [category, setCategory] = useState(expense.category);
   const [description, setDescription] = useState(expense.description);
   const [date, setDate] = useState(expense.date);
+  const [app, setApp] = useState(expense.app || 'Cash'); // Default to Cash if not set
   const [selectedPeople, setSelectedPeople] = useState<string[]>(expense.peopleIds || []);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [currentReceiptUrl, setCurrentReceiptUrl] = useState<string | undefined>(expense.receiptUrl);
@@ -53,6 +54,7 @@ export function EditExpenseModal({
     setCategory(expense.category);
     setDescription(expense.description);
     setDate(expense.date);
+    setApp(expense.app || 'Cash'); // Reset app field when expense changes
     setSelectedPeople(expense.peopleIds || []);
     setCurrentReceiptUrl(expense.receiptUrl);
     setCurrentReceiptFileName(expense.receiptFileName);
@@ -167,6 +169,7 @@ export function EditExpenseModal({
         category,
         description: description.trim(),
         date,
+        app: app || 'Cash', // Include app field in update
         // Only include fields that have actual values or need to be removed
         ...(selectedPeople.length > 0 && { peopleIds: selectedPeople }),
         ...(newReceiptUrl !== undefined && { receiptUrl: newReceiptUrl }),
@@ -288,6 +291,36 @@ export function EditExpenseModal({
                     <div className="flex items-center gap-2">
                       <span>{cat.icon}</span>
                       {cat.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* App/Platform Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="app">Platform/App</Label>
+            <Select value={app} onValueChange={setApp}>
+              <SelectTrigger id="app">
+                <SelectValue placeholder="Select platform or app" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {/* Show all apps if no category selected, or filter by category */}
+                {(category ? getAppsByCategory(category) : getAllApps()).map((appOption) => (
+                  <SelectItem 
+                    key={appOption.name} 
+                    value={appOption.name}
+                    className="flex items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{appOption.icon}</span>
+                      <span>{appOption.name}</span>
+                      {appOption.category !== 'General' && (
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          {appOption.category}
+                        </span>
+                      )}
                     </div>
                   </SelectItem>
                 ))}

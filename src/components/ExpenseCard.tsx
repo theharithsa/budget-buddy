@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Trash2 as Trash, Calendar, Tag, Receipt, Eye, Users, Edit } from 'lucide-react';
-import { type Expense, type Person, DEFAULT_CATEGORIES, getAllPeople, formatCurrency, formatDate } from '@/lib/types';
+import { type Expense, type Person, DEFAULT_CATEGORIES, getAllPeople, getAllApps, formatCurrency, formatDate } from '@/lib/types';
 import { useComponentTracking } from '@/hooks/useDynatraceMonitoring';
 
 interface ExpenseCardProps {
@@ -19,6 +19,10 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
   
   const category = DEFAULT_CATEGORIES.find(cat => cat.name === expense.category);
   const allPeople = getAllPeople(customPeople); // customPeople already includes both custom + public
+  
+  // Get app information for this expense
+  const allApps = getAllApps();
+  const appInfo = allApps.find(app => app.name === expense.app);
   
   // Get people associated with this expense
   const associatedPeople = expense.peopleIds 
@@ -107,6 +111,12 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
                     <Calendar className="w-4 h-4" />
                     {formatDate(expense.date)}
                   </div>
+                  {expense.app && appInfo && (
+                    <div className="flex items-center gap-1">
+                      <span>{appInfo.icon}</span>
+                      <span>{expense.app}</span>
+                    </div>
+                  )}
                   {associatedPeople.length > 0 && (
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4" />
@@ -266,6 +276,12 @@ export function ExpenseCard({ expense, onDelete, onEdit, customPeople = [], view
                 <Calendar className="w-4 h-4" />
                 {formatDate(expense.date)}
               </div>
+              {expense.app && appInfo && (
+                <div className="flex items-center gap-1">
+                  <span>{appInfo.icon}</span>
+                  <span>{expense.app}</span>
+                </div>
+              )}
               {expense.receiptUrl && (
                 <div className="flex items-center gap-1">
                   <Receipt className="w-4 h-4" />
