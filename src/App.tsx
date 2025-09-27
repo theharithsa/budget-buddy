@@ -14,6 +14,8 @@ import { BudgetManager } from '@/components/BudgetManager';
 import { RecurringTemplates } from '@/components/RecurringTemplates';
 import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
+import { ProfileManager } from '@/components/ProfileManager';
+import { DataMigrationTool } from '@/components/DataMigrationTool';
 import { MetricsExplorer } from '@/components/MetricsExplorer';
 import { AIChatPage } from '@/components/AIChatPage';
 import { ComingSoon } from '@/components/ComingSoon';
@@ -27,7 +29,8 @@ import { UpdateNotification } from '@/components/UpdateNotification';
 import { CookieBanner } from '@/components/CookieBanner';
 import { DailySpendingChart } from '@/components/DailySpendingChart';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { useFirestoreData } from '@/hooks/useFirestoreData';
+import { useProfileData } from '@/hooks/useProfileData';
+import { useProfiles } from '@/contexts/ProfileContext';
 import { 
   Search as MagnifyingGlass,
   Receipt,
@@ -44,6 +47,8 @@ function FinanceApp() {
   const {
     expenses,
     budgets,
+    allExpenses,
+    allBudgets,
     templates,
     customCategories,
     publicCategories,
@@ -72,7 +77,16 @@ function FinanceApp() {
     updateBudgetTemplate,
     deleteBudgetTemplate,
     adoptBudgetTemplate,
-  } = useFirestoreData();
+    activeProfile,
+    profiles
+  } = useProfileData();
+
+  const {
+    createProfile,
+    updateProfile: updateProfileData,
+    deleteProfile,
+    switchProfile
+  } = useProfiles();
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -242,7 +256,11 @@ function FinanceApp() {
         sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-72'
       }`}>
         {/* Header */}
-        <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        <AppHeader 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab}
+          onOpenProfileManager={() => setActiveTab('profiles')}
+        />
         
         {/* Content with proper spacing and bottom padding for mobile nav */}
         <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full pb-20 md:pb-6">
@@ -255,6 +273,8 @@ function FinanceApp() {
               <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="people">People</TabsTrigger>
+              <TabsTrigger value="profiles">Profiles</TabsTrigger>
+              <TabsTrigger value="migration">Data Migration</TabsTrigger>
               <TabsTrigger value="explorer">Metrics Explorer</TabsTrigger>
               <TabsTrigger value="ai-chat">KautilyaAI Co-Pilot</TabsTrigger>
             </TabsList>
@@ -482,6 +502,22 @@ function FinanceApp() {
                 onDeletePerson={deletePerson}
                 onAdoptPerson={adoptPerson}
               />
+            </TabsContent>
+
+            <TabsContent value="profiles">
+              <ProfileManager
+                profiles={profiles}
+                activeProfile={activeProfile}
+                expenses={allExpenses || []}
+                onCreateProfile={createProfile}
+                onUpdateProfile={updateProfileData}
+                onDeleteProfile={deleteProfile}
+                onSwitchProfile={switchProfile}
+              />
+            </TabsContent>
+
+            <TabsContent value="migration">
+              <DataMigrationTool />
             </TabsContent>
 
             <TabsContent value="explorer">

@@ -6,6 +6,12 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
+    // User profiles - only accessible by the profile owner
+    match /profiles/{profileId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+    
     // Public categories - readable by all authenticated users, writable by original creator only
     match /publicCategories/{categoryId} {
       allow read: if request.auth != null;

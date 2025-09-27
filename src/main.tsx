@@ -5,6 +5,7 @@ import 'flowbite';
 import App from './App.tsx'
 import { ErrorFallback } from './ErrorFallback.tsx'
 import { ThemeProvider } from './contexts/ThemeContext.tsx'
+import { ProfileProvider } from './contexts/ProfileContext.tsx'
 // import { initializeLogger, log } from './lib/logger.ts'
 
 import "./main.css"
@@ -67,7 +68,9 @@ window.addEventListener('unhandledrejection', (event) => {
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary FallbackComponent={ErrorFallback}>
     <ThemeProvider defaultTheme="light" storageKey="finbuddy-ui-theme">
-      <App />
+      <ProfileProvider>
+        <App />
+      </ProfileProvider>
     </ThemeProvider>
    </ErrorBoundary>
 )

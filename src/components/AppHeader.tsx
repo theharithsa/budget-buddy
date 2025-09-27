@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/co
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { LogOut as SignOut, User, Bug, Download, RefreshCw, UserCheck, Menu, Home, Receipt, Wallet, TrendingUp as TrendUp, RefreshCw as ArrowsClockwise, Palette as Swatches, Lightbulb, Users, ArrowLeft, BookOpen, FileText, BarChart3, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { ProfileSwitcher } from '@/components/ProfileSwitcher';
 import { logOut, debugFirebaseConfig, addExpenseToFirestore, checkFirebaseReady, auth } from '@/lib/firebase';
 import { getVersionSubtitle, getNavigationVersion, APP_DISPLAY_NAME } from '@/lib/version';
 import { toast } from 'sonner';
@@ -23,6 +24,7 @@ import { cn } from '@/lib/utils';
 interface AppHeaderProps {
   activeTab?: string;
   onTabChange?: (tab: string) => void;
+  onOpenProfileManager?: () => void;
 }
 
 interface NavigationItem {
@@ -86,7 +88,7 @@ const navigationItems: NavigationItem[] = [
   }
 ];
 
-export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
+export function AppHeader({ activeTab, onTabChange, onOpenProfileManager }: AppHeaderProps) {
   const { user } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
@@ -348,6 +350,10 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
           </div>
 
           <div className="flex items-center gap-2">
+            <ProfileSwitcher 
+              showCreateButton={false}
+              onOpenProfileManager={() => onOpenProfileManager?.()}
+            />
             <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

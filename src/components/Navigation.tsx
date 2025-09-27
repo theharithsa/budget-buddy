@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Home,
   MessageSquare,
-  BarChart3
+  BarChart3,
+  UserCircle,
+  Database
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getNavigationVersion } from '@/lib/version';
@@ -71,6 +73,18 @@ const navigationItems: NavigationItem[] = [
     label: 'People',
     icon: Users,
     description: 'Manage people and relationships'
+  },
+  {
+    id: 'profiles',
+    label: 'Profiles',
+    icon: UserCircle,
+    description: 'Manage expense profiles and workspaces'
+  },
+  {
+    id: 'migration',
+    label: 'Data Migration',
+    icon: Database,
+    description: 'Fix profile data and migrate existing records'
   },
   {
     id: 'explorer',

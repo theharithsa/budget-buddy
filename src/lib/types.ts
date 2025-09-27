@@ -8,6 +8,7 @@ export interface Expense {
   receiptUrl?: string;
   receiptFileName?: string;
   peopleIds?: string[]; // IDs of people this expense was spent for
+  profileId?: string; // Profile this expense belongs to
 }
 
 export interface Budget {
@@ -15,6 +16,29 @@ export interface Budget {
   category: string;
   limit: number;
   spent: number;
+  profileId?: string; // Profile this budget belongs to
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  userId: string;
+  isDefault: boolean; // One profile per user should be default
+  createdAt: string;
+  updatedAt: string;
+  settings: ProfileSettings;
+}
+
+export interface ProfileSettings {
+  allowedCategories?: string[]; // Restrict to specific categories
+  budgetLimit?: number; // Overall profile budget limit
+  currency: string; // Profile-specific currency
+  exportFormat: 'excel' | 'csv' | 'pdf'; // Preferred export format
+  autoBackup: boolean; // Auto backup profile data
+  notifications: boolean; // Profile-specific notifications
 }
 
 export interface Category {
@@ -484,4 +508,97 @@ export const getAllPeople = (allPeople: Person[] = []): { name: string; color: s
   }));
   
   return [...defaultPeople, ...customAsPeople];
+};
+
+// Default profile templates for quick setup
+export const DEFAULT_PROFILE_TEMPLATES = [
+  {
+    name: 'Personal',
+    description: 'Personal expenses and budgeting',
+    color: 'oklch(0.6 0.2 260)',
+    icon: '👤',
+    settings: {
+      currency: 'USD',
+      exportFormat: 'excel' as const,
+      autoBackup: true,
+      notifications: true
+    }
+  },
+  {
+    name: 'Work',
+    description: 'Work-related expenses and business costs',
+    color: 'oklch(0.55 0.2 220)',
+    icon: '💼',
+    settings: {
+      allowedCategories: ['Transport', 'Meals', 'Office Supplies', 'Travel', 'Accommodation'],
+      currency: 'USD',
+      exportFormat: 'excel' as const,
+      autoBackup: true,
+      notifications: false
+    }
+  },
+  {
+    name: 'Family',
+    description: 'Family expenses and household budgeting',
+    color: 'oklch(0.7 0.2 30)',
+    icon: '👨‍👩‍👧‍👦',
+    settings: {
+      allowedCategories: ['Groceries', 'Utilities', 'Healthcare', 'Education', 'Entertainment'],
+      currency: 'USD',
+      exportFormat: 'excel' as const,
+      autoBackup: true,
+      notifications: true
+    }
+  },
+  {
+    name: 'Travel',
+    description: 'Travel and vacation expenses',
+    color: 'oklch(0.65 0.25 120)',
+    icon: '✈️',
+    settings: {
+      allowedCategories: ['Transport', 'Accommodation', 'Meals', 'Entertainment', 'Shopping'],
+      currency: 'USD',
+      exportFormat: 'excel' as const,
+      autoBackup: true,
+      notifications: false
+    }
+  }
+];
+
+// Excel/CSV export utility function
+export const exportToExcel = async (expenses: Expense[], profileName: string) => {
+  const headers = ['Date', 'Category', 'Description', 'Amount', 'Receipt'];
+  const rows = expenses.map(expense => [
+    new Date(expense.date).toLocaleDateString(),
+    expense.category,
+    expense.description,
+    expense.amount.toFixed(2),
+    expense.receiptUrl ? 'Yes' : 'No'
+  ]);
+
+  // Create CSV content
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+  ].join('\n');
+
+  // Create and download file
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${profileName}-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
+// Profile filtering utilities
+export const filterExpensesByProfile = (expenses: Expense[], profileId: string): Expense[] => {
+  return expenses.filter(expense => expense.profileId === profileId);
+};
+
+export const filterBudgetsByProfile = (budgets: Budget[], profileId: string): Budget[] => {
+  return budgets.filter(budget => budget.profileId === profileId);
 };
