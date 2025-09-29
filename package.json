@@ -81,7 +81,7 @@
         "express": "^5.1.0",
         "firebase": "^12.1.0",
         "flowbite": "^3.1.2",
-        "flowbite-react": "^0.12.7",
+        "flowbite-react": "^0.12.9",
         "framer-motion": "^12.6.2",
         "input-otp": "^1.4.2",
         "install": "^0.13.0",
