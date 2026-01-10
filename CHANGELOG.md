@@ -5,7 +5,37 @@ All notable changes to FinBuddy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.8.1] - 2026-01-11
+
+### 🚀 Features Added
+
+- **📝 Editable Expense Templates**: Enhanced template-to-expense workflow
+  - Clicking "Add Expense" on a template now opens AddExpenseModal with pre-filled values
+  - Users can modify amount, category, description, date, and people before saving
+  - Seamless integration with existing expense creation flow
+
+- **🔍 Template Search**: Quick filtering for templates
+  - Search bar to filter templates by name, category, or description
+  - Real-time filtering with result count display
+
+- **📋 Redesigned Template List View**: Professional table-style design
+  - Clean column headers: Template Name, Category, Amount, Frequency, Actions
+  - Emoji icons in circular avatars based on category
+  - Color-coded frequency badges (blue for monthly, orange for quarterly, purple for yearly)
+  - Action icons for edit, reset, and add functionality
+
+- **💰 Customizable Default Template Amounts**: Personalized template values
+  - Click on any template amount to customize it for your needs
+  - Custom amounts persist in localStorage across sessions
+  - Easy reset to default amount with dedicated button
+  - Visual indicator (primary color) for customized amounts
+
+### 🔧 Technical Improvements
+
+- Added `initialAmount`, `initialCategory`, `initialDescription` props to AddExpenseModal
+- Added `customPeople` and `publicPeople` props to RecurringTemplates component
+- Implemented localStorage persistence for custom template amounts
+- Enhanced component architecture with inline editing support
 
 ## [2.8.0] - 2025-01-XX
 

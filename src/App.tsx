@@ -29,14 +29,14 @@ import { CookieBanner } from '@/components/CookieBanner';
 import { DailySpendingChart } from '@/components/DailySpendingChart';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { useFirestoreData } from '@/hooks/useFirestoreData';
-import { 
+import {
   useMonitoredUserContext,
   usePageTracking,
   useTabTracking,
   useMonitoredBusiness,
   useComponentTracking
 } from '@/hooks/useDynatraceMonitoring';
-import { 
+import {
   Search as MagnifyingGlass,
   Receipt,
   List,
@@ -99,28 +99,28 @@ function FinanceApp() {
   const [peopleFilter, setPeopleFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  
+
   // Initialize view mode with localStorage persistence
   const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
     const saved = localStorage.getItem('finbuddy-view-mode');
     return (saved as 'list' | 'grid') || 'grid';
   });
-  
+
   // Save view mode to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('finbuddy-view-mode', viewMode);
     trackComponentEvent('View Mode Changed', { viewMode });
   }, [viewMode, trackComponentEvent]);
-  
+
   // Initialize date range to current month
   // Initialize date range to current month
   const [dateRange, setDateRange] = useState<DateRange>(() => {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    return { 
-      from: start.toISOString().split('T')[0], 
-      to: end.toISOString().split('T')[0] 
+    return {
+      from: start.toISOString().split('T')[0],
+      to: end.toISOString().split('T')[0]
     };
   });
 
@@ -137,15 +137,15 @@ function FinanceApp() {
         creationTime: user.metadata.creationTime,
         lastSignInTime: user.metadata.lastSignInTime
       });
-      
+
       if (expenses.length > 0) {
         const monthlyExpenses = getMonthlyExpenses(expenses, getCurrentMonth());
         const totalSpent = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-        
+
         // Update context with financial data
         setExpenseContext(expenses.length, totalSpent);
         setBudgetContext(budgets.length, budgets.filter(b => (b as any).isActive !== false).length);
-        
+
         trackUserJourney('User Session Started', {
           totalExpenses: expenses.length,
           totalBudgets: budgets.length,
@@ -253,10 +253,10 @@ function FinanceApp() {
   const handleAddExpense = async (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
     try {
       const result = await addExpense(expenseData);
-      
+
       setShowAddExpense(false);
       toast.success('Expense added successfully!');
-      
+
       // Track successful expense addition
       trackFinancialEvent('Expense Added', expenseData.amount, expenseData.category);
 
@@ -267,20 +267,20 @@ function FinanceApp() {
         hasPeople: Boolean(expenseData.peopleIds?.length),
         peopleCount: expenseData.peopleIds?.length || 0
       });
-      
+
       return result;
-      
+
     } catch (error) {
       console.error('❌ App.tsx - Error adding expense:', error);
       toast.error('Failed to add expense');
-      
+
       // Track error
       trackComponentEvent('Expense Add Failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         category: expenseData.category,
         amount: expenseData.amount
       });
-      
+
       throw error;
     }
   };
@@ -295,7 +295,7 @@ function FinanceApp() {
       await updateExpense(expenseId, expenseData);
       setEditingExpense(null);
       toast.success('Expense updated successfully!');
-      
+
       // Track successful expense update
       trackFinancialEvent('Expense Updated', expenseData.amount, expenseData.category);
 
@@ -304,11 +304,11 @@ function FinanceApp() {
         fieldsUpdated: Object.keys(expenseData).length,
         updatedFields: Object.keys(expenseData)
       });
-      
+
     } catch (error) {
       console.error('Error updating expense:', error);
       toast.error('Failed to update expense');
-      
+
       // Track error
       trackComponentEvent('Expense Update Failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -321,18 +321,18 @@ function FinanceApp() {
     try {
       await deleteExpense(expenseId);
       toast.success('Expense deleted successfully!');
-      
+
       // Track successful expense deletion
       trackFinancialEvent('Expense Deleted');
 
       trackComponentEvent('Expense Deleted Successfully', {
         expenseId
       });
-      
+
     } catch (error) {
       console.error('Error deleting expense:', error);
       toast.error('Failed to delete expense');
-      
+
       // Track error
       trackComponentEvent('Expense Delete Failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -370,17 +370,17 @@ function FinanceApp() {
   const filteredAndSortedExpenses = expenses
     .filter(expense => {
       const matchesSearch = expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           expense.category.toLowerCase().includes(searchTerm.toLowerCase());
+        expense.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || expense.category === categoryFilter;
-      
+
       // Check if expense includes the selected person
-      const matchesPeople = peopleFilter === 'all' || 
-                           (expense.peopleIds && expense.peopleIds.includes(peopleFilter));
-      
+      const matchesPeople = peopleFilter === 'all' ||
+        (expense.peopleIds && expense.peopleIds.includes(peopleFilter));
+
       // Check if expense date falls within the selected date range
       const expenseDate = expense.date;
       const matchesDateRange = expenseDate >= dateRange.from && expenseDate <= dateRange.to;
-      
+
       return matchesSearch && matchesCategory && matchesPeople && matchesDateRange;
     })
     .sort((a, b) => {
@@ -397,7 +397,7 @@ function FinanceApp() {
 
   const currentMonth = getCurrentMonth();
   const monthlyExpenses = getMonthlyExpenses(expenses, currentMonth);
-  
+
   // Calculate total spent for the selected date range
   const totalSpent = filteredAndSortedExpenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0);
@@ -407,37 +407,36 @@ function FinanceApp() {
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
     const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-    
+
     if (dateRange.from === currentMonthStart && dateRange.to === currentMonthEnd) {
       return "This Month Spent";
     }
-    
+
     const fromDate = new Date(dateRange.from + 'T00:00:00');
     const toDate = new Date(dateRange.to + 'T00:00:00');
-    
+
     if (dateRange.from === dateRange.to) {
       return `Spent on ${fromDate.toLocaleDateString()}`;
     }
-    
+
     return `Spent ${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`;
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar Navigation */}
-      <Navigation 
-        activeTab={activeTab} 
+      <Navigation
+        activeTab={activeTab}
         onTabChange={handleTabChange}
         onSidebarToggle={setSidebarCollapsed}
       />
-      
+
       {/* Main Content Area - with dynamic left margin for desktop sidebar */}
-      <div className={`flex flex-col min-h-screen transition-all duration-300 ${
-        sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-72'
-      }`}>
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-72'
+        }`}>
         {/* Header */}
         <AppHeader activeTab={activeTab} onTabChange={handleTabChange} />
-        
+
         {/* Content with proper spacing and bottom padding for mobile nav */}
         <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full pb-20 md:pb-6">
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
@@ -454,7 +453,7 @@ function FinanceApp() {
             </TabsList>
 
             <TabsContent value="dashboard">
-              <Dashboard 
+              <Dashboard
                 expenses={expenses}
                 budgets={budgets}
                 customCategories={customCategories}
@@ -466,7 +465,7 @@ function FinanceApp() {
 
             <TabsContent value="expenses" className="space-y-6">
               {/* Daily Spending Trend Chart */}
-              <DailySpendingChart 
+              <DailySpendingChart
                 expenses={filteredAndSortedExpenses}
                 dateRange={dateRange}
               />
@@ -485,9 +484,9 @@ function FinanceApp() {
                         className="pl-10"
                       />
                     </div>
-                    
-                    <TimeframePicker 
-                      dateRange={dateRange} 
+
+                    <TimeframePicker
+                      dateRange={dateRange}
                       onDateRangeChange={handleDateRangeChange}
                       className="w-60"
                     />
@@ -514,8 +513,8 @@ function FinanceApp() {
                         <LayoutGrid className="w-4 h-4" />
                       </Button>
                     </div>
-                    
-                    <Button 
+
+                    <Button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -556,7 +555,7 @@ function FinanceApp() {
                       {getAllPeople([...customPeople, ...publicPeople]).map((person) => (
                         <SelectItem key={person.id} value={person.id!}>
                           <div className="flex items-center gap-2">
-                            <span 
+                            <span
                               className="w-4 h-4 rounded-full flex items-center justify-center text-xs"
                               style={{ backgroundColor: person.color }}
                             >
@@ -587,7 +586,7 @@ function FinanceApp() {
                 </div>
               </div>
 
-              <div 
+              <div
                 className={viewMode === 'grid' ? "gap-4" : "space-y-4"}
                 style={viewMode === 'grid' ? {
                   display: 'grid',
@@ -612,7 +611,7 @@ function FinanceApp() {
                       <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                       <h3 className="text-lg font-medium mb-2">No expenses found</h3>
                       <p className="text-muted-foreground mb-4">
-                        {searchTerm || categoryFilter !== 'all' 
+                        {searchTerm || categoryFilter !== 'all'
                           ? 'Try adjusting your search or filter criteria'
                           : 'Start by adding your first expense'
                         }
@@ -629,7 +628,7 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="budgets">
-              <BudgetManager 
+              <BudgetManager
                 budgets={budgets}
                 expenses={expenses}
                 onAddBudget={addBudget}
@@ -647,16 +646,18 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="templates">
-              <RecurringTemplates 
+              <RecurringTemplates
                 onAddExpense={handleAddExpenseVoid}
                 onAddTemplate={addTemplate}
                 onDeleteTemplate={deleteTemplate}
                 customCategories={customCategories}
+                customPeople={customPeople}
+                publicPeople={publicPeople}
               />
             </TabsContent>
 
             <TabsContent value="categories">
-              <CategoryManager 
+              <CategoryManager
                 customCategories={customCategories}
                 publicCategories={publicCategories}
                 onAddCategory={addCustomCategory}
@@ -667,7 +668,7 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="people">
-              <PeopleManager 
+              <PeopleManager
                 user={user}
                 customPeople={customPeople}
                 publicPeople={publicPeople}
@@ -679,7 +680,7 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="explorer">
-              <MetricsExplorer 
+              <MetricsExplorer
                 expenses={filteredAndSortedExpenses}
                 budgets={budgets}
                 customCategories={customCategories}
@@ -698,20 +699,20 @@ function FinanceApp() {
           </Tabs>
         </div>
       </div>
-      
+
       {/* PWA Components */}
       <PWAInstallPrompt />
       <PWAUpdatePrompt />
       <PWAConnectionStatus />
       <UpdateNotification />
-      
+
       {/* Bottom Navigation for Mobile */}
-      <BottomNavigation 
+      <BottomNavigation
         activeTab={activeTab}
         onTabChange={handleTabChange}
         isVisible={true}
       />
-      
+
       <Toaster position="top-right" />
 
       {/* Add Expense Modal */}
@@ -739,10 +740,10 @@ function FinanceApp() {
 
       {/* Footer */}
       <Footer />
-      
+
       {/* Cookie Banner */}
-      <CookieBanner 
-        onAccept={() => toast.success("Cookie preferences saved")} 
+      <CookieBanner
+        onAccept={() => toast.success("Cookie preferences saved")}
         onDecline={() => toast.info("Cookies declined - some features may be limited")}
       />
     </div>

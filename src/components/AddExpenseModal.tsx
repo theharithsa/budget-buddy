@@ -8,12 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Plus, 
-  RefreshCw as ArrowsClockwise, 
-  Upload, 
-  X, 
-  FileImage as File 
+import {
+  Plus,
+  RefreshCw as ArrowsClockwise,
+  Upload,
+  X,
+  FileImage as File
 } from 'lucide-react';
 import { DEFAULT_CATEGORIES, DEFAULT_RECURRING_TEMPLATES, getAllCategories, getAllPeople, getAllApps, getAppsByCategory, type Expense, type RecurringTemplate, type CustomCategory, type Person, type AppOption, formatCurrency } from '@/lib/types';
 import { uploadFile, generateReceiptPath, validateReceiptFile } from '@/lib/firebase';
@@ -28,27 +28,40 @@ interface AddExpenseModalProps {
   customCategories?: CustomCategory[];
   customPeople?: Person[];
   publicPeople?: Person[];
+  // Optional initial values for pre-filling from templates
+  initialAmount?: string;
+  initialCategory?: string;
+  initialDescription?: string;
 }
 
-export function AddExpenseModal({ 
-  isOpen = false, 
-  onClose, 
-  onAddExpense, 
-  customCategories = [], 
+export function AddExpenseModal({
+  isOpen = false,
+  onClose,
+  onAddExpense,
+  customCategories = [],
   customPeople = [],
-  publicPeople = []
+  publicPeople = [],
+  initialAmount = '',
+  initialCategory = '',
+  initialDescription = ''
 }: AddExpenseModalProps) {
   const { user } = useAuth();
   const { trackComponentEvent } = useComponentTracking('AddExpenseModal');
   const { trackOperation } = useMonitoredFirebase();
-  
+
   const templates = DEFAULT_RECURRING_TEMPLATES;
   const [open, setOpen] = useState(isOpen);
 
   // Sync internal open state with external isOpen prop
   useEffect(() => {
     setOpen(isOpen);
-  }, [isOpen]);
+    // When modal opens with initial values, update form state
+    if (isOpen) {
+      if (initialAmount) setAmount(initialAmount);
+      if (initialCategory) setCategory(initialCategory);
+      if (initialDescription) setDescription(initialDescription);
+    }
+  }, [isOpen, initialAmount, initialCategory, initialDescription]);
 
   // Handle open state changes
   const handleOpenChange = (newOpen: boolean) => {
@@ -70,11 +83,11 @@ export function AddExpenseModal({
 
   // Helper functions for people management
   const allPeople = getAllPeople([...customPeople, ...publicPeople]);
-  
+
   const handlePeopleToggle = (personId: string) => {
     console.log('People toggle clicked for ID:', personId);
     setSelectedPeople(prev => {
-      const newSelection = prev.includes(personId) 
+      const newSelection = prev.includes(personId)
         ? prev.filter(id => id !== personId)
         : [...prev, personId];
       console.log('Previous selection:', prev);
@@ -129,14 +142,14 @@ export function AddExpenseModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const numAmount = parseFloat(amount);
     if (!numAmount || numAmount <= 0) {
       toast.error('Please enter a valid amount');
       trackComponentEvent('Form Validation Failed', { field: 'amount', value: amount });
       return;
     }
-    
+
     if (!category) {
       toast.error('Please select a category');
       trackComponentEvent('Form Validation Failed', { field: 'category' });
@@ -170,12 +183,12 @@ export function AddExpenseModal({
           trackComponentEvent('Receipt Upload Failed', { reason: 'User not authenticated' });
           return;
         }
-        
+
         trackOperation('upload', 'storage', true, { fileName: receiptFile.name, fileSize: receiptFile.size });
         const receiptPath = generateReceiptPath(user.uid, receiptFile.name);
         receiptUrl = await uploadFile(receiptFile, receiptPath);
         receiptFileName = receiptFile.name;
-        
+
         trackComponentEvent('Receipt Upload Completed', {
           fileName: receiptFileName,
           fileSize: receiptFile.size,
@@ -218,7 +231,7 @@ export function AddExpenseModal({
       }
       handleOpenChange(false);
       setShowTemplates(false);
-      
+
       toast.success('Expense added successfully');
     } catch (error: any) {
       toast.error(error?.message || 'Failed to add expense');
@@ -240,9 +253,9 @@ export function AddExpenseModal({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Quick Templates</Label>
-                <Button 
-                  type="button" 
-                  variant="ghost" 
+                <Button
+                  type="button"
+                  variant="ghost"
                   size="sm"
                   onClick={() => setShowTemplates(true)}
                 >
@@ -276,9 +289,9 @@ export function AddExpenseModal({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">All Templates</Label>
-                <Button 
-                  type="button" 
-                  variant="ghost" 
+                <Button
+                  type="button"
+                  variant="ghost"
                   size="sm"
                   onClick={() => setShowTemplates(false)}
                 >
@@ -321,7 +334,7 @@ export function AddExpenseModal({
               className="text-lg"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select value={category} onValueChange={setCategory}>
@@ -351,8 +364,8 @@ export function AddExpenseModal({
               <SelectContent className="max-h-60">
                 {/* Show all apps if no category selected, or filter by category */}
                 {(category ? getAppsByCategory(category) : getAllApps()).map((appOption) => (
-                  <SelectItem 
-                    key={appOption.name} 
+                  <SelectItem
+                    key={appOption.name}
                     value={appOption.name}
                     className="flex items-center gap-2"
                   >
@@ -374,14 +387,14 @@ export function AddExpenseModal({
           {/* People Selection */}
           <div className="space-y-3">
             <Label>People this expense is for (optional)</Label>
-            
+
             {/* Selected People Display */}
             {selectedPeopleData.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {selectedPeopleData.map((person) => (
-                  <Badge 
-                    key={person.id} 
-                    variant="secondary" 
+                  <Badge
+                    key={person.id}
+                    variant="secondary"
                     className="flex items-center gap-1"
                   >
                     <span>{person.icon}</span>
@@ -405,11 +418,10 @@ export function AddExpenseModal({
                   key={person.id}
                   type="button"
                   onClick={() => handlePeopleToggle(person.id!)}
-                  className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${
-                    selectedPeople.includes(person.id!) 
-                      ? 'border-primary bg-primary/10 text-primary' 
+                  className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPeople.includes(person.id!)
+                      ? 'border-primary bg-primary/10 text-primary'
                       : 'border-border hover:bg-muted'
-                  }`}
+                    }`}
                 >
                   <span>{person.icon}</span>
                   <div className="flex-1 min-w-0">
@@ -419,14 +431,14 @@ export function AddExpenseModal({
                 </button>
               ))}
             </div>
-            
+
             {allPeople.length === 0 && (
               <p className="text-sm text-muted-foreground">
                 No people added yet. Go to People Manager to add people.
               </p>
             )}
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Input
@@ -436,7 +448,7 @@ export function AddExpenseModal({
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="description">Description (optional)</Label>
             <Textarea
@@ -502,7 +514,7 @@ export function AddExpenseModal({
               </Card>
             )}
           </div>
-          
+
           <div className="flex gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} className="flex-1">
               Cancel
