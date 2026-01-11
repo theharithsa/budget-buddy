@@ -158,7 +158,7 @@ export function Dashboard({
     // Recent transactions
     const recentExpenses = [...expenses]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 5);
+      .slice(0, 10);
 
     // Budget breakdown
     const budgetBreakdown = budgets.map(budget => {
@@ -173,7 +173,7 @@ export function Dashboard({
         progress: Math.min(progress, 100),
         status: progress > 100 ? 'over' : progress > 80 ? 'warning' : 'good'
       };
-    }).sort((a, b) => b.spent - a.spent).slice(0, 3);
+    }).sort((a, b) => b.spent - a.spent);
 
     let status: 'good' | 'warning' | 'over' = 'good';
     if (budgetProgress > 100) status = 'over';
@@ -191,7 +191,10 @@ export function Dashboard({
       recentExpenses,
       budgetBreakdown,
       status,
-      totalExpenses: expenses.length
+      totalExpenses: expenses.length,
+      allTimeSpent: expenses.reduce((sum, e) => sum + e.amount, 0),
+      totalCategories: new Set(expenses.map(e => e.category)).size,
+      totalBudgets: budgets.length
     };
   }, [expenses, budgets, customCategories]);
 
@@ -226,116 +229,102 @@ export function Dashboard({
   const chartColorSecondary = isDark ? '#93c5fd' : '#60a5fa';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20 pb-28">
+    <div className={`min-h-screen pb-28 ${isDark
+      ? 'bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950'
+      : 'bg-gradient-to-b from-slate-100 via-slate-50 to-white'
+      }`}>
       {/* Header */}
       <div className="px-5 pt-8 pb-4 md:px-8 md:pt-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-          {greeting}, <span className="text-primary">{user?.displayName?.split(' ')[0] || 'there'}</span> 👋
+        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
+          {greeting}, <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{user?.displayName?.split(' ')[0] || 'there'}</span> 👋
         </h1>
-        <p className="text-muted-foreground text-base mt-2">
+        <p className="text-muted-foreground text-sm mt-2 tracking-wide uppercase font-medium">
           {currentMonth}
         </p>
       </div>
 
-      {/* Hero Metric Card */}
+      {/* Hero Card - Premium Dark Design */}
       <div className="px-5 md:px-8 mt-4">
-        <Card className={`border-0 shadow-2xl overflow-hidden ${isDark
-          ? 'bg-gradient-to-br from-slate-800 via-slate-800 to-indigo-900/50'
-          : 'bg-gradient-to-br from-white via-white to-indigo-50'
-          }`}>
-          <CardContent className="p-6 md:p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              {/* Left: Amount and Progress */}
-              <div className="lg:col-span-3">
-                {/* Amount */}
-                <div className="mb-6">
-                  <p className="text-5xl md:text-6xl font-extrabold tracking-tighter bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text">
-                    {formatCurrency(metrics.monthlySpent)}
-                  </p>
-                  <p className="text-muted-foreground text-base mt-2 font-medium">
-                    spent this month
-                  </p>
-                </div>
+        <div className="grid grid-cols-2 gap-4">
 
-                {/* Progress Bar */}
-                <div className="space-y-3">
-                  <div className="relative h-4 bg-muted/50 rounded-full overflow-hidden backdrop-blur">
-                    <div
-                      className={`absolute left-0 top-0 h-full rounded-full bg-gradient-to-r ${getStatusGradient()} transition-all duration-1000 ease-out`}
-                      style={{ width: `${metrics.budgetProgress}%` }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent" />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className={`text-sm font-bold bg-gradient-to-r ${getStatusGradient()} bg-clip-text text-transparent`}>
-                      {Math.round(metrics.budgetProgress)}% of budget
-                    </span>
-                    <span className="text-sm text-muted-foreground font-semibold">
-                      {formatCurrency(metrics.remaining)} left
-                    </span>
-                  </div>
-                </div>
-
-                {/* Month over Month */}
-                {metrics.monthlyChange !== 0 && (
-                  <div className="flex items-center gap-2 mt-4 text-sm font-semibold">
-                    {metrics.monthlyChange > 0 ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10">
-                        <TrendingUp className="w-4 h-4 text-red-500" />
-                        <span className="text-red-600 dark:text-red-400">
-                          {Math.abs(metrics.monthlyChange).toFixed(0)}% vs last month
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10">
-                        <TrendingDown className="w-4 h-4 text-emerald-500" />
-                        <span className="text-emerald-600 dark:text-emerald-400">
-                          {Math.abs(metrics.monthlyChange).toFixed(0)}% vs last month
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+          {/* Budget Status Card - Dark */}
+          <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6 md:p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-slate-400 text-sm font-medium">Budget Status</span>
               </div>
+              <span className="text-slate-500 text-sm">{currentMonth}</span>
+            </div>
 
-              {/* Right: Trend Chart */}
-              <div className="lg:col-span-2 flex flex-col">
-                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-3">
-                  Last 6 months
-                </p>
-                <div className="flex-1 min-h-[100px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={metrics.monthlyTrend}>
-                      <defs>
-                        <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={chartColor} stopOpacity={0.4} />
-                          <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <Tooltip
-                        formatter={(value: number) => [formatCurrency(value), 'Spent']}
-                        contentStyle={{
-                          backgroundColor: isDark ? '#1e293b' : '#fff',
-                          border: 'none',
-                          borderRadius: '12px',
-                          boxShadow: '0 10px 40px -10px rgba(0,0,0,0.2)',
-                          fontWeight: 600
-                        }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="amount"
-                        stroke={chartColor}
-                        strokeWidth={3}
-                        fill="url(#colorGradient)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+            {/* Large Number Display */}
+            <div className="mb-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-7xl md:text-8xl font-bold text-white tracking-tight">
+                  {Math.round(metrics.budgetProgress)}
+                </span>
+                <span className="text-3xl text-slate-500 font-medium">/ 100</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="relative h-3 bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000"
+                  style={{ width: `${metrics.budgetProgress}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">0%</span>
+                <span className="text-slate-500">100%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Monthly Spent Card - Dark */}
+          <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-slate-400 text-xs md:text-sm font-medium">Monthly Spending</span>
+              {metrics.monthlyChange !== 0 && (
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${metrics.monthlyChange > 0
+                  ? 'bg-red-500/20 text-red-400'
+                  : 'bg-emerald-500/20 text-emerald-400'
+                  }`}>
+                  {metrics.monthlyChange > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                  {Math.abs(metrics.monthlyChange).toFixed(0)}%
+                </div>
+              )}
+            </div>
+
+            {/* Amount */}
+            <div className="mb-4 md:mb-6">
+              <p className="text-2xl md:text-5xl font-bold text-white tracking-tight">
+                {formatCurrency(metrics.monthlySpent)}
+              </p>
+              <p className="text-slate-500 text-xs md:text-sm mt-1 md:mt-2">
+                {formatCurrency(metrics.remaining)} remaining of {formatCurrency(metrics.totalBudget)}
+              </p>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-700/50">
+              <div>
+                <p className="text-2xl font-bold text-white">{metrics.totalExpenses}</p>
+                <p className="text-slate-500 text-xs">entries</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{budgets.length}</p>
+                <p className="text-slate-500 text-xs">budgets</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{metrics.totalCategories}</p>
+                <p className="text-slate-500 text-xs">categories</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       {/* Quick Actions */}
@@ -345,7 +334,7 @@ export function Dashboard({
             { icon: Plus, label: 'Add', color: 'from-blue-500 to-blue-600', action: onAddExpense },
             { icon: Target, label: 'Budgets', color: 'from-blue-600 to-indigo-600', action: () => onNavigate('budgets') },
             { icon: BarChart3, label: 'Analytics', color: 'from-indigo-500 to-blue-600', action: () => onNavigate('explorer') },
-            { icon: MessageSquare, label: 'AI Chat', color: 'from-sky-500 to-blue-500', action: () => onNavigate('ai-chat') },
+            { icon: MessageSquare, label: 'Kautilya AI', color: 'from-sky-500 to-blue-500', action: () => onNavigate('ai-chat') },
           ].map((item, i) => (
             <button
               key={i}
@@ -361,6 +350,99 @@ export function Dashboard({
         </div>
       </div>
 
+      {/* Bento Grid - Premium Design */}
+      <div className="mt-8 px-5 md:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[140px]">
+
+          {/* Large Featured Card - Budget Status */}
+          <div className="col-span-2 md:col-span-1 row-span-2 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-6 flex flex-col justify-between shadow-2xl shadow-purple-500/20 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-pink-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+            <div className="relative z-10">
+              <p className="text-white/80 text-sm font-medium">Budget Remaining</p>
+              <p className="text-4xl md:text-5xl font-black text-white mt-2 tracking-tight">
+                {formatCurrency(metrics.remaining)}
+              </p>
+              <p className="text-white/70 text-sm mt-1">of {formatCurrency(metrics.totalBudget)}</p>
+            </div>
+            <div className="relative z-10 space-y-3">
+              {/* Progress bar */}
+              <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white/80 rounded-full transition-all duration-500"
+                  style={{ width: `${100 - metrics.budgetProgress}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-white/80 text-xs font-medium">{Math.round(100 - metrics.budgetProgress)}% remaining</span>
+                {metrics.monthlyChange > 0 ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/30 text-white text-xs font-semibold">
+                    <TrendingUp className="w-3 h-3" />
+                    {Math.abs(metrics.monthlyChange).toFixed(0)}%
+                  </span>
+                ) : metrics.monthlyChange < 0 ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/30 text-white text-xs font-semibold">
+                    <TrendingDown className="w-3 h-3" />
+                    {Math.abs(metrics.monthlyChange).toFixed(0)}%
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          {/* Daily Average Card */}
+          <div className="rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4 md:p-5 flex flex-col justify-between shadow-xl shadow-purple-500/20 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl" />
+            <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Daily Average</p>
+            <div>
+              <p className="text-xl md:text-3xl font-extrabold text-white">
+                {formatCurrency(metrics.monthlySpent / Math.max(new Date().getDate(), 1))}
+              </p>
+              <p className="text-white/70 text-[10px] md:text-xs mt-1">per day this month</p>
+            </div>
+          </div>
+
+          {/* This Week Card */}
+          <div className="rounded-3xl bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 p-4 md:p-5 flex flex-col justify-between shadow-xl shadow-pink-500/20 overflow-hidden relative">
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />
+            <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">This Week</p>
+            <div>
+              <p className="text-xl md:text-3xl font-extrabold text-white">
+                {formatCurrency(metrics.dailySpending.reduce((sum, d) => sum + d.amount, 0))}
+              </p>
+              <p className="text-white/70 text-[10px] md:text-xs mt-1">weekly total</p>
+            </div>
+          </div>
+
+          {/* Top Category Card */}
+          <div className="rounded-3xl bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 p-4 md:p-5 flex items-center gap-3 md:gap-4 shadow-xl shadow-rose-500/20 overflow-hidden relative">
+            <div className="absolute top-0 left-0 w-16 h-16 bg-white/20 rounded-full blur-xl -translate-y-1/2 -translate-x-1/2" />
+            <div className="text-3xl md:text-5xl drop-shadow-lg relative z-10">{metrics.categoryData[0]?.emoji || '📊'}</div>
+            <div className="relative z-10">
+              <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Top Spend</p>
+              <p className="text-base md:text-xl font-bold text-white">{metrics.categoryData[0]?.name?.split(' ')[0] || 'None'}</p>
+              <p className="text-white/70 text-sm md:text-base font-semibold">{metrics.categoryData[0] ? formatCurrency(metrics.categoryData[0].amount) : '₹0'}</p>
+            </div>
+          </div>
+
+          {/* Avg per Entry Card */}
+          <div className="rounded-3xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 p-4 md:p-5 flex flex-col justify-between shadow-lg shadow-indigo-500/20">
+            <div className="flex items-center justify-between">
+              <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Avg / Entry</p>
+              <div className="p-1.5 rounded-lg bg-white/20">
+                <Receipt className="w-4 h-4 text-white" />
+              </div>
+            </div>
+            <div>
+              <p className="text-xl md:text-3xl font-extrabold text-white">
+                {formatCurrency(metrics.totalExpenses > 0 ? metrics.allTimeSpent / metrics.totalExpenses : 0)}
+              </p>
+              <p className="text-white/70 text-[10px] md:text-xs mt-1">per transaction</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
       {/* Weekly Spending Chart */}
       <div className="mt-10 px-5 md:px-8">
         <h2 className="text-2xl font-bold text-foreground tracking-tight mb-4">This Week</h2>
@@ -413,11 +495,11 @@ export function Dashboard({
         </div>
 
         {metrics.categoryData.length > 0 ? (
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
-            {metrics.categoryData.map((category) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {metrics.categoryData.slice(0, 4).map((category) => (
               <Card
                 key={category.name}
-                className="flex-shrink-0 w-32 border border-transparent shadow-xl hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden active:scale-95"
+                className="border border-transparent shadow-xl hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden active:scale-95"
                 onClick={() => onNavigate('expenses')}
               >
                 <div className={`h-1.5 bg-gradient-to-r ${category.gradient}`} />
@@ -448,34 +530,62 @@ export function Dashboard({
         <div className="mt-10 px-5 md:px-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-foreground tracking-tight">Budget Status</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-primary font-bold hover:text-primary/80"
+            <button
               onClick={() => onNavigate('budgets')}
+              className="group relative flex items-center text-blue-600 font-bold hover:text-blue-700 transition-colors cursor-pointer"
             >
-              Manage
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+              <span className="relative">
+                Manage
+                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300 ease-out" />
+              </span>
+              <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+            </button>
           </div>
           <Card className="border-0 shadow-xl">
-            <CardContent className="p-5 space-y-5">
-              {metrics.budgetBreakdown.map((budget) => (
-                <div key={budget.category}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-foreground">{budget.category}</span>
-                    <span className="text-sm text-muted-foreground font-semibold">
-                      {formatCurrency(budget.spent)} <span className="text-muted-foreground/60">/ {formatCurrency(budget.limit)}</span>
-                    </span>
-                  </div>
-                  <div className="h-2.5 bg-muted/50 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${getBudgetStatusGradient(budget.status)} transition-all duration-700`}
-                      style={{ width: `${budget.progress}%` }}
-                    />
-                  </div>
+            <CardContent className="p-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column - First 3 budgets */}
+                <div className="space-y-4">
+                  {metrics.budgetBreakdown.slice(0, 3).map((budget) => (
+                    <div key={budget.category}>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-bold text-foreground">{budget.category}</span>
+                        <span className="text-sm text-muted-foreground font-semibold">
+                          {formatCurrency(budget.spent)} <span className="text-muted-foreground/60">/ {formatCurrency(budget.limit)}</span>
+                        </span>
+                      </div>
+                      <div className="h-2.5 bg-muted/50 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full bg-gradient-to-r ${getBudgetStatusGradient(budget.status)} transition-all duration-700`}
+                          style={{ width: `${budget.progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+
+                {/* Right Column - Next 3 budgets */}
+                {metrics.budgetBreakdown.length > 3 && (
+                  <div className="space-y-4">
+                    {metrics.budgetBreakdown.slice(3, 6).map((budget) => (
+                      <div key={budget.category}>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-bold text-foreground">{budget.category}</span>
+                          <span className="text-sm text-muted-foreground font-semibold">
+                            {formatCurrency(budget.spent)} <span className="text-muted-foreground/60">/ {formatCurrency(budget.limit)}</span>
+                          </span>
+                        </div>
+                        <div className="h-2.5 bg-muted/50 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full bg-gradient-to-r ${getBudgetStatusGradient(budget.status)} transition-all duration-700`}
+                            style={{ width: `${budget.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -499,33 +609,33 @@ export function Dashboard({
 
         {metrics.recentExpenses.length > 0 ? (
           <Card className="border-0 shadow-xl overflow-hidden">
-            <CardContent className="p-0 divide-y divide-border/50">
+            <CardContent className="p-0 divide-y divide-border/30 max-h-[400px] overflow-y-auto custom-scrollbar">
               {metrics.recentExpenses.map((expense) => {
                 const config = categoryConfig[expense.category] || { emoji: '📝', gradient: 'from-gray-400 to-slate-500' };
                 return (
                   <div
                     key={expense.id}
-                    className="flex items-center justify-between p-4 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all cursor-pointer active:bg-blue-100/50 dark:active:bg-blue-900/30"
+                    className="flex items-center justify-between px-4 py-3 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all cursor-pointer active:bg-blue-100/50 dark:active:bg-blue-900/30"
                     onClick={() => onNavigate('expenses')}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-lg`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-lg shadow`}>
                         {config.emoji}
                       </div>
                       <div>
-                        <p className="font-medium text-foreground">
+                        <p className="font-medium text-foreground text-sm">
                           {expense.description || expense.category}
                         </p>
-                        <p className="text-sm text-muted-foreground font-medium">
+                        <p className="text-xs text-muted-foreground">
                           {expense.app && expense.app !== 'Cash' ? expense.app : expense.category}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-extrabold text-foreground">
+                      <p className="font-bold text-foreground text-sm">
                         {formatCurrency(expense.amount)}
                       </p>
-                      <p className="text-xs text-muted-foreground font-semibold">
+                      <p className="text-xs text-muted-foreground">
                         {formatRelativeDate(expense.date)}
                       </p>
                     </div>
