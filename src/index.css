@@ -27,10 +27,10 @@
   --input: #f1f5f9;
   --ring: #2563eb;
   --radius: 0.5rem;
-  --font-sans: "Titillium Web", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: "Georgia", "Times New Roman", serif;
   --font-mono: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
-  
+
   /* Chart Colors - Light Mode */
   --chart-1: #2563eb;
   --chart-2: #1d4ed8;
@@ -42,7 +42,7 @@
   --chart-8: #84cc16;
   --chart-9: #ec4899;
   --chart-10: #6366f1;
-  
+
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   --gradient-success: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -71,7 +71,7 @@
   --border: #374151;
   --input: #1f2937;
   --ring: #3b82f6;
-  
+
   /* Chart Colors - Dark Mode */
   --chart-1: #60a5fa;
   --chart-2: #3b82f6;
@@ -83,7 +83,7 @@
   --chart-8: #a3e635;
   --chart-9: #f472b6;
   --chart-10: #818cf8;
-  
+
   /* Dark Mode Gradients */
   --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   --gradient-success: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
@@ -95,7 +95,7 @@
   * {
     border-color: hsl(var(--border));
   }
-  
+
   body {
     background-color: var(--background);
     color: var(--foreground);
@@ -104,27 +104,28 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   .font-inter {
     font-family: 'Inter', var(--font-sans);
   }
 }
 
 @layer components {
+
   /* Enhanced hover and focus states */
   .hover-lift {
     transition: all 0.2s ease-in-out;
   }
-  
+
   .hover-lift:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
-  
+
   .dark .hover-lift:hover {
     box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
   }
-  
+
   /* Enhanced card styles */
   .enhanced-card {
     background: var(--card);
@@ -132,12 +133,12 @@
     border-radius: calc(var(--radius) + 2px);
     transition: all 0.2s ease-in-out;
   }
-  
+
   .enhanced-card:hover {
     border-color: var(--primary);
     box-shadow: 0 8px 25px -5px rgba(37, 99, 235, 0.1);
   }
-  
+
   .dark .enhanced-card:hover {
     box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.15);
   }
@@ -153,6 +154,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -201,79 +203,52 @@
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
 }
 
-/* Titillium Web Font Classes */
-.titillium-web-extralight {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 200;
-  font-style: normal;
-}
-
-.titillium-web-light {
-  font-family: "Titillium Web", sans-serif;
+/* Plus Jakarta Sans Font Classes */
+.jakarta-light {
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 300;
   font-style: normal;
 }
 
-.titillium-web-regular {
-  font-family: "Titillium Web", sans-serif;
+.jakarta-regular {
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
-.titillium-web-semibold {
-  font-family: "Titillium Web", sans-serif;
+.jakarta-medium {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.jakarta-semibold {
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 600;
   font-style: normal;
 }
 
-.titillium-web-bold {
-  font-family: "Titillium Web", sans-serif;
+.jakarta-bold {
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 700;
   font-style: normal;
 }
 
-.titillium-web-black {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 900;
+.jakarta-extrabold {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
   font-style: normal;
-}
-
-.titillium-web-extralight-italic {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 200;
-  font-style: italic;
-}
-
-.titillium-web-light-italic {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
-.titillium-web-regular-italic {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.titillium-web-semibold-italic {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 600;
-  font-style: italic;
-}
-
-.titillium-web-bold-italic {
-  font-family: "Titillium Web", sans-serif;
-  font-weight: 700;
-  font-style: italic;
 }
 
 /* Hide scrollbars for bottom navigation */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }

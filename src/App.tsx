@@ -460,6 +460,7 @@ function FinanceApp() {
                 customPeople={customPeople}
                 publicPeople={publicPeople}
                 onNavigate={handleTabChange}
+                onAddExpense={() => setShowAddExpense(true)}
               />
             </TabsContent>
 
