@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,39 @@ import {
 import { type Expense, type Budget, type Person, formatCurrency, getAllCategories } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+
+
+
+function RollingDigit({ digit, delay = 0 }: { digit: number, delay?: number }) {
+  return (
+    <div className="relative h-[1em] w-[0.65em] overflow-hidden">
+      <motion.div
+        initial={{ y: 0 }}
+        animate={{ y: `-${digit}em` }}
+        transition={{ duration: 2, ease: [0.2, 0.6, 0.2, 1], delay }}
+        className="absolute top-0 left-0 flex flex-col items-center w-full"
+      >
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          <span key={num} className="h-[1em] flex items-center justify-center">
+            {num}
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function RollingNumber({ value, className }: { value: number, className?: string }) {
+  const digits = Math.max(0, Math.round(value)).toString().split('').map(Number);
+
+  return (
+    <div className={`flex items-center ${className}`}>
+      {digits.map((digit, index) => (
+        <RollingDigit key={index} digit={digit} delay={index * 0.3} />
+      ))}
+    </div>
+  );
+}
 
 interface DashboardProps {
   expenses: Expense[];
@@ -278,9 +312,10 @@ export function Dashboard({
             {/* Large Number Display */}
             <div className="mb-8">
               <div className="flex items-baseline gap-2">
-                <span className={`text-7xl md:text-8xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {Math.round(metrics.budgetProgress)}
-                </span>
+                <RollingNumber
+                  value={metrics.budgetProgress}
+                  className={`text-7xl md:text-8xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}
+                />
                 <span className={`text-3xl font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>/ 100</span>
               </div>
             </div>
