@@ -78,7 +78,7 @@
         "d3": "^7.9.0",
         "date-fns": "^4.1.0",
         "embla-carousel-react": "^8.5.2",
-        "express": "^5.1.0",
+        "express": "^5.2.0",
         "firebase": "^12.1.0",
         "flowbite": "^3.1.2",
         "flowbite-react": "^0.12.7",
