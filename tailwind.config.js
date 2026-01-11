@@ -142,8 +142,9 @@ const defaultTheme = {
 }
 
 export default {
+  darkMode: "class",
   content: [
-    "./index.html", 
+    "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/flowbite/**/*.js",
     "./node_modules/flowbite-react/lib/**/*.js"

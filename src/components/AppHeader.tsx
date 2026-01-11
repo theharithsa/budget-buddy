@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { pwaManager } from '@/lib/pwa';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface AppHeaderProps {
   activeTab?: string;
@@ -88,6 +89,8 @@ const navigationItems: NavigationItem[] = [
 
 export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -139,10 +142,10 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
     try {
       // Clear localStorage (this will also reset PWA install prompt state)
       localStorage.clear();
-      
+
       // Clear sessionStorage
       sessionStorage.clear();
-      
+
       // Clear service worker caches if available
       if ('caches' in window) {
         const cacheNames = await caches.keys();
@@ -150,18 +153,18 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
           cacheNames.map(cacheName => caches.delete(cacheName))
         );
       }
-      
+
       toast.success('Cache cleared successfully! PWA install prompt will show again on next login if applicable. Refreshing page...');
-      
+
       // Wait a moment for the toast to show, then refresh
       setTimeout(() => {
         window.location.reload();
       }, 1500); // Slightly longer to read the message
-      
+
     } catch (error) {
       console.error('Clear cache error:', error);
       toast.error('Failed to clear cache completely, but localStorage/sessionStorage cleared');
-      
+
       // Still refresh even if cache clearing fails
       setTimeout(() => {
         window.location.reload();
@@ -172,7 +175,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
   const testFirebaseConnection = async () => {
     try {
       debugFirebaseConfig();
-      
+
       if (!user) {
         toast.error('User not authenticated');
         return;
@@ -195,7 +198,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
 
       const result = await addExpenseToFirestore(user.uid, testExpense);
       toast.success('Firebase connection test successful!');
-      
+
     } catch (error: any) {
       console.error('Firebase test failed:', error);
       toast.error(`Firebase test failed: ${error.message}`);
@@ -244,16 +247,19 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
     : user.email?.[0].toUpperCase() || 'U';
 
   return (
-    <div className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+    <div className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300 ${isDark
+      ? 'bg-gradient-to-b from-slate-900 to-slate-900/95 border-slate-700'
+      : 'bg-gradient-to-b from-white to-blue-50/80 border-blue-100'
+      }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Mobile Back Button for non-dashboard pages */}
             {activeTab !== 'dashboard' && (
               <div className="lg:hidden">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="p-2"
                   onClick={() => onTabChange?.('dashboard')}
                 >
@@ -262,7 +268,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                 </Button>
               </div>
             )}
-            
+
             {/* Mobile Navigation Menu - Only show on dashboard */}
             {activeTab === 'dashboard' && (
               <div className="lg:hidden">
@@ -273,68 +279,68 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                       <span className="sr-only">Open navigation menu</span>
                     </Button>
                   </SheetTrigger>
-                <SheetContent side="left" className="w-80 p-0">
-                  <div className="flex flex-col h-full">
-                    {/* Header */}
-                    <SheetHeader className="p-6 border-b border-border">
-                      <SheetTitle className="text-lg font-semibold text-foreground text-left">
-                        {APP_DISPLAY_NAME}
-                      </SheetTitle>
-                      <p className="text-sm text-muted-foreground mt-1 text-left">{getNavigationVersion().subtitle}</p>
-                    </SheetHeader>
+                  <SheetContent side="left" className="w-80 p-0">
+                    <div className="flex flex-col h-full">
+                      {/* Header */}
+                      <SheetHeader className="p-6 border-b border-border">
+                        <SheetTitle className="text-lg font-semibold text-foreground text-left">
+                          {APP_DISPLAY_NAME}
+                        </SheetTitle>
+                        <p className="text-sm text-muted-foreground mt-1 text-left">{getNavigationVersion().subtitle}</p>
+                      </SheetHeader>
 
-                    {/* Navigation Items */}
-                    <ScrollArea className="flex-1 p-4">
-                      <div className="space-y-2">
-                        {navigationItems.map((item) => {
-                          const Icon = item.icon;
-                          const isActive = activeTab === item.id;
-                          
-                          return (
-                            <Button
-                              key={item.id}
-                              variant={isActive ? "secondary" : "ghost"}
-                              className={cn(
-                                "w-full justify-start gap-4 h-14 text-left",
-                                isActive && "bg-primary/10 text-primary border-primary/20"
-                              )}
-                              onClick={() => handleTabChange(item.id)}
-                            >
-                              <Icon className="w-6 h-6 flex-shrink-0" />
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">{item.label}</span>
-                                  {item.hasBeta && (
-                                    <Badge 
-                                      variant="secondary" 
-                                      className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-1.5 py-0.5 font-semibold"
-                                    >
-                                      BETA
-                                    </Badge>
+                      {/* Navigation Items */}
+                      <ScrollArea className="flex-1 p-4">
+                        <div className="space-y-2">
+                          {navigationItems.map((item) => {
+                            const Icon = item.icon;
+                            const isActive = activeTab === item.id;
+
+                            return (
+                              <Button
+                                key={item.id}
+                                variant={isActive ? "secondary" : "ghost"}
+                                className={cn(
+                                  "w-full justify-start gap-4 h-14 text-left",
+                                  isActive && "bg-primary/10 text-primary border-primary/20"
+                                )}
+                                onClick={() => handleTabChange(item.id)}
+                              >
+                                <Icon className="w-6 h-6 flex-shrink-0" />
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">{item.label}</span>
+                                    {item.hasBeta && (
+                                      <Badge
+                                        variant="secondary"
+                                        className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-1.5 py-0.5 font-semibold"
+                                      >
+                                        BETA
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  {item.description && (
+                                    <div className="text-xs text-muted-foreground">
+                                      {item.description}
+                                    </div>
                                   )}
                                 </div>
-                                {item.description && (
-                                  <div className="text-xs text-muted-foreground">
-                                    {item.description}
-                                  </div>
-                                )}
-                              </div>
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </ScrollArea>
 
-                    {/* Footer */}
-                    <div className="p-4 border-t border-border">
-                      <p className="text-xs text-muted-foreground text-center">
-                        Tap any item to navigate
-                      </p>
+                      {/* Footer */}
+                      <div className="p-4 border-t border-border">
+                        <p className="text-xs text-muted-foreground text-center">
+                          Tap any item to navigate
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
             )}
 
             <div>
@@ -352,110 +358,110 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10">
-                  {!avatarError && user.photoURL ? (
-                    <AvatarImage 
-                      src={user.photoURL} 
-                      alt={user.displayName || 'User'}
-                      onError={() => {
-                        setAvatarError(true);
-                      }}
-                      onLoad={() => {
-                        setAvatarError(false);
-                      }}
-                    />
-                  ) : null}
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <div className="flex items-center justify-start gap-2 p-2">
-                <div className="flex flex-col space-y-1 leading-none">
-                  {user.displayName && (
-                    <p className="font-medium">{user.displayName}</p>
-                  )}
-                  {user.email && (
-                    <p className="w-[200px] truncate text-sm text-muted-foreground">
-                      {user.email}
-                    </p>
-                  )}
+                  <Avatar className="h-10 w-10">
+                    {!avatarError && user.photoURL ? (
+                      <AvatarImage
+                        src={user.photoURL}
+                        alt={user.displayName || 'User'}
+                        onError={() => {
+                          setAvatarError(true);
+                        }}
+                        onLoad={() => {
+                          setAvatarError(false);
+                        }}
+                      />
+                    ) : null}
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {userInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <div className="flex items-center justify-start gap-2 p-2">
+                  <div className="flex flex-col space-y-1 leading-none">
+                    {user.displayName && (
+                      <p className="font-medium">{user.displayName}</p>
+                    )}
+                    {user.email && (
+                      <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={openDocumentation}
-                className="cursor-pointer"
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Documentation
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={openReleaseNotes}
-                className="cursor-pointer"
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Release Notes
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={testFirebaseConnection}
-                className="cursor-pointer"
-              >
-                <Bug className="mr-2 h-4 w-4" />
-                Test Firebase
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={refreshUserProfile}
-                className="cursor-pointer"
-              >
-                <UserCheck className="mr-2 h-4 w-4" />
-                Refresh Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleInstallApp}
-                className="cursor-pointer"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Install App
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleClearCache}
-                className="cursor-pointer"
-              >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Clear Cache & Refresh
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => {
-                  const debugInfo = {
-                    isAuthenticated: !!user,
-                    uid: user?.uid,
-                    email: user?.email,
-                    displayName: user?.displayName,
-                    currentUrl: window.location.href,
-                    timestamp: new Date().toISOString()
-                  };
-                  console.log('🔍 DEBUG USER INFO:', debugInfo);
-                  toast.success('User info logged to console');
-                }}
-                className="cursor-pointer"
-              >
-                <Bug className="mr-2 h-4 w-4" />
-                Debug User Info
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="cursor-pointer"
-              >
-                <SignOut className="mr-2 h-4 w-4" />
-                {isLoggingOut ? 'Signing out...' : 'Sign out'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={openDocumentation}
+                  className="cursor-pointer"
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Documentation
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={openReleaseNotes}
+                  className="cursor-pointer"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Release Notes
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={testFirebaseConnection}
+                  className="cursor-pointer"
+                >
+                  <Bug className="mr-2 h-4 w-4" />
+                  Test Firebase
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={refreshUserProfile}
+                  className="cursor-pointer"
+                >
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  Refresh Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleInstallApp}
+                  className="cursor-pointer"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Install App
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleClearCache}
+                  className="cursor-pointer"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Clear Cache & Refresh
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    const debugInfo = {
+                      isAuthenticated: !!user,
+                      uid: user?.uid,
+                      email: user?.email,
+                      displayName: user?.displayName,
+                      currentUrl: window.location.href,
+                      timestamp: new Date().toISOString()
+                    };
+                    console.log('🔍 DEBUG USER INFO:', debugInfo);
+                    toast.success('User info logged to console');
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Bug className="mr-2 h-4 w-4" />
+                  Debug User Info
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="cursor-pointer"
+                >
+                  <SignOut className="mr-2 h-4 w-4" />
+                  {isLoggingOut ? 'Signing out...' : 'Sign out'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

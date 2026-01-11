@@ -136,19 +136,34 @@ export function Dashboard({
       });
     }
 
-    // Category breakdown (top 5)
+    // Category breakdown (top 5) with daily trend
     const allCategories = getAllCategories(customCategories);
     const categoryData = allCategories.map(category => {
-      const amount = monthlyExpenses
-        .filter(e => e.category === category.name)
-        .reduce((sum, e) => sum + e.amount, 0);
+      const categoryExpenses = monthlyExpenses.filter(e => e.category === category.name);
+      const amount = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
       const config = categoryConfig[category.name] || { emoji: '📝', gradient: 'from-gray-400 to-slate-500' };
+
+      // Calculate last 7 days trend for this category
+      const dailyTrend: number[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dayTotal = categoryExpenses
+          .filter(e => {
+            const expDate = new Date(e.date);
+            return expDate.toDateString() === date.toDateString();
+          })
+          .reduce((sum, e) => sum + e.amount, 0);
+        dailyTrend.push(dayTotal);
+      }
+
       return {
         name: category.name,
         amount,
         emoji: config.emoji,
         gradient: config.gradient,
-        color: category.color || '#3B82F6'
+        color: category.color || '#3B82F6',
+        dailyTrend
       };
     })
       .filter(c => c.amount > 0)
@@ -247,49 +262,55 @@ export function Dashboard({
       <div className="px-5 md:px-8 mt-4">
         <div className="grid grid-cols-2 gap-4">
 
-          {/* Budget Status Card - Dark */}
-          <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6 md:p-8 shadow-2xl">
+          {/* Budget Status Card */}
+          <div className={`rounded-3xl p-6 md:p-8 shadow-xl border ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-slate-400 text-sm font-medium">Budget Status</span>
+                <span className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Budget Status</span>
               </div>
-              <span className="text-slate-500 text-sm">{currentMonth}</span>
+              <span className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{currentMonth}</span>
             </div>
 
             {/* Large Number Display */}
             <div className="mb-8">
               <div className="flex items-baseline gap-2">
-                <span className="text-7xl md:text-8xl font-bold text-white tracking-tight">
+                <span className={`text-7xl md:text-8xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   {Math.round(metrics.budgetProgress)}
                 </span>
-                <span className="text-3xl text-slate-500 font-medium">/ 100</span>
+                <span className={`text-3xl font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>/ 100</span>
               </div>
             </div>
 
             {/* Progress Bar */}
             <div className="space-y-2">
-              <div className="relative h-3 bg-slate-700 rounded-full overflow-hidden">
+              <div className={`relative h-3 rounded-full overflow-hidden ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`}>
                 <div
                   className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000"
                   style={{ width: `${metrics.budgetProgress}%` }}
                 />
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">0%</span>
-                <span className="text-slate-500">100%</span>
+                <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>0%</span>
+                <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>100%</span>
               </div>
             </div>
           </div>
 
-          {/* Monthly Spent Card - Dark */}
-          <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-8 shadow-2xl">
+          {/* Monthly Spent Card */}
+          <div className={`rounded-3xl p-4 md:p-8 shadow-xl border ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-slate-400 text-xs md:text-sm font-medium">Monthly Spending</span>
+              <span className={`text-xs md:text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Monthly Spending</span>
               {metrics.monthlyChange !== 0 && (
                 <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${metrics.monthlyChange > 0
-                  ? 'bg-red-500/20 text-red-400'
-                  : 'bg-emerald-500/20 text-emerald-400'
+                  ? isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'
+                  : isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'
                   }`}>
                   {metrics.monthlyChange > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                   {Math.abs(metrics.monthlyChange).toFixed(0)}%
@@ -299,27 +320,27 @@ export function Dashboard({
 
             {/* Amount */}
             <div className="mb-4 md:mb-6">
-              <p className="text-2xl md:text-5xl font-bold text-white tracking-tight">
+              <p className={`text-2xl md:text-5xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.monthlySpent)}
               </p>
-              <p className="text-slate-500 text-xs md:text-sm mt-1 md:mt-2">
+              <p className={`text-xs md:text-sm mt-1 md:mt-2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                 {formatCurrency(metrics.remaining)} remaining of {formatCurrency(metrics.totalBudget)}
               </p>
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-700/50">
+            <div className={`grid grid-cols-3 gap-4 pt-4 border-t ${isDark ? 'border-slate-700/50' : 'border-slate-200'}`}>
               <div>
-                <p className="text-2xl font-bold text-white">{metrics.totalExpenses}</p>
-                <p className="text-slate-500 text-xs">entries</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{metrics.totalExpenses}</p>
+                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>entries</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{budgets.length}</p>
-                <p className="text-slate-500 text-xs">budgets</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{budgets.length}</p>
+                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>budgets</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{metrics.totalCategories}</p>
-                <p className="text-slate-500 text-xs">categories</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{metrics.totalCategories}</p>
+                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>categories</p>
               </div>
             </div>
           </div>
@@ -355,33 +376,36 @@ export function Dashboard({
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[140px]">
 
           {/* Large Featured Card - Budget Status */}
-          <div className="col-span-2 md:col-span-1 row-span-2 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-6 flex flex-col justify-between shadow-2xl shadow-purple-500/20 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-pink-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+          <div className={`col-span-2 md:col-span-1 row-span-2 rounded-3xl p-6 flex flex-col justify-between shadow-xl border overflow-hidden relative ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
+            <div className={`absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 ${isDark ? 'bg-indigo-500/10' : 'bg-blue-100/50'}`} />
+            <div className={`absolute bottom-0 left-0 w-32 h-32 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 ${isDark ? 'bg-blue-500/10' : 'bg-indigo-100/50'}`} />
             <div className="relative z-10">
-              <p className="text-white/80 text-sm font-medium">Budget Remaining</p>
-              <p className="text-4xl md:text-5xl font-black text-white mt-2 tracking-tight">
+              <p className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Budget Remaining</p>
+              <p className={`text-4xl md:text-5xl font-black mt-2 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.remaining)}
               </p>
-              <p className="text-white/70 text-sm mt-1">of {formatCurrency(metrics.totalBudget)}</p>
+              <p className={`text-sm mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>of {formatCurrency(metrics.totalBudget)}</p>
             </div>
             <div className="relative z-10 space-y-3">
               {/* Progress bar */}
-              <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+              <div className={`h-2 rounded-full overflow-hidden ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`}>
                 <div
-                  className="h-full bg-white/80 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500"
                   style={{ width: `${100 - metrics.budgetProgress}%` }}
                 />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white/80 text-xs font-medium">{Math.round(100 - metrics.budgetProgress)}% remaining</span>
+                <span className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{Math.round(100 - metrics.budgetProgress)}% remaining</span>
                 {metrics.monthlyChange > 0 ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/30 text-white text-xs font-semibold">
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}>
                     <TrendingUp className="w-3 h-3" />
                     {Math.abs(metrics.monthlyChange).toFixed(0)}%
                   </span>
                 ) : metrics.monthlyChange < 0 ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/30 text-white text-xs font-semibold">
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
                     <TrendingDown className="w-3 h-3" />
                     {Math.abs(metrics.monthlyChange).toFixed(0)}%
                   </span>
@@ -391,53 +415,65 @@ export function Dashboard({
           </div>
 
           {/* Daily Average Card */}
-          <div className="rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4 md:p-5 flex flex-col justify-between shadow-xl shadow-purple-500/20 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl" />
-            <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Daily Average</p>
+          <div className={`rounded-3xl p-4 md:p-5 flex flex-col justify-between shadow-lg border overflow-hidden relative ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
+            <div className={`absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl ${isDark ? 'bg-indigo-500/10' : 'bg-blue-100/50'}`} />
+            <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Daily Average</p>
             <div>
-              <p className="text-xl md:text-3xl font-extrabold text-white">
+              <p className={`text-xl md:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.monthlySpent / Math.max(new Date().getDate(), 1))}
               </p>
-              <p className="text-white/70 text-[10px] md:text-xs mt-1">per day this month</p>
+              <p className={`text-[10px] md:text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>per day this month</p>
             </div>
           </div>
 
           {/* This Week Card */}
-          <div className="rounded-3xl bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 p-4 md:p-5 flex flex-col justify-between shadow-xl shadow-pink-500/20 overflow-hidden relative">
-            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />
-            <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">This Week</p>
+          <div className={`rounded-3xl p-4 md:p-5 flex flex-col justify-between shadow-lg border overflow-hidden relative ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
+            <div className={`absolute bottom-0 right-0 w-24 h-24 rounded-full blur-2xl translate-y-1/2 translate-x-1/2 ${isDark ? 'bg-blue-500/10' : 'bg-indigo-100/50'}`} />
+            <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>This Week</p>
             <div>
-              <p className="text-xl md:text-3xl font-extrabold text-white">
+              <p className={`text-xl md:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.dailySpending.reduce((sum, d) => sum + d.amount, 0))}
               </p>
-              <p className="text-white/70 text-[10px] md:text-xs mt-1">weekly total</p>
+              <p className={`text-[10px] md:text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>weekly total</p>
             </div>
           </div>
 
           {/* Top Category Card */}
-          <div className="rounded-3xl bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 p-4 md:p-5 flex items-center gap-3 md:gap-4 shadow-xl shadow-rose-500/20 overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-white/20 rounded-full blur-xl -translate-y-1/2 -translate-x-1/2" />
+          <div className={`rounded-3xl p-4 md:p-5 flex items-center gap-3 md:gap-4 shadow-lg border overflow-hidden relative ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
+            <div className={`absolute top-0 left-0 w-16 h-16 rounded-full blur-xl -translate-y-1/2 -translate-x-1/2 ${isDark ? 'bg-purple-500/10' : 'bg-purple-100/50'}`} />
             <div className="text-3xl md:text-5xl drop-shadow-lg relative z-10">{metrics.categoryData[0]?.emoji || '📊'}</div>
             <div className="relative z-10">
-              <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Top Spend</p>
-              <p className="text-base md:text-xl font-bold text-white">{metrics.categoryData[0]?.name?.split(' ')[0] || 'None'}</p>
-              <p className="text-white/70 text-sm md:text-base font-semibold">{metrics.categoryData[0] ? formatCurrency(metrics.categoryData[0].amount) : '₹0'}</p>
+              <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Top Spend</p>
+              <p className={`text-base md:text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{metrics.categoryData[0]?.name?.split(' ')[0] || 'None'}</p>
+              <p className={`text-sm md:text-base font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{metrics.categoryData[0] ? formatCurrency(metrics.categoryData[0].amount) : '₹0'}</p>
             </div>
           </div>
 
           {/* Avg per Entry Card */}
-          <div className="rounded-3xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 p-4 md:p-5 flex flex-col justify-between shadow-lg shadow-indigo-500/20">
+          <div className={`rounded-3xl p-4 md:p-5 flex flex-col justify-between shadow-lg border ${isDark
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
+            : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
+            }`}>
             <div className="flex items-center justify-between">
-              <p className="text-white/80 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Avg / Entry</p>
-              <div className="p-1.5 rounded-lg bg-white/20">
-                <Receipt className="w-4 h-4 text-white" />
+              <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Avg / Entry</p>
+              <div className={`p-1.5 rounded-lg ${isDark ? 'bg-slate-700' : 'bg-blue-100'}`}>
+                <Receipt className={`w-4 h-4 ${isDark ? 'text-slate-300' : 'text-blue-600'}`} />
               </div>
             </div>
             <div>
-              <p className="text-xl md:text-3xl font-extrabold text-white">
+              <p className={`text-xl md:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.totalExpenses > 0 ? metrics.allTimeSpent / metrics.totalExpenses : 0)}
               </p>
-              <p className="text-white/70 text-[10px] md:text-xs mt-1">per transaction</p>
+              <p className={`text-[10px] md:text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>per transaction</p>
             </div>
           </div>
 
@@ -496,24 +532,59 @@ export function Dashboard({
 
         {metrics.categoryData.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {metrics.categoryData.slice(0, 4).map((category) => (
-              <Card
-                key={category.name}
-                className="border border-transparent shadow-xl hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden active:scale-95"
-                onClick={() => onNavigate('expenses')}
-              >
-                <div className={`h-1.5 bg-gradient-to-r ${category.gradient}`} />
-                <CardContent className="p-4 text-center">
-                  <div className="text-4xl mb-3">{category.emoji}</div>
-                  <p className="text-base font-extrabold text-foreground">
-                    {formatCurrency(category.amount)}
-                  </p>
-                  <p className="text-xs text-muted-foreground font-semibold mt-1 truncate">
-                    {category.name.split(' ')[0]}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {metrics.categoryData.slice(0, 4).map((category) => {
+              // Create SVG line path from genuine dailyTrend data
+              const trend = category.dailyTrend;
+              const maxVal = Math.max(...trend, 1);
+              const points = trend.map((val, i) => {
+                const x = (i / (trend.length - 1)) * 100;
+                const y = 100 - (val / maxVal) * 100;
+                return `${x},${y}`;
+              }).join(' ');
+              const hasData = trend.some(v => v > 0);
+
+              return (
+                <div
+                  key={category.name}
+                  className="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden relative"
+                >
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                  <div className="relative z-10">
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                      {category.name.split(' ')[0]}
+                    </p>
+                    <p className="text-3xl font-black text-white tracking-tight">
+                      {formatCurrency(category.amount)}
+                    </p>
+                    {/* SVG Line Graph */}
+                    <div className="mt-4 h-10">
+                      {hasData ? (
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
+                          <defs>
+                            <linearGradient id={`gradient-${category.name}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                              <stop offset="0%" stopColor="#3b82f6" />
+                              <stop offset="100%" stopColor="#a855f7" />
+                            </linearGradient>
+                          </defs>
+                          <polyline
+                            points={points}
+                            fill="none"
+                            stroke={`url(#gradient-${category.name})`}
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      ) : (
+                        <div className="h-full flex items-center justify-center">
+                          <span className="text-slate-600 text-xs">No recent activity</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <Card className="border-0 shadow-lg">
@@ -549,12 +620,12 @@ export function Dashboard({
                   {metrics.budgetBreakdown.slice(0, 3).map((budget) => (
                     <div key={budget.category}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-foreground">{budget.category}</span>
-                        <span className="text-sm text-muted-foreground font-semibold">
+                        <span className="font-bold text-foreground text-base">{budget.category}</span>
+                        <span className="text-base text-muted-foreground font-semibold">
                           {formatCurrency(budget.spent)} <span className="text-muted-foreground/60">/ {formatCurrency(budget.limit)}</span>
                         </span>
                       </div>
-                      <div className="h-2.5 bg-muted/50 rounded-full overflow-hidden">
+                      <div className="h-3 bg-muted/50 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full bg-gradient-to-r ${getBudgetStatusGradient(budget.status)} transition-all duration-700`}
                           style={{ width: `${budget.progress}%` }}
@@ -615,27 +686,27 @@ export function Dashboard({
                 return (
                   <div
                     key={expense.id}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all cursor-pointer active:bg-blue-100/50 dark:active:bg-blue-900/30"
+                    className="flex items-center justify-between px-5 py-4 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all cursor-pointer active:bg-blue-100/50 dark:active:bg-blue-900/30"
                     onClick={() => onNavigate('expenses')}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-lg shadow`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-lg`}>
                         {config.emoji}
                       </div>
                       <div>
-                        <p className="font-medium text-foreground text-sm">
+                        <p className="font-bold text-foreground text-base">
                           {expense.description || expense.category}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {expense.app && expense.app !== 'Cash' ? expense.app : expense.category}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-foreground text-sm">
+                      <p className="font-extrabold text-foreground text-lg">
                         {formatCurrency(expense.amount)}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         {formatRelativeDate(expense.date)}
                       </p>
                     </div>
