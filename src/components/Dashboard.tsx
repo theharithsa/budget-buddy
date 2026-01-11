@@ -37,20 +37,20 @@ interface DashboardProps {
   onAddExpense?: () => void;
 }
 
-// Category emoji and color mapping
+// Category emoji and color mapping - Blue theme with varying shades
 const categoryConfig: Record<string, { emoji: string; gradient: string }> = {
-  'Food & Dining': { emoji: '🍽️', gradient: 'from-orange-400 to-red-500' },
-  'Transportation': { emoji: '🚗', gradient: 'from-blue-400 to-cyan-500' },
-  'Entertainment': { emoji: '🎬', gradient: 'from-purple-400 to-pink-500' },
-  'Healthcare': { emoji: '🏥', gradient: 'from-emerald-400 to-teal-500' },
-  'Education': { emoji: '📚', gradient: 'from-indigo-400 to-blue-500' },
-  'Bills & Utilities': { emoji: '⚡', gradient: 'from-yellow-400 to-orange-500' },
-  'Shopping': { emoji: '🛍️', gradient: 'from-pink-400 to-rose-500' },
+  'Food & Dining': { emoji: '🍽️', gradient: 'from-blue-500 to-blue-600' },
+  'Transportation': { emoji: '🚗', gradient: 'from-blue-400 to-blue-500' },
+  'Entertainment': { emoji: '🎬', gradient: 'from-indigo-500 to-blue-600' },
+  'Healthcare': { emoji: '🏥', gradient: 'from-sky-500 to-blue-500' },
+  'Education': { emoji: '📚', gradient: 'from-blue-600 to-indigo-600' },
+  'Bills & Utilities': { emoji: '⚡', gradient: 'from-blue-500 to-indigo-500' },
+  'Shopping': { emoji: '🛍️', gradient: 'from-indigo-400 to-blue-500' },
   'Travel': { emoji: '✈️', gradient: 'from-sky-400 to-blue-500' },
-  'Personal Care': { emoji: '💆', gradient: 'from-violet-400 to-purple-500' },
-  'Groceries': { emoji: '🛒', gradient: 'from-green-400 to-emerald-500' },
-  'Subscriptions': { emoji: '📱', gradient: 'from-slate-400 to-gray-500' },
-  'Other': { emoji: '📝', gradient: 'from-gray-400 to-slate-500' }
+  'Personal Care': { emoji: '💆', gradient: 'from-blue-400 to-indigo-500' },
+  'Groceries': { emoji: '🛒', gradient: 'from-blue-500 to-sky-500' },
+  'Subscriptions': { emoji: '📱', gradient: 'from-slate-500 to-blue-500' },
+  'Other': { emoji: '📝', gradient: 'from-blue-400 to-blue-500' }
 };
 
 export function Dashboard({
@@ -173,7 +173,7 @@ export function Dashboard({
         progress: Math.min(progress, 100),
         status: progress > 100 ? 'over' : progress > 80 ? 'warning' : 'good'
       };
-    }).slice(0, 3);
+    }).sort((a, b) => b.spent - a.spent).slice(0, 3);
 
     let status: 'good' | 'warning' | 'over' = 'good';
     if (budgetProgress > 100) status = 'over';
@@ -208,22 +208,22 @@ export function Dashboard({
 
   const getStatusGradient = () => {
     switch (metrics.status) {
-      case 'over': return 'from-red-500 to-rose-600';
-      case 'warning': return 'from-amber-500 to-orange-600';
-      default: return 'from-emerald-500 to-green-600';
+      case 'over': return 'from-red-500 to-red-600';
+      case 'warning': return 'from-blue-400 to-blue-500';
+      default: return 'from-blue-500 to-blue-600';
     }
   };
 
   const getBudgetStatusGradient = (status: string) => {
     switch (status) {
-      case 'over': return 'from-red-500 to-rose-600';
-      case 'warning': return 'from-amber-500 to-orange-600';
-      default: return 'from-emerald-500 to-green-600';
+      case 'over': return 'from-red-500 to-red-600';
+      case 'warning': return 'from-blue-400 to-blue-500';
+      default: return 'from-blue-500 to-blue-600';
     }
   };
 
-  const chartColor = isDark ? '#818cf8' : '#6366f1';
-  const chartColorSecondary = isDark ? '#34d399' : '#10b981';
+  const chartColor = isDark ? '#60a5fa' : '#3b82f6';
+  const chartColorSecondary = isDark ? '#93c5fd' : '#60a5fa';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20 pb-28">
@@ -342,20 +342,20 @@ export function Dashboard({
       <div className="mt-8 px-5 md:px-8">
         <div className="grid grid-cols-4 gap-4">
           {[
-            { icon: Plus, label: 'Add', color: 'from-indigo-500 to-purple-600', action: onAddExpense },
-            { icon: Target, label: 'Budgets', color: 'from-emerald-500 to-teal-600', action: () => onNavigate('budgets') },
-            { icon: BarChart3, label: 'Analytics', color: 'from-violet-500 to-purple-600', action: () => onNavigate('explorer') },
-            { icon: MessageSquare, label: 'AI Chat', color: 'from-amber-500 to-orange-600', action: () => onNavigate('ai-chat') },
+            { icon: Plus, label: 'Add', color: 'from-blue-500 to-blue-600', action: onAddExpense },
+            { icon: Target, label: 'Budgets', color: 'from-blue-600 to-indigo-600', action: () => onNavigate('budgets') },
+            { icon: BarChart3, label: 'Analytics', color: 'from-indigo-500 to-blue-600', action: () => onNavigate('explorer') },
+            { icon: MessageSquare, label: 'AI Chat', color: 'from-sky-500 to-blue-500', action: () => onNavigate('ai-chat') },
           ].map((item, i) => (
             <button
               key={i}
               onClick={item.action}
-              className="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-card border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-card border border-transparent shadow-lg hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 hover:-translate-y-1 active:scale-95"
             >
-              <div className={`p-3 rounded-xl bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 transition-transform`}>
+              <div className={`p-3 rounded-xl bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
                 <item.icon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs font-bold text-foreground">{item.label}</span>
+              <span className="text-xs font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{item.label}</span>
             </button>
           ))}
         </div>
@@ -363,7 +363,7 @@ export function Dashboard({
 
       {/* Weekly Spending Chart */}
       <div className="mt-10 px-5 md:px-8">
-        <h2 className="text-lg font-bold text-foreground tracking-tight mb-4">This Week</h2>
+        <h2 className="text-2xl font-bold text-foreground tracking-tight mb-4">This Week</h2>
         <Card className="border-0 shadow-xl">
           <CardContent className="p-5">
             <ResponsiveContainer width="100%" height={140}>
@@ -399,16 +399,17 @@ export function Dashboard({
       {/* Category Breakdown */}
       <div className="mt-10 px-5 md:px-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-foreground tracking-tight">Top Categories</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-primary font-bold hover:text-primary/80"
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">Top Categories</h2>
+          <button
             onClick={() => onNavigate('expenses')}
+            className="group relative flex items-center text-blue-600 font-bold hover:text-blue-700 transition-colors cursor-pointer"
           >
-            View all
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
+            <span className="relative">
+              View all
+              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300 ease-out" />
+            </span>
+            <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+          </button>
         </div>
 
         {metrics.categoryData.length > 0 ? (
@@ -416,7 +417,7 @@ export function Dashboard({
             {metrics.categoryData.map((category) => (
               <Card
                 key={category.name}
-                className="flex-shrink-0 w-32 border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden"
+                className="flex-shrink-0 w-32 border border-transparent shadow-xl hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden active:scale-95"
                 onClick={() => onNavigate('expenses')}
               >
                 <div className={`h-1.5 bg-gradient-to-r ${category.gradient}`} />
@@ -446,7 +447,7 @@ export function Dashboard({
       {metrics.budgetBreakdown.length > 0 && (
         <div className="mt-10 px-5 md:px-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-foreground tracking-tight">Budget Status</h2>
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">Budget Status</h2>
             <Button
               variant="ghost"
               size="sm"
@@ -483,16 +484,17 @@ export function Dashboard({
       {/* Recent Activity */}
       <div className="mt-10 px-5 md:px-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-foreground tracking-tight">Recent Activity</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-primary font-bold hover:text-primary/80"
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">Recent Activity</h2>
+          <button
+            className="group relative flex items-center text-blue-600 font-bold hover:text-blue-700 transition-colors cursor-pointer"
             onClick={() => onNavigate('expenses')}
           >
-            View all
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
+            <span className="relative">
+              View all
+              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300 ease-out" />
+            </span>
+            <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+          </button>
         </div>
 
         {metrics.recentExpenses.length > 0 ? (
@@ -503,7 +505,7 @@ export function Dashboard({
                 return (
                   <div
                     key={expense.id}
-                    className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors cursor-pointer"
+                    className="flex items-center justify-between p-4 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all cursor-pointer active:bg-blue-100/50 dark:active:bg-blue-900/30"
                     onClick={() => onNavigate('expenses')}
                   >
                     <div className="flex items-center gap-4">
@@ -511,7 +513,7 @@ export function Dashboard({
                         {config.emoji}
                       </div>
                       <div>
-                        <p className="font-bold text-foreground">
+                        <p className="font-medium text-foreground">
                           {expense.description || expense.category}
                         </p>
                         <p className="text-sm text-muted-foreground font-medium">
@@ -521,7 +523,7 @@ export function Dashboard({
                     </div>
                     <div className="text-right">
                       <p className="font-extrabold text-foreground">
-                        -{formatCurrency(expense.amount)}
+                        {formatCurrency(expense.amount)}
                       </p>
                       <p className="text-xs text-muted-foreground font-semibold">
                         {formatRelativeDate(expense.date)}
@@ -546,47 +548,50 @@ export function Dashboard({
               </Button>
             </CardContent>
           </Card>
-        )}
-      </div>
+        )
+        }
+      </div >
 
       {/* AI Insight */}
-      {metrics.monthlyChange > 15 && (
-        <div className="mt-10 px-5 md:px-8">
-          <Card className="border-0 shadow-xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-red-500/10 overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
-            <CardContent className="p-5 flex items-start gap-4">
-              <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="font-bold text-foreground text-base">
-                  Spending Alert
-                </p>
-                <p className="text-sm text-muted-foreground mt-1 font-medium">
-                  Your spending is <span className="text-amber-600 dark:text-amber-400 font-bold">{Math.round(metrics.monthlyChange)}% higher</span> than last month.
-                  {metrics.categoryData[0] && ` Top category: ${metrics.categoryData[0].name}.`}
-                </p>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="px-0 mt-2 text-amber-600 hover:text-amber-700 font-bold"
-                  onClick={() => onNavigate('ai-chat')}
-                >
-                  Get AI suggestions →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {
+        metrics.monthlyChange > 15 && (
+          <div className="mt-10 px-5 md:px-8">
+            <Card className="border-0 shadow-xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-red-500/10 overflow-hidden">
+              <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
+              <CardContent className="p-5 flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-foreground text-base">
+                    Spending Alert
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1 font-medium">
+                    Your spending is <span className="text-amber-600 dark:text-amber-400 font-bold">{Math.round(metrics.monthlyChange)}% higher</span> than last month.
+                    {metrics.categoryData[0] && ` Top category: ${metrics.categoryData[0].name}.`}
+                  </p>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="px-0 mt-2 text-blue-600 hover:text-blue-700 font-bold"
+                    onClick={() => onNavigate('ai-chat')}
+                  >
+                    Get AI suggestions →
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )
+      }
 
       {/* Summary Stats */}
       <div className="mt-10 px-5 md:px-8 mb-6">
         <div className="grid grid-cols-3 gap-4">
           {[
-            { icon: Receipt, value: metrics.totalExpenses, label: 'Transactions', gradient: 'from-blue-500 to-cyan-500' },
-            { icon: Target, value: budgets.length, label: 'Budgets', gradient: 'from-emerald-500 to-teal-500' },
-            { icon: PiggyBank, value: metrics.categoryData.length, label: 'Categories', gradient: 'from-violet-500 to-purple-500' },
+            { icon: Receipt, value: metrics.totalExpenses, label: 'Transactions', gradient: 'from-blue-500 to-blue-600' },
+            { icon: Target, value: budgets.length, label: 'Budgets', gradient: 'from-blue-600 to-indigo-600' },
+            { icon: PiggyBank, value: metrics.categoryData.length, label: 'Categories', gradient: 'from-indigo-500 to-blue-600' },
           ].map((stat, i) => (
             <Card key={i} className="border-0 shadow-xl overflow-hidden">
               <div className={`h-1 bg-gradient-to-r ${stat.gradient}`} />
@@ -601,14 +606,14 @@ export function Dashboard({
       </div>
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-8 right-6 z-50">
+      <div className="fixed bottom-6 right-5 z-50">
         <button
           onClick={onAddExpense}
-          className="h-16 w-16 rounded-2xl shadow-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-110 hover:shadow-purple-500/30 hover:shadow-3xl flex items-center justify-center"
+          className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 transition-all duration-300 hover:scale-110 hover:shadow-blue-500/30 flex items-center justify-center"
         >
-          <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
+          <Plus className="w-5 h-5 md:w-6 md:h-6 text-white" strokeWidth={2.5} />
         </button>
       </div>
-    </div>
+    </div >
   );
 }

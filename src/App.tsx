@@ -707,11 +707,11 @@ function FinanceApp() {
       <PWAConnectionStatus />
       <UpdateNotification />
 
-      {/* Bottom Navigation for Mobile */}
+      {/* Bottom Navigation for Mobile - Hidden on Dashboard */}
       <BottomNavigation
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        isVisible={true}
+        isVisible={activeTab !== 'dashboard'}
       />
 
       <Toaster position="top-right" />
