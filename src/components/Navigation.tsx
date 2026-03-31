@@ -16,7 +16,8 @@ import {
   ChevronRight,
   Home,
   MessageSquare,
-  BarChart3
+  BarChart3,
+  Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getNavigationVersion } from '@/lib/version';
@@ -90,7 +91,7 @@ const navigationItems: NavigationItem[] = [
   {
     id: 'monitoring-demo',
     label: 'Monitoring Demo',
-    icon: BarChart3,
+    icon: Activity,
     description: 'Dynatrace tracking demonstration',
     hasBeta: true
   }
@@ -155,7 +156,7 @@ function MobileNavigation({ activeTab, onTabChange, title, version }: {
                           {item.hasBeta && (
                             <Badge 
                               variant="secondary" 
-                              className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[9px] px-1 py-0.5 font-semibold"
+                              className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-[9px] px-1 py-0.5 font-semibold"
                             >
                               BETA
                             </Badge>
@@ -270,7 +271,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse,
                         {item.hasBeta && (
                           <Badge 
                             variant="secondary" 
-                            className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-1.5 py-0.5 font-semibold"
+                            className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-[10px] px-1.5 py-0.5 font-semibold"
                           >
                             BETA
                           </Badge>
@@ -286,7 +287,7 @@ function DesktopSidebar({ activeTab, onTabChange, isCollapsed, onToggleCollapse,
                 )}
                 {/* Collapsed mode beta indicator */}
                 {isCollapsed && item.hasBeta && (
-                  <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                  <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
                 )}
               </Button>
             );

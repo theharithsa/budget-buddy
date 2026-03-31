@@ -465,6 +465,14 @@ function FinanceApp() {
             </TabsContent>
 
             <TabsContent value="expenses" className="space-y-6">
+              {/* Page Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Receipt className="h-6 w-6 text-primary" />
+                  <h2 className="text-2xl font-bold">Expenses</h2>
+                </div>
+              </div>
+
               {/* Daily Spending Trend Chart */}
               <DailySpendingChart
                 expenses={filteredAndSortedExpenses}

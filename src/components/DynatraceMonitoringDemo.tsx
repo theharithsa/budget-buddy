@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Activity } from 'lucide-react';
 import { toast } from 'sonner';
 import { 
   useComponentTracking, 
@@ -124,17 +125,26 @@ export function DynatraceMonitoringDemo() {
   };
 
   return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <div className="flex items-center gap-2">
+          <Activity className="h-6 w-6 text-primary" />
+          <h2 className="text-2xl font-bold">Monitoring Demo</h2>
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 text-xs font-medium">
+            BETA
+          </Badge>
+        </div>
+        <p className="text-muted-foreground">
+          Demonstrates XHR vs Load action differentiation, error handling, and BizEvent integration
+        </p>
+      </div>
+
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          🔍 Dynatrace Monitoring Demo
-          <Badge variant="outline" className="bg-blue-100 text-blue-800">
-            Enhanced Tracking
-          </Badge>
+          🔍 Demo Controls
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Demonstrates XHR vs Load action differentiation, error handling, and BizEvent integration
-        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Demo Form */}
@@ -212,5 +222,6 @@ export function DynatraceMonitoringDemo() {
         </div>
       </CardContent>
     </Card>
+    </div>
   );
 }

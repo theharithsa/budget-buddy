@@ -224,7 +224,10 @@ export function CategoryManager({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Category Manager</h2>
+          <div className="flex items-center gap-2">
+            <Swatches className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold">Category Manager</h2>
+          </div>
           <p className="text-muted-foreground">
             Create custom categories and share them with the community
           </p>

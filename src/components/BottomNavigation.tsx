@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Receipt,
-  Target,
+  Wallet,
   Home,
   MessageSquare
 } from 'lucide-react';
@@ -19,7 +19,7 @@ interface BottomNavigationProps {
 const navigationItems = [
   { id: 'dashboard', label: 'Home', icon: Home },
   { id: 'expenses', label: 'Expenses', icon: Receipt },
-  { id: 'budgets', label: 'Budgets', icon: Target },
+  { id: 'budgets', label: 'Budgets', icon: Wallet },
   { id: 'ai-chat', label: 'AI Chat', icon: MessageSquare, hasBeta: true },
 ];
 
@@ -57,7 +57,7 @@ export function BottomNavigation({ activeTab, onTabChange, isVisible = true }: B
                 {item.label}
               </span>
               {item.hasBeta && (
-                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
               )}
             </Button>
           );

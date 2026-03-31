@@ -263,7 +263,10 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Recurring Templates</h2>
+          <div className="flex items-center gap-2">
+            <ArrowsClockwise className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold">Recurring Templates</h2>
+          </div>
           <p className="text-muted-foreground">
             Quick templates for recurring bills and subscriptions
           </p>

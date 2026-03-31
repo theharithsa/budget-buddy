@@ -604,7 +604,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
                   <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                     KautilyaAI Co-Pilot
                   </CardTitle>
-                  <Badge variant="secondary" className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-xs px-2 py-0.5 font-semibold">
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-xs px-2 py-0.5 font-semibold">
                     BETA
                   </Badge>
                 </div>

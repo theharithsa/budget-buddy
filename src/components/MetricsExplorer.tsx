@@ -895,7 +895,8 @@ export function MetricsExplorer({
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold">Metrics Explorer</h1>
+            <BarChart3 className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold">Metrics Explorer</h2>
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 text-xs font-medium">
               BETA
             </Badge>
