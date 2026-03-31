@@ -224,7 +224,7 @@ export function BudgetManager({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Wallet size={24} className="text-primary" />
-              <h2 className="text-2xl font-bold">Budget Overview</h2>
+               <h2 className="text-2xl font-semibold tracking-tight">Budget Overview</h2>
             </div>
             <div className="flex items-center gap-2">
               <Button 
@@ -362,12 +362,12 @@ export function BudgetManager({
                 const isNearLimit = percentage >= 80 && !isOverBudget;
                 
                 return (
-                  <Card key={budget.category} className={`shadow-lg hover:shadow-xl transition-shadow ${isOverBudget ? 'border-destructive' : ''}`}>
+                  <Card key={budget.category} className={`shadow-sm hover:shadow-md transition-shadow ${isOverBudget ? 'border-destructive' : ''}`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div 
-                            className="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
                             style={{ backgroundColor: category?.color || 'oklch(0.6 0.1 240)' }}
                           >
                             {category?.icon || '📝'}

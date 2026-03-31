@@ -284,7 +284,7 @@ export function Dashboard({
       }`}>
       {/* Header */}
       <div className="px-5 pt-8 pb-4 md:px-8 md:pt-10">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
           {greeting}, <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{user?.displayName?.split(' ')[0] || 'there'}</span> 👋
         </h1>
         <p className="text-muted-foreground text-sm mt-2 tracking-wide uppercase font-medium">
@@ -297,7 +297,7 @@ export function Dashboard({
         <div className="grid grid-cols-2 gap-4">
 
           {/* Budget Status Card */}
-          <div className={`rounded-3xl p-6 md:p-8 shadow-xl border ${isDark
+          <div className={`rounded-3xl p-6 md:p-8 shadow-lg border ${isDark
             ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
             : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
             }`}>
@@ -336,7 +336,7 @@ export function Dashboard({
           </div>
 
           {/* Monthly Spent Card */}
-          <div className={`rounded-3xl p-4 md:p-8 shadow-xl border ${isDark
+          <div className={`rounded-3xl p-4 md:p-8 shadow-lg border ${isDark
             ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
             : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
             }`}>
@@ -395,12 +395,12 @@ export function Dashboard({
             <button
               key={i}
               onClick={item.action}
-              className="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-card border border-transparent shadow-lg hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 hover:-translate-y-1 active:scale-95"
+              className="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-card border border-transparent shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 hover:-translate-y-1 active:scale-95"
             >
-              <div className={`p-3 rounded-xl bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
+              <div className={`p-3 rounded-xl bg-gradient-to-br ${item.color} shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}>
                 <item.icon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{item.label}</span>
+              <span className="text-xs font-semibold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{item.label}</span>
             </button>
           ))}
         </div>
@@ -411,7 +411,7 @@ export function Dashboard({
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[140px]">
 
           {/* Large Featured Card - Budget Status */}
-          <div className={`col-span-2 md:col-span-1 row-span-2 rounded-3xl p-6 flex flex-col justify-between shadow-xl border overflow-hidden relative ${isDark
+          <div className={`col-span-2 md:col-span-1 row-span-2 rounded-3xl p-6 flex flex-col justify-between shadow-lg border overflow-hidden relative ${isDark
             ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700'
             : 'bg-gradient-to-br from-white via-white to-blue-50 border-blue-100'
             }`}>
@@ -419,7 +419,7 @@ export function Dashboard({
             <div className={`absolute bottom-0 left-0 w-32 h-32 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 ${isDark ? 'bg-blue-500/10' : 'bg-indigo-100/50'}`} />
             <div className="relative z-10">
               <p className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Budget Remaining</p>
-              <p className={`text-4xl md:text-5xl font-black mt-2 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <p className={`text-4xl md:text-5xl font-bold mt-2 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.remaining)}
               </p>
               <p className={`text-sm mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>of {formatCurrency(metrics.totalBudget)}</p>
@@ -457,7 +457,7 @@ export function Dashboard({
             <div className={`absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl ${isDark ? 'bg-indigo-500/10' : 'bg-blue-100/50'}`} />
             <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Daily Average</p>
             <div>
-              <p className={`text-xl md:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <p className={`text-xl md:text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.monthlySpent / Math.max(new Date().getDate(), 1))}
               </p>
               <p className={`text-[10px] md:text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>per day this month</p>
@@ -472,7 +472,7 @@ export function Dashboard({
             <div className={`absolute bottom-0 right-0 w-24 h-24 rounded-full blur-2xl translate-y-1/2 translate-x-1/2 ${isDark ? 'bg-blue-500/10' : 'bg-indigo-100/50'}`} />
             <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>This Week</p>
             <div>
-              <p className={`text-xl md:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <p className={`text-xl md:text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.dailySpending.reduce((sum, d) => sum + d.amount, 0))}
               </p>
               <p className={`text-[10px] md:text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>weekly total</p>
@@ -505,7 +505,7 @@ export function Dashboard({
               </div>
             </div>
             <div>
-              <p className={`text-xl md:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <p className={`text-xl md:text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {formatCurrency(metrics.totalExpenses > 0 ? metrics.allTimeSpent / metrics.totalExpenses : 0)}
               </p>
               <p className={`text-[10px] md:text-xs mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>per transaction</p>
@@ -516,8 +516,8 @@ export function Dashboard({
       </div>
       {/* Weekly Spending Chart */}
       <div className="mt-10 px-5 md:px-8">
-        <h2 className="text-2xl font-bold text-foreground tracking-tight mb-4">This Week</h2>
-        <Card className="border-0 shadow-xl">
+        <h2 className="text-2xl font-semibold text-foreground tracking-tight mb-4">This Week</h2>
+        <Card className="border-0 shadow-md">
           <CardContent className="p-5">
             <ResponsiveContainer width="100%" height={140}>
               <BarChart data={metrics.dailySpending} barCategoryGap="20%">
@@ -552,10 +552,10 @@ export function Dashboard({
       {/* Category Breakdown */}
       <div className="mt-10 px-5 md:px-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">Top Categories</h2>
+          <h2 className="text-2xl font-semibold text-foreground tracking-tight">Top Categories</h2>
           <button
             onClick={() => onNavigate('expenses')}
-            className="group relative flex items-center text-blue-600 font-bold hover:text-blue-700 transition-colors cursor-pointer"
+            className="group relative flex items-center text-primary font-medium hover:text-primary/80 transition-colors cursor-pointer"
           >
             <span className="relative">
               View all
@@ -581,7 +581,7 @@ export function Dashboard({
               return (
                 <div
                   key={category.name}
-                  className="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden relative"
+                  className="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden relative"
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
                   <div className="relative z-10">
@@ -622,7 +622,7 @@ export function Dashboard({
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-lg">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-10 text-center">
               <Zap className="w-12 h-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="text-muted-foreground font-semibold">No expenses this month</p>
@@ -635,10 +635,10 @@ export function Dashboard({
       {metrics.budgetBreakdown.length > 0 && (
         <div className="mt-10 px-5 md:px-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">Budget Status</h2>
+            <h2 className="text-2xl font-semibold text-foreground tracking-tight">Budget Status</h2>
             <button
               onClick={() => onNavigate('budgets')}
-              className="group relative flex items-center text-blue-600 font-bold hover:text-blue-700 transition-colors cursor-pointer"
+              className="group relative flex items-center text-primary font-medium hover:text-primary/80 transition-colors cursor-pointer"
             >
               <span className="relative">
                 Manage
@@ -647,7 +647,7 @@ export function Dashboard({
               <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-md">
             <CardContent className="p-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left Column - First 3 budgets */}
@@ -655,7 +655,7 @@ export function Dashboard({
                   {metrics.budgetBreakdown.slice(0, 3).map((budget) => (
                     <div key={budget.category}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-foreground text-base">{budget.category}</span>
+                        <span className="font-semibold text-foreground text-base">{budget.category}</span>
                         <span className="text-base text-muted-foreground font-semibold">
                           {formatCurrency(budget.spent)} <span className="text-muted-foreground/60">/ {formatCurrency(budget.limit)}</span>
                         </span>
@@ -676,7 +676,7 @@ export function Dashboard({
                     {metrics.budgetBreakdown.slice(3, 6).map((budget) => (
                       <div key={budget.category}>
                         <div className="flex justify-between items-center mb-2">
-                          <span className="font-bold text-foreground">{budget.category}</span>
+                          <span className="font-semibold text-foreground">{budget.category}</span>
                           <span className="text-sm text-muted-foreground font-semibold">
                             {formatCurrency(budget.spent)} <span className="text-muted-foreground/60">/ {formatCurrency(budget.limit)}</span>
                           </span>
@@ -700,9 +700,9 @@ export function Dashboard({
       {/* Recent Activity */}
       <div className="mt-10 px-5 md:px-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">Recent Activity</h2>
+          <h2 className="text-2xl font-semibold text-foreground tracking-tight">Recent Activity</h2>
           <button
-            className="group relative flex items-center text-blue-600 font-bold hover:text-blue-700 transition-colors cursor-pointer"
+            className="group relative flex items-center text-primary font-medium hover:text-primary/80 transition-colors cursor-pointer"
             onClick={() => onNavigate('expenses')}
           >
             <span className="relative">
@@ -714,7 +714,7 @@ export function Dashboard({
         </div>
 
         {metrics.recentExpenses.length > 0 ? (
-          <Card className="border-0 shadow-xl overflow-hidden">
+          <Card className="border-0 shadow-md overflow-hidden">
             <CardContent className="p-0 divide-y divide-border/30 max-h-[400px] overflow-y-auto custom-scrollbar">
               {metrics.recentExpenses.map((expense) => {
                 const config = categoryConfig[expense.category] || { emoji: '📝', gradient: 'from-gray-400 to-slate-500' };
@@ -725,11 +725,11 @@ export function Dashboard({
                     onClick={() => onNavigate('expenses')}
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-lg`}>
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-md`}>
                         {config.emoji}
                       </div>
                       <div>
-                        <p className="font-bold text-foreground text-base">
+                        <p className="font-semibold text-foreground text-base">
                           {expense.description || expense.category}
                         </p>
                         <p className="text-sm text-muted-foreground">
@@ -738,7 +738,7 @@ export function Dashboard({
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-extrabold text-foreground text-lg">
+                      <p className="font-semibold text-foreground text-lg">
                         {formatCurrency(expense.amount)}
                       </p>
                       <p className="text-sm text-muted-foreground">
@@ -751,13 +751,13 @@ export function Dashboard({
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-md">
             <CardContent className="p-10 text-center">
               <Receipt className="w-16 h-16 mx-auto text-muted-foreground/20 mb-4" />
-              <p className="text-muted-foreground font-bold mb-4">No expenses yet</p>
+              <p className="text-muted-foreground font-semibold mb-4">No expenses yet</p>
               <Button
                 onClick={onAddExpense}
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg font-bold"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-md font-semibold"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add your first expense
@@ -772,24 +772,24 @@ export function Dashboard({
       {
         metrics.monthlyChange > 15 && (
           <div className="mt-10 px-5 md:px-8">
-            <Card className="border-0 shadow-xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-red-500/10 overflow-hidden">
+            <Card className="border-0 shadow-md bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-red-500/10 overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
               <CardContent className="p-5 flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg">
+                <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-md">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-foreground text-base">
+                  <p className="font-semibold text-foreground text-base">
                     Spending Alert
                   </p>
                   <p className="text-sm text-muted-foreground mt-1 font-medium">
-                    Your spending is <span className="text-amber-600 dark:text-amber-400 font-bold">{Math.round(metrics.monthlyChange)}% higher</span> than last month.
+                    Your spending is <span className="text-amber-600 dark:text-amber-400 font-semibold">{Math.round(metrics.monthlyChange)}% higher</span> than last month.
                     {metrics.categoryData[0] && ` Top category: ${metrics.categoryData[0].name}.`}
                   </p>
                   <Button
                     variant="link"
                     size="sm"
-                    className="px-0 mt-2 text-blue-600 hover:text-blue-700 font-bold"
+                    className="px-0 mt-2 text-primary hover:text-primary/80 font-medium"
                     onClick={() => onNavigate('ai-chat')}
                   >
                     Get AI suggestions →
@@ -809,11 +809,11 @@ export function Dashboard({
             { icon: Target, value: budgets.length, label: 'Budgets', gradient: 'from-blue-600 to-indigo-600' },
             { icon: PiggyBank, value: metrics.categoryData.length, label: 'Categories', gradient: 'from-indigo-500 to-blue-600' },
           ].map((stat, i) => (
-            <Card key={i} className="border-0 shadow-xl overflow-hidden">
+            <Card key={i} className="border-0 shadow-md overflow-hidden">
               <div className={`h-1 bg-gradient-to-r ${stat.gradient}`} />
               <CardContent className="p-4 text-center">
                 <stat.icon className="w-5 h-5 mx-auto text-muted-foreground mb-2" />
-                <p className="text-2xl font-extrabold text-foreground">{stat.value}</p>
+                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                 <p className="text-xs text-muted-foreground font-semibold">{stat.label}</p>
               </CardContent>
             </Card>
@@ -825,7 +825,7 @@ export function Dashboard({
       <div className="fixed bottom-6 right-5 z-50">
         <button
           onClick={onAddExpense}
-          className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 transition-all duration-300 hover:scale-110 hover:shadow-blue-500/30 flex items-center justify-center"
+          className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-lg bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 transition-all duration-300 hover:scale-110 hover:shadow-blue-500/30 flex items-center justify-center"
         >
           <Plus className="w-5 h-5 md:w-6 md:h-6 text-white" strokeWidth={2.5} />
         </button>

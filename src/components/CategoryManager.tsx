@@ -226,7 +226,7 @@ export function CategoryManager({
         <div>
           <div className="flex items-center gap-2">
             <Swatches className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold">Category Manager</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Category Manager</h2>
           </div>
           <p className="text-muted-foreground">
             Create custom categories and share them with the community
@@ -353,7 +353,7 @@ export function CategoryManager({
             <h3 className="text-lg font-medium">Default Categories</h3>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {DEFAULT_CATEGORIES.map((category) => (
-                <Card key={category.name} className="shadow-lg hover:shadow-xl transition-shadow">
+                <Card key={category.name} className="shadow-sm hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div 
@@ -379,7 +379,7 @@ export function CategoryManager({
                 <h3 className="text-lg font-medium">Your Custom Categories</h3>
                 <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                   {customCategories.map((category) => (
-                    <Card key={category.id} className="relative group shadow-lg hover:shadow-xl transition-shadow">
+                    <Card key={category.id} className="relative group shadow-sm hover:shadow-md transition-shadow">
                       <CardHeader className="pb-2">
                         <div className="flex items-center gap-3">
                           <div 
@@ -467,7 +467,7 @@ export function CategoryManager({
           {filteredPublicCategories.length > 0 ? (
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredPublicCategories.map((category) => (
-                <Card key={category.id} className="shadow-lg hover:shadow-xl transition-shadow">
+                <Card key={category.id} className="shadow-sm hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div 

@@ -75,7 +75,7 @@ export function DailySpendingChart({ expenses, dateRange, className = '' }: Dail
         grid: isDark ? '#334155' : '#e2e8f0',
         background: isDark ? '#0f172a' : '#ffffff'
       },
-      fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      fontFamily: '"Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     };
   };
 

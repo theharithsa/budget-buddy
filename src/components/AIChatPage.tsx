@@ -592,19 +592,19 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <Card className="mb-4 shadow-lg border-0">
+      <Card className="mb-4 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-br from-primary to-primary/80 rounded-xl shadow-lg">
+              <div className="p-3 bg-gradient-to-br from-primary to-primary/80 rounded-xl">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
                 <div className="flex items-center gap-3">
-                  <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  <CardTitle className="text-xl font-semibold">
                     KautilyaAI Co-Pilot
                   </CardTitle>
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-xs px-2 py-0.5 font-semibold">
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-xs px-2 py-0.5 font-medium">
                     BETA
                   </Badge>
                 </div>
@@ -768,7 +768,7 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
       </Card>
 
       {/* Chat Messages */}
-      <Card className="flex-1 flex flex-col min-h-0 shadow-xl border-0 max-w-5xl mx-auto w-full">
+      <Card className="flex-1 flex flex-col min-h-0 shadow-sm max-w-5xl mx-auto w-full">
         <CardContent className="flex-1 flex flex-col p-6 min-h-0">
           {/* Header with Title and Disclaimer */}
           <div className="mb-4 pb-4 border-b border-border/50">
@@ -776,16 +776,16 @@ Let's start managing your finances with ancient wisdom and modern AI! 🚀`,
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white">
                       <Bot className="h-5 w-5" />
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h1 className="text-xl font-bold text-foreground">KautilyaAI Co-Pilot</h1>
+                    <h1 className="text-lg font-semibold text-foreground">KautilyaAI Co-Pilot</h1>
                     <p className="text-sm text-muted-foreground">Your Intelligent Financial Assistant</p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 font-semibold">
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-xs px-2 py-0.5 font-medium">
                   BETA
                 </Badge>
               </div>

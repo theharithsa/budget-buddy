@@ -18,7 +18,7 @@ export const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({
         {/* Beta badge indicator */}
         <Badge 
           variant="secondary" 
-          className="absolute -top-2 -right-2 z-10 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-xs px-2 font-semibold"
+          className="absolute -top-2 -right-2 z-10 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-xs px-2 font-medium"
         >
           BETA
         </Badge>

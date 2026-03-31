@@ -214,7 +214,7 @@ export function MetricsExplorer({
   const getChartThemeConfig = () => {
     const isDark = theme === 'dark';
     return {
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: '"Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       colors: {
         primary: '#3b82f6',
         secondary: '#2563eb',
@@ -896,8 +896,8 @@ export function MetricsExplorer({
         <div>
           <div className="flex items-center gap-3">
             <BarChart3 className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold">Metrics Explorer</h2>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 text-xs font-medium">
+            <h2 className="text-2xl font-semibold tracking-tight">Metrics Explorer</h2>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 text-xs font-medium">
               BETA
             </Badge>
           </div>

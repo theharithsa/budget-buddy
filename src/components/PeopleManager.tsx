@@ -209,8 +209,8 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Users className="h-6 w-6" />
-          <h2 className="text-2xl font-bold">Manage People</h2>
+          <Users className="h-6 w-6 text-primary" />
+          <h2 className="text-2xl font-semibold tracking-tight">Manage People</h2>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -349,7 +349,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {/* Default People (only show actual default people, not custom ones) */}
             {DEFAULT_PEOPLE.map((person, index) => (
-              <div key={`default-${index}`} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+              <div key={`default-${index}`} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
@@ -372,7 +372,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
 
             {/* Custom People */}
             {customPeople.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+              <div key={person.id} className="flex items-center justify-between p-3 bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
@@ -387,7 +387,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
                         {person.relationship}
                       </Badge>
                     )}
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>Custom person</span>
                       {person.isPublic ? (
                         <div className="flex items-center gap-1">
@@ -425,7 +425,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
             ))}
 
             {allPeople.length === 0 && customPeople.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>No people added yet</p>
                 <p className="text-sm">Add your first person to start tracking expenses by person</p>
@@ -437,7 +437,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
         <TabsContent value="public-people" className="space-y-4">
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {publicPeople.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+              <div key={person.id} className="flex items-center justify-between p-3 bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium"
@@ -452,7 +452,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
                         {person.relationship}
                       </Badge>
                     )}
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Created by {person.createdBy}
                     </div>
                   </div>
@@ -470,7 +470,7 @@ export const PeopleManager: React.FC<PeopleManagerProps> = ({
             ))}
 
             {publicPeople.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <Share2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>No public people available</p>
                 <p className="text-sm">Be the first to share a person publicly!</p>

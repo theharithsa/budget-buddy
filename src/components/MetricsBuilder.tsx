@@ -309,7 +309,7 @@ export function MetricsBuilder() {
         textMuted: isDark ? '#94a3b8' : '#64748b',
         grid: isDark ? '#334155' : '#e2e8f0'
       },
-      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      fontFamily: '"Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     };
   };
   

@@ -313,7 +313,7 @@ export function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                                     {item.hasBeta && (
                                       <Badge
                                         variant="secondary"
-                                        className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-1.5 py-0.5 font-semibold"
+                                        className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-0 text-[10px] px-1.5 py-0.5 font-medium"
                                       >
                                         BETA
                                       </Badge>

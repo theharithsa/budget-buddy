@@ -130,8 +130,8 @@ export function DynatraceMonitoringDemo() {
       <div>
         <div className="flex items-center gap-2">
           <Activity className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-bold">Monitoring Demo</h2>
-          <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 text-xs font-medium">
+          <h2 className="text-2xl font-semibold tracking-tight">Monitoring Demo</h2>
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 text-xs font-medium">
             BETA
           </Badge>
         </div>

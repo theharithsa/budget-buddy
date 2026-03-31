@@ -265,7 +265,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
         <div>
           <div className="flex items-center gap-2">
             <ArrowsClockwise className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold">Recurring Templates</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Recurring Templates</h2>
           </div>
           <p className="text-muted-foreground">
             Quick templates for recurring bills and subscriptions
@@ -368,7 +368,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
       </div>
 
       {/* Quick Tips */}
-      <Card className="bg-accent/10 shadow-lg hover:shadow-xl transition-shadow">
+      <Card className="bg-accent/10 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-4">
           <div className="flex items-start gap-3">
             <div className="text-accent">💡</div>
@@ -389,7 +389,7 @@ export function RecurringTemplates({ onAddExpense, onAddTemplate, onDeleteTempla
           <h3 className="text-lg font-medium">Your Templates</h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {customTemplates.map((template) => (
-              <Card key={template.id} className="relative group shadow-lg hover:shadow-xl transition-shadow">
+              <Card key={template.id} className="relative group shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
