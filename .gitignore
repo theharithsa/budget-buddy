@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-.vscode/
 
 node_modules
 dist
@@ -14,11 +13,10 @@ dist-ssr
 *-dist
 *.local
 
-# Allow documentation files but ignore other public folder contents
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/mcp.json
 .idea
 .DS_Store
 *.suo
@@ -34,3 +32,6 @@ packages
 .devcontainer/
 
 .spark-workbench-id
+
+# Firebase service account keys (security)
+**/service-account.json

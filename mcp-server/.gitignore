@@ -1,0 +1,4 @@
+node_modules/
+dist/
+service-account.json
+*.js.map

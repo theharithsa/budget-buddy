@@ -1,0 +1,12 @@
+{
+	"servers": {
+		"finbuddy": {
+			"type": "stdio",
+			"command": "node",
+			"args": ["${workspaceFolder}/mcp-server/dist/index.js"],
+			"env": {
+				"GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/mcp-server/service-account.json"
+			}
+		}
+	}
+}
