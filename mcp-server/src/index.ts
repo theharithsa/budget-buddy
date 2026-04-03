@@ -46,6 +46,12 @@ import {
   financialHealth,
 } from "./tools/analytics.js";
 
+// ── Lookup tools ─────────────────────────────────────────────────────
+import {
+  SearchAppsSchema,
+  searchApps,
+} from "./tools/lookup.js";
+
 // ── Initialize ──────────────────────────────────────────────────────
 
 initFirebase();
@@ -284,6 +290,25 @@ server.tool(
   async (params) => {
     try {
       const result = await financialHealth(FinancialHealthSchema.parse(params));
+      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      return { isError: true, content: [{ type: "text", text: `Error: ${msg}` }] };
+    }
+  }
+);
+
+// ═══════════════════════════════════════════════════════════════════
+// LOOKUP TOOLS
+// ═══════════════════════════════════════════════════════════════════
+
+server.tool(
+  "finbuddy_search_apps",
+  "Search the FinBuddy app library to find the exact app name before adding an expense. Use this to look up the correct app name (e.g. search 'blinkit' returns 'Grofers/Blinkit'). Supports filtering by category.",
+  SearchAppsSchema.shape,
+  async (params) => {
+    try {
+      const result = searchApps(SearchAppsSchema.parse(params));
       return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error);
