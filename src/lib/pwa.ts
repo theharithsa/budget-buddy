@@ -2,7 +2,7 @@
 export class PWAManager {
   private deferredPrompt: any = null;
   private isStandalone = false;
-  private currentVersion = '2.5.5'; // Update this with each release
+  private currentVersion = '2.9.0'; // Update this with each release
   private updateAvailable = false;
 
   constructor() {

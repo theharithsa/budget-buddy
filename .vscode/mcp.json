@@ -5,7 +5,8 @@
 			"command": "node",
 			"args": ["${workspaceFolder}/mcp-server/dist/index.js"],
 			"env": {
-				"GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/mcp-server/service-account.json"
+				"GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/mcp-server/service-account.json",
+				"FINBUDDY_USER_ID": "Q24xj0zwukaM5u77QGjPAgkUEC42"
 			}
 		}
 	}

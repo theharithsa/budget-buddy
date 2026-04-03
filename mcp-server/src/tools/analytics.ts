@@ -1,49 +1,55 @@
 import { z } from "zod";
-import { userExpensesRef, userBudgetsRef, type Expense, type Budget } from "../firebase.js";
+import { userExpensesRef, userBudgetsRef, resolveUserId, type Expense, type Budget } from "../firebase.js";
 
 // ── Schemas ─────────────────────────────────────────────────────────
 
 export const SpendingSummarySchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Month (YYYY-MM). Defaults to current month."),
   fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Start date (YYYY-MM-DD) for custom range"),
   toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("End date (YYYY-MM-DD) for custom range"),
 });
 
 export const CategoryBreakdownSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Month (YYYY-MM). Defaults to current month."),
 });
 
 export const SpendingTrendsSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   months: z.number().int().min(1).max(12).default(6).describe("Number of past months to analyze"),
 });
 
 export const AppSpendingSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Month (YYYY-MM). Defaults to current month."),
 });
 
 export const DailySpendingSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Month (YYYY-MM). Defaults to current month."),
 });
 
 export const FinancialHealthSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Month (YYYY-MM). Defaults to current month."),
 });
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
-async function fetchExpenses(userId: string): Promise<Expense[]> {
-  const snap = await userExpensesRef(userId).get();
+function resolveUid(userId?: string): string {
+  return resolveUserId(userId);
+}
+
+async function fetchExpenses(userId?: string): Promise<Expense[]> {
+  const uid = resolveUid(userId);
+  const snap = await userExpensesRef(uid).get();
   return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Expense[];
 }
 
-async function fetchBudgets(userId: string): Promise<Budget[]> {
-  const snap = await userBudgetsRef(userId).get();
+async function fetchBudgets(userId?: string): Promise<Budget[]> {
+  const uid = resolveUid(userId);
+  const snap = await userBudgetsRef(uid).get();
   return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Budget[];
 }
 

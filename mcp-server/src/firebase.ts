@@ -29,6 +29,20 @@ export function getDb(): Firestore {
   return db;
 }
 
+/**
+ * Resolve userId: use the provided value, or fall back to FINBUDDY_USER_ID env var.
+ * Throws if neither is available.
+ */
+export function resolveUserId(userId?: string): string {
+  const resolved = userId || process.env.FINBUDDY_USER_ID;
+  if (!resolved) {
+    throw new Error(
+      "userId is required. Either pass it as a parameter or set the FINBUDDY_USER_ID environment variable."
+    );
+  }
+  return resolved;
+}
+
 // ── Collection helpers ──────────────────────────────────────────────
 
 export function userExpensesRef(userId: string) {

@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { userExpensesRef, type Expense } from "../firebase.js";
+import { userExpensesRef, resolveUserId, type Expense } from "../firebase.js";
 
 // ── Schemas ─────────────────────────────────────────────────────────
 
 export const ListExpensesSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Filter by month (YYYY-MM). Defaults to all."),
   category: z.string().optional().describe("Filter by category name"),
   app: z.string().optional().describe("Filter by app/platform name (e.g. Swiggy, Amazon)"),
@@ -15,12 +15,12 @@ export const ListExpensesSchema = z.object({
 });
 
 export const GetExpenseSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   expenseId: z.string().describe("Expense document ID"),
 });
 
 export const AddExpenseSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   amount: z.number().positive().describe("Expense amount in INR"),
   category: z.string().describe("Category name (e.g. Food & Dining, Transportation)"),
   description: z.string().describe("Short description of the expense"),
@@ -30,7 +30,7 @@ export const AddExpenseSchema = z.object({
 });
 
 export const UpdateExpenseSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   expenseId: z.string().describe("Expense document ID"),
   amount: z.number().positive().optional().describe("Updated amount"),
   category: z.string().optional().describe("Updated category"),
@@ -41,14 +41,15 @@ export const UpdateExpenseSchema = z.object({
 });
 
 export const DeleteExpenseSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   expenseId: z.string().describe("Expense document ID"),
 });
 
 // ── Tool implementations ────────────────────────────────────────────
 
 export async function listExpenses(params: z.infer<typeof ListExpensesSchema>) {
-  const ref = userExpensesRef(params.userId);
+  const uid = resolveUserId(params.userId);
+  const ref = userExpensesRef(uid);
   let query = ref.orderBy(params.sortBy, params.sortOrder);
 
   const snapshot = await query.get();
@@ -86,24 +87,27 @@ export async function listExpenses(params: z.infer<typeof ListExpensesSchema>) {
 }
 
 export async function getExpense(params: z.infer<typeof GetExpenseSchema>) {
-  const doc = await userExpensesRef(params.userId).doc(params.expenseId).get();
+  const uid = resolveUserId(params.userId);
+  const doc = await userExpensesRef(uid).doc(params.expenseId).get();
   if (!doc.exists) {
-    throw new Error(`Expense ${params.expenseId} not found for user ${params.userId}`);
+    throw new Error(`Expense ${params.expenseId} not found for user ${uid}`);
   }
   return { id: doc.id, ...doc.data() } as Expense;
 }
 
 export async function addExpense(params: z.infer<typeof AddExpenseSchema>) {
+  const uid = resolveUserId(params.userId);
   const { userId, ...data } = params;
   const expenseData = {
     ...data,
     createdAt: new Date().toISOString(),
   };
-  const docRef = await userExpensesRef(userId).add(expenseData);
+  const docRef = await userExpensesRef(uid).add(expenseData);
   return { id: docRef.id, ...expenseData } as Expense;
 }
 
 export async function updateExpense(params: z.infer<typeof UpdateExpenseSchema>) {
+  const uid = resolveUserId(params.userId);
   const { userId, expenseId, ...updates } = params;
   // Remove undefined fields
   const cleanUpdates = Object.fromEntries(
@@ -113,7 +117,7 @@ export async function updateExpense(params: z.infer<typeof UpdateExpenseSchema>)
     throw new Error("No fields to update. Provide at least one field to change.");
   }
 
-  const ref = userExpensesRef(userId).doc(expenseId);
+  const ref = userExpensesRef(uid).doc(expenseId);
   const doc = await ref.get();
   if (!doc.exists) {
     throw new Error(`Expense ${expenseId} not found. Use finbuddy_list_expenses to find valid IDs.`);
@@ -125,7 +129,8 @@ export async function updateExpense(params: z.infer<typeof UpdateExpenseSchema>)
 }
 
 export async function deleteExpense(params: z.infer<typeof DeleteExpenseSchema>) {
-  const ref = userExpensesRef(params.userId).doc(params.expenseId);
+  const uid = resolveUserId(params.userId);
+  const ref = userExpensesRef(uid).doc(params.expenseId);
   const doc = await ref.get();
   if (!doc.exists) {
     throw new Error(`Expense ${params.expenseId} not found. Use finbuddy_list_expenses to find valid IDs.`);

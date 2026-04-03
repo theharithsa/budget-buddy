@@ -18,7 +18,7 @@
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable) with custom monitoring hooks
 - **Testing**: Vitest (unit, integration, e2e)
-- **Version**: Currently v2.8.1
+- **Version**: Currently v2.9.0
 
 ### Critical Development Commands
 ```bash
@@ -149,7 +149,7 @@ scripts/                 # Build & deploy scripts
 - `tailwind.config.js` - Custom color system with CSS variables, custom screens
 - `components.json` - shadcn/ui "new-york" style configuration
 - `tsconfig.json` - ES2020 target, bundler mode, `@/*` path alias
-- `package.json` - Dependencies & scripts (v2.8.1)
+- `package.json` - Dependencies & scripts (v2.9.0)
 - `vitest.config.ts` - Vitest test configuration
 - `firebase.json` - Firebase project configuration
 - `firestore.rules` / `storage.rules` - Security rules
@@ -843,11 +843,17 @@ Configured in `.vscode/mcp.json` — build the server and restart VS Code to use
 - **Transport**: stdio (local development)
 
 ### All tools require `userId`
-Every tool takes `userId` as a required parameter mapping to the Firebase Auth UID (`/users/{userId}/...`).
+Every tool takes `userId` as an optional parameter mapping to the Firebase Auth UID (`/users/{userId}/...`). When `FINBUDDY_USER_ID` env var is set, userId can be omitted.
 
-## �📋 Recent Developments (v2.5.1-2.8.1)
+## 📋 Recent Developments (v2.5.1-2.9.0)
 
 ### Major Feature Additions
+
+#### **MCP Server — AI Agent Integration (v2.9.0)**
+- **15 MCP Tools**: Expense CRUD (5), Budget Management (4), Financial Analytics (6)
+- **Default User Auth**: FINBUDDY_USER_ID env var eliminates passing userId on every call
+- **VS Code Integration**: Pre-configured in .vscode/mcp.json
+- **Codebase Cleanup**: Removed 27 dead backup/duplicate files
 
 #### **Editable Expense Templates (v2.8.1)**
 - **Pre-fill AddExpenseModal**: Click a template to open expense form with pre-filled values
@@ -991,7 +997,7 @@ firebase.auth().currentUser
 6. **Build Failures**: Clear node_modules and reinstall if TypeScript errors persist
 7. **ApexCharts Errors**: Ensure DOM refs are current before chart initialization
 
-### Current Feature Status (v2.8.1)
+### Current Feature Status (v2.9.0)
 - ✅ Grid/List view toggle with persistence
 - ✅ Enhanced filtering system with people filter
 - ✅ Clear cache functionality
@@ -1023,5 +1029,8 @@ firebase.auth().currentUser
 - ✅ Dynatrace monitoring hooks suite
 - ✅ Daily spending chart in expenses tab
 - ✅ Spending trend analysis charts
+- ✅ MCP server with 15 tools (expenses, budgets, analytics)
+- ✅ Default user authentication via FINBUDDY_USER_ID env var
+- ✅ VS Code Copilot MCP integration (.vscode/mcp.json)
 
 This guide should help AI coding agents understand the FinBuddy codebase structure, implementation patterns, and development workflows to be immediately productive when working on the project.

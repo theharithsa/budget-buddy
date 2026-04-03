@@ -5,6 +5,43 @@ All notable changes to FinBuddy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2026-04-03
+
+### 🚀 Major Features Added
+
+- **🔌 MCP Server — AI Agent Integration**: Full-featured Model Context Protocol server for AI agent access to FinBuddy data
+  - **15 MCP Tools** across 3 domains: Expenses (5), Budgets (4), Analytics (6)
+  - **Expense CRUD**: List, get, add, update, delete expenses with filtering by month/category/app, pagination, and sorting
+  - **Budget Management**: List, set, delete budgets + budget vs. actual compliance with per-category status and over-budget warnings
+  - **Financial Analytics**: Spending summary, category breakdown, multi-month trends with MoM changes, app/platform spending, daily spending with peak detection, and financial health scoring (0-100)
+  - **VS Code Copilot Integration**: Pre-configured in `.vscode/mcp.json` — build and restart to use
+  - **MCP Inspector**: Built-in `npm run inspect` for interactive tool testing
+
+- **🔐 Default User Authentication via Environment Variable**
+  - `FINBUDDY_USER_ID` env var eliminates the need to pass userId on every tool call
+  - Resolution order: explicit parameter → env var → error
+  - Pre-configured in `.vscode/mcp.json` for seamless developer experience
+
+### 🧹 Codebase Cleanup
+
+- **Removed 27 dead files** across the entire project:
+  - Dashboard variants (4): Dashboard-new, Dashboard_v2, Dashboard_Flowbite, Dashboard_old
+  - MetricsExplorer variants (3): backup, new, redesigned
+  - AdvancedCharts variants (3): backup, Flowbite, original
+  - SpendingTrends variants (2): backup, Flowbite
+  - App/GeminiChat variants (4): App-backup, App-new, GeminiChat, GeminiChat_improved
+  - Compiled JS backups (6): functions/lib index variants with source maps
+  - Dev doc backups (4): api-reference-backup, components-backup, components-new, index-backup
+  - Root utilities (3): update_code_styling.py, icon-generator.html, pwa-test.html
+
+### 🔧 Technical Improvements
+
+- **MCP Server Tech Stack**: @modelcontextprotocol/sdk 1.12.1, firebase-admin 13.4.0, Zod 3.25.x, TypeScript 5.8.x
+- **Transport**: stdio for local development, extensible to SSE/HTTP
+- **Firestore Direct Access**: Firebase Admin SDK with service account authentication
+- **Updated .gitignore**: Fixed `.vscode/` rules to track `mcp.json`, added global `service-account.json` guard
+- **Updated copilot-instructions.md**: Documented MCP server architecture, tools, and setup
+
 ## [2.8.1] - 2026-01-11
 
 ### 🚀 Features Added

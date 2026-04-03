@@ -1,5 +1,9 @@
 # FinBuddy MCP Server
 
+[![MCP](https://img.shields.io/badge/MCP-1.12.1-8b5cf6?style=flat-square)](https://modelcontextprotocol.io/)
+[![Firebase](https://img.shields.io/badge/Firebase%20Admin-13.4.0-ffca28?style=flat-square&logo=firebase)](https://firebase.google.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+
 Model Context Protocol (MCP) server for the FinBuddy personal finance app. Provides 15 tools for expense CRUD, budget management, and financial analytics — all backed by Firebase/Firestore.
 
 ## Prerequisites
@@ -44,6 +48,34 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/service-account.json
 ### VS Code (Copilot Chat)
 
 Already configured in `.vscode/mcp.json`. Just build the server and restart VS Code — the tools appear automatically in Copilot Chat.
+
+### Default User ID
+
+To avoid passing `userId` on every tool call, set the `FINBUDDY_USER_ID` environment variable:
+
+```json
+// .vscode/mcp.json
+{
+  "servers": {
+    "finbuddy": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/mcp-server/dist/index.js"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/mcp-server/service-account.json",
+        "FINBUDDY_USER_ID": "<your-firebase-uid>"
+      }
+    }
+  }
+}
+```
+
+With this set, all 15 tools will use your UID automatically. You can still override it per-call by passing `userId` explicitly.
+
+Find your UID in Firebase Console → Authentication → Users, or in the browser DevTools console while logged in:
+```js
+firebase.auth().currentUser.uid
+```
 
 ### Manual / Inspector
 
@@ -90,9 +122,15 @@ npm run dev
 | `finbuddy_daily_spending` | Day-by-day spending with peak day detection |
 | `finbuddy_financial_health` | Financial health score (0-100) combining budget compliance, consistency, and over-budget analysis |
 
-## All tools require a `userId` parameter
+## User Authentication
 
-Every tool takes `userId` as the first parameter — this maps to the Firebase Auth UID used in Firestore paths (`/users/{userId}/expenses`, etc.).
+`userId` is **optional** on all tools when `FINBUDDY_USER_ID` is set as an environment variable. The resolution order is:
+
+1. `userId` parameter passed to the tool (highest priority)
+2. `FINBUDDY_USER_ID` environment variable (fallback)
+3. Error if neither is available
+
+This maps to the Firebase Auth UID used in Firestore paths (`/users/{userId}/expenses`, etc.).
 
 ## Firestore Collections
 

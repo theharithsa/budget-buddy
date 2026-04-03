@@ -1,17 +1,18 @@
 # 💰 FinBuddy - Smart Personal Finance Manager with KautilyaAI
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.8.1-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.9.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-A+-brightgreen?style=for-the-badge&logo=codeclimate)](https://github.com/theharithsa/budget-buddy)
 [![Security](https://img.shields.io/badge/Security-Verified-green?style=for-the-badge&logo=shield)](./SECURITY.md)
 
-[![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-Cloud-ffca28?style=flat-square&logo=firebase)](https://firebase.google.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0-06b6d4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.0-06b6d4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![MCP](https://img.shields.io/badge/MCP-15%20Tools-8b5cf6?style=flat-square&logo=protocol)](https://modelcontextprotocol.io/)
 [![KautilyaAI](https://img.shields.io/badge/KautilyaAI-Gemini%202.0%20Flash-ff6b6b?style=flat-square&logo=google)](https://deepmind.google/technologies/gemini/)
 [![Arthashastra](https://img.shields.io/badge/Wisdom-Arthashastra%20Principles-saffron?style=flat-square&logo=book)](https://en.wikipedia.org/wiki/Arthashastra)
 [![Currency](https://img.shields.io/badge/Currency-Indian%20Rupee%20%E2%82%B9-green?style=flat-square&logo=rupee)](https://en.wikipedia.org/wiki/Indian_rupee)
@@ -132,9 +133,28 @@
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and KautilyaAI guidance
 
-## 🎨 What's New in v2.7.0
+## 🎨 What's New in v2.9.0
 
-### 📊 **Metrics Explorer (BETA) - Professional Analytics Platform**
+### 🔌 **MCP Server — AI Agent Integration**
+
+**FinBuddy now ships with a full-featured Model Context Protocol (MCP) server**, enabling AI agents (VS Code Copilot, Claude, etc.) to interact with your financial data directly.
+
+- **15 MCP Tools**: Complete coverage across expenses, budgets, and analytics
+  - **Expense CRUD** (5 tools): List, get, add, update, delete expenses with filtering by month/category/app
+  - **Budget Management** (4 tools): List, set, delete budgets + budget vs. actual compliance status
+  - **Financial Analytics** (6 tools): Spending summary, category breakdown, trends, app spending, daily spending, and financial health scoring
+- **Zero-Config Authentication**: Set `FINBUDDY_USER_ID` env var once — no need to pass userId on every call
+- **VS Code Integration**: Pre-configured in `.vscode/mcp.json` — build and restart to use
+- **Firebase Admin SDK**: Direct Firestore access via service account for reliable data operations
+- **MCP Inspector**: Built-in `npm run inspect` command for testing tools interactively
+
+### 🧹 **Codebase Cleanup**
+
+- Removed 27 dead backup/duplicate files across the entire project
+- Cleaned up Dashboard, MetricsExplorer, AdvancedCharts, SpendingTrends, and GeminiChat variants
+- Removed compiled JS backups, dev doc backups, and unused root utilities
+
+### 📊 **Previous Highlights (v2.7.0–v2.8.1)**
 
 - **Advanced Financial Analytics**: Dynatrace-style interface bringing enterprise-level insights to personal finance
 - **Dual Interface**: Simple dashboard for quick insights + Advanced Query Builder for custom analytics
@@ -184,6 +204,7 @@
 - **User Guide**: [Complete Documentation](./public/docs/index.html)
 - **KautilyaAI Guide**: [AI Co-Pilot Documentation](./public/docs/kautilyaai-guide.html)
 - **Metrics Explorer**: [Analytics Platform Guide](./public/docs/metrics-explorer-guide.html)
+- **MCP Server**: [MCP Setup & Tools](./mcp-server/README.md)
 - **Developer Guide**: [Technical Documentation](./public/developer/index.html)
 - **Security**: [Security Guidelines](./SECURITY.md)
 - **Contributing**: [Contribution Guidelines](./CONTRIBUTING.md)
@@ -253,7 +274,7 @@ Help us improve our documentation:
 Stay up to date with FinBuddy's latest improvements:
 
 - **[Changelog](./CHANGELOG.md)** - Complete version history with detailed release notes
-- **[Version 2.5.4](./CHANGELOG.md#254)** - Latest features and improvements
+- **[Version 2.9.0](./CHANGELOG.md#290)** - Latest features and improvements
 - **[Roadmap](https://github.com/theharithsa/budget-buddy/projects)** - Upcoming features and planned improvements
 
 ## Support & Help

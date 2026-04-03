@@ -1,32 +1,33 @@
 import { z } from "zod";
-import { userBudgetsRef, userExpensesRef, type Budget, type Expense } from "../firebase.js";
+import { userBudgetsRef, userExpensesRef, resolveUserId, type Budget, type Expense } from "../firebase.js";
 
 // ── Schemas ─────────────────────────────────────────────────────────
 
 export const ListBudgetsSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
 });
 
 export const SetBudgetSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   category: z.string().describe("Budget category (e.g. Food & Dining)"),
   limit: z.number().positive().describe("Monthly budget limit in INR"),
 });
 
 export const DeleteBudgetSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   budgetId: z.string().describe("Budget document ID"),
 });
 
 export const GetBudgetStatusSchema = z.object({
-  userId: z.string().describe("Firebase user ID"),
+  userId: z.string().optional().describe("Firebase user ID (falls back to FINBUDDY_USER_ID env var)"),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("Month to check (YYYY-MM). Defaults to current month."),
 });
 
 // ── Tool implementations ────────────────────────────────────────────
 
 export async function listBudgets(params: z.infer<typeof ListBudgetsSchema>) {
-  const snapshot = await userBudgetsRef(params.userId).get();
+  const uid = resolveUserId(params.userId);
+  const snapshot = await userBudgetsRef(uid).get();
   const budgets: Budget[] = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
@@ -35,8 +36,9 @@ export async function listBudgets(params: z.infer<typeof ListBudgetsSchema>) {
 }
 
 export async function setBudget(params: z.infer<typeof SetBudgetSchema>) {
-  const { userId, category, limit } = params;
-  const ref = userBudgetsRef(userId);
+  const uid = resolveUserId(params.userId);
+  const { category, limit } = params;
+  const ref = userBudgetsRef(uid);
 
   // Check if budget for this category already exists
   const existing = await ref.where("category", "==", category).get();
@@ -52,7 +54,8 @@ export async function setBudget(params: z.infer<typeof SetBudgetSchema>) {
 }
 
 export async function deleteBudget(params: z.infer<typeof DeleteBudgetSchema>) {
-  const ref = userBudgetsRef(params.userId).doc(params.budgetId);
+  const uid = resolveUserId(params.userId);
+  const ref = userBudgetsRef(uid).doc(params.budgetId);
   const doc = await ref.get();
   if (!doc.exists) {
     throw new Error(`Budget ${params.budgetId} not found. Use finbuddy_list_budgets to find valid IDs.`);
@@ -63,17 +66,18 @@ export async function deleteBudget(params: z.infer<typeof DeleteBudgetSchema>) {
 }
 
 export async function getBudgetStatus(params: z.infer<typeof GetBudgetStatusSchema>) {
+  const uid = resolveUserId(params.userId);
   const month = params.month ?? new Date().toISOString().slice(0, 7);
 
   // Fetch budgets
-  const budgetSnap = await userBudgetsRef(params.userId).get();
+  const budgetSnap = await userBudgetsRef(uid).get();
   const budgets: Budget[] = budgetSnap.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   })) as Budget[];
 
   // Fetch expenses for the month
-  const expenseSnap = await userExpensesRef(params.userId).get();
+  const expenseSnap = await userExpensesRef(uid).get();
   const expenses: Expense[] = (expenseSnap.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
