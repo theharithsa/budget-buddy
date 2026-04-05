@@ -1,6 +1,6 @@
 # Security Policy - FinBuddy with KautilyaAI
 
-**Version**: 2.9.0  
+**Version**: 2.901.0  
 **Last Updated**: April 2026  
 **Security Contact**: [GitHub Issues](https://github.com/theharithsa/budget-buddy/issues)
 

@@ -18,7 +18,7 @@
 - **Deployment**: Azure App Service ready
 - **Observability**: Dynatrace integration (configurable) with custom monitoring hooks
 - **Testing**: Vitest (unit, integration, e2e)
-- **Version**: Currently v2.9.0
+- **Version**: Currently v2.901.0
 
 ### Critical Development Commands
 ```bash
@@ -149,7 +149,7 @@ scripts/                 # Build & deploy scripts
 - `tailwind.config.js` - Custom color system with CSS variables, custom screens
 - `components.json` - shadcn/ui "new-york" style configuration
 - `tsconfig.json` - ES2020 target, bundler mode, `@/*` path alias
-- `package.json` - Dependencies & scripts (v2.9.0)
+- `package.json` - Dependencies & scripts (v2.901.0)
 - `vitest.config.ts` - Vitest test configuration
 - `firebase.json` - Firebase project configuration
 - `firestore.rules` / `storage.rules` - Security rules
@@ -845,11 +845,11 @@ Configured in `.vscode/mcp.json` — build the server and restart VS Code to use
 ### All tools require `userId`
 Every tool takes `userId` as an optional parameter mapping to the Firebase Auth UID (`/users/{userId}/...`). When `FINBUDDY_USER_ID` env var is set, userId can be omitted.
 
-## 📋 Recent Developments (v2.5.1-2.9.0)
+## 📋 Recent Developments (v2.5.1-2.901.0)
 
 ### Major Feature Additions
 
-#### **MCP Server — AI Agent Integration (v2.9.0)**
+#### **MCP Server — AI Agent Integration (v2.901.0)**
 - **15 MCP Tools**: Expense CRUD (5), Budget Management (4), Financial Analytics (6)
 - **Default User Auth**: FINBUDDY_USER_ID env var eliminates passing userId on every call
 - **VS Code Integration**: Pre-configured in .vscode/mcp.json
@@ -910,7 +910,10 @@ Every tool takes `userId` as an optional parameter mapping to the Firebase Auth 
 
 ### Version Management
 - **Synchronized Versioning**: package.json and CHANGELOG.md kept in sync
-- **Semantic Versioning**: Following semver for feature releases
+- **Versioning Scheme (from v2.901 onwards)**:
+  - `2.901.x` — Bug fixes and patches (e.g. 2.901.1, 2.901.2)
+  - `2.902` — Next feature release
+  - `2.903` — Subsequent feature release, and so on
 - **Documentation**: Comprehensive changelog with feature descriptions
 - **Release Process**: Structured release notes with categorized changes
 
@@ -997,7 +1000,7 @@ firebase.auth().currentUser
 6. **Build Failures**: Clear node_modules and reinstall if TypeScript errors persist
 7. **ApexCharts Errors**: Ensure DOM refs are current before chart initialization
 
-### Current Feature Status (v2.9.0)
+### Current Feature Status (v2.901.0)
 - ✅ Grid/List view toggle with persistence
 - ✅ Enhanced filtering system with people filter
 - ✅ Clear cache functionality

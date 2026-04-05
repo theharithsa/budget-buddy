@@ -1,7 +1,7 @@
 # 💰 FinBuddy - Smart Personal Finance Manager with KautilyaAI
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Now-orange?style=for-the-badge&logo=firebase)](https://finbuddy-2025.web.app)
-[![Version](https://img.shields.io/badge/Version-2.9.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
+[![Version](https://img.shields.io/badge/Version-2.901.0-blue?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](https://github.com/theharithsa/budget-buddy/actions)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://finbuddy-2025.web.app)
@@ -133,7 +133,7 @@
 3. **Add to Home Screen** for native app experience
 4. **Enjoy** offline access and KautilyaAI guidance
 
-## 🎨 What's New in v2.9.0
+## 🎨 What's New in v2.901
 
 ### 🔌 **MCP Server — AI Agent Integration**
 
@@ -274,7 +274,7 @@ Help us improve our documentation:
 Stay up to date with FinBuddy's latest improvements:
 
 - **[Changelog](./CHANGELOG.md)** - Complete version history with detailed release notes
-- **[Version 2.9.0](./CHANGELOG.md#290)** - Latest features and improvements
+- **[Version 2.901.0](./CHANGELOG.md#2901)** - Latest features and improvements
 - **[Roadmap](https://github.com/theharithsa/budget-buddy/projects)** - Upcoming features and planned improvements
 
 ## Support & Help

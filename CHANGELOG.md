@@ -2,8 +2,27 @@
 
 All notable changes to FinBuddy will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+### Versioning Scheme (from v2.901 onwards)
+- **2.901.x** — Bug fixes and patches (e.g. 2.901.1, 2.901.2)
+- **2.902** — Next feature release
+- **2.903** — Subsequent feature release, and so on
+
+## [2.901.0] - 2026-04-05
+
+### 🐛 Bug Fixes
+
+- **KautilyaAI Co-Pilot Fixed**: Updated Gemini model from deprecated `gemini-2.0-flash-exp` to stable `gemini-2.0-flash` — the experimental model was sunset by Google (404 Not Found)
+- **Firebase Functions Redeployed**: Both `chatWithGemini` and `getFinancialInsights` updated and deployed
+
+### 🗑️ Removed
+
+- **Dynatrace Monitoring Demo Tab**: Removed from app navigation and sidebar — the demo page is no longer needed
+
+### 🔧 Technical
+
+- Adopted new versioning scheme: 2.90x for feature releases, 2.90x.y for patches
 
 ## [2.9.0] - 2026-04-03
 
