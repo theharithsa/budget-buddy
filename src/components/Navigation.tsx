@@ -16,8 +16,7 @@ import {
   ChevronRight,
   Home,
   MessageSquare,
-  BarChart3,
-  Activity
+  BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getNavigationVersion } from '@/lib/version';
@@ -86,13 +85,6 @@ const navigationItems: NavigationItem[] = [
     label: 'KautilyaAI Co-Pilot',
     icon: MessageSquare,
     description: 'Chat with KautilyaAI assistant',
-    hasBeta: true
-  },
-  {
-    id: 'monitoring-demo',
-    label: 'Monitoring Demo',
-    icon: Activity,
-    description: 'Dynatrace tracking demonstration',
     hasBeta: true
   }
 ];

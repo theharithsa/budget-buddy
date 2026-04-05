@@ -16,7 +16,7 @@ import { CategoryManager } from '@/components/CategoryManager';
 import { PeopleManager } from '@/components/PeopleManager';
 import { MetricsExplorer } from '@/components/MetricsExplorer';
 import { AIChatPage } from '@/components/AIChatPage';
-import { DynatraceMonitoringDemo } from '@/components/DynatraceMonitoringDemo';
+
 import { ComingSoon } from '@/components/ComingSoon';
 import { LoginPage } from '@/components/LoginPage';
 import { AppHeader } from '@/components/AppHeader';
@@ -702,9 +702,7 @@ function FinanceApp() {
               <AIChatPage />
             </TabsContent>
 
-            <TabsContent value="monitoring-demo" className="space-y-6">
-              <DynatraceMonitoringDemo />
-            </TabsContent>
+
           </Tabs>
         </div>
       </div>

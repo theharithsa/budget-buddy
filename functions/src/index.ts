@@ -334,7 +334,7 @@ export const chatWithGemini = onCall({
     
     // Generate response with Gemini
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash",
       generationConfig: {
         temperature: 0.2,
         topP: 0.8,
